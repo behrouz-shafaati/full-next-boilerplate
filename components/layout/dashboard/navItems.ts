@@ -9,10 +9,10 @@ export const navItems: NavItem[] = [
     label: 'Dashboard',
   },
   {
-    title: 'User',
-    href: '/dashboard/user',
+    title: 'Users',
+    href: '/dashboard/users',
     icon: 'user',
-    label: 'user',
+    label: 'users',
   },
   {
     title: 'Employee',

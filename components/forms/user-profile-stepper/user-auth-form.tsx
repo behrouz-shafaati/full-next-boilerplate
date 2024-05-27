@@ -103,7 +103,7 @@ export default function UserAuthForm() {
           </div>
 
           <Button disabled={loading} className="ml-auto w-full" type="submit">
-            Continue With Email
+            ورود
           </Button>
         </form>
       </Form>
