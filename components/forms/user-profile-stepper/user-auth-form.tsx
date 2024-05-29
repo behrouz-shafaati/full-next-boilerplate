@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useFormState, useFormStatus } from 'react-dom';
 import * as z from 'zod';
-import GoogleSignInButton from '../../github-auth-button';
+import GitHubSignInButton from '../../github-auth-button';
 import { authenticate } from '@/lib/entity/user/actions';
 
 const formSchema = z.object({
@@ -112,12 +112,10 @@ export default function UserAuthForm() {
           <span className="w-full border-t" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
+          <span className="bg-background px-2 text-muted-foreground">یا</span>
         </div>
       </div>
-      <GoogleSignInButton />
+      <GitHubSignInButton />
     </>
   );
 }

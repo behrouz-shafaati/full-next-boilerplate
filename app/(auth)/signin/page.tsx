@@ -36,16 +36,15 @@ export default function AuthenticationPage() {
           >
             <path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3" />
           </svg>
-          Logo
+          تکنوآفرین
         </div>
         <div className="relative z-20 mt-auto">
           <blockquote className="space-y-2">
             <p className="text-lg">
-              &ldquo;This library has saved me countless hours of work and
-              helped me deliver stunning designs to my clients faster than ever
-              before.&rdquo;
+              &ldquo;تلاشی در راه افزایش رفاه و میزان بهره وری کسب و
+              کارها&rdquo;
             </p>
-            <footer className="text-sm">Sofia Davis</footer>
+            <footer className="text-sm">بهروز شفاعتی</footer>
           </blockquote>
         </div>
       </div>
@@ -53,29 +52,29 @@ export default function AuthenticationPage() {
         <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
           <div className="flex flex-col space-y-2 text-center">
             <h1 className="text-2xl font-semibold tracking-tight">
-              Create an account
+              ورود به حساب
             </h1>
             <p className="text-sm text-muted-foreground">
-              Enter your email below to create your account
+              برای ورود ایمیل و رمز عبور خود را وارد کنید
             </p>
           </div>
           <UserAuthForm />
           <p className="px-8 text-center text-sm text-muted-foreground">
-            By clicking continue, you agree to our{' '}
+            با کلیک بر روی ادامه، با{' '}
             <Link
               href="/terms"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Terms of Service
+              شرایط استفاده از خدمات
             </Link>{' '}
-            and{' '}
+            و{' '}
             <Link
               href="/privacy"
               className="underline underline-offset-4 hover:text-primary"
             >
-              Privacy Policy
-            </Link>
-            .
+              حریم خصوصی
+            </Link>{' '}
+            ما موافقت می کنید.
           </p>
         </div>
       </div>

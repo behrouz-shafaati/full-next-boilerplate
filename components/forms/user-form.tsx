@@ -31,16 +31,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { Checkbox } from '@/components/ui/checkbox';
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../ui/use-toast';
 import roleCtrl from '@/lib/entity/role/controller';
 import { useFormState } from 'react-dom';
-import { createUser } from '@/lib/entity/user/actions';
+import { createUser, deleteUser, updateUser } from '@/lib/entity/user/actions';
 import Text from '../ui/text';
 import { SubmitButton } from '../ui/submit-button';
 import MultipleSelector, { Option } from '../ui/multiple-selector';
 import FileUpload from '../ui/file-upload';
+import { AlertModal } from '../modal/alert-modal';
 // import FileUpload from "../file-upload";
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -70,15 +70,14 @@ type ProductFormValues = z.infer<typeof formSchema>;
 
 interface ProductFormProps {
   initialData: any | null;
-  categories: any;
 }
 
-export const UserForm: React.FC<ProductFormProps> = ({
-  initialData: user,
-  categories,
-}) => {
+export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   const initialState = { message: null, errors: {} };
-  const [state, dispatch] = useFormState(createUser, initialState);
+  const actionHandler = user
+    ? updateUser.bind(null, String(user.id))
+    : createUser;
+  const [state, dispatch] = useFormState(actionHandler, initialState);
   const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
     label: role.title,
     value: role.slug,
@@ -95,21 +94,17 @@ export const UserForm: React.FC<ProductFormProps> = ({
   const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد';
   const action = user ? 'ذخیره تغییرات' : 'ذخیره';
 
+  console.log('#197 user:', user);
   const onDelete = async () => {
     try {
       setLoading(true);
-      //   await axios.delete(`/api/${params.storeId}/products/${params.productId}`);
-      router.refresh();
-      router.push(`/${params.storeId}/products`);
-    } catch (error: any) {
-    } finally {
-      setLoading(false);
-      setOpen(false);
-    }
+      DeleteUser(user?.id);
+    } catch (error: any) {}
   };
 
   useEffect(() => {
-    if (state.message !== null)
+    console.log('#230 state:', state);
+    if (state.message && state.message !== null)
       toast({
         variant: 'destructive',
         title: '',
@@ -117,15 +112,14 @@ export const UserForm: React.FC<ProductFormProps> = ({
       });
   }, [state]);
 
-  const triggerImgUrlValidation = () => form.trigger('imgUrl');
   return (
     <>
-      {/* <AlertModal
+      <AlertModal
         isOpen={open}
         onClose={() => setOpen(false)}
         onConfirm={onDelete}
         loading={loading}
-      /> */}
+      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
         {user && (
@@ -208,3 +202,8 @@ export const UserForm: React.FC<ProductFormProps> = ({
     </>
   );
 };
+
+export function DeleteUser(id: string) {
+  const deleteUserWithId = deleteUser.bind(null, id);
+  deleteUserWithId();
+}

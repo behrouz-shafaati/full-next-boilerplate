@@ -5,9 +5,9 @@ import { UserSchema } from '@/lib/entity/user/interface';
 const userSchema = new Schema<UserSchema>(
   {
     roles: { type: [String], required: true },
-    mobile: { type: String },
+    mobile: { type: String, required: false, unique: true },
     mobileVerified: { type: Boolean, default: false },
-    email: { type: String, required: true, unique: true },
+    email: { type: String, required: false, unique: true },
     emailVerified: { type: Boolean, default: false },
     password: { type: String, required: true },
     firstName: String,

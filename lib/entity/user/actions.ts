@@ -163,7 +163,9 @@ export async function deleteUser(id: string) {
     return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' };
   }
   await userCtrl.delete({ filters: [id] });
+  // Revalidate the path and redirect to the user dashboard
   revalidatePath('/dashboard/users');
+  redirect('/dashboard/users');
 }
 
 export async function searchUser(query: string) {

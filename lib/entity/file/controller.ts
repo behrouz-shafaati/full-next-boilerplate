@@ -96,7 +96,7 @@ class controller extends c_controller {
     let tmpPath: string = `./public/uploads/tmp`;
 
     const { name: defualtFileName, type: mimeType, size: fileSize } = file;
-
+    console.log('#23 _id:', _id);
     const fileName = createFileName(
       title,
       defualtFileName.split('.').pop() as string
@@ -178,15 +178,16 @@ class controller extends c_controller {
 
     await this.saveFileInDirectory(buffer, `${tmpPath}/${fileName}`);
     // await fs.writeFile(`${tmpPath}/${fileName}`, buffer);
+    try {
+      if (mimeType == 'image/jpeg' || mimeType == 'image/png') {
+        const tmpFilePath = path.resolve(tmpPath, fileName);
 
-    if (mimeType == 'image/jpeg' || mimeType == 'image/png') {
-      const tmpFilePath = path.resolve(tmpPath, fileName);
-
-      // change extension to .jpeg
-      const jpegFileName =
-        fileName.substr(0, fileName.lastIndexOf('.')) + '.png';
-      const goalFilePath = path.resolve(patch, jpegFileName);
-      (url = `${url}/${jpegFileName}`),
+        // change extension to .jpeg
+        const jpegFileName =
+          fileName.substr(0, fileName.lastIndexOf('.')) + '.png';
+        const goalFilePath = path.resolve(patch, jpegFileName);
+        url = `${url}/${jpegFileName}`;
+        patch = `${patch}/${jpegFileName}`;
         // reduce size
         await sharp(tmpFilePath)
           .flatten({ background: { r: 255, g: 255, b: 255 } })
@@ -197,7 +198,10 @@ class controller extends c_controller {
           // .jpeg({ quality: 90 })
           .png({ quality: 90 })
           .toFile(goalFilePath);
-      fs.unlinkSync(tmpFilePath);
+        fs.unlinkSync(tmpFilePath);
+      }
+    } catch (e: any) {
+      console.log('#903 Error in upload file:', e);
     }
 
     let fileInfo: File = await this.create({
@@ -228,27 +232,10 @@ class controller extends c_controller {
       const file = await this.findById({ id: fileDetails.id });
       // Check if the file is not found, null, or already deleted
       if (!file || file == null || file?.deleted) return;
-      // Generate the current and new file names
-      const currentFileName = `${file.title}.${file.extension}`;
-      const newFileName = createFileName(fileDetails.title, file.extension);
-      // Get the file's patch and URL
-      const patch = file.patch;
-      const url = file.url.substr(0, file.url.lastIndexOf('/'));
-      const newUrl = `${url}/${newFileName}`;
-      // Rename the file
-      fs.rename(
-        `${patch}/${currentFileName}`,
-        `${patch}/${newFileName}`,
-        function (err: any) {
-          if (err) console.log('#9536 ERROR: ' + err);
-        }
-      );
       // Update the file details in the database
       await this.findOneAndUpdate({
         filters: fileDetails.id,
         params: {
-          patch: patch,
-          url: newUrl,
           title: fileDetails.title,
           alt: fileDetails.alt,
           description: fileDetails.description,
@@ -260,6 +247,7 @@ class controller extends c_controller {
 
   async deleteFile(id: string) {
     const file = await this.findById({ id });
+    console.log('#32 delete file patch:', file.patch);
     fs.unlinkSync(file.patch);
     return this.delete({ filters: [id] });
   }
@@ -274,15 +262,13 @@ export async function createDir(pathname: string) {
 }
 
 function createFileName(title: string, fileExtension: string) {
+  const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
   // const fileExtension = mimeType.split('/')[1];
-  if (title && title !== '') {
-    // const fileExtension = title.split('.').pop();
-    title = title.replace(/\s+/g, '-').toLowerCase();
-    return `${title}.${fileExtension}`;
-  }
+  // if (title && title !== '') {
+  //   // const fileExtension = title.split('.').pop();
+  //   title = title.replace(/\s+/g, '-').toLowerCase();
+  //   return `${uniqueSuffix}-${title}.${fileExtension}`;
+  // }
   // generate random file name if title is empty
-  return `${
-    Math.random().toString(36).substring(2, 15) +
-    Math.random().toString(36).substring(2, 15)
-  }.${fileExtension}`;
+  return `${uniqueSuffix}.${fileExtension}`;
 }

@@ -1,9 +1,11 @@
+/* Create public/uploads/tmp directory. */
+
 'use client';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react';
-import Modal from './modal';
+import Modal from '../modal/modal';
 import Text from './text';
 import { Button } from './button';
 import Checkbox from './checkbox';
@@ -65,7 +67,7 @@ export default function FileUpload({
       );
 
       setFiles((previousFiles) => [...previousFiles, ...newFiles]);
-
+      console.log('#230 onDrop:', newFiles);
       for (const file of newFiles) {
         submitFile(file);
       }
@@ -82,6 +84,7 @@ export default function FileUpload({
     formData.append('description', file.description);
     formData.append('main', file.main);
 
+    console.log('#290 formData:', formData);
     const data = await uploadFile(formData);
 
     console.log(data);
