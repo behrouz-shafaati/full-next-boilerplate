@@ -1,22 +1,15 @@
 import UsersTable from '@/components/tables/user-tables/users-table';
 import { BreadCrumb } from '@/components/breadcrumb';
-import { auth } from '@/lib/auth';
-import { Session } from '@/types';
-import { ScrollArea } from '@/components/ui/scroll-area';
-
-const allowedRoles = ['admin'];
 const breadcrumbItems = [{ title: 'کاربران', link: '/dashboard/users' }];
-export default async function Page({
-  searchParams,
-}: {
+
+interface PageProps {
   searchParams?: {
     query?: string;
     page?: string;
   };
-}) {
-  const session = (await auth()) as Session;
-  //   if (!alloweAccess(session, allowedRoles)) return <NotAllowed />;
+}
 
+const Page: React.FC<PageProps> = ({ searchParams }) => {
   const query = searchParams?.query || '';
   const currentPage = Number(searchParams?.page) || 1;
 
@@ -26,4 +19,6 @@ export default async function Page({
       <UsersTable query={query} currentPage={currentPage} />
     </div>
   );
-}
+};
+
+export default Page;

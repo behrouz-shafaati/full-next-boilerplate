@@ -1,3 +1,4 @@
+import Authorization from '@/components/HOC/authorization';
 import Header from '@/components/layout/dashboard/header';
 import Sidebar from '@/components/layout/dashboard/sidebar';
 import type { Metadata } from 'next';
@@ -7,11 +8,15 @@ export const metadata: Metadata = {
   description: 'Basic dashboard with Next.js and Shadcn',
 };
 
-export default function DashboardLayout({
+interface DashboardLayoutProps {
+  children: React.ReactNode;
+}
+
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children,
 }: {
   children: React.ReactNode;
-}) {
+}) => {
   return (
     <>
       <Header />
@@ -21,4 +26,14 @@ export default function DashboardLayout({
       </div>
     </>
   );
-}
+};
+
+const Layout: React.FC<DashboardLayoutProps> = (props) => {
+  return (
+    <Authorization AuthorizedRoles={['admin']}>
+      <DashboardLayout>{props.children}</DashboardLayout>
+    </Authorization>
+  );
+};
+
+export default Layout;

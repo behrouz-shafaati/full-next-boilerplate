@@ -11,6 +11,10 @@ export const hashPassword = async (password: string) => {
   return bcrypt.hash(password, salt);
 };
 
+export const haveAccess = (roles: string[], AuthorizedRoles: string[]) => {
+  return !!roles.some((element) => AuthorizedRoles.includes(element));
+};
+
 export const generatePagination = (currentPage: number, totalPages: number) => {
   // If the total number of pages is 7 or less,
   // display all pages without any ellipsis.

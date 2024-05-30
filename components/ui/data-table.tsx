@@ -46,7 +46,6 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
   });
   /* this can be used to get the selectedrows */
-  console.log('value', table.getFilteredSelectedRowModel());
   const isSelected = table.getFilteredSelectedRowModel().flatRows.length > 0;
   const selectedItems = table
     .getFilteredSelectedRowModel()

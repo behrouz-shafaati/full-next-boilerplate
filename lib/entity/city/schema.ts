@@ -18,7 +18,7 @@ const citySchema = new Schema<CitySchema>(
     active: { type: Boolean, default: true },
     deleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 citySchema
@@ -49,4 +49,4 @@ citySchema.set('toJSON', {
     delete ret.deleted;
   },
 });
-export default mongoose.models.city || model<CitySchema>('city', citySchema);
+export default mongoose.models?.city || model<CitySchema>('city', citySchema);

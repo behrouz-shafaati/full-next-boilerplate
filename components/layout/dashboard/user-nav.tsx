@@ -75,19 +75,3 @@ export async function UserNav() {
     );
   }
 }
-
-{
-  /* <form
-              className="w-full flex"
-              action={async () => {
-                'use server';
-                await signOut();
-              }}
-            >
-              <button className="w-full h-full flex">
-                <div className="hidden md:block">
-                  Sign Out <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </div>
-              </button>
-            </form> */
-}

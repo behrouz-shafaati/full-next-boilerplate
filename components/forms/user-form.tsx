@@ -94,7 +94,6 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد';
   const action = user ? 'ذخیره تغییرات' : 'ذخیره';
 
-  console.log('#197 user:', user);
   const onDelete = async () => {
     try {
       setLoading(true);
@@ -103,7 +102,6 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   };
 
   useEffect(() => {
-    console.log('#230 state:', state);
     if (state.message && state.message !== null)
       toast({
         variant: 'destructive',

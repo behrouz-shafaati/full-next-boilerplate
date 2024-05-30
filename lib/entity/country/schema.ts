@@ -13,7 +13,7 @@ const countrySchema = new Schema<CountrySchema>(
     active: { type: Boolean, default: true },
     deleted: { type: Boolean, default: false },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 countrySchema
@@ -42,5 +42,5 @@ countrySchema.set('toJSON', {
     delete ret.deleted;
   },
 });
-export default mongoose.models.country ||
+export default mongoose.models?.country ||
   model<CountrySchema>('country', countrySchema);

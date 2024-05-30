@@ -33,14 +33,14 @@ export const { auth, signIn, signOut } = NextAuth({
           // evaluate password
           const passwordsMatch = await bcrypt.compare(password, user.password);
 
-          const sessionUser = {
-            id: user.id,
-            email: user.email,
-            name: user?.name,
-            roles: user.roles,
-            picture: '#',
-          };
-          if (passwordsMatch) return sessionUser;
+          // const user = {
+          //   id: user.id,
+          //   email: user.email,
+          //   name: user?.name,
+          //   roles: user.roles,
+          //   picture: '#',
+          // };
+          if (passwordsMatch) return user;
         }
         // Invalid credentials
         return null;

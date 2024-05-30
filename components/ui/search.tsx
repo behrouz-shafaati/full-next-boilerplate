@@ -39,7 +39,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
           <SpinIcon className="absolute  right-3 top-3 flex items-center justify-center h-[18px] w-[18px] animate-spin text-gray-700" />
         )}
         <Input
-          className="peer block w-full rounded-md border border-gray-200 py-[9px] pr-10 text-sm outline-2 placeholder:text-gray-500 md:max-w-sm"
+          className="peer block w-full rounded-md border py-[9px] pr-10 text-sm outline-2  md:max-w-sm"
           placeholder={placeholder}
           onChange={(e) => {
             handleSearch(e.target.value);
