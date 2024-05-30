@@ -35,7 +35,7 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  console.log('@@@*** render');
+  console.log('#inf03 render RootLayout in dashboard');
   return (
     <html lang="fa" dir="rtl">
       <body className={iransans.className}>

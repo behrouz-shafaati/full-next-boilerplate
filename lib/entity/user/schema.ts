@@ -40,15 +40,15 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-// userSchema
-//   .pre('findOne', function (next: any) {
-//     this.populate('image');
-//     next();
-//   })
-//   .pre('find', function (next: any) {
-//     this.populate('image');
-//     next();
-//   });
+userSchema
+  .pre('findOne', function (next: any) {
+    this.populate('image');
+    next();
+  })
+  .pre('find', function (next: any) {
+    this.populate('image');
+    next();
+  });
 
 userSchema.set('toObject', {
   transform: function (doc, ret, options) {

@@ -39,8 +39,8 @@ import { createUser, deleteUser, updateUser } from '@/lib/entity/user/actions';
 import Text from '../ui/text';
 import { SubmitButton } from '../ui/submit-button';
 import MultipleSelector, { Option } from '../ui/multiple-selector';
-import FileUpload from '../ui/file-upload';
 import { AlertModal } from '../modal/alert-modal';
+import ProfileUpload from '../ui/profile-upload';
 // import FileUpload from "../file-upload";
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -135,7 +135,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
       </div>
       {/* <Separator /> */}
       <form action={dispatch} className="space-y-8 w-full">
-        <FileUpload title="عکس" name="profileImages" />
+        <ProfileUpload title="" name="image" defaultValue={user?.image} />
         <div className="md:grid md:grid-cols-3 gap-8">
           {/* First Name */}
           <Text

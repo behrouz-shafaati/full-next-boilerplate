@@ -35,6 +35,7 @@ export default function FileUpload({
   defaultValues?: BeFile[];
   state?: any;
 }) {
+  if (defaultValues.constructor !== Array) defaultValues = [defaultValues];
   const errorMessages = state?.errors?.[name] ?? [];
   const hasError = state?.errors?.[name]?.length > 0;
 

@@ -107,7 +107,6 @@ class controller extends coreController {
 
   async find(payload: QueryFind) {
     payload.filters = this.standardizationFilters(payload.filters);
-    console.log('#s09 payload.filters:', payload.filters);
     return super.find(payload);
   }
 

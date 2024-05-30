@@ -21,11 +21,9 @@ export default async function Page({
   const currentPage = Number(searchParams?.page) || 1;
 
   return (
-    <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-        <BreadCrumb items={breadcrumbItems} />
-        <UsersTable query={query} currentPage={currentPage} />
-      </div>
-    </ScrollArea>
+    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+      <BreadCrumb items={breadcrumbItems} />
+      <UsersTable query={query} currentPage={currentPage} />
+    </div>
   );
 }

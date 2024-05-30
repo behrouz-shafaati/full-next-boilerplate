@@ -57,10 +57,7 @@ export default function Text({
           placeholder={placeholder}
           readOnly={readOnly}
           disabled={disabled}
-          className={clsx(
-            'peer block w-full rounded-md border border-gray-200 px-2 py-2 pl-10 text-sm outline-2 placeholder:text-gray-500',
-            { 'bg-gray-100 text-gray-500': disabled }
-          )}
+          className="peer"
         />
         {icon && (
           <span className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500">

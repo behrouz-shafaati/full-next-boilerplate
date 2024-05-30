@@ -42,6 +42,7 @@ const FormSchema = z.object({
       required_error: 'لطفا رمز ورود را وارد کنید.',
     })
     .min(1, { message: 'لطفا رمز ورود را وارد کنید.' }),
+  image: z.string({}),
 });
 
 export type State = {
@@ -52,6 +53,7 @@ export type State = {
     mobile?: string[];
     property?: string[];
     password?: string[];
+    image?: string[];
   };
   message?: string | null;
 };
@@ -144,7 +146,9 @@ export async function updateUser(
       ...validatedFields.data,
       roles: JSON.parse(validatedFields.data.roles),
     };
+    // validatedFields.data.image ;
 
+    console.log('#209 validatedFields.data:', validatedFields.data);
     await userCtrl.findOneAndUpdate({
       filters: id,
       params: validatedFields.data,

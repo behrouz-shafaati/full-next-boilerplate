@@ -185,6 +185,7 @@ class controller extends c_controller {
         // change extension to .jpeg
         const jpegFileName =
           fileName.substr(0, fileName.lastIndexOf('.')) + '.png';
+        title = jpegFileName;
         const goalFilePath = path.resolve(patch, jpegFileName);
         url = `${url}/${jpegFileName}`;
         patch = `${patch}/${jpegFileName}`;
@@ -236,7 +237,7 @@ class controller extends c_controller {
       await this.findOneAndUpdate({
         filters: fileDetails.id,
         params: {
-          title: fileDetails.title,
+          // title: fileDetails.title,
           alt: fileDetails.alt,
           description: fileDetails.description,
           main: fileDetails.main,

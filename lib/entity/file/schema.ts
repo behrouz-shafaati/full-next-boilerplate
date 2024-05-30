@@ -17,6 +17,12 @@ const fileSchema = new Schema<SchemaFile>(
   { timestamps: true }
 );
 
+// Middleware to exclude deleted documents
+fileSchema.pre('find', function (next) {
+  this.where({ deleted: false });
+  next();
+});
+
 fileSchema.set('toObject', {
   transform: function (doc, ret, options) {
     ret.id = ret._id.toHexString();

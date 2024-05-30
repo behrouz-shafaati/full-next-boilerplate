@@ -1,4 +1,3 @@
-import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 // import { DataTable } from "@/components/ui/data-table";
 import { Heading } from '@/components/ui/heading';
@@ -7,12 +6,12 @@ import userCtrl from '@/lib/entity/user/controller';
 import { User } from '@/lib/entity/user/interface';
 // import { Separator } from "@/components/ui/separator";
 // import { User } from "@/constants/data";
-import { Plus } from 'lucide-react';
-import Link from 'next/link';
+import { Plus, Trash } from 'lucide-react';
 import { columns } from './columns';
 import { QueryResponse } from '@/lib/entity/core/interface';
 import { Role } from '@/lib/entity/role/interface';
 import roleCtrl from '@/lib/entity/role/controller';
+import GroupAction from './group-action';
 
 interface UsersTableProps {
   query: string;
@@ -29,8 +28,6 @@ export default async function UsersTable({
     filters: { query },
     pagination: { page: currentPage, perPage: 6 },
   });
-
-  console.log('#289 users:', findResult);
 
   return (
     <>
@@ -50,6 +47,7 @@ export default async function UsersTable({
         searchTitle="جستجو ..."
         columns={columns}
         response={findResult}
+        groupAction={GroupAction}
       />
     </>
   );
