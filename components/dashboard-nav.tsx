@@ -16,8 +16,8 @@ interface DashboardNavProps {
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const path = usePathname();
-  // const { data: session } = useSession();
-  // console.log('#9900 session from nav bar:', session);
+  const { data: session } = useSession();
+  console.log('#9900 session from nav bar:', session);
   if (!items?.length) {
     return null;
   }
@@ -27,7 +27,8 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
       {items.map((item, index) => {
         const Icon = Icons[item.icon || 'arrowRight'];
         return (
-          item.href && (
+          item.href &&
+          haveAccess(session?.user.roles, item?.authorized) && (
             <Link
               key={index}
               href={item.disabled ? '/' : item.href}

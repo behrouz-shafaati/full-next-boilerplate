@@ -1,5 +1,6 @@
 import { Icons } from '@/components/icons';
 
+export type Roles = 'admin' | 'user';
 export type Session = {
   user: {
     id: string;
@@ -12,6 +13,7 @@ export type Session = {
 };
 
 export interface NavItem {
+  slug: string;
   title: string;
   href?: string;
   disabled?: boolean;
@@ -19,6 +21,7 @@ export interface NavItem {
   icon?: keyof typeof Icons;
   label?: string;
   description?: string;
+  authorized?: Roles[];
 }
 
 export interface NavItemWithChildren extends NavItem {

@@ -11,7 +11,13 @@ export const hashPassword = async (password: string) => {
   return bcrypt.hash(password, salt);
 };
 
-export const haveAccess = (roles: string[], AuthorizedRoles: string[]) => {
+export const haveAccess = (
+  roles: string[] = [],
+  AuthorizedRoles: string[] = []
+) => {
+  if (AuthorizedRoles.length == 0) return true;
+  const isSuperAdmin = roles.includes('super_admin');
+  if (isSuperAdmin) return true;
   return !!roles.some((element) => AuthorizedRoles.includes(element));
 };
 

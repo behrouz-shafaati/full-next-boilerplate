@@ -108,7 +108,7 @@ export default function ProfileUpload({
             )}
           />
         </div>
-        <div className="flex flex-row space-x-2">
+        <div className="flex flex-row gap-2">
           <Button
             {...getRootProps({
               className: `text-xs`,

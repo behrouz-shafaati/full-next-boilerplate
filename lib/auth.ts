@@ -16,7 +16,7 @@ async function getUser(email: string): Promise<User | undefined> {
   }
 }
 
-export const { auth, signIn, signOut } = NextAuth({
+export const { auth, signIn, signOut, handlers } = NextAuth({
   ...authConfig,
   providers: [
     Credentials({
@@ -57,7 +57,6 @@ export const { auth, signIn, signOut } = NextAuth({
         email: user.email,
         name: user.name,
         roles: user.roles,
-        image: '#',
       };
       obj.token.user = sessionUser;
       return obj.token;

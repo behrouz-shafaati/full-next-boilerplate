@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/layout/theme-toggle/theme-provider';
+import { SessionProvider } from 'next-auth/react';
 
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/ui/toaster';
@@ -42,15 +43,17 @@ export default async function RootLayout({
   return (
     <html lang="fa" dir="rtl">
       <body className={iransans.className}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main>{children}</main>
-          <Toaster />
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main>{children}</main>
+            <Toaster />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
