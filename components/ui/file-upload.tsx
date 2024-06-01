@@ -35,19 +35,21 @@ export default function FileUpload({
   defaultValues?: BeFile[];
   state?: any;
 }) {
-  if (defaultValues.constructor !== Array) defaultValues = [defaultValues];
+  if (!Array.isArray(defaultValues)) {
+    defaultValues = [defaultValues];
+  }
   const errorMessages = state?.errors?.[name] ?? [];
   const hasError = state?.errors?.[name]?.length > 0;
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [files, setFiles] = useState<File[]>(defaultValues);
+  const [files, setFiles] = useState<any[]>(defaultValues);
   const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0);
 
   const onCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  const onDrop = (acceptedFiles: File[]) => {
+  const onDrop = (acceptedFiles: any[]) => {
     let firstImage = true;
     if (acceptedFiles?.length) {
       const newFiles = acceptedFiles.map((file) =>
@@ -75,15 +77,15 @@ export default function FileUpload({
     }
   };
 
-  const submitFile = async (file: File) => {
+  const submitFile = async (file: any) => {
     const formData = new FormData();
 
     formData.append('file', file);
-    formData.append('id', file.id);
-    formData.append('title', file.title);
-    formData.append('alt', file.alt);
-    formData.append('description', file.description);
-    formData.append('main', file.main);
+    formData.append('id', file?.id);
+    formData.append('title', file?.title);
+    formData.append('alt', file?.alt);
+    formData.append('description', file?.description);
+    formData.append('main', file?.main);
 
     console.log('#290 formData:', formData);
     const data = await uploadFile(formData);
@@ -152,7 +154,7 @@ export default function FileUpload({
       });
     }
   };
-  const onSaveFileDetails = (newFile: File, index: number) => {
+  const onSaveFileDetails = (newFile: any, index: number) => {
     setIsModalOpen(false);
     if (newFile.main) {
       unCheckMainAllFiles();

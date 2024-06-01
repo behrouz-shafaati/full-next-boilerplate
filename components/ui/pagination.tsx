@@ -7,8 +7,9 @@ import { generatePagination } from '@/lib/utils';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { LinkButton } from './link-button';
 import { Button } from './button';
+import { Suspense } from 'react';
 
-export default function Pagination({ totalPages }: { totalPages: number }) {
+function PaginationComponent({ totalPages }: { totalPages: number }) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
@@ -127,5 +128,13 @@ function PaginationArrow({
     <Link className={className} href={href}>
       {icon}
     </Link>
+  );
+}
+
+export default function Pagination({ totalPages }: { totalPages: number }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <PaginationComponent totalPages={totalPages} />
+    </Suspense>
   );
 }

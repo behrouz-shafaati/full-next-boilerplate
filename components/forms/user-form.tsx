@@ -77,7 +77,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   const actionHandler = user
     ? updateUser.bind(null, String(user.id))
     : createUser;
-  const [state, dispatch] = useFormState(actionHandler, initialState);
+  const [state, dispatch] = useFormState(actionHandler as any, initialState);
   const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
     label: role.title,
     value: role.slug,

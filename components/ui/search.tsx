@@ -3,11 +3,11 @@
 import { Search as SeachIcon } from 'lucide-react';
 import { useSearchParams, usePathname, useRouter } from 'next/navigation';
 import { useDebouncedCallback } from 'use-debounce';
-import { useTransition } from 'react';
+import { Suspense, useTransition } from 'react';
 import { Input } from './input';
 import SpinIcon from '../icon/spin';
 
-export default function Search({ placeholder }: { placeholder: string }) {
+function SearchComponent({ placeholder }: { placeholder: string }) {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -48,5 +48,13 @@ export default function Search({ placeholder }: { placeholder: string }) {
         />
       </div>
     </div>
+  );
+}
+
+export default function Search({ placeholder }: { placeholder: string }) {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchComponent placeholder={placeholder} />
+    </Suspense>
   );
 }

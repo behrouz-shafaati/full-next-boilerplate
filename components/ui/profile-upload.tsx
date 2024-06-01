@@ -29,7 +29,7 @@ export default function ProfileUpload({
   const errorMessages = state?.errors?.[name] ?? [];
   const hasError = state?.errors?.[name]?.length > 0;
 
-  const [file, setFile] = useState<File>(defaultValue);
+  const [file, setFile] = useState<any>(defaultValue);
 
   const onDrop = (acceptedFiles: File[]) => {
     let firstImage = true;
@@ -53,7 +53,7 @@ export default function ProfileUpload({
     }
   };
 
-  const submitFile = async (file: File) => {
+  const submitFile = async (file: any) => {
     const formData = new FormData();
 
     formData.append('file', file);

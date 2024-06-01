@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useFormState, useFormStatus } from 'react-dom';
 import * as z from 'zod';
@@ -28,7 +28,7 @@ const formSchema = z.object({
 
 type UserFormValue = z.infer<typeof formSchema>;
 
-export default function UserAuthForm() {
+function UserAuthFormComponent() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl');
   const [loading, setLoading] = useState(false);
@@ -117,5 +117,13 @@ export default function UserAuthForm() {
       </div>
       <GitHubSignInButton />
     </>
+  );
+}
+
+export default function UserAuthForm() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UserAuthFormComponent />
+    </Suspense>
   );
 }

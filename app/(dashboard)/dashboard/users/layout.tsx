@@ -16,7 +16,7 @@ const UsersLayout: React.FC<UsersLayoutProps> = ({ children }) => {
 
 const Layout: React.FC<UsersLayoutProps> = (props) => {
   return (
-    <Authorization AuthorizedRoles={['admin']}>
+    <Authorization routeSlug="users">
       <UsersLayout>{props.children}</UsersLayout>
     </Authorization>
   );

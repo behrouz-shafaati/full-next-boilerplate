@@ -30,7 +30,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
 const Layout: React.FC<DashboardLayoutProps> = (props) => {
   return (
-    <Authorization AuthorizedRoles={['admin']}>
+    <Authorization routeSlug="dashboard">
       <DashboardLayout>{props.children}</DashboardLayout>
     </Authorization>
   );

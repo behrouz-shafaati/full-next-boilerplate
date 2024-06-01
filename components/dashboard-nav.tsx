@@ -1,5 +1,4 @@
 'use client';
-
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
@@ -28,7 +27,7 @@ export function DashboardNav({ items, setOpen }: DashboardNavProps) {
         const Icon = Icons[item.icon || 'arrowRight'];
         return (
           item.href &&
-          haveAccess(session?.user.roles, item?.authorized) && (
+          haveAccess(session?.user?.roles || [], item?.authorized) && (
             <Link
               key={index}
               href={item.disabled ? '/' : item.href}

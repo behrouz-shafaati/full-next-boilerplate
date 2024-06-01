@@ -3,7 +3,6 @@ import c_controller from '@/lib/entity/core/controller';
 
 import fileSchema from './schema';
 import fileService from './service';
-import { createReadStream } from 'fs';
 import { FileDetailsPayload } from './interface';
 // import imgurClient from "./imgur";
 // const multer = require('multer');

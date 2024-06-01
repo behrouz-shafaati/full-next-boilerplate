@@ -12,7 +12,7 @@ export const authConfig = {
       // const user = await getUser(auth?.user.email);
       // console.log('#754 config user: ', user);
 
-      console.log('#287 auth?.user:', auth?.user);
+      // console.log('#287 auth?.user:', auth?.user);
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
       if (isOnDashboard) {
         if (isLoggedIn) return true;
