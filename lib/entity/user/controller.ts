@@ -168,6 +168,7 @@ class controller extends coreController {
 
   async findById(payload: QueryFindById) {
     const user = await super.findById(payload);
+    if (!user) return null;
     const addresses = await shippingAddressCtrl.findAll({
       filters: { userId: user.id },
     });

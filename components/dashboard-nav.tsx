@@ -6,7 +6,7 @@ import { Icons } from '@/components/icons';
 import { cn, haveAccess } from '@/lib/utils';
 import { NavItem } from '@/types';
 import { Dispatch, SetStateAction } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession } from '@/components/context/SessionContext';
 
 interface DashboardNavProps {
   items: NavItem[];
@@ -15,8 +15,7 @@ interface DashboardNavProps {
 
 export function DashboardNav({ items, setOpen }: DashboardNavProps) {
   const path = usePathname();
-  const { data: session } = useSession();
-  console.log('#9900 session from nav bar:', session);
+  const { session } = useSession();
   if (!items?.length) {
     return null;
   }

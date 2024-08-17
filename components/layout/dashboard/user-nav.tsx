@@ -10,10 +10,10 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { auth, signOut } from '@/lib/auth';
+import { getSession, logout } from '@/lib/auth';
 import { Session } from '@/types';
 export async function UserNav() {
-  const session = (await auth()) as Session;
+  const session = (await getSession()) as Session;
   if (session) {
     return (
       <DropdownMenu dir="rtl">
@@ -62,7 +62,7 @@ export async function UserNav() {
               className="w-full flex  top-0 left-0 h-full"
               action={async () => {
                 'use server';
-                await signOut();
+                await logout();
               }}
             >
               <button className="w-full h-full flex">

@@ -5,8 +5,8 @@ import userCtrl from '@/lib/entity/user/controller';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import shippingAddressCtrl from '../shippingAddress/controller';
-import { signIn } from '@/lib/auth';
 import { AuthError } from 'next-auth';
+import { login } from '@/lib/auth';
 
 const FormSchema = z.object({
   firstName: z
@@ -42,7 +42,7 @@ const FormSchema = z.object({
       required_error: 'لطفا رمز ورود را وارد کنید.',
     })
     .min(1, { message: 'لطفا رمز ورود را وارد کنید.' }),
-  image: z.string({}),
+  image: z.string({}).nullable(),
 });
 
 export type State = {
@@ -63,7 +63,7 @@ export async function authenticate(
   formData: FormData
 ) {
   try {
-    await signIn('credentials', formData);
+    await login(formData);
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {

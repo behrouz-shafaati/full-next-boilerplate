@@ -15,8 +15,10 @@ export const haveAccess = (
   roles: string[] = [],
   AuthorizedRoles: string[] = []
 ) => {
+  console.log('#6345 roles in have access:', roles);
   if (AuthorizedRoles.length == 0) return true;
   const isSuperAdmin = roles.includes('super_admin');
+  console.log('#6345 isSuperAdmin flg:', isSuperAdmin);
   if (isSuperAdmin) return true;
   return !!roles.some((element) => AuthorizedRoles.includes(element));
 };

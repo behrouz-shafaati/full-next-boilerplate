@@ -7,13 +7,15 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      // console.log('#785 user auth:', auth);
-      // const authObj = JSON.parse(auth)
-      // const user = await getUser(auth?.user.email);
-      // console.log('#754 config user: ', user);
-
-      // console.log('#287 auth?.user:', auth?.user);
       const isOnDashboard = nextUrl.pathname.startsWith('/dashboard');
+      const isStaticFile =
+        nextUrl.pathname.startsWith('/uploads') ||
+        nextUrl.pathname.startsWith('/_next/static') ||
+        nextUrl.pathname.startsWith('/_next/image');
+
+      if (isStaticFile) {
+        return true; // اجازه دسترسی به فایل‌های استاتیک
+      }
       if (isOnDashboard) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page

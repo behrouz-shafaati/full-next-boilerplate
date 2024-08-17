@@ -1,11 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'export',
-  // experimental: {
-  //   images: {
-  //     unoptimized: true,
-  //   },
-  // },
+  images: {
+    domains: [], // نیازی به دامنه نیست برای تصاویر محلی
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
 import './globals.css';
 import { ThemeProvider } from '@/components/layout/theme-toggle/theme-provider';
-import { SessionProvider } from 'next-auth/react';
+import { SessionProvider } from '@/components/context/SessionContext';
 
 import localFont from 'next/font/local';
 import { Toaster } from '@/components/ui/toaster';
-// import { auth } from '@/lib/auth';
-// import { Session } from 'next-auth';
+import { Session } from '@/types';
+import { getSession } from '@/lib/auth';
 const iransans = localFont({
   src: [
     {
@@ -39,11 +39,11 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   console.log('#inf03 render RootLayout in dashboard');
-  // const session = (await auth()) as Session;
+  const session = (await getSession()) as Session;
   return (
     <html lang="fa" dir="rtl">
       <body className={iransans.className}>
-        <SessionProvider>
+        <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
