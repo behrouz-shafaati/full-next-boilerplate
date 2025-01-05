@@ -24,7 +24,7 @@ export type Session = {
 export interface NavItem {
   slug: string;
   title: string;
-  href?: string;
+  href: string;
   disabled?: boolean;
   external?: boolean;
   icon?: keyof typeof Icons;
@@ -33,12 +33,8 @@ export interface NavItem {
   authorized?: RoleSlugs[];
 }
 
-export interface NavItemWithChildren extends NavItem {
-  items: NavItemWithChildren[];
-}
-
-export interface NavItemWithOptionalChildren extends NavItem {
-  items?: NavItemWithChildren[];
+export interface SidebarNavItem extends NavItem {
+  sub?: NavItem[];
 }
 
 export interface FooterItem {
@@ -49,7 +45,3 @@ export interface FooterItem {
     external?: boolean;
   }[];
 }
-
-export type MainNavItem = NavItemWithOptionalChildren;
-
-export type SidebarNavItem = NavItemWithChildren;

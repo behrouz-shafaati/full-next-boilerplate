@@ -11,6 +11,7 @@ import {
   Update,
   Delete,
   DeleteMany,
+  AggregateQueryArray,
 } from './interface';
 // import logController from "@entity/log/controller";
 import { Types } from 'mongoose';
@@ -68,7 +69,7 @@ export default class controller {
       result = await this.service.find(
         payload.filters,
         payload.pagination,
-        payload.sort,
+        payload.sort
       );
       // if (payload.saveLog) {
       //   if (result) {
@@ -103,7 +104,7 @@ export default class controller {
       result = await this.service.findAll(
         payload.filters,
         payload.sort,
-        payload.populate,
+        payload.populate
       );
       // if (payload.saveLog) {
       //   if (result) {
@@ -243,7 +244,7 @@ export default class controller {
     try {
       result = await this.service.findOneAndUpdate(
         payload.filters,
-        payload.params,
+        payload.params
       );
       // if (payload.saveLog) {
       //   if (result) log.setResultStatus(true);
@@ -339,5 +340,9 @@ export default class controller {
       console.log(error);
     }
     return result;
+  }
+
+  async aggregate(query: AggregateQueryArray, pagination?: Pagination) {
+    return this.service.aggregate(query, pagination);
   }
 }

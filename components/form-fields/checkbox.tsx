@@ -1,6 +1,6 @@
 import clsx from 'clsx';
-import { Label } from './label';
-import { CheckboxInput } from './checkbox-input';
+import { Label } from '../ui/label';
+import { CheckboxInput } from '../ui/checkbox-input';
 
 type RadioProps = {
   name: string;

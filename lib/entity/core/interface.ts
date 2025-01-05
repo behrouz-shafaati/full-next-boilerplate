@@ -112,4 +112,29 @@ type Location = {
   long: string;
 };
 
+interface AggregateQuery {
+  $match?: { [key: string]: any }; // برای فیلتر کردن داده‌ها
+  $group?: {
+    _id: any;
+    [key: string]: any;
+  }; // برای گروه‌بندی داده‌ها
+  $project?: { [key: string]: any }; // برای انتخاب فیلدهای خاص
+  $sort?: { [key: string]: 1 | -1 }; // برای مرتب‌سازی داده‌ها
+  $limit?: number; // برای محدود کردن تعداد نتایج
+  $skip?: number; // برای نادیده گرفتن تعداد مشخصی از نتایج
+  $lookup?: {
+    from: string;
+    localField: string;
+    foreignField: string;
+    as: string;
+  }; // برای ایجاد ارتباط با مجموعه‌های دیگر
+  $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean }; // برای بازکردن آرایه‌ها
+  $addFields?: { [key: string]: any }; // برای اضافه کردن فیلدهای جدید
+  $replaceRoot?: { newRoot: any }; // برای جایگزینی ریشه اسناد
+  $count?: string; // برای شمارش نتایج
+  // می‌توانید سایر مراحل نیز اضافه کنید
+}
+
+export interface AggregateQueryArray extends Array<AggregateQuery> {}
+
 type Id = Schema.Types.ObjectId;

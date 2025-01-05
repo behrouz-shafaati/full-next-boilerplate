@@ -7,7 +7,7 @@ import { useDropzone } from 'react-dropzone';
 import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react';
 import Modal from '../modal/modal';
 import Text from './text';
-import { Button } from './button';
+import { Button } from '../ui/button';
 import Checkbox from './checkbox';
 import clsx from 'clsx';
 import {
@@ -19,6 +19,7 @@ import {
   File as BeFile,
   FileDetailsPayload,
 } from '@/lib/entity/file/interface';
+import { useToast } from '../ui/use-toast';
 const ObjectId = require('bson-objectid');
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
@@ -28,13 +29,18 @@ export default function FileUpload({
   name,
   defaultValues = [],
   state,
+  maxFiles,
+  allowedFileTypes,
 }: {
   className?: string;
   title: string;
   name: string;
   defaultValues?: BeFile[];
   state?: any;
+  maxFiles?: number;
+  allowedFileTypes?: any;
 }) {
+  const { toast } = useToast();
   if (!Array.isArray(defaultValues)) {
     defaultValues = [defaultValues];
   }
@@ -45,11 +51,22 @@ export default function FileUpload({
   const [files, setFiles] = useState<any[]>(defaultValues);
   const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0);
 
+  const acceptedFiles = allowedFileTypes ? { accept: allowedFileTypes } : {};
   const onCloseModal = () => {
     setIsModalOpen(false);
   };
 
   const onDrop = (acceptedFiles: any[]) => {
+    if (maxFiles) {
+      if (files.length + acceptedFiles.length > maxFiles) {
+        toast({
+          variant: 'destructive',
+          title: '',
+          description: `حداکثر ${maxFiles} فایل قابل آپلود است.`,
+        });
+        return;
+      }
+    }
     let firstImage = true;
     if (acceptedFiles?.length) {
       const newFiles = acceptedFiles.map((file) =>
@@ -87,16 +104,12 @@ export default function FileUpload({
     formData.append('description', file?.description);
     formData.append('main', file?.main);
 
-    console.log('#290 formData:', formData);
     const data = await uploadFile(formData);
-
-    console.log(data);
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      'image/*': [],
-    },
+    ...acceptedFiles,
+    multiple: true,
     maxSize: 6 * 1024 * 1000, // 6 MB
     onDrop,
   });
@@ -188,6 +201,7 @@ export default function FileUpload({
             className: `${className} border-2 border-dashed border-secondary-400 p-4 text-center rounded-md text-gry-400`,
           })}
         >
+          <input {...getInputProps()} />
           <div className="flex flex-col items-center justify-center gap-2 text-xs text-gray-400">
             <ArrowUpTrayIcon className="h-5 w-5 fill-current" />
             {isDragActive ? (
@@ -203,9 +217,12 @@ export default function FileUpload({
         {/* Preview */}
         <section className="">
           {/* Accepted files */}
-          <ul className="mt-0 mt-4 grid grid-cols-3 gap-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <ul className=" mt-4 grid grid-cols-3 gap-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {files.map((file, index) => (
-              <li key={index} className="h-22 group relative rounded-md">
+              <li
+                key={index}
+                className="max-h-20 h-22 group relative rounded-md"
+              >
                 <Image
                   src={file?.preview || file?.url}
                   alt={file?.name || file?.alt}
@@ -216,7 +233,7 @@ export default function FileUpload({
                   //   }}
                   className={clsx(
                     'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
-                    { 'border border-2 border-blue-500': file.main }
+                    { 'border-2 border-blue-500': file.main }
                   )}
                   onClick={() => {
                     setSelectedFileIndex(index);

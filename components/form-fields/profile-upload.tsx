@@ -8,7 +8,7 @@ import { CameraIcon, TrashIcon } from 'lucide-react';
 import clsx from 'clsx';
 import { deleteFile, uploadFile } from '@/lib/entity/file/actions';
 import { File as BeFile } from '@/lib/entity/file/interface';
-import { Button } from './button';
+import { Button } from '../ui/button';
 const ObjectId = require('bson-objectid');
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
@@ -117,6 +117,7 @@ export default function ProfileUpload({
             role="button"
             type="button"
           >
+            <input {...getInputProps()} />
             <CameraIcon className="h-5 w-5 text-gray-500" />
           </Button>
           {file !== null && (

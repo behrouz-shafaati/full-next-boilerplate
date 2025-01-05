@@ -1,7 +1,7 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { LoadingButton } from './loading-button';
+import { LoadingButton } from '../ui/loading-button';
 
 type SubmitButtonProps = {
   text?: string;

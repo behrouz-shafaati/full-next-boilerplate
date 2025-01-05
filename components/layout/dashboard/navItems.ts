@@ -1,13 +1,21 @@
 import { Icons } from '@/components/icons';
 import { NavItem, SidebarNavItem } from '@/types';
 
-export const navItems: NavItem[] = [
+export const navItems: SidebarNavItem[] = [
   {
     slug: 'dashboard',
     title: 'داشبورد',
     href: '/dashboard',
     icon: 'dashboard',
-    label: 'داشبورد',
+    label: '',
+    authorized: ['admin'],
+  },
+  {
+    slug: 'post',
+    title: 'مطالب',
+    href: '/dashboard/posts',
+    icon: 'user',
+    label: '',
     authorized: ['admin'],
   },
   {
@@ -15,7 +23,33 @@ export const navItems: NavItem[] = [
     title: 'کاربران',
     href: '/dashboard/users',
     icon: 'user',
-    label: 'کاربران',
+    label: '',
+    authorized: ['admin'],
+    // sub: [
+    //   {
+    //     slug: 'employee',
+    //     title: 'کارمندان',
+    //     href: '/dashboard/users/employees',
+    //     icon: 'employee',
+    //     label: '',
+    //     authorized: ['admin'],
+    //   },
+    //   {
+    //     slug: 'employee',
+    //     title: 'کارمندان',
+    //     href: '/dashboard/users/employees',
+    //     icon: 'employee',
+    //     label: '',
+    //     authorized: ['admin'],
+    //   },
+    // ],
+  },
+  {
+    slug: 'category',
+    title: 'دسته بندی ها',
+    href: '/dashboard/categories',
+    icon: 'category',
+    label: '',
     authorized: ['admin'],
   },
 
@@ -24,6 +58,6 @@ export const navItems: NavItem[] = [
     title: 'خروج',
     href: '/',
     icon: 'login',
-    label: 'خروج',
+    label: '',
   },
 ];

@@ -1,7 +1,9 @@
 'use client';
 
 import { Fragment, useState, useEffect } from 'react';
-import MultipleSelectorInput, { Option as O } from './multiple-selector-input';
+import MultipleSelectorInput, {
+  Option as O,
+} from '../ui/multiple-selector-input';
 
 export interface Option extends O {
   value: string;

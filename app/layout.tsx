@@ -7,6 +7,13 @@ import localFont from 'next/font/local';
 import { Toaster } from '@/components/ui/toaster';
 import { Session } from '@/types';
 import { getSession } from '@/lib/auth';
+
+// const originalConsoleLog = console.log;
+// console.log = (...args) => {
+//   const stack = new Error().stack.split('\n')[2].trim();
+//   originalConsoleLog(`[${stack}]`, ...args);
+// };
+
 const iransans = localFont({
   src: [
     {

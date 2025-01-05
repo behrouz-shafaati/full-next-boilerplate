@@ -3,6 +3,11 @@ import { Types } from 'mongoose';
 import { Id, Pagination, QueryFind, QueryResponse } from './interface';
 import dbConnect from '@/lib/dbConnect';
 
+const makeNewJsonObject = (object: any) => {
+  return object;
+  const jsonStringObject = JSON.stringify(object);
+  return JSON.parse(jsonStringObject);
+};
 // a function that recive json object, convert it to json string, the convert to json object and return it
 function toObject(obj: any): any {
   return JSON.parse(JSON.stringify(obj));
@@ -221,5 +226,57 @@ export default class service {
     } catch (error) {
       console.log('#872 error: ', error);
     }
+  }
+
+  async aggregate(query: any[], pagination: Pagination = defaultPagination) {
+    // کلون کردن کوئری برای محاسبه تعداد کل مستندات
+    const queryToCalculateCount = [...query];
+    const pageNumber: number = pagination.page as number;
+
+    if (
+      pagination.perPage === undefined ||
+      pagination.perPage === null ||
+      Number.isNaN(pagination.perPage) ||
+      typeof pagination.perPage === undefined
+    ) {
+      pagination.perPage = defaultPagination.perPage;
+    }
+
+    // محاسبه مقدار skip برای صفحه‌بندی
+    const skip: number =
+      pageNumber > 0 ? (pageNumber - 1) * pagination.perPage : 0;
+
+    // اضافه کردن مراحل skip و limit به کوئری برای صفحه‌بندی
+    query.push({ $skip: skip }, { $limit: pagination.perPage });
+
+    // اجرای کوئری اصلی
+    const result = await this.model.aggregate(query).allowDiskUse(true);
+
+    // اضافه کردن مراحل project و count به کوئری برای محاسبه تعداد کل مستندات
+    queryToCalculateCount.push({ $project: { _id: 1 } }, { $count: 'count' });
+    const totalDocument = await this.model
+      .aggregate(queryToCalculateCount)
+      .allowDiskUse(true);
+
+    // استخراج تعداد کل مستندات
+    const countTotalDocument = totalDocument[0] ? totalDocument[0].count : 0;
+
+    // محاسبه شماره صفحه بعد و تعداد کل صفحات
+    let nextPage: number =
+      pageNumber * pagination.perPage >= countTotalDocument
+        ? 0
+        : pageNumber + 1;
+    const totalPages: number =
+      Math.ceil(countTotalDocument / pagination.perPage) || 0;
+
+    // اگر نتیجه خالی باشد یا تعداد نتیجه با تعداد کل مستندات برابر باشد، صفحه بعدی وجود ندارد
+    if (!result.length || result.length === countTotalDocument) nextPage = 0;
+
+    return {
+      result: makeNewJsonObject(result), // تبدیل نتیجه به قالب جدید
+      nextPage,
+      totalPages,
+      totalDocument: countTotalDocument,
+    };
   }
 }

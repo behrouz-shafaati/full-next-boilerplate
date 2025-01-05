@@ -36,11 +36,11 @@ import { useToast } from '../ui/use-toast';
 import roleCtrl from '@/lib/entity/role/controller';
 import { useFormState } from 'react-dom';
 import { createUser, deleteUser, updateUser } from '@/lib/entity/user/actions';
-import Text from '../ui/text';
-import { SubmitButton } from '../ui/submit-button';
-import MultipleSelector, { Option } from '../ui/multiple-selector';
+import Text from '../form-fields/text';
+import { SubmitButton } from '../form-fields/submit-button';
+import MultipleSelector, { Option } from '../form-fields/multiple-selector';
 import { AlertModal } from '../modal/alert-modal';
-import ProfileUpload from '../ui/profile-upload';
+import ProfileUpload from '../form-fields/profile-upload';
 // import FileUpload from "../file-upload";
 const ImgSchema = z.object({
   fileName: z.string(),

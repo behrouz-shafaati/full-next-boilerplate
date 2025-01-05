@@ -4,6 +4,7 @@ import {
   Check,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   CircuitBoardIcon,
   Command,
   CreditCard,
@@ -24,11 +25,14 @@ import {
   Settings,
   SunMedium,
   Trash,
-  Twitter,
+  Braces,
   User,
   User2Icon,
   UserX2Icon,
   X,
+  Bold,
+  Italic,
+  Underline,
 } from 'lucide-react';
 
 export type Icon = LucideIcon;
@@ -43,6 +47,7 @@ export const Icons = {
   kanban: CircuitBoardIcon,
   chevronLeft: ChevronLeft,
   chevronRight: ChevronRight,
+  chevronDown: ChevronDown,
   trash: Trash,
   employee: UserX2Icon,
   post: FileText,
@@ -60,6 +65,10 @@ export const Icons = {
   sun: SunMedium,
   moon: Moon,
   laptop: Laptop,
+  category: Braces,
+  bold: Bold,
+  italic: Italic,
+  underline: Underline,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
@@ -78,3 +87,18 @@ export const Icons = {
     </svg>
   ),
 };
+
+export default function renderIcon(icon: string | undefined) {
+  switch (icon) {
+    case 'dashboard':
+      return <Icons.dashboard className="mr-2 h-4 w-4" />;
+    case 'user':
+      return <Icons.user className="mr-2 h-4 w-4" />;
+    case 'category':
+      return <Icons.category className="mr-2 h-4 w-4" />;
+    case 'login':
+      return <Icons.login className="mr-2 h-4 w-4" />;
+    default:
+      return <Icons.user className="mr-2 h-4 w-4" />;
+  }
+}

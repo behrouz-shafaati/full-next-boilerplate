@@ -1,12 +1,9 @@
 import { DataTable } from '@/components/ui/data-table';
-// import { DataTable } from "@/components/ui/data-table";
 import { Heading } from '@/components/ui/heading';
 import { LinkButton } from '@/components/ui/link-button';
 import userCtrl from '@/lib/entity/user/controller';
 import { User } from '@/lib/entity/user/interface';
-// import { Separator } from "@/components/ui/separator";
-// import { User } from "@/constants/data";
-import { Plus, Trash } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { columns } from './columns';
 import { QueryResponse } from '@/lib/entity/core/interface';
 import { Role } from '@/lib/entity/role/interface';

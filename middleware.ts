@@ -3,7 +3,6 @@ import { getSession } from './lib/auth';
 
 export async function middleware(request: NextRequest) {
   const currentUser = await getSession();
-  console.log('#currentUser:', currentUser);
 
   if (currentUser && !request.nextUrl.pathname.startsWith('/dashboard')) {
     return Response.redirect(new URL('/dashboard', request.url));

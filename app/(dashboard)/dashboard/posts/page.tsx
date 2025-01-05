@@ -1,6 +1,6 @@
-import UsersTable from '@/components/tables/user/users-table';
 import { BreadCrumb } from '@/components/breadcrumb';
-const breadcrumbItems = [{ title: 'کاربران', link: '/dashboard/users' }];
+import CategoryTable from '@/components/tables/category';
+const breadcrumbItems = [{ title: 'مطالب', link: '/dashboard/categories' }];
 
 interface PageProps {
   searchParams?: {
@@ -16,7 +16,7 @@ const Page: React.FC<PageProps> = ({ searchParams }) => {
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <BreadCrumb items={breadcrumbItems} />
-      <UsersTable query={query} currentPage={currentPage} />
+      <CategoryTable query={query} currentPage={currentPage} />
     </div>
   );
 };

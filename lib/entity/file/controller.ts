@@ -78,6 +78,7 @@ class controller extends c_controller {
   }
 
   async saveFile(formData: FormData) {
+    console.log('#0028 in file upload');
     const file = formData.get('file') as File;
 
     const _id: string = formData.get('id') as string;
