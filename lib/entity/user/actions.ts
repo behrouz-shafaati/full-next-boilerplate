@@ -1,12 +1,12 @@
-'use server';
+'use server'
 
-import { z } from 'zod';
-import userCtrl from '@/lib/entity/user/controller';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
-import shippingAddressCtrl from '../shippingAddress/controller';
-import { AuthError } from 'next-auth';
-import { login } from '@/lib/auth';
+import { z } from 'zod'
+import userCtrl from '@/lib/entity/user/controller'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import shippingAddressCtrl from '../shippingAddress/controller'
+import { AuthError } from 'next-auth'
+import { login } from '@/lib/auth'
 
 const FormSchema = z.object({
   firstName: z
@@ -43,37 +43,37 @@ const FormSchema = z.object({
     })
     .min(1, { message: 'لطفا رمز ورود را وارد کنید.' }),
   image: z.string({}).nullable(),
-});
+})
 
 export type State = {
   errors?: {
-    firstName?: string[];
-    lastName?: string[];
-    email?: string[];
-    mobile?: string[];
-    property?: string[];
-    password?: string[];
-    image?: string[];
-  };
-  message?: string | null;
-};
+    firstName?: string[]
+    lastName?: string[]
+    email?: string[]
+    mobile?: string[]
+    property?: string[]
+    password?: string[]
+    image?: string[]
+  }
+  message?: string | null
+}
 
 export async function authenticate(
   prevState: string | undefined,
   formData: FormData
 ) {
   try {
-    await login(formData);
+    await login(formData)
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
         case 'CredentialsSignin':
-          return 'ایمیل با رمز عبور صحیح نیست';
+          return 'ایمیل با رمز عبور صحیح نیست'
         default:
-          return 'خطایی رخ داده است';
+          return 'خطایی رخ داده است'
       }
     }
-    throw error;
+    throw error
   }
 }
 
@@ -88,13 +88,13 @@ export async function createUser(prevState: State, formData: FormData) {
   // Validate form fields
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
-  );
+  )
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
-    };
+    }
   }
 
   try {
@@ -102,28 +102,32 @@ export async function createUser(prevState: State, formData: FormData) {
     validatedFields.data = {
       ...validatedFields.data,
       roles: JSON.parse(validatedFields.data.roles),
-    };
+    }
     // Create the user
-    await userCtrl.create({ params: validatedFields.data });
+    const cleanedUserData = {
+      ...validatedFields.data,
+      ...(validatedFields.data.image === '' && { image: null }),
+    }
+    await userCtrl.create({ params: cleanedUserData })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
         errors: error.flatten().fieldErrors,
-      };
+      }
     }
     return {
       message: 'خطای پایگاه داده: ایجاد کاربر ناموفق بود.',
-    };
+    }
   }
 
   // Revalidate the path and redirect to the user dashboard
-  revalidatePath('/dashboard/users');
-  redirect('/dashboard/users');
+  revalidatePath('/dashboard/users')
+  redirect('/dashboard/users')
 }
 
 // Use Zod to update the expected types
-const UpdateUserSchema = FormSchema.omit({ password: true });
+const UpdateUserSchema = FormSchema.omit({ password: true })
 export async function updateUser(
   id: string,
   prevState: State,
@@ -131,52 +135,56 @@ export async function updateUser(
 ) {
   const validatedFields = UpdateUserSchema.safeParse(
     Object.fromEntries(formData.entries())
-  );
+  )
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
-    };
+    }
   }
   try {
     // Parse the roles field from a string to an array
     validatedFields.data = {
       ...validatedFields.data,
       roles: JSON.parse(validatedFields.data.roles),
-    };
+    }
     // validatedFields.data.image ;
-
-    console.log('#209 validatedFields.data:', validatedFields.data);
+    // Create the user
+    const cleanedUserData = {
+      ...validatedFields.data,
+      ...(validatedFields.data.image === '' && { image: null }),
+    }
+    console.log('#209 validatedFields.data:', validatedFields.data)
     await userCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
-    });
+      params: cleanedUserData,
+    })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' };
+    return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' }
   }
-  revalidatePath('/dashboard/users');
-  redirect('/dashboard/users');
+  revalidatePath('/dashboard/users')
+  redirect('/dashboard/users')
 }
 
 export async function deleteUser(id: string) {
   try {
-    await userCtrl.delete({ filters: [id] });
+    await userCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' };
+    return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' }
   }
-  await userCtrl.delete({ filters: [id] });
+  await userCtrl.delete({ filters: [id] })
   // Revalidate the path and redirect to the user dashboard
-  revalidatePath('/dashboard/users');
-  redirect('/dashboard/users');
+  revalidatePath('/dashboard/users')
+  redirect('/dashboard/users')
 }
 
 export async function searchUser(query: string) {
   try {
-    return userCtrl.find({ filters: { query } });
+    return userCtrl.find({ filters: { query } })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: جستجوی کاربر ناموفق بود' };
+    return { message: 'خطای پایگاه داده: جستجوی کاربر ناموفق بود' }
   }
 }
 
@@ -184,9 +192,9 @@ export async function getUserShippingAddresses(userId: string) {
   try {
     const shippingAddresses = await shippingAddressCtrl.findAll({
       filters: { userId: userId },
-    });
-    return shippingAddresses;
+    })
+    return shippingAddresses
   } catch (error) {
-    return { message: 'خطای پایگاه داده: جستجوی کاربر ناموفق بود' };
+    return { message: 'خطای پایگاه داده: جستجوی کاربر ناموفق بود' }
   }
 }

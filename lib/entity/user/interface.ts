@@ -1,6 +1,6 @@
-import { Id, Model, SchemaModel } from '@/lib/entity/core/interface';
-import { File } from '../file/interface';
-import { ShippingAddress } from '../shippingAddress/interface';
+import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
+import { File } from '../file/interface'
+import { ShippingAddress } from '../shippingAddress/interface'
 // import { Role } from "@entity/role/interface";
 /**
  * اطلاعات پایه کاربر که شامل فیلدهای اصلی و مشترک می‌باشد
@@ -9,103 +9,103 @@ type UserBase = {
   /**
    * نقش‌های کاربر در سیستم (مثل ادمین، کاربر معمولی و غیره)
    */
-  roles: string[];
+  roles: string[]
 
   /**
    * توکن احراز هویت برای جلسات (اختیاری)
    */
-  token?: string;
+  token?: string
 
   /**
    * شماره موبایل کاربر (اختیاری)
    */
-  mobile?: string;
+  mobile?: string
 
   /**
    * وضعیت تأیید شماره موبایل (در صورت تأیید true)
    */
-  mobileVerified: boolean;
+  mobileVerified: boolean
 
   /**
    * ایمیل کاربر
    */
-  email: string;
+  email: string
 
   /**
    * وضعیت تأیید ایمیل (در صورت تأیید true)
    */
-  emailVerified: boolean;
+  emailVerified: boolean
 
   /**
    * رمز عبور کاربر (هش شده)
    */
-  password: string;
+  password: string
 
   /**
    * توکن تجدید برای تمدید جلسات احراز هویت
    */
-  refreshToken: string;
+  refreshToken: string
 
   /**
    * نام کوچک کاربر
    */
-  firstName: string;
+  firstName: string
 
   /**
    * نام خانوادگی کاربر
    */
-  lastName: string;
+  lastName: string
 
   /**
    * نام کامل کاربر (محاسبه شده از نام کوچک و نام خانوادگی)
    */
-  name: string;
+  name: string
 
   /**
    * کشور کاربر
    */
-  country: string;
+  country: string
 
   /**
    * ایالت/استان کاربر
    */
-  state: string;
+  state: string
 
   /**
    * شهر کاربر
    */
-  city: string;
+  city: string
 
   /**
    * آدرس کامل کاربر
    */
-  address: string;
+  address: string
 
   /**
    * توضیحاتی درباره کاربر
    */
-  about: string;
+  about: string
 
   /**
    * شناسه تصویر پروفایل کاربر (به عنوان یک شناسه)
    */
-  image: Id;
+  image?: Id
 
   /**
    * زبان ترجیحی کاربر
    */
-  language: string;
+  language: string
 
   /**
    * وضعیت حالت تاریک (در صورت فعال بودن true)
    */
-  darkMode: boolean;
+  darkMode: boolean
 
   /**
    * وضعیت فعال بودن حساب کاربر (در صورت فعال بودن true)
    */
-  active: boolean;
-};
+  active: boolean
+}
 
 /**
  * مدل کاربر که شامل اطلاعات پایه و ویژگی‌های اضافی می‌باشد
@@ -115,13 +115,13 @@ export type User = Model &
     /**
      * فایل تصویر پروفایل کاربر
      */
-    image: File;
+    image?: File
 
     /**
      * آدرس‌های ارسال کاربر
      */
-    shippingAddresses: ShippingAddress[];
-  };
+    shippingAddresses: ShippingAddress[]
+  }
 
 /**
  * مدل اسکیمای کاربر برای پایگاه داده که شناسه تصویر به صورت Id ذخیره می‌شود
@@ -131,8 +131,8 @@ export type UserSchema = SchemaModel &
     /**
      * شناسه تصویر پروفایل کاربر
      */
-    image: Id;
-  };
+    image?: Id
+  }
 
 /**
  * ساختار درخواست بررسی دسترسی کاربر به یک مسیر خاص
@@ -141,18 +141,18 @@ export type HaveAccessPayload = {
   /**
    * شناسه کاربر (اختیاری)
    */
-  userId?: Id;
+  userId?: Id
 
   /**
    * متد HTTP که درخواست می‌شود (POST, GET, PUT, DELETE)
    */
-  method: 'POST' | 'GET' | 'PUT' | 'DELETE';
+  method: 'POST' | 'GET' | 'PUT' | 'DELETE'
 
   /**
    * مسیر دسترسی که درخواست می‌شود
    */
-  path: string;
-};
+  path: string
+}
 
 /**
  * ساختار درخواست تغییر رمز عبور کاربر
@@ -161,15 +161,15 @@ export type ChangePassword = {
   /**
    * شناسه کاربر
    */
-  userId: Id;
+  userId: Id
 
   /**
    * رمز عبور قدیمی کاربر
    */
-  oldPassword: string;
+  oldPassword: string
 
   /**
    * رمز عبور جدید کاربر
    */
-  newPassword: string;
-};
+  newPassword: string
+}
