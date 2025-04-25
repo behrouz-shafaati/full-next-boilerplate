@@ -1,16 +1,13 @@
-import React from 'react';
-import dynamic from 'next/dynamic';
-const DraggableList = dynamic(() => import('@/components/page-builder'), {
-  ssr: false,
-});
+import React from 'react'
+import TiptapEditor from '@/components/tiptap-editor'
 
 const Home: React.FC = () => {
   return (
-    <div>
-      <h1>لیست کشیدن و رها کردن</h1>
-      <DraggableList />
+    <div className="p-6">
+      <h1 className="text-xl font-bold mb-4">ویرایشگر متن</h1>
+      <TiptapEditor />
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

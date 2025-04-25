@@ -1,26 +1,27 @@
 /* Create public/uploads/tmp directory. */
 
-'use client';
-import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react';
-import Modal from '../modal/modal';
-import Text from './text';
-import { Button } from '../ui/button';
-import Checkbox from './checkbox';
-import clsx from 'clsx';
+'use client'
+import Image from 'next/image'
+import { useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react'
+import Modal from '../modal/modal'
+import Text from './text'
+import { Button } from '../ui/button'
+import Checkbox from './checkbox'
+import clsx from 'clsx'
 import {
   deleteFile,
   updateFileDetails,
   uploadFile,
-} from '@/lib/entity/file/actions';
+} from '@/lib/entity/file/actions'
 import {
   File as BeFile,
+  FileDetails,
   FileDetailsPayload,
-} from '@/lib/entity/file/interface';
-import { useToast } from '../ui/use-toast';
-const ObjectId = require('bson-objectid');
+} from '@/lib/entity/file/interface'
+import { useToast } from '../ui/use-toast'
+const ObjectId = require('bson-objectid')
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
 export default function FileUpload({
@@ -31,30 +32,32 @@ export default function FileUpload({
   state,
   maxFiles,
   allowedFileTypes,
+  responseHnadler,
 }: {
-  className?: string;
-  title: string;
-  name: string;
-  defaultValues?: BeFile[];
-  state?: any;
-  maxFiles?: number;
-  allowedFileTypes?: any;
+  className?: string
+  title: string
+  name: string
+  defaultValues?: BeFile[]
+  state?: any
+  maxFiles?: number
+  allowedFileTypes?: any
+  responseHnadler?: (FileDetails: FileDetails) => void
 }) {
-  const { toast } = useToast();
+  const { toast } = useToast()
   if (!Array.isArray(defaultValues)) {
-    defaultValues = [defaultValues];
+    defaultValues = [defaultValues]
   }
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [files, setFiles] = useState<any[]>(defaultValues);
-  const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [files, setFiles] = useState<any[]>(defaultValues)
+  const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0)
 
-  const acceptedFiles = allowedFileTypes ? { accept: allowedFileTypes } : {};
+  const acceptedFiles = allowedFileTypes ? { accept: allowedFileTypes } : {}
   const onCloseModal = () => {
-    setIsModalOpen(false);
-  };
+    setIsModalOpen(false)
+  }
 
   const onDrop = (acceptedFiles: any[]) => {
     if (maxFiles) {
@@ -63,11 +66,11 @@ export default function FileUpload({
           variant: 'destructive',
           title: '',
           description: `حداکثر ${maxFiles} فایل قابل آپلود است.`,
-        });
-        return;
+        })
+        return
       }
     }
-    let firstImage = true;
+    let firstImage = true
     if (acceptedFiles?.length) {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
@@ -75,44 +78,45 @@ export default function FileUpload({
           preview: URL.createObjectURL(file),
           main: (() => {
             if (files.length === 0 && firstImage) {
-              firstImage = false;
-              return true;
+              firstImage = false
+              return true
             }
-            return false;
+            return false
           })(),
           title: file.name.split('.')[0],
           alt: '',
           description: '',
         })
-      );
+      )
 
-      setFiles((previousFiles) => [...previousFiles, ...newFiles]);
-      console.log('#230 onDrop:', newFiles);
+      setFiles((previousFiles) => [...previousFiles, ...newFiles])
+      console.log('#230 onDrop:', newFiles)
       for (const file of newFiles) {
-        submitFile(file);
+        submitFile(file)
       }
     }
-  };
+  }
 
   const submitFile = async (file: any) => {
-    const formData = new FormData();
+    const formData = new FormData()
 
-    formData.append('file', file);
-    formData.append('id', file?.id);
-    formData.append('title', file?.title);
-    formData.append('alt', file?.alt);
-    formData.append('description', file?.description);
-    formData.append('main', file?.main);
+    formData.append('file', file)
+    formData.append('id', file?.id)
+    formData.append('title', file?.title)
+    formData.append('alt', file?.alt)
+    formData.append('description', file?.description)
+    formData.append('main', file?.main)
 
-    const data = await uploadFile(formData);
-  };
+    const FileDetails: FileDetails = await uploadFile(formData)
+    if (responseHnadler) responseHnadler(FileDetails)
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     ...acceptedFiles,
     multiple: true,
     maxSize: 6 * 1024 * 1000, // 6 MB
     onDrop,
-  });
+  })
 
   useEffect(() => {
     // Revoke the data uris to avoid memory leaks
@@ -127,62 +131,62 @@ export default function FileUpload({
         alt: file.alt,
         description: file.description,
         main: file.main,
-      };
-    });
+      }
+    })
 
-    updateFileDetails(filesDetails);
-  }, [files]);
+    updateFileDetails(filesDetails)
+  }, [files])
 
   const removeFile = (index: number) => {
-    const items = [...files];
-    const [deletedItem] = items.splice(index, 1);
+    const items = [...files]
+    const [deletedItem] = items.splice(index, 1)
     if (deletedItem.main && items.length) {
-      items[0].main = true;
+      items[0].main = true
     }
-    setFiles(items);
-    deleteFile(deletedItem.id);
-  };
+    setFiles(items)
+    deleteFile(deletedItem.id)
+  }
 
   const removeAll = () => {
-    setFiles([]);
-  };
+    setFiles([])
+  }
 
   const unCheckMainAllFiles = () => {
     setFiles((previousFiles) => {
-      const newFiles = [...previousFiles];
+      const newFiles = [...previousFiles]
       newFiles.forEach((file) => {
-        file.main = false;
-      });
-      return newFiles;
-    });
-  };
+        file.main = false
+      })
+      return newFiles
+    })
+  }
 
   const handleCheckMainFile = (e: any, index: number) => {
     if (e.target.checked) {
-      unCheckMainAllFiles();
+      unCheckMainAllFiles()
       setFiles((previousFiles) => {
-        const newFiles = [...previousFiles];
-        newFiles[index].main = true;
-        return newFiles;
-      });
+        const newFiles = [...previousFiles]
+        newFiles[index].main = true
+        return newFiles
+      })
     }
-  };
+  }
   const onSaveFileDetails = (newFile: any, index: number) => {
-    setIsModalOpen(false);
+    setIsModalOpen(false)
     if (newFile.main) {
-      unCheckMainAllFiles();
+      unCheckMainAllFiles()
     } else {
       if (files.length === 1) {
-        newFile.main = true;
+        newFile.main = true
       }
     }
 
     setFiles((previousFiles) => {
-      const newFiles = [...previousFiles];
-      newFiles[index] = newFile;
-      return newFiles;
-    });
-  };
+      const newFiles = [...previousFiles]
+      newFiles[index] = newFile
+      return newFiles
+    })
+  }
 
   return (
     <>
@@ -236,8 +240,8 @@ export default function FileUpload({
                     { 'border-2 border-blue-500': file.main }
                   )}
                   onClick={() => {
-                    setSelectedFileIndex(index);
-                    setIsModalOpen(true);
+                    setSelectedFileIndex(index)
+                    setIsModalOpen(true)
                   }}
                 />
                 <button
@@ -285,7 +289,7 @@ export default function FileUpload({
         onCloseModal={onCloseModal}
       />
     </>
-  );
+  )
 }
 
 const ModalContent = ({
@@ -294,15 +298,15 @@ const ModalContent = ({
   onCloseModal,
   onSave,
 }: {
-  file: any;
-  index: number;
-  onCloseModal: any;
-  onSave: (newFile: any, index: number) => void;
+  file: any
+  index: number
+  onCloseModal: any
+  onSave: (newFile: any, index: number) => void
 }) => {
   const [newFile, setNewFile] = useState({
     ...file,
-  });
-  console.log('#0092 file: ', file);
+  })
+  console.log('#0092 file: ', file)
   return (
     <div className="mt-4">
       <div>
@@ -363,5 +367,5 @@ const ModalContent = ({
         </Button>
       </div>
     </div>
-  );
-};
+  )
+}
