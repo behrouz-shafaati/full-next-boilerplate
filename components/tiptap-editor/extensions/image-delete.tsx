@@ -1,5 +1,6 @@
 import { Extension } from '@tiptap/core'
-import { NodeSelection } from 'prosemirror-state'
+import { NodeSelection, TextSelection } from 'prosemirror-state'
+import { Fragment, Slice } from 'prosemirror-model'
 
 declare module '@tiptap/core' {
   interface Commands<ReturnType> {
@@ -34,22 +35,19 @@ const DeleteImageWithKey = Extension.create({
         ({ state, dispatch }) => {
           const { selection } = state
 
-          if (
-            selection instanceof NodeSelection &&
-            selection.node.type.name === 'image'
-          ) {
-            const imageSrc = selection.node.attrs.src
+          if (selection instanceof NodeSelection) {
+            const selectedNode = selection.node
 
-            // صدا زدن تابع حذف فایل اگه موجود باشه
-            if (this.options.deleteFileHandler) {
-              this.options.deleteFileHandler(imageSrc)
+            if (selectedNode.type.name === 'image') {
+              const imageSrc = selectedNode.attrs.src
+
+              if (this.options.deleteFileHandler) {
+                this.options.deleteFileHandler(imageSrc)
+              }
+
+              dispatch(state.tr.deleteSelection())
+              return true
             }
-
-            console.log('#234 imageSrc:', imageSrc)
-
-            // حذف عکس از داکیومنت
-            dispatch(state.tr.deleteSelection())
-            return true
           }
 
           return false

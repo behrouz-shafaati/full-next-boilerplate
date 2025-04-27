@@ -2,7 +2,14 @@
 
 'use client'
 import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import {
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+  useRef,
+  Ref,
+} from 'react'
 import { useDropzone } from 'react-dropzone'
 import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react'
 import Modal from '../modal/modal'
@@ -23,17 +30,16 @@ import {
 import { useToast } from '../ui/use-toast'
 const ObjectId = require('bson-objectid')
 
-// Context from Function app/ui/components/dropzone.tsx:Dropzone
-export default function FileUpload({
-  className,
-  title,
-  name,
-  defaultValues = [],
-  state,
-  maxFiles,
-  allowedFileTypes,
-  responseHnadler,
-}: {
+// Type تعریف برای رفرنس
+export interface FileUploadRef {
+  removeFile: (index: number) => void
+  removeAll: () => void
+  getFiles: () => any[]
+  clearFiles: () => void
+}
+
+// Type تعریف برای Props
+interface FileUploadProps {
   className?: string
   title: string
   name: string
@@ -42,7 +48,22 @@ export default function FileUpload({
   maxFiles?: number
   allowedFileTypes?: any
   responseHnadler?: (FileDetails: FileDetails) => void
-}) {
+}
+
+// Context from Function app/ui/components/dropzone.tsx:Dropzone
+const FileUpload = forwardRef(function FileUpload(
+  {
+    className,
+    title,
+    name,
+    defaultValues = [],
+    state,
+    maxFiles,
+    allowedFileTypes,
+    responseHnadler,
+  }: FileUploadProps,
+  ref: Ref<FileUploadRef>
+) {
   const { toast } = useToast()
   if (!Array.isArray(defaultValues)) {
     defaultValues = [defaultValues]
@@ -188,6 +209,13 @@ export default function FileUpload({
     })
   }
 
+  useImperativeHandle(ref, () => ({
+    removeFile,
+    removeAll,
+    getFiles: () => files,
+    clearFiles: () => setFiles([]),
+  }))
+
   return (
     <>
       <div>
@@ -290,7 +318,7 @@ export default function FileUpload({
       />
     </>
   )
-}
+})
 
 const ModalContent = ({
   file,
@@ -369,3 +397,5 @@ const ModalContent = ({
     </div>
   )
 }
+
+export default FileUpload
