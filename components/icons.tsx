@@ -33,9 +33,10 @@ import {
   Bold,
   Italic,
   Underline,
-} from 'lucide-react';
+  SquareMenu,
+} from 'lucide-react'
 
-export type Icon = LucideIcon;
+export type Icon = LucideIcon
 
 export const Icons = {
   dashboard: LayoutDashboardIcon,
@@ -69,6 +70,7 @@ export const Icons = {
   bold: Bold,
   italic: Italic,
   underline: Underline,
+  squareMenu: SquareMenu,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
@@ -86,19 +88,21 @@ export const Icons = {
       ></path>
     </svg>
   ),
-};
+}
 
 export default function renderIcon(icon: string | undefined) {
   switch (icon) {
     case 'dashboard':
-      return <Icons.dashboard className="mr-2 h-4 w-4" />;
+      return <Icons.dashboard className="mr-2 h-4 w-4" />
     case 'user':
-      return <Icons.user className="mr-2 h-4 w-4" />;
+      return <Icons.user className="mr-2 h-4 w-4" />
     case 'category':
-      return <Icons.category className="mr-2 h-4 w-4" />;
+      return <Icons.category className="mr-2 h-4 w-4" />
+    case 'squareMenu':
+      return <Icons.squareMenu className="mr-2 h-4 w-4" />
     case 'login':
-      return <Icons.login className="mr-2 h-4 w-4" />;
+      return <Icons.login className="mr-2 h-4 w-4" />
     default:
-      return <Icons.user className="mr-2 h-4 w-4" />;
+      return <Icons.user className="mr-2 h-4 w-4" />
   }
 }

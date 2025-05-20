@@ -32,6 +32,7 @@ const ObjectId = require('bson-objectid')
 
 // Type تعریف برای رفرنس
 export interface FileUploadRef {
+  removeFileById: (index: string) => void
   removeFile: (index: number) => void
   removeAll: () => void
   getFiles: () => any[]
@@ -47,6 +48,7 @@ interface FileUploadProps {
   state?: any
   maxFiles?: number
   allowedFileTypes?: any
+  showDeleteButton?: boolean
   responseHnadler?: (FileDetails: FileDetails) => void
 }
 
@@ -60,6 +62,7 @@ const FileUpload = forwardRef(function FileUpload(
     state,
     maxFiles,
     allowedFileTypes,
+    showDeleteButton = true,
     responseHnadler,
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
@@ -158,6 +161,17 @@ const FileUpload = forwardRef(function FileUpload(
     updateFileDetails(filesDetails)
   }, [files])
 
+  const removeFileById = (id: string) => {
+    const items = [...files]
+    for (let index = 0; index < items.length; index++) {
+      if (String(items[index].id) === id) {
+        removeFile(index)
+        return
+      }
+    }
+    return
+  }
+
   const removeFile = (index: number) => {
     const items = [...files]
     const [deletedItem] = items.splice(index, 1)
@@ -210,6 +224,7 @@ const FileUpload = forwardRef(function FileUpload(
   }
 
   useImperativeHandle(ref, () => ({
+    removeFileById,
     removeFile,
     removeAll,
     getFiles: () => files,
@@ -253,7 +268,7 @@ const FileUpload = forwardRef(function FileUpload(
             {files.map((file, index) => (
               <li
                 key={index}
-                className="max-h-20 h-22 group relative rounded-md"
+                className="max-h-20 h-22 group relative rounded-md min-h-12"
               >
                 <Image
                   src={file?.preview || file?.url}
@@ -272,13 +287,15 @@ const FileUpload = forwardRef(function FileUpload(
                     setIsModalOpen(true)
                   }}
                 />
-                <button
-                  type="button"
-                  className="border-secondary-400 bg-secondary-400 absolute -right-1 -top-1  flex  h-5 w-5 items-center justify-center rounded-full border bg-gray-400 text-white transition-colors hover:bg-red-500 hover:text-white"
-                  onClick={() => removeFile(index)}
-                >
-                  <XMarkIcon className="hover:fill-secondary-400 h-5 w-5 transition-colors" />
-                </button>
+                {showDeleteButton && (
+                  <button
+                    type="button"
+                    className="border-secondary-400 bg-secondary-400 absolute -right-1 -top-1  flex  h-5 w-5 items-center justify-center rounded-full border bg-gray-400 text-white transition-colors hover:bg-red-500 hover:text-white"
+                    onClick={() => removeFile(index)}
+                  >
+                    <XMarkIcon className="hover:fill-secondary-400 h-5 w-5 transition-colors" />
+                  </button>
+                )}
                 <label className="absolute bottom-0 hidden w-full cursor-pointer bg-white p-1 text-xs group-hover:block">
                   <input
                     name="main"

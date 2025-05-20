@@ -1,5 +1,5 @@
-import { Icons } from '@/components/icons';
-import { NavItem, SidebarNavItem } from '@/types';
+import { Icons } from '@/components/icons'
+import { NavItem, SidebarNavItem } from '@/types'
 
 export const navItems: SidebarNavItem[] = [
   {
@@ -52,6 +52,14 @@ export const navItems: SidebarNavItem[] = [
     label: '',
     authorized: ['admin'],
   },
+  {
+    slug: 'menu',
+    title: 'فهرست ها',
+    href: '/dashboard/menus',
+    icon: 'squareMenu',
+    label: '',
+    authorized: ['admin'],
+  },
 
   {
     slug: 'logout',
@@ -60,4 +68,4 @@ export const navItems: SidebarNavItem[] = [
     icon: 'login',
     label: '',
   },
-];
+]
