@@ -6,24 +6,17 @@ import { Menu } from '@/features/menu/interface'
 import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
-import { Role } from '@/lib/entity/role/interface'
-import roleCtrl from '@/lib/entity/role/controller'
 import GroupAction from './group-action'
 
 interface CategoriesTableProps {
   query: string
-  currentPage: number
+  page: number
 }
 
-export default async function MenuTable({
-  query,
-  currentPage,
-}: CategoriesTableProps) {
-  const roles: Role[] = roleCtrl.getRoles()
-
+export default async function MenuTable({ query, page }: CategoriesTableProps) {
   const findResult: QueryResponse<Menu> = await MenuCtrl.find({
     filters: { query },
-    pagination: { page: currentPage, perPage: 6 },
+    pagination: { page, perPage: 6 },
   })
 
   return (
