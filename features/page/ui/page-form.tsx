@@ -9,30 +9,30 @@ import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '@/components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
-import { createMenu, deleteMenu, updateMenu } from '../actions'
+import { createPage, deletePage, updatePage } from '../actions'
 import Text from '@/components/form-fields/text'
 import { SubmitButton } from '@/components/form-fields/submit-button'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
-import MenuBuilder from './components/menu-builder'
-import { initialMenu } from './components/types'
+import PageBuilder from '@/components/page-builder'
+import { initialPage } from './components/types'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
   title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
 })
 
-type MenuFormValues = z.infer<typeof formSchema>
+type PageFormValues = z.infer<typeof formSchema>
 
-interface MenuFormProps {
+interface PageFormProps {
   initialData: any | null
 }
 
-export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
+export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
   const initialState = { message: null, errors: {} }
-  const actionHandler = menu
-    ? updateMenu.bind(null, String(menu.id))
-    : createMenu
+  const actionHandler = page
+    ? updatePage.bind(null, String(page.id))
+    : createPage
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
   const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
     label: role.title,
@@ -45,10 +45,10 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
-  const title = menu ? 'ویرایش فهرست' : 'افزودن فهرست'
-  const description = menu ? 'ویرایش فهرست' : 'افزودن فهرست'
-  const toastMessage = menu ? 'فهرست بروزرسانی شد' : 'فهرست اضافه شد'
-  const action = menu ? 'ذخیره تغییرات' : 'ذخیره'
+  const title = page ? 'ویرایش برگه' : 'افزودن برگه'
+  const description = page ? 'ویرایش برگه' : 'افزودن برگه'
+  const toastMessage = page ? 'برگه بروزرسانی شد' : 'برگه اضافه شد'
+  const action = page ? 'ذخیره تغییرات' : 'ذخیره'
 
   const statusOptions = [
     {
@@ -61,9 +61,9 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
     },
   ]
 
-  console.log('#299 menu:', menu)
-  const statusDefaultValue = menu
-    ? String(menu?.status) === 'active'
+  console.log('#299 page:', page)
+  const statusDefaultValue = page
+    ? String(page?.status) === 'active'
       ? '1'
       : '0'
     : '1'
@@ -71,7 +71,7 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteMenu(menu?.id)
+      DeletePage(page?.id)
     } catch (error: any) {}
   }
 
@@ -94,7 +94,7 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {menu && (
+        {page && (
           <Button
             disabled={loading}
             variant="destructive"
@@ -107,21 +107,18 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       </div>
       {/* <Separator /> */}
       <form action={dispatch} className="space-y-8 w-full">
-        <div className="md:grid md:grid-cols-3 gap-8">
+        <div className="block">
           {/* Title */}
           <Text
             title="عنوان"
             name="title"
-            defaultValue={menu?.title || ''}
+            defaultValue={page?.title || ''}
             placeholder="عنوان"
             state={state}
             icon={<HeadingIcon className="w-4 h-4" />}
+            className="w-20"
           />
-          <MenuBuilder
-            initialMenu={initialMenu}
-            maxDepth={1}
-            className="col-span-2"
-          />
+          <PageBuilder />
         </div>
         <SubmitButton />
       </form>
@@ -129,7 +126,7 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   )
 }
 
-export function DeleteMenu(id: string) {
-  const deleteMenuWithId = deleteMenu.bind(null, id)
-  deleteMenuWithId()
+export function DeletePage(id: string) {
+  const deletePageWithId = deletePage.bind(null, id)
+  deletePageWithId()
 }

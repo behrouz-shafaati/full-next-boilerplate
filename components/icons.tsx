@@ -34,6 +34,7 @@ import {
   Italic,
   Underline,
   SquareMenu,
+  LayoutTemplate,
 } from 'lucide-react'
 
 export type Icon = LucideIcon
@@ -71,6 +72,7 @@ export const Icons = {
   italic: Italic,
   underline: Underline,
   squareMenu: SquareMenu,
+  layoutTemplate: LayoutTemplate,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"

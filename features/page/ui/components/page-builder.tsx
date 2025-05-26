@@ -1,6 +1,6 @@
 'use client'
 
-import { useMenuStore } from '../store/useMenuStore'
+import { usePageStore } from '../store/usePageStore'
 import {
   DndContext,
   closestCenter,
@@ -11,23 +11,23 @@ import {
   DragOverlay,
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import SortableItem from './sortable-menu-item'
+import SortableItem from './sortable-page-item'
 import { useState } from 'react'
-import { MenuItem } from '../types/menu'
+import { PageItem } from '../types/page'
 
 type props = {
   maxDepth?: number
-  initialMenu?: MenuItem[]
+  initialPage?: PageItem[]
   className?: string
 }
 
-export default function MenuBuilder({
-  initialMenu = [],
+export default function PageBuilder({
+  initialPage = [],
   maxDepth = 3,
   className = '',
 }: props) {
-  const { items, addItem, getJson, reorderItems } = useMenuStore()
-  const [activeItem, setActiveItem] = useState<MenuItem | null>(null)
+  const { items, addItem, getJson, reorderItems } = usePageStore()
+  const [activeItem, setActiveItem] = useState<PageItem | null>(null)
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -37,7 +37,7 @@ export default function MenuBuilder({
     })
   )
 
-  const findItemById = (items: MenuItem[], id: string): MenuItem | null => {
+  const findItemById = (items: PageItem[], id: string): PageItem | null => {
     for (const item of items) {
       if (item.id === id) return item
       if (item.children) {

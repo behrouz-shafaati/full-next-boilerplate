@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
-import { MenuItem } from '../types/menu'
-import { useMenuStore } from '../store/useMenuStore'
+import { PageItem } from '../types/page'
+import { usePageStore } from '../store/usePageStore'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { cn } from '@/lib/utils'
 import { GripVertical } from 'lucide-react'
@@ -11,13 +11,13 @@ export default function SortableItem({
   depth,
   maxDepth,
 }: {
-  item: MenuItem
+  item: PageItem
   depth: number
   maxDepth?: number
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: item.id })
-  const { deleteItem, updateItem, addChild } = useMenuStore()
+  const { deleteItem, updateItem, addChild } = usePageStore()
 
   const style = {
     transform: CSS.Transform.toString(transform),

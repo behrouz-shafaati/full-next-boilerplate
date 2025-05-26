@@ -5,18 +5,19 @@ import categoryCtrl from '@/lib/entity/category/controller'
 import { notFound } from 'next/navigation'
 import { CategoryForm } from '@/components/forms/category-form'
 
-type PageProps = {
-  params: { id: string }
+interface PageProps {
+  params: Promise<{ id: string }>
 }
 export default async function Page({ params }: PageProps) {
+  const resolvedParams = await params
+  const { id } = resolvedParams
   let category = null,
     allCategories
   let pageBreadCrumb = {
     title: 'افزودن',
     link: '/dashboard/categories/create',
   }
-  if (params.id !== 'create') {
-    const id = params.id
+  if (id !== 'create') {
     ;[category, allCategories] = await Promise.all([
       categoryCtrl.findById({ id }),
       categoryCtrl.findAll({}),
@@ -27,7 +28,7 @@ export default async function Page({ params }: PageProps) {
     }
     pageBreadCrumb = {
       title: category.title,
-      link: `/dashboard/categories/${params.id}`,
+      link: `/dashboard/categories/${id}`,
     }
   } else {
     ;[allCategories] = await Promise.all([categoryCtrl.findAll({})])

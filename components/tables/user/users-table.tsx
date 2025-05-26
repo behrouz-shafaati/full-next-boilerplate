@@ -1,30 +1,23 @@
-import { DataTable } from '@/components/ui/data-table';
-import { Heading } from '@/components/ui/heading';
-import { LinkButton } from '@/components/ui/link-button';
-import userCtrl from '@/lib/entity/user/controller';
-import { User } from '@/lib/entity/user/interface';
-import { Plus } from 'lucide-react';
-import { columns } from './columns';
-import { QueryResponse } from '@/lib/entity/core/interface';
-import { Role } from '@/lib/entity/role/interface';
-import roleCtrl from '@/lib/entity/role/controller';
-import GroupAction from './group-action';
+import { DataTable } from '@/components/ui/data-table'
+import { Heading } from '@/components/ui/heading'
+import { LinkButton } from '@/components/ui/link-button'
+import userCtrl from '@/lib/entity/user/controller'
+import { User } from '@/lib/entity/user/interface'
+import { Plus } from 'lucide-react'
+import { columns } from './columns'
+import { QueryResponse } from '@/lib/entity/core/interface'
+import GroupAction from './group-action'
 
 interface UsersTableProps {
-  query: string;
-  currentPage: number;
+  query: string
+  page: number
 }
 
-export default async function UsersTable({
-  query,
-  currentPage,
-}: UsersTableProps) {
-  const roles: Role[] = roleCtrl.getRoles();
-
+export default async function UsersTable({ query, page }: UsersTableProps) {
   const findResult: QueryResponse<User> = await userCtrl.find({
     filters: { query },
-    pagination: { page: currentPage, perPage: 6 },
-  });
+    pagination: { page, perPage: 6 },
+  })
 
   return (
     <>
@@ -47,5 +40,5 @@ export default async function UsersTable({
         groupAction={GroupAction}
       />
     </>
-  );
+  )
 }

@@ -3,17 +3,19 @@ import TiptapEditor from '@/components/tiptap-editor'
 import postCtrl from '@/lib/entity/post/controller'
 import { notFound } from 'next/navigation'
 
-type PageProps = {
-  params: { id: string }
+interface PageProps {
+  params: Promise<{ id: string }>
 }
+
 export default async function Page({ params }: PageProps) {
+  const resolvedParams = await params
+  const { id } = resolvedParams
   let pageBreadCrumb = {
     title: 'افزودن',
     link: '/dashboard/post/create',
   }
 
-  if (params.id !== 'create') {
-    const id = params.id
+  if (id !== 'create') {
     const [post] = await Promise.all([postCtrl.findById({ id })])
 
     if (!post) {
@@ -21,7 +23,7 @@ export default async function Page({ params }: PageProps) {
     }
     pageBreadCrumb = {
       title: post.title,
-      link: `/dashboard/posts/${params.id}`,
+      link: `/dashboard/posts/${id}`,
     }
   }
 

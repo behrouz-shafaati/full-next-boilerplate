@@ -60,6 +60,14 @@ export const navItems: SidebarNavItem[] = [
     label: '',
     authorized: ['admin'],
   },
+  {
+    slug: 'page',
+    title: 'برگه‌ ها',
+    href: '/dashboard/pages',
+    icon: 'layoutTemplate',
+    label: '',
+    authorized: ['admin'],
+  },
 
   {
     slug: 'logout',

@@ -127,6 +127,7 @@ export default function PageBuilder() {
           <h4 className="mb-2 font-bold">بلوک‌ها</h4>
           <DraggableTextBlock />
           <button
+            type="button"
             onClick={addRow}
             className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
           >
@@ -141,6 +142,7 @@ export default function PageBuilder() {
               <div className="flex justify-between items-center mb-2">
                 <h3 className="font-bold">ردیف</h3>
                 <button
+                  type="button"
                   onClick={() => addColumn(row.id)}
                   className="bg-blue-500 text-white px-3 py-1 rounded"
                 >

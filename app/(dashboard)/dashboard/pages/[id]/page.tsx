@@ -1,9 +1,9 @@
 import { BreadCrumb } from '@/components/breadcrumb'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import React from 'react'
-import menuCtrl from '@/features/menu/controller'
+import pageCtrl from '@/features/page/controller'
 import { notFound } from 'next/navigation'
-import { MenuForm } from '@/features/menu/ui/menu-form'
+import { PageForm } from '@/features/page/ui/page-form'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -12,38 +12,38 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
   const { id } = resolvedParams
 
-  let menu = null,
-    allMenus
+  let page = null,
+    allPages
   let pageBreadCrumb = {
     title: 'افزودن',
-    link: '/dashboard/menus/create',
+    link: '/dashboard/pages/create',
   }
   if (id !== 'create') {
-    ;[menu, allMenus] = await Promise.all([
-      menuCtrl.findById({ id }),
-      menuCtrl.findAll({}),
+    ;[page, allPages] = await Promise.all([
+      pageCtrl.findById({ id }),
+      pageCtrl.findAll({}),
     ])
 
-    if (!menu) {
+    if (!page) {
       notFound()
     }
     pageBreadCrumb = {
-      title: menu.title,
-      link: `/dashboard/menus/${id}`,
+      title: page.title,
+      link: `/dashboard/pages/${id}`,
     }
   } else {
-    ;[allMenus] = await Promise.all([menuCtrl.findAll({})])
+    ;[allPages] = await Promise.all([pageCtrl.findAll({})])
   }
 
   const breadcrumbItems = [
-    { title: 'دسته ها', link: '/dashboard/menus' },
+    { title: 'دسته ها', link: '/dashboard/pages' },
     pageBreadCrumb,
   ]
   return (
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <MenuForm initialData={menu} />
+        <PageForm initialData={page} />
       </div>
     </ScrollArea>
   )
