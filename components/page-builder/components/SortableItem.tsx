@@ -28,9 +28,6 @@ export default function SortableItem({
       style={style}
       className="mb-2"
     >
-      <p>index:{index}</p>
-      <p>colId:{colId}</p>
-      <p className="ltr">item:{JSON.stringify(item)}</p>
       {item.type === 'text' && (
         <input
           className="w-full p-1 border rounded"

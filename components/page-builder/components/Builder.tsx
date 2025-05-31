@@ -11,23 +11,31 @@ import {
 import DraggableTextBlock from './DraggableTextBlock'
 import DroppableColumn from './DroppableColumn'
 import { useEffect } from 'react'
+import { PageContent } from '../types'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
+import SortableRow from './SortableRow'
 
-export default function PageBuilder() {
+type props = {
+  initialContent?: PageContent
+}
+
+export default function PageBuilder({ initialContent }: props) {
   const {
     rows,
     addRow,
-    addColumn,
+    getJson,
     addElementToColumn,
     moveElementWithinColumn,
     moveElementBetweenColumns,
     setActiveElement,
     activeElement,
+    reorderRows,
   } = useBuilderStore()
 
   const findColumnContainingElement = (elementId: string) => {
     return rows
       .flatMap((row) => row.columns)
-      .find((col) => col.elements.some((el) => el.id === elementId))
+      .find((col) => col.blocks.some((el) => el.id === elementId))
   }
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -41,7 +49,7 @@ export default function PageBuilder() {
       setActiveElement({
         id,
         type: elementType,
-        content: elementType === 'text' ? 'بلوک متن' : undefined,
+        data: { content: elementType === 'text' ? 'بلوک متن' : undefined },
       })
     }
   }
@@ -56,6 +64,11 @@ export default function PageBuilder() {
     const overId = over.id
 
     const sourceCol = findColumnContainingElement(activeId)
+    // اگر جابجایی مربوط به ردیف بود
+    if (rows.find((r) => r.id === activeId)) {
+      reorderRows(activeId, overId)
+      return
+    }
 
     // حالت 1: کشیدن آیتم جدید از نوار ابزار (text-block)
     if (activeId === 'text-block') {
@@ -66,7 +79,7 @@ export default function PageBuilder() {
         addElementToColumn(column.id, {
           id: uuidv4(),
           type: 'text',
-          content: 'متن جدید',
+          data: { content: 'متن جدید' },
         })
       }
 
@@ -77,7 +90,7 @@ export default function PageBuilder() {
         addElementToColumn(targetCol.id, {
           id: uuidv4(),
           type: 'text',
-          content: 'متن جدید',
+          data: { content: 'متن جدید' },
         })
       }
 
@@ -91,8 +104,8 @@ export default function PageBuilder() {
     console.log('@94 sourceCol:', sourceCol, ' | column:', column)
     if (!sourceCol || !column) return
 
-    const oldIndex = sourceCol.elements.findIndex((el) => el.id === activeId)
-    const newIndex = column.elements.findIndex((el) => el.id === overId)
+    const oldIndex = sourceCol.blocks.findIndex((el) => el.id === activeId)
+    const newIndex = column.blocks.findIndex((el) => el.id === overId)
     console.log('@94 oldIndex:', oldIndex, ' | newIndex:', newIndex)
 
     if (sourceCol.id === column.id) {
@@ -106,7 +119,7 @@ export default function PageBuilder() {
         sourceCol.id,
         column.id,
         activeId,
-        newIndex === -1 ? column.elements.length : newIndex
+        newIndex === -1 ? column.blocks.length : newIndex
       )
     }
   }
@@ -116,49 +129,43 @@ export default function PageBuilder() {
   }, [rows])
 
   return (
-    <DndContext
-      onDragEnd={handleDragEnd}
-      collisionDetection={closestCorners}
-      onDragStart={handleDragStart}
-    >
-      <div className="p-4 flex space-x-4">
-        {/* نوار ابزار */}
-        <div className="w-1/4 p-2 bg-gray-100 rounded">
-          <h4 className="mb-2 font-bold">بلوک‌ها</h4>
-          <DraggableTextBlock />
-          <button
-            type="button"
-            onClick={addRow}
-            className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+    <>
+      <DndContext
+        onDragEnd={handleDragEnd}
+        collisionDetection={closestCorners}
+        onDragStart={handleDragStart}
+      >
+        <div className="p-4 flex space-x-4">
+          {/* نوار ابزار */}
+          <div className="w-1/4 p-2 bg-gray-100 rounded">
+            <h4 className="mb-2 font-bold">بلوک‌ها</h4>
+            <DraggableTextBlock />
+            <button
+              type="button"
+              onClick={addRow}
+              className="mt-4 bg-green-600 text-white px-4 py-2 rounded"
+            >
+              افزودن ردیف
+            </button>
+          </div>
+
+          {/* ناحیه ساخت صفحه */}
+          <SortableContext
+            items={rows.map((row) => row.id)}
+            strategy={verticalListSortingStrategy}
           >
-            افزودن ردیف
-          </button>
-        </div>
-
-        {/* ناحیه ساخت صفحه */}
-        <div className="w-3/4 space-y-4">
-          {rows.map((row) => (
-            <div key={row.id} className="p-4 border bg-white rounded">
-              <div className="flex justify-between items-center mb-2">
-                <h3 className="font-bold">ردیف</h3>
-                <button
-                  type="button"
-                  onClick={() => addColumn(row.id)}
-                  className="bg-blue-500 text-white px-3 py-1 rounded"
-                >
-                  افزودن ستون
-                </button>
-              </div>
-
-              <div className="grid grid-cols-12 gap-4">
-                {row.columns.map((col) => (
-                  <DroppableColumn key={col.id} rowId={row.id} col={col} />
-                ))}
-              </div>
+            <div className="w-3/4 space-y-4">
+              {rows.map((row) => (
+                <SortableRow key={row.id} row={row} />
+              ))}
             </div>
-          ))}
+          </SortableContext>
         </div>
-      </div>
-    </DndContext>
+      </DndContext>
+
+      <pre className="bg-gray-100 p-4 mt-4">
+        <code>{getJson()}</code>
+      </pre>
+    </>
   )
 }

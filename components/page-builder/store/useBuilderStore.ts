@@ -1,30 +1,15 @@
 // store/useBuilderStore.ts
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
-
-type ElementType = {
-  id: string
-  type: 'text' | 'image'
-  content?: string
-}
-
-type ColumnType = {
-  id: string
-  elements: ElementType[]
-}
-
-type RowType = {
-  id: string
-  columns: ColumnType[]
-}
+import { PageBlock, PageRow } from '../types'
 
 type State = {
-  activeElement: ElementType | null
-  setActiveElement: (el: ElementType | null) => void
-  rows: RowType[]
+  activeElement: PageBlock | null
+  setActiveElement: (el: PageBlock | null) => void
+  rows: PageRow[]
   addRow: () => void
   addColumn: (rowId: string) => void
-  addElementToColumn: (colId: string, element: ElementType) => void
+  addElementToColumn: (colId: string, element: PageBlock) => void
   moveElementWithinColumn: (
     colId: string,
     oldIndex: number,
@@ -36,9 +21,11 @@ type State = {
     elementId: string,
     newIndex: number
   ) => void
+  getJson: () => string
+  reorderRows: (sourceId: string, destinationId: string) => void
 }
 
-export const useBuilderStore = create<State>((set) => ({
+export const useBuilderStore = create<State>((set, get) => ({
   rows: [],
   activeElement: null,
   setActiveElement: (el) => set(() => ({ activeElement: el })),
@@ -53,7 +40,10 @@ export const useBuilderStore = create<State>((set) => ({
         row.id === rowId
           ? {
               ...row,
-              columns: [...row.columns, { id: uuidv4(), elements: [] }],
+              columns: [
+                ...row.columns,
+                { id: uuidv4(), width: 12, blocks: [] },
+              ],
             }
           : row
       ),
@@ -70,9 +60,7 @@ export const useBuilderStore = create<State>((set) => ({
             ? {
                 ...r,
                 columns: r.columns.map((c) =>
-                  c.id === colId
-                    ? { ...c, elements: [...c.elements, element] }
-                    : c
+                  c.id === colId ? { ...c, blocks: [...c.blocks, element] } : c
                 ),
               }
             : r
@@ -87,11 +75,11 @@ export const useBuilderStore = create<State>((set) => ({
         columns: row.columns.map((col) => {
           if (col.id !== colId) return col
 
-          const updated = [...col.elements]
+          const updated = [...col.blocks]
           const [moved] = updated.splice(oldIndex, 1)
           updated.splice(newIndex, 0, moved)
 
-          return { ...col, elements: updated }
+          return { ...col, blocks: updated }
         }),
       }))
 
@@ -100,7 +88,7 @@ export const useBuilderStore = create<State>((set) => ({
 
   moveElementBetweenColumns: (sourceColId, targetColId, elementId, newIndex) =>
     set((state) => {
-      let movedElement: ElementType | undefined
+      let movedElement: PageBlock | undefined
 
       const updatedRows = state.rows.map((row) => {
         return {
@@ -108,14 +96,14 @@ export const useBuilderStore = create<State>((set) => ({
           columns: row.columns.map((col) => {
             // حذف از ستون مبدا
             if (col.id === sourceColId) {
-              const filtered = col.elements.filter((el) => {
+              const filtered = col.blocks.filter((el) => {
                 if (el.id === elementId) {
                   movedElement = el
                   return false
                 }
                 return true
               })
-              return { ...col, elements: filtered }
+              return { ...col, blocks: filtered }
             }
             return col
           }),
@@ -128,9 +116,9 @@ export const useBuilderStore = create<State>((set) => ({
           columns: row.columns.map((col) => {
             // اضافه به ستون مقصد
             if (col.id === targetColId && movedElement) {
-              const updated = [...col.elements]
+              const updated = [...col.blocks]
               updated.splice(newIndex, 0, movedElement)
-              return { ...col, elements: updated }
+              return { ...col, blocks: updated }
             }
             return col
           }),
@@ -139,4 +127,20 @@ export const useBuilderStore = create<State>((set) => ({
 
       return { rows: finalRows }
     }),
+  /**
+   *
+   * @param sourceId Row ID to change location
+   * @param destinationId
+   */
+  reorderRows: (sourceId, destinationId) =>
+    set((state) => {
+      const indexFrom = state.rows.findIndex((row) => row.id == sourceId)
+      const indexTo = state.rows.findIndex((row) => row.id === destinationId)
+      const updated = [...state.rows]
+      const [moved] = updated.splice(indexFrom, 1)
+      updated.splice(indexTo + (indexFrom < indexTo ? 0 : 0), 0, moved)
+      return { ...state, rows: updated }
+    }),
+
+  getJson: () => JSON.stringify(get().rows, null, 2),
 }))
