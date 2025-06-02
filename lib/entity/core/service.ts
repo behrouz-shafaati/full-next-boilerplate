@@ -1,39 +1,39 @@
-import mongoose from 'mongoose';
-import { Types } from 'mongoose';
-import { Id, Pagination, QueryFind, QueryResponse } from './interface';
-import dbConnect from '@/lib/dbConnect';
+import mongoose from 'mongoose'
+import { Types } from 'mongoose'
+import { Id, Pagination, QueryFind, QueryResponse } from './interface'
+import dbConnect from '@/lib/dbConnect'
 
 const makeNewJsonObject = (object: any) => {
-  return object;
-  const jsonStringObject = JSON.stringify(object);
-  return JSON.parse(jsonStringObject);
-};
+  return object
+  const jsonStringObject = JSON.stringify(object)
+  return JSON.parse(jsonStringObject)
+}
 // a function that recive json object, convert it to json string, the convert to json object and return it
 function toObject(obj: any): any {
-  return JSON.parse(JSON.stringify(obj));
+  return JSON.parse(JSON.stringify(obj))
 }
 function standardizationFilters(filters: any): any {
-  if (typeof filters != 'object') return {};
+  if (typeof filters != 'object') return {}
   for (const [key, value] of Object.entries(filters)) {
-    if (typeof value != 'string') continue;
+    if (typeof value != 'string') continue
     // for id
     if (key == 'id') {
-      filters._id = value;
-      delete filters.id;
+      filters._id = value
+      delete filters.id
     }
   }
-  return filters;
+  return filters
 }
 
 const defaultPagination: Pagination = {
   page: 0,
   perPage: 15,
-};
+}
 
 export default class service {
-  private model: any;
+  private model: any
   constructor(model: any) {
-    this.model = model;
+    this.model = model
   }
 
   /**
@@ -49,45 +49,51 @@ export default class service {
     sort = { createdAt: -1 }
   ): Promise<QueryResponse<any>> {
     // Connect to the MongoDB database
-    await dbConnect();
+    await dbConnect()
     // Standardize and update the filters
-    filters = standardizationFilters(filters);
-
+    filters = standardizationFilters(filters)
     // Calculate the skip value for pagination
     // The page start from 0
-    const page: number = (pagination.page as number) - 1;
-    let skip: number = page > 0 ? page * pagination.perPage : 0;
+    const page: number = (pagination.page as number) - 1
+    let skip: number = page > 0 ? page * pagination.perPage : 0
 
     // Add deleted:false filter to exclude deleted documents
-    filters = { ...filters, deleted: false };
-
+    filters = { ...filters, deleted: false }
+    console.log(
+      'filters: ',
+      filters,
+      ' sort: ',
+      sort,
+      ' skip: ',
+      skip,
+      ' pagination.perPage: ',
+      pagination.perPage
+    )
     // Find documents in the collection based on filters, sort order, and pagination
     // Get the total count of documents that match the filters
     const [result, totalDocuments] = await Promise.all([
       this.model.find(filters).sort(sort).skip(skip).limit(pagination.perPage),
       this.model.countDocuments(filters),
-    ]);
-
+    ])
     // Disconnect from the MongoDB database
     // mongoose.disconnect();
 
     // Calculate the next page value for pagination
     let nextPage: number =
-      page * pagination.perPage >= totalDocuments ? 0 : page + 1;
+      page * pagination.perPage >= totalDocuments ? 0 : page + 1
 
     // Calculate the total number of pages based on the document count and pagination
-    const totalPages: number = Math.ceil(totalDocuments / pagination.perPage);
+    const totalPages: number = Math.ceil(totalDocuments / pagination.perPage)
 
     // If there are no documents or all documents are returned, set nextPage to 0
-    if (!result.length || result.length == totalDocuments) nextPage = 0;
-
+    if (!result.length || result.length == totalDocuments) nextPage = 0
     // Return the QueryResponse object with the retrieved documents, pagination information, and total document count
     return toObject({
       data: result,
       nextPage,
       totalPages,
       totalDocuments,
-    });
+    })
   }
 
   async findAll(
@@ -96,53 +102,53 @@ export default class service {
     populate?: string
   ): Promise<QueryResponse<any>> {
     // Connect to the MongoDB database
-    await dbConnect();
-    filters = { ...filters, deleted: false };
-    let result: any;
+    await dbConnect()
+    filters = { ...filters, deleted: false }
+    let result: any
     if (populate)
-      result = await this.model.find(filters).populate(populate).sort(sort);
-    else result = await this.model.find(filters).sort(sort);
+      result = await this.model.find(filters).populate(populate).sort(sort)
+    else result = await this.model.find(filters).sort(sort)
 
-    const totalDocuments: number = await this.model.countDocuments(filters);
+    const totalDocuments: number = await this.model.countDocuments(filters)
     // Disconnect from the MongoDB database
     // mongoose.disconnect();
-    let nextPage: number = 0;
-    const totalPages: number = 1;
+    let nextPage: number = 0
+    const totalPages: number = 1
     return toObject({
       data: result,
       nextPage,
       totalPages,
       totalDocuments,
-    });
+    })
   }
 
   async findById(_id: string) {
-    if (!_id || _id == '') return null;
+    if (!_id || _id == '') return null
     // Connect to the MongoDB database
-    await dbConnect();
-    return toObject(await this.model.findById({ _id, deleted: false }));
+    await dbConnect()
+    return toObject(await this.model.findById({ _id, deleted: false }))
   }
   async findOne(filters: object = {}, populate?: string) {
     // Connect to the MongoDB database
-    await dbConnect();
-    filters = standardizationFilters(filters);
+    await dbConnect()
+    filters = standardizationFilters(filters)
     if (typeof filters === 'string' || filters instanceof Types.ObjectId) {
       // eslint-disable-next-line no-param-reassign
       filters = {
         _id: filters,
-      };
+      }
     }
     if (populate) {
       return await this.model
         .findOne({ ...filters, deleted: false })
-        .populate(populate);
+        .populate(populate)
     }
-    return toObject(await this.model.findOne({ ...filters, deleted: false }));
+    return toObject(await this.model.findOne({ ...filters, deleted: false }))
   }
   async create(data: object) {
     // Connect to the MongoDB database
-    await dbConnect();
-    return toObject(await this.model.create(data));
+    await dbConnect()
+    return toObject(await this.model.create(data))
     // Disconnect from the MongoDB database
     // mongoose.disconnect();
   }
@@ -155,45 +161,45 @@ export default class service {
    */
   async findOneAndUpdate(filters: any, data: object) {
     // Connect to the MongoDB database
-    await dbConnect();
+    await dbConnect()
     // Convert string or ObjectId filters to an object if necessary
     if (typeof filters === 'string' || filters instanceof Types.ObjectId) {
       // eslint-disable-next-line no-param-reassign
       filters = {
         _id: filters,
-      };
+      }
     }
     // Add 'deleted' filter to exclude deleted documents
-    filters = { ...filters, deleted: false };
+    filters = { ...filters, deleted: false }
     // Find and update the document, and return the updated document
     return toObject(
       await this.model.findOneAndUpdate(filters, data, { new: true })
-    );
+    )
   }
 
   async updateMany(filters: any, data: object, options: object = {}) {
     // Connect to the MongoDB database
-    await dbConnect();
-    filters = { ...filters, deleted: false };
-    return toObject(await this.model.updateMany(filters, data, options));
+    await dbConnect()
+    filters = { ...filters, deleted: false }
+    return toObject(await this.model.updateMany(filters, data, options))
   }
   async countDocuments(filters: any): Promise<number> {
     // Connect to the MongoDB database
-    await dbConnect();
+    await dbConnect()
     if (typeof filters === 'string' || filters instanceof Types.ObjectId) {
       // eslint-disable-next-line no-param-reassign
       filters = {
         _id: filters,
-      };
+      }
     }
-    filters = { ...filters, deleted: false };
-    console.log('count filters:', filters);
-    return this.model.countDocuments(filters);
+    filters = { ...filters, deleted: false }
+    console.log('count filters:', filters)
+    return this.model.countDocuments(filters)
   }
 
   async delete(ids: Id[]) {
     // Connect to the MongoDB database
-    await dbConnect();
+    await dbConnect()
     try {
       const result: any = await this.model.updateMany(
         {
@@ -201,37 +207,37 @@ export default class service {
         },
         { deleted: true },
         { multi: true }
-      );
-      return result;
+      )
+      return result
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
   }
 
   async deleteMany(filters: object, fullDelete = false) {
     // Connect to the MongoDB database
-    await dbConnect();
+    await dbConnect()
     try {
       if (fullDelete) {
-        console.log('#872 fullDelete filters:', filters);
-        const result: any = await this.model.deleteMany(filters);
-        return result;
+        console.log('#872 fullDelete filters:', filters)
+        const result: any = await this.model.deleteMany(filters)
+        return result
       }
       const result: any = await this.model.updateMany(
         filters,
         { deleted: true },
         { multi: true }
-      );
-      return result;
+      )
+      return result
     } catch (error) {
-      console.log('#872 error: ', error);
+      console.log('#872 error: ', error)
     }
   }
 
   async aggregate(query: any[], pagination: Pagination = defaultPagination) {
     // کلون کردن کوئری برای محاسبه تعداد کل مستندات
-    const queryToCalculateCount = [...query];
-    const pageNumber: number = pagination.page as number;
+    const queryToCalculateCount = [...query]
+    const pageNumber: number = pagination.page as number
 
     if (
       pagination.perPage === undefined ||
@@ -239,44 +245,42 @@ export default class service {
       Number.isNaN(pagination.perPage) ||
       typeof pagination.perPage === undefined
     ) {
-      pagination.perPage = defaultPagination.perPage;
+      pagination.perPage = defaultPagination.perPage
     }
 
     // محاسبه مقدار skip برای صفحه‌بندی
     const skip: number =
-      pageNumber > 0 ? (pageNumber - 1) * pagination.perPage : 0;
+      pageNumber > 0 ? (pageNumber - 1) * pagination.perPage : 0
 
     // اضافه کردن مراحل skip و limit به کوئری برای صفحه‌بندی
-    query.push({ $skip: skip }, { $limit: pagination.perPage });
+    query.push({ $skip: skip }, { $limit: pagination.perPage })
 
     // اجرای کوئری اصلی
-    const result = await this.model.aggregate(query).allowDiskUse(true);
+    const result = await this.model.aggregate(query).allowDiskUse(true)
 
     // اضافه کردن مراحل project و count به کوئری برای محاسبه تعداد کل مستندات
-    queryToCalculateCount.push({ $project: { _id: 1 } }, { $count: 'count' });
+    queryToCalculateCount.push({ $project: { _id: 1 } }, { $count: 'count' })
     const totalDocument = await this.model
       .aggregate(queryToCalculateCount)
-      .allowDiskUse(true);
+      .allowDiskUse(true)
 
     // استخراج تعداد کل مستندات
-    const countTotalDocument = totalDocument[0] ? totalDocument[0].count : 0;
+    const countTotalDocument = totalDocument[0] ? totalDocument[0].count : 0
 
     // محاسبه شماره صفحه بعد و تعداد کل صفحات
     let nextPage: number =
-      pageNumber * pagination.perPage >= countTotalDocument
-        ? 0
-        : pageNumber + 1;
+      pageNumber * pagination.perPage >= countTotalDocument ? 0 : pageNumber + 1
     const totalPages: number =
-      Math.ceil(countTotalDocument / pagination.perPage) || 0;
+      Math.ceil(countTotalDocument / pagination.perPage) || 0
 
     // اگر نتیجه خالی باشد یا تعداد نتیجه با تعداد کل مستندات برابر باشد، صفحه بعدی وجود ندارد
-    if (!result.length || result.length === countTotalDocument) nextPage = 0;
+    if (!result.length || result.length === countTotalDocument) nextPage = 0
 
     return {
       result: makeNewJsonObject(result), // تبدیل نتیجه به قالب جدید
       nextPage,
       totalPages,
       totalDocument: countTotalDocument,
-    };
+    }
   }
 }

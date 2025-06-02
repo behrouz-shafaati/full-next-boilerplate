@@ -1,6 +1,6 @@
-'use client';
+'use client'
 
-import { Fragment, useState, useEffect } from 'react';
+import { Fragment, useState, useEffect } from 'react'
 
 import {
   Select as SelectInput,
@@ -10,22 +10,23 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from '../ui/select';
+} from '../ui/select'
 
 export type Option = {
-  value: string;
-  label: string;
-};
+  value: string
+  label: string
+}
 
 type SelectProps = {
-  title: string;
-  name: string;
-  defaultValue?: string;
-  options: Option[];
-  placeholder?: string;
-  icon?: any;
-  state?: any;
-};
+  title: string
+  name: string
+  defaultValue?: string
+  options: Option[]
+  placeholder?: string
+  icon?: any
+  state?: any
+  onChange?: (value: string) => void
+}
 export default function Select({
   title,
   name,
@@ -34,24 +35,25 @@ export default function Select({
   placeholder,
   icon,
   state,
+  onChange,
 }: SelectProps) {
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
-  const InputIcon = typeof icon === 'object' ? () => icon : icon;
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
+  const InputIcon = typeof icon === 'object' ? () => icon : icon
   let defaultSelectedOption: Option = {
     value: '',
     label: '',
-  };
-  console.log('defaultValue:', defaultValue);
+  }
+  console.log('defaultValue:', defaultValue)
   if (defaultValue)
     for (let j = 0; j < options.length; j++) {
       if (defaultValue === options[j].value) {
-        defaultSelectedOption = options[j];
+        defaultSelectedOption = options[j]
       }
     }
-  console.log('#111 defaultSelectedOption:', defaultSelectedOption);
-  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption);
-  const [value, setValue] = useState(defaultSelectedOption?.value);
+  console.log('#111 defaultSelectedOption:', defaultSelectedOption)
+  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
+  const [value, setValue] = useState(defaultSelectedOption?.value)
 
   return (
     <div className="mb-4">
@@ -64,10 +66,11 @@ export default function Select({
           <SelectInput
             defaultValue={defaultValue}
             onValueChange={(value: string) => {
+              if (onChange) onChange(value)
               setSelectedOption(
                 options.find((option) => option.value === value) ||
                   defaultSelectedOption
-              );
+              )
             }}
           >
             <SelectTrigger className="w-full">
@@ -102,5 +105,5 @@ export default function Select({
         </div>
       )}
     </div>
-  );
+  )
 }

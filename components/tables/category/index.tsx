@@ -21,7 +21,6 @@ export default async function CategoryTable({
     filters: { query },
     pagination: { page, perPage: 6 },
   })
-
   return (
     <>
       <div className="flex items-start justify-between">

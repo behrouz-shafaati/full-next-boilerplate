@@ -1,7 +1,13 @@
 // store/useBuilderStore.ts
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
-import { PageBlock, PageRow } from '../types'
+import { PageBlock, PageColumn, PageRow } from '../types'
+
+const defaultColumn = () => ({
+  id: uuidv4(),
+  width: 4,
+  blocks: [],
+})
 
 type State = {
   activeElement: PageBlock | null
@@ -23,6 +29,8 @@ type State = {
   ) => void
   getJson: () => string
   reorderRows: (sourceId: string, destinationId: string) => void
+  updateRowColumns: (rowId: string, layout: string) => void
+  updatePage: (itemId: string, key: string, value: string) => void
 }
 
 export const useBuilderStore = create<State>((set, get) => ({
@@ -31,9 +39,14 @@ export const useBuilderStore = create<State>((set, get) => ({
   setActiveElement: (el) => set(() => ({ activeElement: el })),
   addRow: () =>
     set((state) => ({
-      rows: [...state.rows, { id: uuidv4(), columns: [] }],
+      rows: [
+        ...state.rows,
+        {
+          id: uuidv4(),
+          columns: [defaultColumn(), defaultColumn(), defaultColumn()],
+        },
+      ],
     })),
-
   addColumn: (rowId) =>
     set((state) => ({
       rows: state.rows.map((row) =>
@@ -142,5 +155,83 @@ export const useBuilderStore = create<State>((set, get) => ({
       return { ...state, rows: updated }
     }),
 
+  /**
+   *
+   * @param rowId
+   * @param layout
+   */
+  updateRowColumns: (rowId, layout) => {
+    const widths = layout.split('-').map(Number)
+
+    set((state) => ({
+      rows: state.rows.map((row) => {
+        if (row.id !== rowId) return row
+
+        let index = -1
+        // ساخت ستون‌های جدید
+        const newColumns: PageColumn[] = widths.map((width) => {
+          index++
+          return {
+            id: uuidv4(),
+            width,
+            blocks: row.columns[index]?.blocks || [], // اگه وجود نداشت، آرایه‌ی خالی
+          }
+        })
+
+        return {
+          ...row,
+          columns: newColumns,
+        }
+      }),
+    }))
+  },
+
+  /**
+   *
+   * @param itemId
+   * @param key
+   * @param value
+   */
+  updatePage: (itemId, key, value) =>
+    set((state) => {
+      const updatedRows = state.rows.map((row) => {
+        if (row.id === itemId) {
+          // آپدیت ردیف
+          return { ...row, [key]: value }
+        }
+
+        const updatedColumns = row.columns.map((column) => {
+          if (column.id === itemId) {
+            // آپدیت ستون
+            return { ...column, [key]: value }
+          }
+
+          const updatedBlocks = column.blocks.map((block) => {
+            if (block.id === itemId) {
+              // آپدیت بلاک
+              if (key === 'data' && typeof value === 'object') {
+                return {
+                  ...block,
+                  data: {
+                    ...block.data,
+                    [key]: value,
+                  },
+                }
+              }
+            }
+
+            return block
+          })
+
+          return { ...column, blocks: updatedBlocks }
+        })
+
+        return { ...row, columns: updatedColumns }
+      })
+
+      return {
+        rows: updatedRows,
+      }
+    }),
   getJson: () => JSON.stringify(get().rows, null, 2),
 }))

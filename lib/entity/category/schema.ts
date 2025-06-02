@@ -18,14 +18,26 @@ const categorySchema = new Schema<CategorySchema>(
 )
 
 categorySchema
+  .pre('save', function (next) {
+    if (this.parent?.toString() === this._id?.toString()) {
+      return next(new Error('A category cannot be its own parent.'))
+    }
+    next()
+  })
   .pre('findOne', function (next: any) {
     this.populate('parent')
+    this.where({ deleted: false })
     next()
   })
   .pre('find', function (next: any) {
     this.populate('parent')
+    this.where({ deleted: false })
     next()
   })
+
+// ایندکس‌ها برای بهبود عملکرد
+categorySchema.index({ title: 1 })
+categorySchema.index({ status: 1 })
 
 const statusMap: any = {
   0: 'inactive',

@@ -1,7 +1,7 @@
-import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface';
-import baseController from '@/lib/entity/core/controller';
-import categorySchema from './schema';
-import categoryService from './service';
+import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
+import baseController from '@/lib/entity/core/controller'
+import categorySchema from './schema'
+import categoryService from './service'
 
 class controller extends baseController {
   /**
@@ -15,22 +15,22 @@ class controller extends baseController {
    * @beta
    */
   constructor(service: any) {
-    super(service);
+    super(service)
   }
 
   standardizationFilters(filters: any): any {
-    if (typeof filters != 'object') return {};
+    if (typeof filters != 'object') return {}
     for (const [key, value] of Object.entries(filters)) {
-      if (typeof value != 'string') continue;
+      if (typeof value != 'string') continue
       if (
         key == 'userName' ||
         key == 'fullName' ||
         key == 'email' ||
         key == 'mobile'
       )
-        filters[key] = { $regex: new RegExp(value, 'i') };
+        filters[key] = { $regex: new RegExp(value, 'i') }
       if (key == 'query' && filters?.query == '') {
-        delete filters.query;
+        delete filters.query
       } else if (key == 'query') {
         filters.$expr = {
           $regexMatch: {
@@ -40,41 +40,44 @@ class controller extends baseController {
             regex: filters.query,
             options: 'i',
           },
-        };
-        delete filters.query;
+        }
+        delete filters.query
       }
 
       if (key == 'id') {
-        filters._id = value;
-        delete filters.id;
+        filters._id = value
+        delete filters.id
       }
     }
-    return filters;
+    return filters
   }
 
   async find(payload: QueryFind) {
-    console.log('#3008 payload:', payload);
-    payload.filters = this.standardizationFilters(payload.filters);
-    console.log('#3009 payload:', payload);
-    const result = await super.find(payload);
-    console.log('#3010 payload result:', result);
-    return result;
+    payload.filters = this.standardizationFilters(payload.filters)
+    const result = await super.find(payload)
+    return result
   }
 
   async create(payload: Create) {
-    console.log('#385 payload:', payload);
-    payload.params.parentId == 'null' ? '' : payload.params.parentId;
-    return super.create(payload);
+    payload.params.parent =
+      payload.params.parent == 'null' ? null : payload.params.parent
+    payload.params.parent =
+      payload.params.parent == payload.params?.id ? null : payload.params.parent
+    return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
-    payload.params.parentId =
-      payload.params.parentId == 'null' ? null : payload.params.parentId;
+    payload.params.parent =
+      payload.params.parent == 'null' ? null : payload.params.parent
 
-    console.log('#3326 payload:', payload);
-    return super.findOneAndUpdate(payload);
+    // Preventing the risk of circular reference
+    payload.params.parent =
+      payload.params.parent == payload.filters ? null : payload.params.parent
+
+    console.log('#---------------------payload: ', payload)
+    return super.findOneAndUpdate(payload)
   }
 }
 
-const categoryCtrl = new controller(new categoryService(categorySchema));
-export default categoryCtrl;
+const categoryCtrl = new controller(new categoryService(categorySchema))
+export default categoryCtrl

@@ -15,6 +15,7 @@ export type PageColumn = {
 
 export type PageBlock = {
   id: string // UUID
+  // The type is not updatable.
   type: 'text' | 'image' | 'video' | 'gallery' | 'form' | 'product' | 'custom'
   data: Record<string, any>
 }

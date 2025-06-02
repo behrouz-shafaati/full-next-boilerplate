@@ -34,7 +34,9 @@ export default function DroppableColumn({
     >
       <div
         ref={setNodeRef}
-        className={`border  col-span-4 rounded p-3 min-h-[100px] transition-all ${
+        className={`border  col-span-${
+          col.width
+        } rounded p-3 min-h-[100px] transition-all ${
           isOver ? 'bg-green-100' : 'bg-white'
         }`}
       >
