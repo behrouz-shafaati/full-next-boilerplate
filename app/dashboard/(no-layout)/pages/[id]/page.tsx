@@ -41,8 +41,8 @@ export default async function Page({ params }: PageProps) {
   ]
   return (
     <ScrollArea className="h-full">
-      <div className="flex-1 space-y-4 p-5">
-        <BreadCrumb items={breadcrumbItems} />
+      <div className="">
+        {/* <BreadCrumb items={breadcrumbItems} /> */}
         <PageForm initialData={page} />
       </div>
     </ScrollArea>

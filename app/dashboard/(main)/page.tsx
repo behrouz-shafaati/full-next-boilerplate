@@ -1,5 +1,4 @@
 import HelloUser from '@/components/HelloUser'
-import PageBuilder from '@/components/page-builder'
 import { ScrollArea } from '@/components/ui/scroll-area'
 
 export default function page() {

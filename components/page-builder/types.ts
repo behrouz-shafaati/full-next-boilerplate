@@ -1,4 +1,5 @@
 export type PageContent = {
+  title: string
   rows: PageRow[]
 }
 

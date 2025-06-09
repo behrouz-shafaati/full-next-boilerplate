@@ -15,7 +15,6 @@ import { SubmitButton } from '@/components/form-fields/submit-button'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import PageBuilder from '@/components/page-builder'
-import { initialPage } from './components/types'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
@@ -93,7 +92,7 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
         loading={loading}
       />
       <div className="flex items-center justify-between">
-        <Heading title={title} description={description} />
+        {/* <Heading title={title} description={description} /> */}
         {page && (
           <Button
             disabled={loading}
@@ -106,21 +105,10 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full">
+      <form action={dispatch} className="w-full">
         <div className="block">
-          {/* Title */}
-          <Text
-            title="عنوان"
-            name="title"
-            defaultValue={page?.title || ''}
-            placeholder="عنوان"
-            state={state}
-            icon={<HeadingIcon className="w-4 h-4" />}
-            className="w-20"
-          />
-          <PageBuilder />
+          <PageBuilder initialContent={page} />
         </div>
-        <SubmitButton />
       </form>
     </>
   )

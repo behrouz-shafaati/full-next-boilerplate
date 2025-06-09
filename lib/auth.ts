@@ -1,6 +1,7 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
+import { redirect } from 'next/navigation'
 import { User } from './entity/user/interface'
 import userCtrl from './entity/user/controller'
 import { z } from 'zod'
@@ -75,6 +76,7 @@ export async function login(formData: FormData) {
     // Save the session in a cookie
     const cookieStore = await cookies()
     cookieStore.set('session', session, { expires, httpOnly: true })
+    redirect('/dashboard')
   } else {
     // Invalid credentials
     return {

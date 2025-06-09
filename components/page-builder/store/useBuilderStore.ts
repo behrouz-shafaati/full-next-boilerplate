@@ -14,6 +14,7 @@ type State = {
   setActiveElement: (el: PageBlock | null) => void
   rows: PageRow[]
   addRow: () => void
+  deleteRow: (rowId: string) => void
   addColumn: (rowId: string) => void
   addElementToColumn: (colId: string, element: PageBlock) => void
   moveElementWithinColumn: (
@@ -46,6 +47,10 @@ export const useBuilderStore = create<State>((set, get) => ({
           columns: [defaultColumn(), defaultColumn(), defaultColumn()],
         },
       ],
+    })),
+  deleteRow: (rowId) =>
+    set((state) => ({
+      rows: state.rows.filter((row) => row.id != rowId),
     })),
   addColumn: (rowId) =>
     set((state) => ({
