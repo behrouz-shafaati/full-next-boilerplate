@@ -1,28 +1,29 @@
-'use client'
-import { useBuilderStore } from '../store/useBuilderStore'
-import { v4 as uuidv4 } from 'uuid'
-import { useRouter } from 'next/navigation'
+'use client';
+import { useBuilderStore } from '../store/useBuilderStore';
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
 import {
   closestCorners,
   DndContext,
   DragEndEvent,
-  DragOverlay,
   DragStartEvent,
-} from '@dnd-kit/core'
-import DraggableTextBlock from './blocks/DraggableTextBlock'
-import { useEffect } from 'react'
-import { PageContent } from '../types'
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import SortableRow from './SortableRow'
-import ToolsSection from './toolsSection'
-import { Button } from '@/components/ui/button'
+} from '@dnd-kit/core';
+import { useEffect } from 'react';
+import { PageContent } from '../types';
+import {
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import SortableRow from './SortableRow';
+import ToolsSection from './toolsSection';
+import { Button } from '@/components/ui/button';
 
 type props = {
-  initialContent?: PageContent
-}
+  initialContent?: PageContent;
+};
 
 export default function PageBuilder({ initialContent }: props) {
-  const router = useRouter()
+  const router = useRouter();
   const {
     rows,
     addRow,
@@ -33,88 +34,100 @@ export default function PageBuilder({ initialContent }: props) {
     setActiveElement,
     activeElement,
     reorderRows,
-  } = useBuilderStore()
+  } = useBuilderStore();
 
   const findColumnContainingElement = (elementId: string) => {
     return rows
       .flatMap((row) => row.columns)
-      .find((col) => col.blocks.some((el) => el.id === elementId))
-  }
+      .find((col) => col.blocks.some((el) => el.id === elementId));
+  };
 
   const handleDragStart = (event: DragStartEvent) => {
-    const { active } = event
-    if (!active) return
+    const { active } = event;
+    if (!active) return;
 
     // set the dragged item in state
-    const elementType = active.data.current?.type as 'text' | 'image'
-    const id = active.id as string
+    const elementType = active.data.current?.type as 'text' | 'image';
+    const id = active.id as string;
     if (elementType) {
       setActiveElement({
         id,
         type: elementType,
         data: { content: elementType === 'text' ? 'بلوک متن' : undefined },
-      })
+      });
     }
-  }
+  };
   const handleDragEnd = (event: DragEndEvent) => {
-    console.log('#87 drag end')
-    const { active, over } = event
-    if (!over) return
+    console.log('#87 drag end');
+    const { active, over } = event;
+    if (!over) return;
 
-    console.log('#88 active:', active, ' | #9 overId:', over)
+    console.log('#88 active:', active, ' | #9 overId:', over);
 
-    const activeId = active.id
-    const overId = over.id
+    const activeId = active.id;
+    const overId = over.id;
 
-    const sourceCol = findColumnContainingElement(activeId)
+    const activeData = active.data.current as {
+      type:
+        | 'text'
+        | 'image'
+        | 'video'
+        | 'gallery'
+        | 'form'
+        | 'product'
+        | 'custom';
+    };
+
+    const sourceCol = findColumnContainingElement(activeId);
     // اگر جابجایی مربوط به ردیف بود
     if (rows.find((r) => r.id === activeId)) {
-      reorderRows(activeId, overId)
-      return
+      reorderRows(activeId, overId);
+      return;
     }
 
     // حالت 1: کشیدن آیتم جدید از نوار ابزار (text-block)
     if (activeId === 'text-block') {
       // اگر روی ستون خالی انداختیم
-      const column = rows.flatMap((r) => r.columns).find((c) => c.id === overId)
-      console.log('#939 empty Col in new el:', column)
+      const column = rows
+        .flatMap((r) => r.columns)
+        .find((c) => c.id === overId);
+      console.log('#939 empty Col in new el:', column);
       if (column) {
         addElementToColumn(column.id, {
           id: uuidv4(),
-          type: 'text',
+          type: activeData.type,
           data: { content: 'متن جدید' },
-        })
+        });
       }
 
       // یا روی یک آیتم درون ستون انداختیم
-      const targetCol = findColumnContainingElement(overId)
-      console.log('#939 full Col in new el:', targetCol)
+      const targetCol = findColumnContainingElement(overId);
+      console.log('#939 full Col in new el:', targetCol);
       if (targetCol) {
         addElementToColumn(targetCol.id, {
           id: uuidv4(),
-          type: 'text',
+          type: activeData.type,
           data: { content: 'متن جدید' },
-        })
+        });
       }
-
-      return
+      return;
     }
 
     // حالت 2: جابجایی آیتم بین ستون‌ها یا درون یک ستون
     const column =
       findColumnContainingElement(overId) ??
-      rows.flatMap((r) => r.columns).find((col) => col.id === overId)
-    console.log('@94 sourceCol:', sourceCol, ' | column:', column)
-    if (!sourceCol || !column) return
+      rows.flatMap((r) => r.columns).find((col) => col.id === overId);
+    console.log('@94 sourceCol:', sourceCol, ' | column:', column);
+    if (!sourceCol || !column) return;
 
-    const oldIndex = sourceCol.blocks.findIndex((el) => el.id === activeId)
-    const newIndex = column.blocks.findIndex((el) => el.id === overId)
-    console.log('@94 oldIndex:', oldIndex, ' | newIndex:', newIndex)
+    const oldIndex = sourceCol.blocks.findIndex((el) => el.id === activeId);
+    const newIndex = column.blocks.findIndex((el) => el.id === overId);
+    console.log('@94 oldIndex:', oldIndex, ' | newIndex:', newIndex);
 
     if (sourceCol.id === column.id) {
       // جابجایی در همان ستون
       if (oldIndex !== -1 && newIndex !== -1) {
-        moveElementWithinColumn(sourceCol.id, oldIndex, newIndex)
+        moveElementWithinColumn(sourceCol.id, oldIndex, newIndex);
       }
     } else {
       // جابجایی بین دو ستون
@@ -123,13 +136,13 @@ export default function PageBuilder({ initialContent }: props) {
         column.id,
         activeId,
         newIndex === -1 ? column.blocks.length : newIndex
-      )
+      );
     }
-  }
+  };
 
   useEffect(() => {
-    console.log('#665 rows:', rows)
-  }, [rows])
+    console.log('#665 rows:', rows);
+  }, [rows]);
 
   return (
     <>
@@ -140,9 +153,9 @@ export default function PageBuilder({ initialContent }: props) {
       >
         <div className="flex  h-screen w-full overflow-hidden">
           {/* نوار ابزار */}
-          <aside className="h-screen w-80 shrink-0 bg-slate-50 relative">
+          <aside className="relative h-screen w-80 shrink-0 bg-slate-50">
             <ToolsSection page={initialContent || null} />
-            <div className="absolute flex flex-row gap-2 bottom-0 p-2 bg-slate-100 w-full">
+            <div className="absolute bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
               <Button>ذخیره</Button>
               <Button
                 type="button"
@@ -169,7 +182,7 @@ export default function PageBuilder({ initialContent }: props) {
             <Button
               type="button"
               onClick={addRow}
-              className="mt-4 rounded px-4 py-2 text-white w-full"
+              className="mt-4 w-full rounded px-4 py-2 text-white"
             >
               افزودن ردیف
             </Button>
@@ -181,5 +194,5 @@ export default function PageBuilder({ initialContent }: props) {
         </div>
       </DndContext>
     </>
-  )
+  );
 }
