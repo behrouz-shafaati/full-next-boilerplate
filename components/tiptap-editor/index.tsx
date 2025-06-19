@@ -84,46 +84,6 @@ export default function TiptapEditor({
       .focus()
       .run()
   }
-
-  // useEffect(() => {
-  //   if (!editor) return
-
-  //   const updateSelectionInfo = () => {
-  //     const { state, view } = editor
-  //     const selection = state.selection
-  //     const doc = state.doc
-
-  //     const info = {
-  //       from: selection.from,
-  //       to: selection.to,
-  //       empty: selection.empty,
-  //       isNodeSelection: selection instanceof NodeSelection,
-  //       selectedNodeType:
-  //         selection instanceof NodeSelection
-  //           ? selection.node?.type?.name
-  //           : null,
-  //       selectedNodeContent:
-  //         selection instanceof NodeSelection ? selection.node?.content : null,
-  //       focus: view.hasFocus(),
-  //       docType: doc.type,
-  //     }
-
-  //     // console.log('🟡 Selection Info:', info)
-  //   }
-
-  //   editor.on('selectionUpdate', updateSelectionInfo)
-  //   editor.on('focus', updateSelectionInfo)
-  //   editor.on('blur', updateSelectionInfo)
-
-  //   // initial load
-  //   updateSelectionInfo()
-
-  //   return () => {
-  //     editor.off('selectionUpdate', updateSelectionInfo)
-  //     editor.off('focus', updateSelectionInfo)
-  //     editor.off('blur', updateSelectionInfo)
-  //   }
-  // }, [editor])
   return (
     <div className="grid grid-cols-12 gap-4">
       <div className="col-span-10">

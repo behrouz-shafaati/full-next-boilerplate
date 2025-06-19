@@ -1,8 +1,26 @@
 // کامپوننت نمایشی بلاک
 
-import React from 'react';
+import React from 'react'
+import { PageBlock } from '../../types'
 
-export const TextBlock = ({ settings }: { settings: any }) => {
+type TextBlockProps = {
+  blockData: {
+    content: {
+      text: string
+    }
+    type: 'text'
+    settings: {
+      fontSize?: string
+      fontWeight?: string
+      textAlign?: 'left' | 'right' | 'center' | 'justify'
+      color?: string
+      text?: string
+    }
+  } & PageBlock
+} & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
+
+export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
+  const { content, settings } = blockData
   return (
     <p
       style={{
@@ -10,9 +28,11 @@ export const TextBlock = ({ settings }: { settings: any }) => {
         fontWeight: settings.fontWeight || 'normal',
         textAlign: settings.textAlign || 'left',
         color: settings.color || '#000',
+        ...blockData?.styles,
       }}
+      {...props}
     >
-      {settings.text || 'متن پیش‌فرض'}
+      {content.text || 'متن پیش‌فرض'}
     </p>
-  );
-};
+  )
+}

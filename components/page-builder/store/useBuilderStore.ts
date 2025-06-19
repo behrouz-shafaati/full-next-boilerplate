@@ -31,7 +31,10 @@ type State = {
   getJson: () => string
   reorderRows: (sourceId: string, destinationId: string) => void
   updateRowColumns: (rowId: string, layout: string) => void
-  updatePage: (itemId: string, key: string, value: string) => void
+  updatePage: (itemId: string, key: string, value: any) => void
+  selectedBlock: PageBlock | null
+  selectBlock: (block: PageBlock) => void
+  deselectBlock: () => void
 }
 
 export const useBuilderStore = create<State>((set, get) => ({
@@ -213,14 +216,25 @@ export const useBuilderStore = create<State>((set, get) => ({
 
           const updatedBlocks = column.blocks.map((block) => {
             if (block.id === itemId) {
-              // آپدیت بلاک
-              if (key === 'data' && typeof value === 'object') {
+              // آپدیت محتوا
+              if (key === 'content') {
                 return {
                   ...block,
-                  data: {
-                    ...block.data,
-                    [key]: value,
-                  },
+                  content: value,
+                }
+              }
+              // آپدیت استایل
+              if (key === 'styles' && typeof value === 'object') {
+                return {
+                  ...block,
+                  styles: value,
+                }
+              }
+              // آپدیت تنظمیات بلاک
+              if (key === 'settings' && typeof value === 'object') {
+                return {
+                  ...block,
+                  settings: value,
                 }
               }
             }
@@ -239,4 +253,9 @@ export const useBuilderStore = create<State>((set, get) => ({
       }
     }),
   getJson: () => JSON.stringify(get().rows, null, 2),
+  selectedBlock: null,
+  selectBlock: (block) => {
+    set({ selectedBlock: block })
+  },
+  deselectBlock: () => set({ selectedBlock: null }),
 }))

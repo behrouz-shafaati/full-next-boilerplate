@@ -1,38 +1,48 @@
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-import { blockRegistry } from '@/components/page-builder/registry/blockRegistry';
-import { BaseBlock } from '../types';
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+import { blockRegistry } from '@/components/page-builder/registry/blockRegistry'
+import { PageBlock } from '../types'
+import { GripHorizontal } from 'lucide-react'
+import { useBuilderStore } from '../store/useBuilderStore'
 
 type SortableItemProp = {
-  item: BaseBlock,
-  index: number,
+  item: PageBlock
+  index: number
   colId: string
 }
-export default function SortableItem({
-  item,
-  index,
-  colId,
-}: SortableItemProp) {
+export default function SortableItem({ item, index, colId }: SortableItemProp) {
+  const { selectBlock } = useBuilderStore()
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: item.id,
-    });
-  console.log('#@222222:', item);
+    })
+  console.log('#@222222:', item)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
-  };
-  const block = blockRegistry[item.type];
-  const Component = block.Component;
+  }
+  const block = blockRegistry[item.type]
+  const Component = block.Renderer
   return (
     <div
       ref={setNodeRef}
       {...attributes}
-      {...listeners}
       style={style}
-      className="mb-2"
+      className="mb-2 relative group"
     >
-      <Component settings={block.defaultSettings} />
+      <div
+        {...listeners}
+        className="absolute -top-6 left-1/2 -translate-x-1/2 p-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+      >
+        <GripHorizontal className="h-5 w-5 ml-2 text-gray-400 cursor-grab" />
+      </div>
+      <Component
+        blockData={item}
+        onClick={(e) => {
+          e.stopPropagation() // جلوگیری از propagate شدن به document
+          selectBlock(item)
+        }}
+      />
     </div>
-  );
+  )
 }

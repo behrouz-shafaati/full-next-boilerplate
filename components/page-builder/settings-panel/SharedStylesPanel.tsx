@@ -1,53 +1,70 @@
 // پنل تنظیمات عمومی مثل padding, margin
-import React from 'react';
+import Form from '@rjsf/core'
+import validator from '@rjsf/validator-ajv8'
+import { useBuilderStore } from '../store/useBuilderStore'
+import { useDebouncedCallback } from 'use-debounce'
 
-type Props = {
-  styles: any;
-  onChange: (newStyles: any) => void;
-};
+export const publicStylesSchema = {
+  type: 'object',
+  properties: {
+    padding: { type: 'string', title: 'Padding', default: '0px' },
+    margin: { type: 'string', title: 'Margin', default: '0px' },
+    backgroundColor: {
+      type: 'string',
+      title: 'Background color',
+      default: '#ffffff',
+    },
+    'box-shadow': { type: 'string', title: 'Box shadow', default: '' },
+    border: {
+      type: 'string',
+      title: 'Border',
+      enum: [
+        'none',
+        'solid',
+        'dashed',
+        'dotted',
+        'double',
+        'inset',
+        'groove',
+        'outset',
+        'ridge',
+      ],
+      default: 'none',
+    },
+    borderRadius: { type: 'string', title: 'Border radius', default: '0px' },
+  },
+}
 
-export const SharedStylesPanel = ({ styles, onChange }: Props) => {
+export const PublicStylesForm = () => {
+  const { selectedBlock, updatePage } = useBuilderStore()
+  const debouncedUpdate = useDebouncedCallback(
+    (id, key, form) => updatePage(id, key, form),
+    400
+  )
+
+  if (!selectedBlock) return null
+
   return (
-    <div className="flex flex-col gap-2">
-      <label>
-        Padding:
-        <input
-          type="text"
-          value={styles.padding || ''}
-          onChange={(e) => onChange({ ...styles, padding: e.target.value })}
-        />
-      </label>
-
-      <label>
-        Margin:
-        <input
-          type="text"
-          value={styles.margin || ''}
-          onChange={(e) => onChange({ ...styles, margin: e.target.value })}
-        />
-      </label>
-
-      <label>
-        پس‌زمینه:
-        <input
-          type="color"
-          value={styles.backgroundColor || '#ffffff'}
-          onChange={(e) =>
-            onChange({ ...styles, backgroundColor: e.target.value })
-          }
-        />
-      </label>
-
-      <label>
-        Border Radius:
-        <input
-          type="text"
-          value={styles.borderRadius || ''}
-          onChange={(e) =>
-            onChange({ ...styles, borderRadius: e.target.value })
-          }
-        />
-      </label>
-    </div>
-  );
-};
+    <>
+      <Form
+        schema={publicStylesSchema}
+        formData={selectedBlock.styles}
+        validator={validator}
+        onChange={(e) =>
+          debouncedUpdate(selectedBlock.id, 'styles', e.formData)
+        }
+        showErrorList={false}
+        omitExtraData
+        noHtml5Validate
+        liveValidate
+        widgets={{}} // می‌تونی در آینده کاستوم‌سازی کنی
+        templates={{
+          //  حذف دکمه Submit
+          ButtonTemplates: {
+            SubmitButton: () => null,
+          },
+        }}
+      />
+    </>
+  )
+}
