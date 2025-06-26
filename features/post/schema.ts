@@ -4,7 +4,7 @@ import { PostSchema } from './interface'
 const postSchema = new Schema<PostSchema>(
   {
     title: { type: String, required: true },
-    content: { type: String, default: '' },
+    contentJson: { type: String, default: '' },
     status: { type: Number, default: 1 },
     deleted: { type: Boolean, default: false },
   },

@@ -3,15 +3,16 @@ import { useBuilderStore } from '../store/useBuilderStore'
 import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import {
-  closestCorners,
   DndContext,
   DragEndEvent,
   DragStartEvent,
+  MeasuringStrategy,
+  pointerWithin,
 } from '@dnd-kit/core'
 import { useEffect } from 'react'
 import { PageContent } from '../types'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import SortableRow from './SortableRow'
+import SortableRow from '../blocks/row/SortableRow'
 import ToolsSection from './toolsSection'
 import { Button } from '@/components/ui/button'
 import { blockRegistry } from '../registry/blockRegistry'
@@ -23,7 +24,7 @@ type props = {
 export default function PageBuilder({ initialContent }: props) {
   const router = useRouter()
   const {
-    rows,
+    content,
     addRow,
     getJson,
     addElementToColumn,
@@ -36,7 +37,7 @@ export default function PageBuilder({ initialContent }: props) {
   } = useBuilderStore()
 
   const findColumnContainingElement = (elementId: string) => {
-    return rows
+    return content.rows
       .flatMap((row) => row.columns)
       .find((col) => col.blocks.some((el) => el.id === elementId))
   }
@@ -48,6 +49,7 @@ export default function PageBuilder({ initialContent }: props) {
     // set the dragged item in state
     const elementType = active.data.current?.type as 'text' | 'image'
     const id = active.id as string
+    console.log('#000999 elementType: ', active.data.current)
     if (elementType) {
       setActiveElement({
         id,
@@ -57,6 +59,7 @@ export default function PageBuilder({ initialContent }: props) {
     }
   }
   const handleDragEnd = (event: DragEndEvent) => {
+    setActiveElement(null)
     console.log('#87 drag end')
     const { active, over } = event
     if (!over) return
@@ -79,7 +82,7 @@ export default function PageBuilder({ initialContent }: props) {
 
     const sourceCol = findColumnContainingElement(activeId)
     // اگر جابجایی مربوط به ردیف بود
-    if (rows.find((r) => r.id === activeId)) {
+    if (content.rows.find((r) => r.id === activeId)) {
       reorderRows(activeId, overId)
       return
     }
@@ -88,7 +91,9 @@ export default function PageBuilder({ initialContent }: props) {
     if (activeId === 'text-block') {
       const block = blockRegistry[activeData.type]
       // اگر روی ستون خالی انداختیم
-      const column = rows.flatMap((r) => r.columns).find((c) => c.id === overId)
+      const column = content.rows
+        .flatMap((r) => r.columns)
+        .find((c) => c.id === overId)
       console.log('#939 empty Col in new el:', column)
       if (column) {
         addElementToColumn(column.id, {
@@ -114,7 +119,7 @@ export default function PageBuilder({ initialContent }: props) {
     // حالت 2: جابجایی آیتم بین ستون‌ها یا درون یک ستون
     const column =
       findColumnContainingElement(overId) ??
-      rows.flatMap((r) => r.columns).find((col) => col.id === overId)
+      content.rows.flatMap((r) => r.columns).find((col) => col.id === overId)
     console.log('@94 sourceCol:', sourceCol, ' | column:', column)
     if (!sourceCol || !column) return
 
@@ -139,21 +144,21 @@ export default function PageBuilder({ initialContent }: props) {
   }
 
   useEffect(() => {
-    console.log('#665 rows:', rows)
-  }, [rows])
+    console.log('#665 rows:', content.rows)
+  }, [content])
 
   return (
     <>
       <DndContext
         onDragEnd={handleDragEnd}
-        collisionDetection={closestCorners}
+        collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
       >
-        <div className="flex  h-screen w-full overflow-hidden">
+        <div className="flex  h-screen w-full ">
           {/* نوار ابزار */}
-          <aside className="relative h-screen w-80 shrink-0 bg-slate-50">
+          <aside className="relative h-screen w-80 shrink-0 bg-slate-50 overflow-y-auto overflow-x-hidden ">
             <ToolsSection page={initialContent || null} />
-            <div className="absolute bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
+            <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
               <Button>ذخیره</Button>
               <Button
                 type="button"
@@ -165,18 +170,19 @@ export default function PageBuilder({ initialContent }: props) {
             </div>
           </aside>
           {/* ناحیه ساخت صفحه */}
+          <div className="h-screen w-0 -z-50"></div>
           <div
-            className="h-screen flex-1 overflow-y-auto overflow-x-hidden p-2"
+            className="h-screen flex-1 overflow-y-auto rtl:pr-10 ltr:pl-10 "
             onClick={() => {
               deselectBlock()
             }}
           >
             <SortableContext
-              items={rows.map((row) => row.id)}
+              items={content.rows.map((row) => row.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-2">
-                {rows.map((row) => (
+              <div>
+                {content.rows.map((row) => (
                   <SortableRow key={row.id} row={row} />
                 ))}
               </div>

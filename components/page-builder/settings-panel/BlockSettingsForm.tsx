@@ -3,9 +3,12 @@ import validator from '@rjsf/validator-ajv8'
 import { useBuilderStore } from '../store/useBuilderStore'
 import { blockRegistry } from '../registry/blockRegistry'
 import { useDebouncedCallback } from 'use-debounce'
+import { TailwindForm } from '../../rjsf/shadcn-theme'
+import { uiSchema } from '../../rjsf/uiSchema'
 
 export const BlockSettingsForm = () => {
   const { selectedBlock, updatePage } = useBuilderStore()
+
   const debouncedUpdate = useDebouncedCallback(
     (id, key, form) => updatePage(id, key, form),
     400
@@ -20,9 +23,15 @@ export const BlockSettingsForm = () => {
 
   return (
     <>
-      <ContentEditor />
-      <Form
+      {ContentEditor && (
+        <ContentEditor
+          key={`content-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
+        />
+      )}
+      <TailwindForm
+        key={`settings-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
         schema={schema}
+        uiSchema={uiSchema}
         formData={selectedBlock.settings}
         validator={validator}
         onChange={(e) =>

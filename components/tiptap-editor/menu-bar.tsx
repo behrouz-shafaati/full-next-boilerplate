@@ -179,7 +179,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   }
 
   return (
-    <div className="flex flex-row gap-1 py-2 rtl items-center">
+    <div className="flex flex-row gap-1 py-2 rtl items-center max-w-full">
       <ToggleGroup
         type="multiple"
         value={[

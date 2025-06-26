@@ -88,6 +88,7 @@ export default function TiptapEditor({
     <div className="grid grid-cols-12 gap-4">
       <div className="col-span-10">
         <textarea
+          hidden
           value={content}
           name={name}
           className="w-full ltr"

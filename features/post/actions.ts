@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import postCtrl from '@/lib/entity/post/controller'
+import postCtrl from '@/features/post/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 

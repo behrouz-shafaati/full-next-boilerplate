@@ -15,8 +15,8 @@ export default function SortableItem({ item, index, colId }: SortableItemProp) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({
       id: item.id,
+      data: { type: item.type },
     })
-  console.log('#@222222:', item)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -28,11 +28,11 @@ export default function SortableItem({ item, index, colId }: SortableItemProp) {
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className="mb-2 relative group"
+      className="mb-2 relative group/item"
     >
       <div
         {...listeners}
-        className="absolute -top-6 left-1/2 -translate-x-1/2 p-1 z-10 opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute -top-6 left-1/2 -translate-x-1/2 p-1 z-10 opacity-0 group-hover/item:opacity-100 transition-opacity"
       >
         <GripHorizontal className="h-5 w-5 ml-2 text-gray-400 cursor-grab" />
       </div>

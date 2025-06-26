@@ -1,7 +1,7 @@
 // store/useBuilderStore.ts
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
-import { PageBlock, PageColumn, PageRow } from '../types'
+import { PageBlock, PageColumn, PageContent, PageRow } from '../types'
 
 const defaultColumn = () => ({
   id: uuidv4(),
@@ -12,7 +12,7 @@ const defaultColumn = () => ({
 type State = {
   activeElement: PageBlock | null
   setActiveElement: (el: PageBlock | null) => void
-  rows: PageRow[]
+  content: PageContent
   addRow: () => void
   deleteRow: (rowId: string) => void
   addColumn: (rowId: string) => void
@@ -31,67 +31,90 @@ type State = {
   getJson: () => string
   reorderRows: (sourceId: string, destinationId: string) => void
   updateRowColumns: (rowId: string, layout: string) => void
-  updatePage: (itemId: string, key: string, value: any) => void
+  updatePage: (itemId: string | null, key: string, value: any) => void
   selectedBlock: PageBlock | null
   selectBlock: (block: PageBlock) => void
   deselectBlock: () => void
 }
 
 export const useBuilderStore = create<State>((set, get) => ({
+  content: {
+    title: '',
+    rows: [],
+  },
   rows: [],
   activeElement: null,
   setActiveElement: (el) => set(() => ({ activeElement: el })),
   addRow: () =>
     set((state) => ({
-      rows: [
-        ...state.rows,
-        {
-          id: uuidv4(),
-          columns: [defaultColumn(), defaultColumn(), defaultColumn()],
-        },
-      ],
+      content: {
+        ...state.content,
+        rows: [
+          ...state.content.rows,
+          {
+            id: uuidv4(),
+            type: 'row',
+            styles: {},
+            settings: { rowColumns: '4-4-4' },
+            columns: [defaultColumn(), defaultColumn(), defaultColumn()],
+          },
+        ],
+      },
     })),
   deleteRow: (rowId) =>
     set((state) => ({
-      rows: state.rows.filter((row) => row.id != rowId),
+      content: {
+        ...state.content,
+        rows: state.content.rows.filter((row) => row.id != rowId),
+      },
     })),
   addColumn: (rowId) =>
     set((state) => ({
-      rows: state.rows.map((row) =>
-        row.id === rowId
-          ? {
-              ...row,
-              columns: [
-                ...row.columns,
-                { id: uuidv4(), width: 12, blocks: [] },
-              ],
-            }
-          : row
-      ),
+      content: {
+        ...state.content,
+        rows: state.content.rows.map((row) =>
+          row.id === rowId
+            ? {
+                ...row,
+                columns: [
+                  ...row.columns,
+                  { id: uuidv4(), width: 12, blocks: [] },
+                ],
+              }
+            : row
+        ),
+      },
     })),
 
   addElementToColumn: (colId, element) =>
     set((state) => {
-      const row = state.rows.find((r) => r.columns.find((c) => c.id === colId))
+      const row = state.content.rows.find((r) =>
+        r.columns.find((c) => c.id === colId)
+      )
       if (!row) return state
 
       return {
-        rows: state.rows.map((r) =>
-          r.id === row.id
-            ? {
-                ...r,
-                columns: r.columns.map((c) =>
-                  c.id === colId ? { ...c, blocks: [...c.blocks, element] } : c
-                ),
-              }
-            : r
-        ),
+        content: {
+          ...state.content,
+          rows: state.content.rows.map((r) =>
+            r.id === row.id
+              ? {
+                  ...r,
+                  columns: r.columns.map((c) =>
+                    c.id === colId
+                      ? { ...c, blocks: [...c.blocks, element] }
+                      : c
+                  ),
+                }
+              : r
+          ),
+        },
       }
     }),
 
   moveElementWithinColumn: (colId, oldIndex, newIndex) =>
     set((state) => {
-      const newRows = state.rows.map((row) => ({
+      const newRows = state.content.rows.map((row) => ({
         ...row,
         columns: row.columns.map((col) => {
           if (col.id !== colId) return col
@@ -104,14 +127,14 @@ export const useBuilderStore = create<State>((set, get) => ({
         }),
       }))
 
-      return { rows: newRows }
+      return { content: { ...state.content, rows: newRows } }
     }),
 
   moveElementBetweenColumns: (sourceColId, targetColId, elementId, newIndex) =>
     set((state) => {
       let movedElement: PageBlock | undefined
 
-      const updatedRows = state.rows.map((row) => {
+      const updatedRows = state.content.rows.map((row) => {
         return {
           ...row,
           columns: row.columns.map((col) => {
@@ -146,7 +169,7 @@ export const useBuilderStore = create<State>((set, get) => ({
         }
       })
 
-      return { rows: finalRows }
+      return { content: { ...state.content, rows: finalRows } }
     }),
   /**
    *
@@ -155,12 +178,16 @@ export const useBuilderStore = create<State>((set, get) => ({
    */
   reorderRows: (sourceId, destinationId) =>
     set((state) => {
-      const indexFrom = state.rows.findIndex((row) => row.id == sourceId)
-      const indexTo = state.rows.findIndex((row) => row.id === destinationId)
-      const updated = [...state.rows]
+      const indexFrom = state.content.rows.findIndex(
+        (row) => row.id == sourceId
+      )
+      const indexTo = state.content.rows.findIndex(
+        (row) => row.id === destinationId
+      )
+      const updated = [...state.content.rows]
       const [moved] = updated.splice(indexFrom, 1)
       updated.splice(indexTo + (indexFrom < indexTo ? 0 : 0), 0, moved)
-      return { ...state, rows: updated }
+      return { ...state, content: { ...state.content, rows: updated } }
     }),
 
   /**
@@ -172,25 +199,28 @@ export const useBuilderStore = create<State>((set, get) => ({
     const widths = layout.split('-').map(Number)
 
     set((state) => ({
-      rows: state.rows.map((row) => {
-        if (row.id !== rowId) return row
+      content: {
+        ...state.content,
+        rows: state.content.rows.map((row) => {
+          if (row.id !== rowId) return row
 
-        let index = -1
-        // ساخت ستون‌های جدید
-        const newColumns: PageColumn[] = widths.map((width) => {
-          index++
+          let index = -1
+          // ساخت ستون‌های جدید
+          const newColumns: PageColumn[] = widths.map((width) => {
+            index++
+            return {
+              id: uuidv4(),
+              width,
+              blocks: row.columns[index]?.blocks || [], // اگه وجود نداشت، آرایه‌ی خالی
+            }
+          })
+
           return {
-            id: uuidv4(),
-            width,
-            blocks: row.columns[index]?.blocks || [], // اگه وجود نداشت، آرایه‌ی خالی
+            ...row,
+            columns: newColumns,
           }
-        })
-
-        return {
-          ...row,
-          columns: newColumns,
-        }
-      }),
+        }),
+      },
     }))
   },
 
@@ -202,44 +232,56 @@ export const useBuilderStore = create<State>((set, get) => ({
    */
   updatePage: (itemId, key, value) =>
     set((state) => {
-      const updatedRows = state.rows.map((row) => {
+      if (itemId == null) {
+        console.log(key, ':', value)
+        return {
+          content: { ...state.content, [key]: value },
+        }
+      }
+      const updatedRows = state.content.rows.map((row) => {
+        let updatedRow = row
         if (row.id === itemId) {
-          // آپدیت ردیف
-          return { ...row, [key]: value }
+          updatedRow = { ...row, [key]: value }
+          state.selectBlock(updatedRow)
+          return updatedRow
         }
 
         const updatedColumns = row.columns.map((column) => {
+          let updatedColumn = column
           if (column.id === itemId) {
             // آپدیت ستون
-            return { ...column, [key]: value }
+            updatedColumn = { ...column, [key]: value }
+            state.selectBlock(updatedColumn)
+            return updatedColumn
           }
 
           const updatedBlocks = column.blocks.map((block) => {
+            let updatedBlock = block
             if (block.id === itemId) {
               // آپدیت محتوا
               if (key === 'content') {
-                return {
+                updatedBlock = {
                   ...block,
                   content: value,
                 }
               }
               // آپدیت استایل
               if (key === 'styles' && typeof value === 'object') {
-                return {
+                updatedBlock = {
                   ...block,
                   styles: value,
                 }
               }
               // آپدیت تنظمیات بلاک
               if (key === 'settings' && typeof value === 'object') {
-                return {
+                updatedBlock = {
                   ...block,
                   settings: value,
                 }
               }
+              state.selectBlock(updatedBlock)
             }
-
-            return block
+            return updatedBlock
           })
 
           return { ...column, blocks: updatedBlocks }
@@ -249,10 +291,10 @@ export const useBuilderStore = create<State>((set, get) => ({
       })
 
       return {
-        rows: updatedRows,
+        content: { ...state.content, rows: updatedRows },
       }
     }),
-  getJson: () => JSON.stringify(get().rows, null, 2),
+  getJson: () => JSON.stringify(get().content, null, 2),
   selectedBlock: null,
   selectBlock: (block) => {
     set({ selectedBlock: block })

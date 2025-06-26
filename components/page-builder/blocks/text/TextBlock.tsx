@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { PageBlock } from '../../types'
+import { computedStyles } from '../../utils/styleUtils'
 
 type TextBlockProps = {
   blockData: {
@@ -21,6 +22,7 @@ type TextBlockProps = {
 
 export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
   const { content, settings } = blockData
+
   return (
     <p
       style={{
@@ -28,7 +30,7 @@ export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
         fontWeight: settings.fontWeight || 'normal',
         textAlign: settings.textAlign || 'left',
         color: settings.color || '#000',
-        ...blockData?.styles,
+        ...computedStyles(blockData.styles),
       }}
       {...props}
     >

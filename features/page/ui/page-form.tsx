@@ -105,11 +105,14 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="w-full">
+      <div className="block">
+        <PageBuilder initialContent={page} />
+      </div>
+      {/* <form action={dispatch} className="w-full">
         <div className="block">
           <PageBuilder initialContent={page} />
         </div>
-      </form>
+      </form> */}
     </>
   )
 }

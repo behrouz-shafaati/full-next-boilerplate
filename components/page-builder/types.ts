@@ -5,6 +5,9 @@ export type PageContent = {
 
 export type PageRow = {
   id: string // UUID
+  type: 'row'
+  styles: { [key: string]: string }
+  settings: { rowColumns: string }
   columns: PageColumn[]
 }
 
@@ -17,8 +20,17 @@ export type PageColumn = {
 export type PageBlock = {
   id: string // UUID
   // The type is not updatable.
-  type: 'text' | 'image' | 'video' | 'gallery' | 'form' | 'product' | 'custom'
-  content: object
+  type:
+    | 'row'
+    | 'column'
+    | 'text'
+    | 'image'
+    | 'video'
+    | 'gallery'
+    | 'form'
+    | 'product'
+    | 'custom'
+  content?: object
   styles: {
     padding?: string
     margin?: string
@@ -26,7 +38,7 @@ export type PageBlock = {
     borderRadius?: string
     [key: string]: any
   }
-  settings: {
+  settings?: {
     [key: string]: any
   }
   children?: PageBlock[]

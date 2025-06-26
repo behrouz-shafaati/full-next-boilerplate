@@ -1,6 +1,6 @@
 'use client'
 import * as z from 'zod'
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,21 +14,19 @@ import {
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
-import { useFormState } from 'react-dom'
-import { createPost, deletePost, updatePost } from '@/lib/entity/post/actions'
-import Text from '../form-fields/text'
-import { SubmitButton } from '../form-fields/submit-button'
-import { Option } from '../form-fields/combobox'
-import { AlertModal } from '../modal/alert-modal'
-import ProfileUpload from '../form-fields/profile-upload'
-import Combobox from '../form-fields/combobox'
-import { Post } from '@/lib/entity/post/interface'
+import { useToast } from '../../../components/ui/use-toast'
+import { createPost, deletePost, updatePost } from '@/features/post/actions'
+import Text from '../../../components/form-fields/text'
+import { SubmitButton } from '../../../components/form-fields/submit-button'
+import { Option } from '../../../components/form-fields/combobox'
+import { AlertModal } from '../../../components/modal/alert-modal'
+import ProfileUpload from '../../../components/form-fields/profile-upload'
+import Combobox from '../../../components/form-fields/combobox'
+import { Post } from '@/features/post/interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
-import FileUpload from '../form-fields/file-upload'
-import Select from '../form-fields/select'
-import TiptapEditor from '../tiptap-editor'
+import FileUpload from '../../../components/form-fields/file-upload'
+import Select from '../../../components/form-fields/select'
+import TiptapEditor from '@/components/tiptap-editor'
 
 const formSchema = z.object({
   title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
@@ -44,7 +42,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   const actionHandler = post
     ? updatePost.bind(null, String(post.id))
     : createPost
-  const [state, dispatch] = useFormState(actionHandler as any, initialState)
+  const [state, dispatch] = useActionState(actionHandler as any, initialState)
 
   const params = useParams()
   const router = useRouter()
@@ -91,6 +89,12 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
       })
   }, [state])
 
+  // const defaultC = JSON.parse(
+  //   '{"contentJson":{"type":"doc","content":[{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"سلام"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"s"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"خوبی"}]}]}}'
+  // )
+
+  // console.log('@33 post contentJson: ', post?.contentJson)
+  // console.log('@34 post contentJson: ', defaultC?.contentJson)
   return (
     <>
       <AlertModal
@@ -117,27 +121,37 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
         {/* Product Media image */}
         <section className="mt-2 rounded-md  p-4 md:mt-0 md:p-6"></section>
         <div className="md:grid md:grid-cols-3 gap-8">
-          {/* Title */}
-          <Text
-            title="عنوان"
-            name="title"
-            defaultValue={post?.title || ''}
-            placeholder="عنوان"
-            state={state}
-            icon={<PostIcon className="w-4 h-4" />}
-          />
-          {/* content */}
-          <TiptapEditor name="content" defaultContent="سلام" />
-          {/* status */}
-          <Select
-            title="وضعیت"
-            name="status"
-            defaultValue={statusDefaultValue}
-            options={statusOptions}
-            placeholder="وضعیت"
-            state={state}
-            icon={<MailIcon className="w-4 h-4" />}
-          />
+          <div className="col-span-3">
+            {/* Title */}
+            <Text
+              title="عنوان"
+              name="title"
+              defaultValue={post?.title || ''}
+              placeholder="عنوان"
+              state={state}
+              icon={<PostIcon className="w-4 h-4" />}
+            />
+          </div>
+
+          <div className="col-span-3">
+            {/* contentJson */}
+            <TiptapEditor
+              name="contentJson"
+              defaultContent={post?.contentJson}
+            />
+          </div>
+          <div className="">
+            {/* status */}
+            <Select
+              title="وضعیت"
+              name="status"
+              defaultValue={statusDefaultValue}
+              options={statusOptions}
+              placeholder="وضعیت"
+              state={state}
+              icon={<MailIcon className="w-4 h-4" />}
+            />
+          </div>
         </div>
         <SubmitButton />
       </form>

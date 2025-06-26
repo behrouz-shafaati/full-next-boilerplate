@@ -15,6 +15,11 @@ export const textBlockSchema = {
       enum: ['left', 'center', 'right', 'justify'],
       default: 'center',
     },
-    color: { type: 'string', title: 'رنگ', default: '#000000' },
+    color: {
+      type: 'string',
+      title: 'رنگ',
+      default: '#000000',
+      'ui:widget': 'ColorWidget', // 👈 از ویجت اختصاصی رنگ استفاده کن
+    },
   },
 }

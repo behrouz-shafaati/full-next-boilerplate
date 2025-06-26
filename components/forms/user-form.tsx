@@ -1,10 +1,8 @@
-'use client';
-import * as z from 'zod';
-import { useEffect, useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
-import { useParams, useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+'use client'
+import * as z from 'zod'
+import { useActionState, useEffect, useState } from 'react'
+import { useParams, useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
 import {
   User as UserIcon,
   Mail as MailIcon,
@@ -12,35 +10,18 @@ import {
   ShieldQuestionIcon,
   KeyRound,
   Trash,
-} from 'lucide-react';
-import {
-  Form,
-  FormControl,
-  FormDescription,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+} from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
-import { Heading } from '@/components/ui/heading';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../ui/use-toast';
-import roleCtrl from '@/lib/entity/role/controller';
-import { useFormState } from 'react-dom';
-import { createUser, deleteUser, updateUser } from '@/lib/entity/user/actions';
-import Text from '../form-fields/text';
-import { SubmitButton } from '../form-fields/submit-button';
-import MultipleSelector, { Option } from '../form-fields/multiple-selector';
-import { AlertModal } from '../modal/alert-modal';
-import ProfileUpload from '../form-fields/profile-upload';
+import { useToast } from '../ui/use-toast'
+import roleCtrl from '@/lib/entity/role/controller'
+import { createUser, deleteUser, updateUser } from '@/lib/entity/user/actions'
+import Text from '../form-fields/text'
+import { SubmitButton } from '../form-fields/submit-button'
+import MultipleSelector, { Option } from '../form-fields/multiple-selector'
+import { AlertModal } from '../modal/alert-modal'
+import ProfileUpload from '../form-fields/profile-upload'
 // import FileUpload from "../file-upload";
 const ImgSchema = z.object({
   fileName: z.string(),
@@ -51,8 +32,8 @@ const ImgSchema = z.object({
   key: z.string(),
   fileUrl: z.string(),
   url: z.string(),
-});
-export const IMG_MAX_LIMIT = 3;
+})
+export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
   name: z.string().min(3, { message: 'نام معتبر وارد کنید' }),
   imgUrl: z
@@ -64,42 +45,40 @@ const formSchema = z.object({
     .min(3, { message: 'Product description must be at least 3 characters' }),
   price: z.coerce.number(),
   category: z.string().min(1, { message: 'Please select a category' }),
-});
+})
 
-type ProductFormValues = z.infer<typeof formSchema>;
+type ProductFormValues = z.infer<typeof formSchema>
 
 interface ProductFormProps {
-  initialData: any | null;
+  initialData: any | null
 }
 
 export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
-  const initialState = { message: null, errors: {} };
+  const initialState = { message: null, errors: {} }
   const actionHandler = user
     ? updateUser.bind(null, String(user.id))
-    : createUser;
-  const [state, dispatch] = useFormState(actionHandler as any, initialState);
+    : createUser
+  const [state, dispatch] = useActionState(actionHandler as any, initialState)
   const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
     label: role.title,
     value: role.slug,
-  }));
+  }))
 
-  const params = useParams();
-  const router = useRouter();
-  const { toast } = useToast();
-  const [open, setOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [imgLoading, setImgLoading] = useState(false);
-  const title = user ? 'ویرایش کاربر' : 'افزودن کاربر';
-  const description = user ? 'ویرایش یک کاربر' : 'افزودن یک کاربر';
-  const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد';
-  const action = user ? 'ذخیره تغییرات' : 'ذخیره';
+  const { toast } = useToast()
+  const [open, setOpen] = useState(false)
+  const [loading, setLoading] = useState(false)
+  const [imgLoading, setImgLoading] = useState(false)
+  const title = user ? 'ویرایش کاربر' : 'افزودن کاربر'
+  const description = user ? 'ویرایش یک کاربر' : 'افزودن یک کاربر'
+  const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد'
+  const action = user ? 'ذخیره تغییرات' : 'ذخیره'
 
   const onDelete = async () => {
     try {
-      setLoading(true);
-      DeleteUser(user?.id);
+      setLoading(true)
+      DeleteUser(user?.id)
     } catch (error: any) {}
-  };
+  }
 
   useEffect(() => {
     if (state.message && state.message !== null)
@@ -107,8 +86,8 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
         variant: 'destructive',
         title: '',
         description: state.message,
-      });
-  }, [state]);
+      })
+  }, [state])
 
   return (
     <>
@@ -198,10 +177,10 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
         <SubmitButton />
       </form>
     </>
-  );
-};
+  )
+}
 
 export function DeleteUser(id: string) {
-  const deleteUserWithId = deleteUser.bind(null, id);
-  deleteUserWithId();
+  const deleteUserWithId = deleteUser.bind(null, id)
+  deleteUserWithId()
 }

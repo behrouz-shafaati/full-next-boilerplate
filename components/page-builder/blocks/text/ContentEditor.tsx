@@ -10,6 +10,7 @@ export const ContentEditor = ({ initialData }: Props) => {
   const { selectedBlock, updatePage } = useBuilderStore()
   return (
     <textarea
+      key={`text-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
       defaultValue={selectedBlock?.content.text}
       name="content"
       className="w-full ltr"

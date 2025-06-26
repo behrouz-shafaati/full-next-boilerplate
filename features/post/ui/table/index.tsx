@@ -1,7 +1,7 @@
 import { DataTable } from '@/components/ui/data-table'
 import { Heading } from '@/components/ui/heading'
 import { LinkButton } from '@/components/ui/link-button'
-import PostCtrl from '@/lib/entity/post/controller'
+import PostCtrl from '@/features/post/controller'
 import { Category } from '@/lib/entity/category/interface'
 import { Plus } from 'lucide-react'
 import { columns } from './columns'

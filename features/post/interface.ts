@@ -12,7 +12,7 @@ type PostBase = {
   /**
    * توضیحات مربوط به مطلب
    */
-  content: string
+  contentJson: string
 
   /**
    * وضعیت فعال بودن مطلب (در صورت فعال بودن true)
