@@ -231,6 +231,11 @@ const FileUpload = forwardRef(function FileUpload(
     clearFiles: () => setFiles([]),
   }))
 
+  const makeIdsClean = () => {
+    if (maxFiles == 1) return files[0]?.id
+    return JSON.stringify(files.map((file) => file.id))
+  }
+
   return (
     <>
       <div>
@@ -239,7 +244,7 @@ const FileUpload = forwardRef(function FileUpload(
         <textarea
           name={name}
           className="hidden"
-          value={JSON.stringify(files.map((file) => file.id))}
+          value={makeIdsClean()}
           readOnly
         />
         {/* Dropzone */}

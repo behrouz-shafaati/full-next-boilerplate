@@ -57,9 +57,7 @@ export default function TiptapEditor({
     content: defaultContent,
     onUpdate({ editor }) {
       const json = editor?.getJSON()
-      const text = JSON.stringify({
-        contentJson: json,
-      })
+      const text = JSON.stringify(json)
       SetContent(text)
       onChange?.(text)
     },
@@ -76,7 +74,7 @@ export default function TiptapEditor({
         attrs: {
           src: fileDetails.url,
           alt: fileDetails.alt,
-          title: String(fileDetails.id),
+          title: String(fileDetails.id), // Image Id saved as title
           id: String(fileDetails.id),
         },
       })

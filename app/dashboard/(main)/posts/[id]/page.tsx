@@ -44,9 +44,7 @@ export default async function Page({ params }: PageProps) {
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <PostForm
-          initialData={{ ...post, contentJson: defaultC.contentJson }}
-        />
+        <PostForm initialData={post} />
       </div>
     </ScrollArea>
   )

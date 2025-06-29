@@ -1,32 +1,31 @@
-'use client';
-import { DeleteCategory } from '@/components/forms/category-form';
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
+'use client'
+import { DeletePost } from '../post-form'
+import { AlertModal } from '@/components/modal/alert-modal'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Category } from '@/lib/entity/category/interface';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from '@/components/ui/dropdown-menu'
+import { Post } from '../../interface'
+import { Edit, MoreHorizontal, Trash } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface CellActionProps {
-  data: Category;
+  data: Post
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   const onConfirm = async () => {
-    setLoading(true);
-    DeleteCategory(data.id);
-  };
+    setLoading(true)
+    DeletePost(data.id)
+  }
 
   return (
     <>
@@ -47,7 +46,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
 
           <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/categories/${data.id}`)}
+            onClick={() => router.push(`/dashboard/posts/${data.id}`)}
           >
             <Edit className="ml-2 h-4 w-4" /> بروزرسانی
           </DropdownMenuItem>
@@ -57,5 +56,5 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuContent>
       </DropdownMenu>
     </>
-  );
-};
+  )
+}

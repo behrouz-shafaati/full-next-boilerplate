@@ -4,11 +4,17 @@ import { z } from 'zod'
 import postCtrl from '@/features/post/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import {
+  extractExcerptFromContentJson,
+  generateExcerpt,
+  generateUniqueSlug,
+} from './utils'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
-  content: z.string({}),
+  contentJson: z.string({}),
   status: z.string({}),
+  image: z.string().nullable(),
 })
 
 export type State = {
@@ -40,7 +46,13 @@ export async function createPost(prevState: State, formData: FormData) {
 
   try {
     // Create the post
-    await postCtrl.create({ params: validatedFields.data })
+    const postPayload = validatedFields.data
+    const excerpt = extractExcerptFromContentJson(postPayload.contentJson, 25)
+    const slug = await generateUniqueSlug(postPayload.title)
+    const image = postPayload.image || null
+    const params = { ...postPayload, excerpt, slug, image }
+    console.log('#887 params:', params)
+    await postCtrl.create({ params })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {

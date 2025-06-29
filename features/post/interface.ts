@@ -10,9 +10,24 @@ type PostBase = {
   title: string
 
   /**
+   * خلاصه‌ای از متن پست
+   */
+  excerpt: string
+
+  /**
    * توضیحات مربوط به مطلب
    */
   contentJson: string
+
+  /**
+   * تصویر پست
+   */
+  image?: string
+
+  /**
+   * آدرس یکتای پست
+   */
+  slug: string
 
   /**
    * وضعیت فعال بودن مطلب (در صورت فعال بودن true)

@@ -70,6 +70,13 @@ class controller extends baseController {
     console.log('#3323 payload:', payload)
     return super.findOneAndUpdate(payload)
   }
+
+  async existSlug(slug: string): Promise<boolean> {
+    const count = await this.countAll({ slug })
+    console.log('#7736 post count: ', count)
+    if (count > 0) return true
+    return false
+  }
 }
 
 const postCtrl = new controller(new postService(postSchema))

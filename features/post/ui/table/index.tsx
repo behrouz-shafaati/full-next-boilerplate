@@ -2,19 +2,19 @@ import { DataTable } from '@/components/ui/data-table'
 import { Heading } from '@/components/ui/heading'
 import { LinkButton } from '@/components/ui/link-button'
 import PostCtrl from '@/features/post/controller'
-import { Category } from '@/lib/entity/category/interface'
 import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { Post } from '../../interface'
 
-interface CategoriesTableProps {
+interface PostTableProps {
   query: string
   page: number
 }
 
-export default async function PostTable({ query, page }: CategoriesTableProps) {
-  const findResult: QueryResponse<Category> = await PostCtrl.find({
+export default async function PostTable({ query, page }: PostTableProps) {
+  const findResult: QueryResponse<Post> = await PostCtrl.find({
     filters: { query },
     pagination: { page, perPage: 6 },
   })

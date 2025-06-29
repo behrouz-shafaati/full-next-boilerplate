@@ -137,7 +137,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
             {/* contentJson */}
             <TiptapEditor
               name="contentJson"
-              defaultContent={post?.contentJson}
+              defaultContent={post ? JSON.parse(post?.contentJson) : {}}
             />
           </div>
           <div className="">
@@ -151,6 +151,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
               state={state}
               icon={<MailIcon className="w-4 h-4" />}
             />
+            <FileUpload name="image" title="پوستر مطلب" maxFiles={1} />
           </div>
         </div>
         <SubmitButton />
