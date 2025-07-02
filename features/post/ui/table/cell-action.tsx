@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Post } from '../../interface'
-import { Edit, MoreHorizontal, Trash } from 'lucide-react'
+import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
@@ -45,6 +45,9 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="start">
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
 
+          <DropdownMenuItem onClick={() => router.push(`/blog/${data.slug}`)}>
+            <Eye className="ml-2 h-4 w-4" /> مشاهده
+          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/posts/${data.id}`)}
           >

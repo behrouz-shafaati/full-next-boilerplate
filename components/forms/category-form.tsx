@@ -42,7 +42,7 @@ const ImgSchema = z.object({
   fileKey: z.string(),
   key: z.string(),
   fileUrl: z.string(),
-  url: z.string(),
+  src: z.string(),
 })
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({

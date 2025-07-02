@@ -43,7 +43,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
     ? updatePost.bind(null, String(post.id))
     : createPost
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
-
+  console.log('#298 post in form: ', post)
   const params = useParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -94,7 +94,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   // )
 
   // console.log('@33 post contentJson: ', post?.contentJson)
-  // console.log('@34 post contentJson: ', defaultC?.contentJson)
+  console.log('@34 post?.image: ', post?.image)
   return (
     <>
       <AlertModal
@@ -119,7 +119,6 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
       {/* <Separator /> */}
       <form action={dispatch} className="space-y-8 w-full">
         {/* Product Media image */}
-        <section className="mt-2 rounded-md  p-4 md:mt-0 md:p-6"></section>
         <div className="md:grid md:grid-cols-3 gap-8">
           <div className="col-span-3">
             {/* Title */}
@@ -151,7 +150,12 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
               state={state}
               icon={<MailIcon className="w-4 h-4" />}
             />
-            <FileUpload name="image" title="پوستر مطلب" maxFiles={1} />
+            <FileUpload
+              name="image"
+              title="پوستر مطلب"
+              maxFiles={1}
+              defaultValues={post?.image || null}
+            />
           </div>
         </div>
         <SubmitButton />

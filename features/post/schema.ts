@@ -5,6 +5,12 @@ const postSchema = new Schema<PostSchema>(
   {
     title: { type: String, required: true },
     excerpt: { type: String, default: '' },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      required: true,
+    },
     image: {
       type: Schema.Types.ObjectId,
       ref: 'file',
@@ -27,10 +33,12 @@ const statusMap: any = {
 postSchema
   .pre('findOne', function (next: any) {
     this.populate('image')
+    this.populate('user')
     next()
   })
   .pre('find', function (next: any) {
     this.populate('image')
+    this.populate('user')
     next()
   })
 

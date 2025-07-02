@@ -15,20 +15,24 @@ import { useRef, useState } from 'react'
 
 import styles from './editor.module.css'
 import MenuBar from './menu-bar'
+import { CustomImage } from './extensions/CustomImage'
 
 interface TiptapEditor {
   name: string
-  defaultContent?: string
+  defaultContent?: { [key: string]: any }
   onChange?: (content: string) => void
 }
 
 export default function TiptapEditor({
   name,
-  defaultContent = '',
+  defaultContent = {},
   onChange,
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
+  const defaultFiles = defaultContent?.content
+    ?.filter((block: any) => block.type === 'image')
+    .map((block: any) => block.attrs)
   const editor: any = useEditor({
     extensions: [
       StarterKit.configure({
@@ -53,6 +57,7 @@ export default function TiptapEditor({
           fileUploadRef.current?.removeFileById(id)
         },
       }),
+      CustomImage,
     ],
     content: defaultContent,
     onUpdate({ editor }) {
@@ -72,7 +77,7 @@ export default function TiptapEditor({
       .insertContentAt(pos, {
         type: 'image',
         attrs: {
-          src: fileDetails.url,
+          src: fileDetails.src,
           alt: fileDetails.alt,
           title: String(fileDetails.id), // Image Id saved as title
           id: String(fileDetails.id),
@@ -86,7 +91,6 @@ export default function TiptapEditor({
     <div className="grid grid-cols-12 gap-4">
       <div className="col-span-10">
         <textarea
-          hidden
           value={content}
           name={name}
           className="w-full ltr"
@@ -109,6 +113,7 @@ export default function TiptapEditor({
           responseHnadler={responseFileUploadHandler}
           ref={fileUploadRef}
           showDeleteButton={false}
+          defaultValues={defaultFiles}
         />
       </div>
     </div>

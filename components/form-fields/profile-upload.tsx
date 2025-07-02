@@ -1,15 +1,15 @@
 /* Create public/uploads/tmp directory. */
 
-'use client';
-import Image from 'next/image';
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { CameraIcon, TrashIcon } from 'lucide-react';
-import clsx from 'clsx';
-import { deleteFile, uploadFile } from '@/lib/entity/file/actions';
-import { File as BeFile } from '@/lib/entity/file/interface';
-import { Button } from '../ui/button';
-const ObjectId = require('bson-objectid');
+'use client'
+import Image from 'next/image'
+import { useState } from 'react'
+import { useDropzone } from 'react-dropzone'
+import { CameraIcon, TrashIcon } from 'lucide-react'
+import clsx from 'clsx'
+import { deleteFile, uploadFile } from '@/lib/entity/file/actions'
+import { File as BeFile } from '@/lib/entity/file/interface'
+import { Button } from '../ui/button'
+const ObjectId = require('bson-objectid')
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
 export default function ProfileUpload({
@@ -19,20 +19,20 @@ export default function ProfileUpload({
   defaultValue = null,
   state,
 }: {
-  className?: string;
-  title: string;
-  name: string;
-  defaultValue?: BeFile | null;
-  state?: any;
+  className?: string
+  title: string
+  name: string
+  defaultValue?: BeFile | null
+  state?: any
 }) {
-  const defaultImageUrl = '/assets/default-profile.png';
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
+  const defaultImageUrl = '/assets/default-profile.png'
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
 
-  const [file, setFile] = useState<any>(defaultValue);
+  const [file, setFile] = useState<any>(defaultValue)
 
   const onDrop = (acceptedFiles: File[]) => {
-    let firstImage = true;
+    let firstImage = true
     if (acceptedFiles?.length) {
       const newFiles = acceptedFiles.map((file) =>
         Object.assign(file, {
@@ -43,31 +43,31 @@ export default function ProfileUpload({
           alt: '',
           description: '',
         })
-      );
+      )
 
-      setFile(newFiles[0]);
-      console.log('#230 onDrop:', newFiles);
+      setFile(newFiles[0])
+      console.log('#230 onDrop:', newFiles)
       for (const file of newFiles) {
-        submitFile(file);
+        submitFile(file)
       }
     }
-  };
+  }
 
   const submitFile = async (file: any) => {
-    const formData = new FormData();
+    const formData = new FormData()
 
-    formData.append('file', file);
-    formData.append('id', file.id);
-    formData.append('title', file.title);
-    formData.append('alt', file.alt);
-    formData.append('description', file.description);
-    formData.append('main', file.main);
+    formData.append('file', file)
+    formData.append('id', file.id)
+    formData.append('title', file.title)
+    formData.append('alt', file.alt)
+    formData.append('description', file.description)
+    formData.append('main', file.main)
 
-    console.log('#290 formData:', formData);
-    const data = await uploadFile(formData);
+    console.log('#290 formData:', formData)
+    const data = await uploadFile(formData)
 
-    console.log(data);
-  };
+    console.log(data)
+  }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -75,12 +75,12 @@ export default function ProfileUpload({
     },
     maxSize: 6 * 1024 * 1000, // 6 MB
     onDrop,
-  });
+  })
 
   const removeFile = () => {
-    deleteFile(file.id);
-    setFile(null);
-  };
+    deleteFile(file.id)
+    setFile(null)
+  }
   return (
     <>
       {/* Preview */}
@@ -96,7 +96,7 @@ export default function ProfileUpload({
         <div className="w-[74px] h-[74px] relative">
           {/* Accepted files */}
           <Image
-            src={file?.preview || file?.url || defaultImageUrl}
+            src={file?.preview || file?.src || defaultImageUrl}
             alt={file?.name || file?.alt || defaultImageUrl}
             width={100}
             height={100}
@@ -142,5 +142,5 @@ export default function ProfileUpload({
         )}
       </section>
     </>
-  );
+  )
 }

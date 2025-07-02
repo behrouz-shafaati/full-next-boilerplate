@@ -45,14 +45,14 @@ class controller extends c_controller {
 
   async generateDirectory(
     fileType: string
-  ): Promise<{ url: string; patch: string }> {
+  ): Promise<{ src: string; patch: string }> {
     const yearNumber = new Date().getFullYear()
     const monthNumber = new Date().getMonth()
     const dayNumber = new Date().getDate()
-    const url = `/uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
+    const src = `/uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
     const patch = `./public/uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
     await createDir(patch)
-    return { url, patch }
+    return { src, patch }
   }
 
   async saveFileInDirectory(buffer: Uint8Array, patch: string) {
@@ -91,7 +91,7 @@ class controller extends c_controller {
     const buffer = new Uint8Array(arrayBuffer)
 
     let previewPath: string = ''
-    let url: string = ''
+    let src: string = ''
     let patch: string = ''
     let tmpPath: string = `./public/uploads/tmp`
 
@@ -106,7 +106,7 @@ class controller extends c_controller {
     if (mimeType == 'image/jpeg' || mimeType == 'image/png') {
       const directory = await this.generateDirectory('images')
       patch = directory.patch
-      url = directory.url
+      src = directory.src
 
       // await sharp(req.files["file"][0].path)
       //   .resize(750, 750, {
@@ -122,14 +122,14 @@ class controller extends c_controller {
       //     type: "stream",
       //   });
       //   // console.log(response.data);
-      //   url = response.data.link;
+      //   src = response.data.link;
       //   fs.unlinkSync(filePath);
       // }
       // fs.unlinkSync(req.files["file"][0].path);
     }
     // for svg
     else if (mimeType == 'image/svg+xml') {
-      const { url: url, patch: patch } = await this.generateDirectory('images')
+      const { src: src, patch: patch } = await this.generateDirectory('images')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
       //     filePath = path.resolve(directory, file);
       //   let oldPath = req.files['file'][0].path;
@@ -140,7 +140,7 @@ class controller extends c_controller {
 
     // for movies
     else if (mimeType == 'video/mp4') {
-      const { url: url, patch: patch } = await this.generateDirectory('movies')
+      const { src: src, patch: patch } = await this.generateDirectory('movies')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
 
       //   filePath = path.resolve(directory, file);
@@ -166,7 +166,7 @@ class controller extends c_controller {
       mimeType == 'audio/mp4' ||
       mimeType == 'audio/webm'
     ) {
-      const { url: url, patch: patch } = await this.generateDirectory('audios')
+      const { src: src, patch: patch } = await this.generateDirectory('audios')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
 
       //   filePath = path.resolve(directory, file);
@@ -187,7 +187,7 @@ class controller extends c_controller {
           fileName.substr(0, fileName.lastIndexOf('.')) + '.png'
         title = jpegFileName
         const goalFilePath = path.resolve(patch, jpegFileName)
-        url = `${url}/${jpegFileName}`
+        src = `${src}/${jpegFileName}`
         patch = `${patch}/${jpegFileName}`
         // reduce size
         await sharp(tmpFilePath)
@@ -209,7 +209,7 @@ class controller extends c_controller {
       params: {
         _id,
         title,
-        url,
+        src,
         patch,
         mimeType: 'image/png',
         fileSize,

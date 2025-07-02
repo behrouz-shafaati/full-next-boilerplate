@@ -1,6 +1,7 @@
 import Authorization from '@/components/HOC/authorization'
 import Header from '@/components/layout/dashboard/header'
 import Sidebar from '@/components/layout/dashboard/sidebar'
+import { ScrollArea } from '@/components/ui/scroll-area'
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -20,9 +21,9 @@ export default function DashboardLayout({
   return (
     <>
       <Header />
-      <div className="flex h-screen">
+      <ScrollArea className="h-full">
         <main className="w-full pt-16">{children}</main>
-      </div>
+      </ScrollArea>
     </>
   )
 }

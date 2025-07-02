@@ -9,7 +9,7 @@ type Props = {
 
 const PostCard = ({ post, variant = 'Vertical' }: Props) => {
   const cardProps = {
-    imageUrl: post?.image?.url,
+    imageUrl: post?.image?.src,
     title: post.title,
     excerpt: post.excerpt,
     slug: post.slug,

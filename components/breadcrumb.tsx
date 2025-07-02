@@ -3,7 +3,7 @@ import { ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 
-type BreadCrumbType = {
+export type BreadCrumbType = {
   title: string
   link: string
 }

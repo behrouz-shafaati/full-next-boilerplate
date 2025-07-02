@@ -1,4 +1,6 @@
 import postCtrl from './controller'
+const jalaali = require('jalaali-js')
+import readingTime from 'reading-time'
 
 /**
  * تبدیل عنوان به اسلاگ خوانا
@@ -70,4 +72,17 @@ export function extractExcerptFromContentJson(
     console.error('خطا در پردازش contentJson:', err)
     return ''
   }
+}
+
+export function formatToJalali(dateString: string): string {
+  const date = new Date(dateString)
+  const { jy, jm, jd } = jalaali.toJalaali(date)
+  const pad = (n: number) => n.toString().padStart(2, '0')
+  return `${jy}/${pad(jm)}/${pad(jd)}`
+}
+
+export function getReadingTime(text: string): string {
+  const stats = readingTime(text)
+  console.log('#00 99 stats: ', stats)
+  return stats.text // مثل "3 دقیقه"
 }

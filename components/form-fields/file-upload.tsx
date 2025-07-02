@@ -67,6 +67,7 @@ const FileUpload = forwardRef(function FileUpload(
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
 ) {
+  defaultValues = defaultValues == null ? [] : defaultValues
   const { toast } = useToast()
   if (!Array.isArray(defaultValues)) {
     defaultValues = [defaultValues]
@@ -148,15 +149,17 @@ const FileUpload = forwardRef(function FileUpload(
 
     // Context from Function app/lib/entity/file/actions.ts:updateFileDetails
     // save file details
-    const filesDetails: FileDetailsPayload[] = files.map((file) => {
-      return {
-        id: file.id,
-        title: file.title,
-        alt: file.alt,
-        description: file.description,
-        main: file.main,
-      }
-    })
+    const filesDetails: FileDetailsPayload[] = files
+      .filter((file) => file?.id)
+      .map((file) => {
+        return {
+          id: file.id,
+          title: file.title,
+          alt: file.alt,
+          description: file.description,
+          main: file.main,
+        }
+      })
 
     updateFileDetails(filesDetails)
   }, [files])
@@ -275,23 +278,25 @@ const FileUpload = forwardRef(function FileUpload(
                 key={index}
                 className="max-h-20 h-22 group relative rounded-md min-h-12"
               >
-                <Image
-                  src={file?.preview || file?.url}
-                  alt={file?.name || file?.alt}
-                  width={100}
-                  height={100}
-                  //   onLoad={() => {
-                  //     URL.revokeObjectURL(file.preview);
-                  //   }}
-                  className={clsx(
-                    'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
-                    { 'border-2 border-blue-500': file.main }
-                  )}
-                  onClick={() => {
-                    setSelectedFileIndex(index)
-                    setIsModalOpen(true)
-                  }}
-                />
+                {file?.src && (
+                  <Image
+                    src={file?.preview || file?.src}
+                    alt={file?.name || file?.alt}
+                    width={100}
+                    height={100}
+                    //   onLoad={() => {
+                    //     URL.revokeObjectURL(file.preview);
+                    //   }}
+                    className={clsx(
+                      'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
+                      { 'border-2 border-blue-500': file?.main }
+                    )}
+                    onClick={() => {
+                      setSelectedFileIndex(index)
+                      setIsModalOpen(true)
+                    }}
+                  />
+                )}
                 {showDeleteButton && (
                   <button
                     type="button"
@@ -306,7 +311,7 @@ const FileUpload = forwardRef(function FileUpload(
                     name="main"
                     type="checkBox"
                     className="mr-1"
-                    checked={file.main}
+                    checked={file?.main}
                     onChange={(e) => handleCheckMainFile(e, index)}
                   />
                   <span className="mr-2">اصلی</span>
@@ -362,7 +367,7 @@ const ModalContent = ({
       <div>
         <div className="relative h-24 ">
           <Image
-            src={file?.preview || file?.url}
+            src={file?.preview || file?.src}
             alt={file.name}
             width={100}
             height={100}

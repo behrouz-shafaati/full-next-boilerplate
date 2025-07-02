@@ -1,5 +1,6 @@
 import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
+import fileCtrl from '@/lib/entity/file/controller'
 import postSchema from './schema'
 import postService from './service'
 
@@ -57,7 +58,6 @@ class controller extends baseController {
     payload.filters = this.standardizationFilters(payload.filters)
     console.log('#3034 payload:', payload)
     const result = await super.find(payload)
-    console.log('#3035 payload result:', result)
     return result
   }
 
@@ -76,6 +76,21 @@ class controller extends baseController {
     console.log('#7736 post count: ', count)
     if (count > 0) return true
     return false
+  }
+
+  async setFileData(contentJson: any) {
+    const content = JSON.parse(contentJson)
+    const contentJsonSetedFileData = await Promise.all(
+      content?.content?.map(async (block: any) => {
+        if (block.type === 'image') {
+          const image = block.attrs
+          const imageFileData = await fileCtrl.findById({ id: image.id })
+          return { type: 'image', attrs: imageFileData }
+        }
+        return block
+      })
+    )
+    return { type: 'doc', content: contentJsonSetedFileData }
   }
 }
 

@@ -1,10 +1,7 @@
 import React from 'react'
 import postCtrl from '@/features/post/controller'
 import { notFound } from 'next/navigation'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { BreadCrumb } from '@/components/breadcrumb'
-import { slugify } from '@/features/post/utils'
-import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
+import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 
 interface PageProps {
   params: Promise<{ slug: string }>
@@ -28,12 +25,5 @@ export default async function Page({ params }: PageProps) {
   }
 
   const breadcrumbItems = [{ title: 'بلاگ', link: '/blog' }, pageBreadCrumb]
-  return (
-    <ScrollArea className="h-full max-w-4xl m-auto text-justify">
-      <div className="flex-1 space-y-4 p-5">
-        <BreadCrumb items={breadcrumbItems} />
-      </div>
-      <RenderedHtml contentJson={post.contentJson} />
-    </ScrollArea>
-  )
+  return <DefaultSinglePageBlog post={post} breadcrumbItems={breadcrumbItems} />
 }

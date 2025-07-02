@@ -9,6 +9,8 @@ import {
   generateExcerpt,
   generateUniqueSlug,
 } from './utils'
+import { getSession } from '@/lib/auth'
+import { Session } from '@/types'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -45,12 +47,7 @@ export async function createPost(prevState: State, formData: FormData) {
   }
 
   try {
-    // Create the post
-    const postPayload = validatedFields.data
-    const excerpt = extractExcerptFromContentJson(postPayload.contentJson, 25)
-    const slug = await generateUniqueSlug(postPayload.title)
-    const image = postPayload.image || null
-    const params = { ...postPayload, excerpt, slug, image }
+    const params = await sanitizePostData(validatedFields)
     console.log('#887 params:', params)
     await postCtrl.create({ params })
   } catch (error) {
@@ -87,9 +84,11 @@ export async function updatePost(
     }
   }
   try {
+    const params = await sanitizePostData(validatedFields)
+    console.log('#6666 params in update post: ', JSON.stringify(params))
     await postCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
+      params,
     })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.' }
@@ -106,4 +105,28 @@ export async function deletePost(id: string) {
   }
   await postCtrl.delete({ filters: [id] })
   revalidatePath('/dashboard/posts')
+}
+
+async function sanitizePostData(validatedFields: any) {
+  const session = (await getSession()) as Session
+  // Create the post
+  const postPayload = validatedFields.data
+  const excerpt = extractExcerptFromContentJson(postPayload.contentJson, 25)
+  const image = postPayload.image
+    ? postPayload.image == ''
+      ? null
+      : postPayload.image
+    : null
+  const user = session.user.id
+  const contentJson = await postCtrl.setFileData(postPayload.contentJson)
+  console.log('#contentJson after set file data: ', contentJson)
+  const params = {
+    ...postPayload,
+    contentJson: JSON.stringify(contentJson),
+    excerpt,
+    image,
+    user,
+  }
+
+  return params
 }

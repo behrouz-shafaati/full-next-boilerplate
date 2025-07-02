@@ -10,6 +10,11 @@ type PostBase = {
   title: string
 
   /**
+   * نویسنده پست
+   */
+  user?: string
+
+  /**
    * خلاصه‌ای از متن پست
    */
   excerpt: string

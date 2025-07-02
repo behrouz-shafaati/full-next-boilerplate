@@ -31,14 +31,17 @@ const ImgSchema = z.object({
   fileKey: z.string(),
   key: z.string(),
   fileUrl: z.string(),
-  url: z.string(),
+  src: z.string(),
 })
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
   name: z.string().min(3, { message: 'نام معتبر وارد کنید' }),
   imgUrl: z
     .array(ImgSchema)
-    .max(IMG_MAX_LIMIT, { message: 'You can only add up to 3 images' })
+    .max(
+      IMG_MAX_LIMIT,
+      `message: You can only add up to ${IMG_MAX_LIMIT} images`
+    )
     .min(1, { message: 'At least one image must be added.' }),
   description: z
     .string()
