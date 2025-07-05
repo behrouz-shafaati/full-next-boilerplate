@@ -2,6 +2,7 @@ import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
 import categorySchema from './schema'
 import categoryService from './service'
+import { CategoryInput } from './interface'
 
 class controller extends baseController {
   /**
@@ -52,6 +53,15 @@ class controller extends baseController {
     return filters
   }
 
+  makeCleanDataBeforeSave(data: any) {
+    data.parent = data.parent == '' ? null : data.parent
+    data.parent = data.parent == 'null' ? null : data.parent
+    data.parent = data.parent == data?.id ? null : data.parent
+
+    data.image = data.image == '' ? null : data.image
+    return data
+  }
+
   async find(payload: QueryFind) {
     payload.filters = this.standardizationFilters(payload.filters)
     const result = await super.find(payload)
@@ -59,22 +69,16 @@ class controller extends baseController {
   }
 
   async create(payload: Create) {
-    payload.params.parent =
-      payload.params.parent == 'null' ? null : payload.params.parent
-    payload.params.parent =
-      payload.params.parent == payload.params?.id ? null : payload.params.parent
+    payload.params = this.makeCleanDataBeforeSave(payload.params)
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
-    payload.params.parent =
-      payload.params.parent == 'null' ? null : payload.params.parent
+    payload.params = this.makeCleanDataBeforeSave(payload.params)
 
     // Preventing the risk of circular reference
     payload.params.parent =
       payload.params.parent == payload.filters ? null : payload.params.parent
-
-    console.log('#---------------------payload: ', payload)
     return super.findOneAndUpdate(payload)
   }
 }

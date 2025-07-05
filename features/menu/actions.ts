@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
+  itemsJson: z.string({}),
 })
 
 export type State = {
@@ -25,14 +26,17 @@ export type State = {
  */
 export async function createMenu(prevState: State, formData: FormData) {
   // Validate form fields
+  const values = Object.fromEntries(formData)
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
+      ok: false,
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
 
@@ -43,11 +47,15 @@ export async function createMenu(prevState: State, formData: FormData) {
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
+        ok: false,
         errors: error.flatten().fieldErrors,
+        values,
       }
     }
     return {
-      message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
+      ok: false,
+      message: 'خطای پایگاه داده: ایجاد منو ناموفق بود.',
+      values,
     }
   }
 
@@ -61,6 +69,7 @@ export async function updateMenu(
   prevState: State,
   formData: FormData
 ) {
+  const values = Object.fromEntries(formData)
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -68,8 +77,10 @@ export async function updateMenu(
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
+      ok: false,
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
   try {
@@ -78,7 +89,11 @@ export async function updateMenu(
       params: validatedFields.data,
     })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
+    return {
+      ok: false,
+      values,
+      message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.',
+    }
   }
   revalidatePath('/dashboard/menus')
   redirect('/dashboard/menus')

@@ -41,8 +41,8 @@ export default function SortableItem({
         />
         <input
           className="border px-2 py-1"
-          value={item.title}
-          onChange={(e) => updateItem(item.id, { title: e.target.value })}
+          value={item.label}
+          onChange={(e) => updateItem(item.id, { label: e.target.value })}
         />
         <input
           className="border px-2 py-1"
@@ -67,13 +67,14 @@ export default function SortableItem({
         </button>
       </div>
 
-      {item.children && item.children.length > 0 && (
+      {item.subMenu && item.subMenu.length > 0 && (
         <div className="pr-6 space-y-2 mt-2">
           <SortableContext
-            items={item.children.map((c) => c.id)}
+            key={item.id}
+            items={item.subMenu.map((c) => c.id)}
             strategy={verticalListSortingStrategy}
           >
-            {item.children.map((child) => (
+            {item.subMenu.map((child) => (
               <SortableItem
                 key={child.id}
                 item={child}

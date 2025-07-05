@@ -24,11 +24,31 @@ const menuSchema = new Schema<MenuSchema>(
   { timestamps: true }
 )
 
+function transformMenuItem(item: any): any {
+  const transformed = {
+    ...item,
+    id: item._id?.toString(),
+  }
+
+  delete transformed._id
+  delete transformed.__v
+
+  if (Array.isArray(item.subMenu)) {
+    transformed.subMenu = item.subMenu.map(transformMenuItem)
+  }
+
+  return transformed
+}
+
 const transform = (doc: any, ret: any, options: any) => {
   ret.id = ret._id?.toHexString()
   delete ret._id
   delete ret.__v
   delete ret.deleted
+
+  if (Array.isArray(ret.items)) {
+    ret.items = ret.items.map(transformMenuItem)
+  }
 }
 
 menuSchema.set('toObject', {

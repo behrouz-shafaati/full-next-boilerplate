@@ -21,12 +21,14 @@ interface TiptapEditor {
   name: string
   defaultContent?: { [key: string]: any }
   onChange?: (content: string) => void
+  onChangeFiles?: () => void
 }
 
 export default function TiptapEditor({
   name,
   defaultContent = {},
   onChange,
+  onChangeFiles,
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
@@ -86,6 +88,9 @@ export default function TiptapEditor({
       .setTextSelection(pos)
       .focus()
       .run()
+    // requestAnimationFrame(() => {
+    //   onChangeFiles?.()
+    // })
   }
   return (
     <div className="grid grid-cols-12 gap-4">
@@ -108,12 +113,13 @@ export default function TiptapEditor({
       </div>
       <div className="col-span-2">
         <FileUpload
-          name="tiptapfiles"
+          name={`${name}Files`}
           title="رسانه های مطلب"
           responseHnadler={responseFileUploadHandler}
           ref={fileUploadRef}
           showDeleteButton={false}
           defaultValues={defaultFiles}
+          {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
         />
       </div>
     </div>

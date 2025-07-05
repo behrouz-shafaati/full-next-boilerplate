@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import categoryCtrl from '@/lib/entity/category/controller'
+import categoryCtrl from './controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 
@@ -10,6 +10,7 @@ const FormSchema = z.object({
   parent: z.string({}).nullable(),
   description: z.string({}),
   status: z.string({}),
+  image: z.string({}).nullable(),
 })
 
 export type State = {
@@ -38,9 +39,6 @@ export async function createCategory(prevState: State, formData: FormData) {
       message: 'لطفا فیلدهای لازم را پر کنید.',
     }
   }
-
-  validatedFields.data.parent =
-    validatedFields.data.parent == '' ? null : validatedFields.data.parent
 
   try {
     // Create the category

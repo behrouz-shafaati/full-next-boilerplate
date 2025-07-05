@@ -1,16 +1,9 @@
 'use client'
 import * as z from 'zod'
-import { useActionState, useEffect, useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import {
-  Braces as PostIcon,
-  Mail as MailIcon,
-  Smartphone as PhoneIcon,
-  ShieldQuestionIcon,
-  KeyRound,
-  Trash,
-} from 'lucide-react'
+import { Braces as PostIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
@@ -18,26 +11,17 @@ import { useToast } from '../../../components/ui/use-toast'
 import { createPost, deletePost, updatePost } from '@/features/post/actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
-import { Option } from '../../../components/form-fields/combobox'
 import { AlertModal } from '../../../components/modal/alert-modal'
-import ProfileUpload from '../../../components/form-fields/profile-upload'
-import Combobox from '../../../components/form-fields/combobox'
-import { Post } from '@/features/post/interface'
-import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
 import TiptapEditor from '@/components/tiptap-editor'
-
-const formSchema = z.object({
-  title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
-  content: z.string({}),
-})
 
 interface PostFormProps {
   initialData: any | null
 }
 
 export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
+  const formRef = useRef<HTMLFormElement>(null)
   const initialState = { message: null, errors: {} }
   const actionHandler = post
     ? updatePost.bind(null, String(post.id))
@@ -83,18 +67,23 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   useEffect(() => {
     if (state.message && state.message !== null)
       toast({
-        variant: 'destructive',
-        title: '',
+        variant: state.success ? 'default' : 'destructive',
         description: state.message,
       })
   }, [state])
 
+  const submitManually = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit() // بهترین راه
+    }
+  }
   // const defaultC = JSON.parse(
   //   '{"contentJson":{"type":"doc","content":[{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"سلام"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"s"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"خوبی"}]}]}}'
   // )
 
   // console.log('@33 post contentJson: ', post?.contentJson)
   console.log('@34 post?.image: ', post?.image)
+
   return (
     <>
       <AlertModal
@@ -117,7 +106,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full">
+      <form action={dispatch} ref={formRef} className="space-y-8 w-full">
         {/* Product Media image */}
         <div className="md:grid md:grid-cols-3 gap-8">
           <div className="col-span-3">
@@ -137,6 +126,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
             <TiptapEditor
               name="contentJson"
               defaultContent={post ? JSON.parse(post?.contentJson) : {}}
+              onChangeFiles={submitManually}
             />
           </div>
           <div className="">
@@ -155,6 +145,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
               title="پوستر مطلب"
               maxFiles={1}
               defaultValues={post?.image || null}
+              onChange={submitManually}
             />
           </div>
         </div>

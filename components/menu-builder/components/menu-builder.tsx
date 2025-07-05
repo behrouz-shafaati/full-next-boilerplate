@@ -12,21 +12,23 @@ import {
 } from '@dnd-kit/core'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import SortableItem from './sortable-menu-item'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { MenuItem } from '../types/menu'
 
 type props = {
+  name: string
   maxDepth?: number
   initialMenu?: MenuItem[]
   className?: string
 }
 
 export default function MenuBuilder({
+  name,
   initialMenu = [],
   maxDepth = 3,
   className = '',
 }: props) {
-  const { items, addItem, getJson, reorderItems } = useMenuStore()
+  const { items, setItems, addItem, getJson, reorderItems } = useMenuStore()
   const [activeItem, setActiveItem] = useState<MenuItem | null>(null)
 
   const sensors = useSensors(
@@ -40,8 +42,8 @@ export default function MenuBuilder({
   const findItemById = (items: MenuItem[], id: string): MenuItem | null => {
     for (const item of items) {
       if (item.id === id) return item
-      if (item.children) {
-        const found = findItemById(item.children, id)
+      if (item.subMenu) {
+        const found = findItemById(item.subMenu, id)
         if (found) return found
       }
     }
@@ -55,8 +57,11 @@ export default function MenuBuilder({
     reorderItems(active.id as string, over.id as string)
   }
 
+  useEffect(() => setItems(initialMenu), [])
+
   return (
     <div className={`p-4 space-y-4 ${className}`}>
+      <textarea readOnly name={name} value={getJson()} />
       <button
         type="button"
         onClick={addItem}
@@ -64,7 +69,6 @@ export default function MenuBuilder({
       >
         + افزودن آیتم
       </button>
-
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -75,6 +79,7 @@ export default function MenuBuilder({
         }}
       >
         <SortableContext
+          key={`SortableContext`}
           items={items.map((item) => item.id)}
           strategy={verticalListSortingStrategy}
         >
@@ -92,12 +97,11 @@ export default function MenuBuilder({
         <DragOverlay>
           {activeItem ? (
             <div className="border p-2 bg-white shadow rounded">
-              {activeItem.title}
+              {activeItem.label}
             </div>
           ) : null}
         </DragOverlay>
       </DndContext>
-
       <pre className="bg-gray-100 p-4 mt-4">
         <code>{getJson()}</code>
       </pre>

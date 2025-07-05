@@ -26,11 +26,13 @@ categorySchema
   })
   .pre('findOne', function (next: any) {
     this.populate('parent')
+    this.populate('image')
     this.where({ deleted: false })
     next()
   })
   .pre('find', function (next: any) {
     this.populate('parent')
+    this.populate('image')
     this.where({ deleted: false })
     next()
   })

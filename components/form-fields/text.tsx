@@ -1,24 +1,24 @@
-import clsx from 'clsx';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import clsx from 'clsx'
+import { Input } from '../ui/input'
+import { Label } from '../ui/label'
 
 type Text = {
-  title: string;
-  name: string;
-  id?: string;
-  type?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  description?: string;
-  icon?: any;
-  state?: any;
-  value?: string;
-  display?: boolean;
-  disabled?: boolean;
-  readOnly?: boolean;
-  className?: string;
-  onChange?: (e: any) => void;
-};
+  title: string
+  name: string
+  id?: string
+  type?: string
+  defaultValue?: string
+  placeholder?: string
+  description?: string
+  icon?: any
+  state?: any
+  value?: string
+  display?: boolean
+  disabled?: boolean
+  readOnly?: boolean
+  className?: string
+  onChange?: (e: any) => void
+}
 export default function Text({
   title,
   name,
@@ -36,11 +36,11 @@ export default function Text({
   className = '',
   onChange,
 }: Text) {
-  if (!display) return null;
-  const defaultType = 'text';
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
-  const InputIcon = typeof icon === 'object' ? () => icon : icon;
+  if (!display) return null
+  const defaultType = 'text'
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
+  const InputIcon = typeof icon === 'object' ? () => icon : icon
   return (
     <div className={`mb-4 ${className}`}>
       <Label htmlFor={name} className="mb-2 block text-sm font-medium">
@@ -49,7 +49,7 @@ export default function Text({
       <div className="relative">
         <Input
           onChange={onChange}
-          value={value}
+          {...(value !== undefined ? { value } : {})}
           id={id || name}
           name={name}
           type={type ?? defaultType}
@@ -78,5 +78,5 @@ export default function Text({
         </div>
       )}
     </div>
-  );
+  )
 }

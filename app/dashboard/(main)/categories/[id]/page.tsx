@@ -1,9 +1,9 @@
 import { BreadCrumb } from '@/components/breadcrumb'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import React from 'react'
-import categoryCtrl from '@/lib/entity/category/controller'
+import categoryCtrl from '@/features/category/controller'
 import { notFound } from 'next/navigation'
-import { CategoryForm } from '@/components/forms/category-form'
+import { CategoryForm } from '@/features/category/ui/category-form'
 
 interface PageProps {
   params: Promise<{ id: string }>

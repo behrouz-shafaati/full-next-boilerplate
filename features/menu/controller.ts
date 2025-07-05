@@ -35,7 +35,7 @@ class controller extends baseController {
         filters.$expr = {
           $regexMatch: {
             input: {
-              $concat: ['$title', '$description'],
+              $concat: ['$label', '$description'],
             },
             regex: filters.query,
             options: 'i',
@@ -52,6 +52,11 @@ class controller extends baseController {
     return filters
   }
 
+  prepareDataForSave(data: any) {
+    data.items = JSON.parse(data.itemsJson)
+    return data
+  }
+
   async find(payload: QueryFind) {
     console.log('#3008 payload:', payload)
     payload.filters = this.standardizationFilters(payload.filters)
@@ -62,11 +67,16 @@ class controller extends baseController {
   }
 
   async create(payload: Create) {
+    console.log('#3018 payload crearte menu:', payload)
+    payload.params = this.prepareDataForSave(payload.params)
+    console.log('#3010 payload crearte menu:', payload)
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
-    console.log('#3326 payload:', payload)
+    console.log('#30sss11 payload crearte menu:', payload)
+    payload.params = this.prepareDataForSave(payload.params)
+    console.log('#30sss12 payload crearte menu:', payload)
     return super.findOneAndUpdate(payload)
   }
 }

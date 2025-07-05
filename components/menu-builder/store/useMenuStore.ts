@@ -24,9 +24,9 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   addItem: () => {
     const newItem: MenuItem = {
       id: uuidv4(),
-      title: 'New Item',
+      label: 'New Item',
       url: '#',
-      children: [],
+      subMenu: [],
     }
     set((state) => ({ items: [...state.items, newItem] }))
   },
@@ -38,11 +38,11 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
           if (item.id === parentId) {
             return {
               ...item,
-              children: [
-                ...(item.children || []),
+              subMenu: [
+                ...(item.subMenu || []),
                 {
                   id: uuidv4(),
-                  title: 'Sub Item',
+                  label: 'Sub Item',
                   url: '#',
                 },
               ],
@@ -50,7 +50,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
           }
           return {
             ...item,
-            children: item.children ? addChildRecursive(item.children) : [],
+            subMenu: item.subMenu ? addChildRecursive(item.subMenu) : [],
           }
         })
 
@@ -64,7 +64,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
         .filter((item) => item.id !== id)
         .map((item) => ({
           ...item,
-          children: item.children ? deleteRecursive(item.children) : [],
+          subMenu: item.subMenu ? deleteRecursive(item.subMenu) : [],
         }))
 
     set((state) => ({ items: deleteRecursive(state.items) }))
@@ -77,7 +77,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
           ? { ...item, ...data }
           : {
               ...item,
-              children: item.children ? updateRecursive(item.children) : [],
+              subMenu: item.subMenu ? updateRecursive(item.subMenu) : [],
             }
       )
 
@@ -95,12 +95,12 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
         if (item.id === destinationId) {
           return {
             ...item,
-            children: [...(item.children || []), sourceItem],
+            subMenu: [...(item.subMenu || []), sourceItem],
           }
         }
         return {
           ...item,
-          children: item.children ? insertInto(item.children) : [],
+          subMenu: item.subMenu ? insertInto(item.subMenu) : [],
         }
       })
     }
@@ -119,7 +119,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
       if (indexFrom === -1 || indexTo === -1) {
         return items.map((item) => ({
           ...item,
-          children: item.children ? reorderRecursive(item.children) : [],
+          subMenu: item.subMenu ? reorderRecursive(item.subMenu) : [],
         }))
       }
       const updated = [...items]
@@ -149,15 +149,15 @@ const findAndRemove = (
         return acc
       }
 
-      const [childRemoved, newChildren] = item.children
-        ? findAndRemove(item.children, id)
+      const [childRemoved, newChildren] = item.subMenu
+        ? findAndRemove(item.subMenu, id)
         : [null, []]
 
       if (childRemoved) removed = childRemoved
 
       acc.push({
         ...item,
-        children: item.children ? newChildren : undefined,
+        subMenu: item.subMenu ? newChildren : undefined,
       })
 
       return acc

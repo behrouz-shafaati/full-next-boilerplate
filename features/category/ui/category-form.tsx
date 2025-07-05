@@ -1,57 +1,27 @@
 'use client'
 import * as z from 'zod'
-import { useEffect, useState } from 'react'
+import { useActionState, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import {
-  Braces as CategoryIcon,
-  Mail as MailIcon,
-  Smartphone as PhoneIcon,
-  ShieldQuestionIcon,
-  KeyRound,
-  Trash,
-} from 'lucide-react'
+import { Braces as CategoryIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../ui/use-toast'
+import { useToast } from '../../../components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
 import { useFormState } from 'react-dom'
-import {
-  createCategory,
-  deleteCategory,
-  getAllCategories,
-  updateCategory,
-} from '@/lib/entity/category/actions'
-import Text from '../form-fields/text'
-import { SubmitButton } from '../form-fields/submit-button'
-import { Option } from '../form-fields/combobox'
-import { AlertModal } from '../modal/alert-modal'
-import ProfileUpload from '../form-fields/profile-upload'
-import Combobox from '../form-fields/combobox'
-import { Category } from '@/lib/entity/category/interface'
+import { createCategory, deleteCategory, updateCategory } from '../actions'
+import Text from '../../../components/form-fields/text'
+import { SubmitButton } from '../../../components/form-fields/submit-button'
+import { Option } from '../../../components/form-fields/combobox'
+import { AlertModal } from '../../../components/modal/alert-modal'
+import Combobox from '../../../components/form-fields/combobox'
+import { Category } from '../interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
-import FileUpload from '../form-fields/file-upload'
-import Select from '../form-fields/select'
-// import FileUpload from "../file-upload";
-const ImgSchema = z.object({
-  fileName: z.string(),
-  name: z.string(),
-  fileSize: z.number(),
-  size: z.number(),
-  fileKey: z.string(),
-  key: z.string(),
-  fileUrl: z.string(),
-  src: z.string(),
-})
-export const IMG_MAX_LIMIT = 3
-const formSchema = z.object({
-  title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
-  parentId: z.string({}).nullable(),
-  description: z.string({}),
-})
+import FileUpload from '../../../components/form-fields/file-upload'
+import Select from '../../../components/form-fields/select'
 
-type CategoryFormValues = z.infer<typeof formSchema>
+export const IMG_MAX_LIMIT = 1
 
 interface CategoryFormProps {
   initialData: any | null
@@ -62,28 +32,18 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   initialData: category,
   allCategories,
 }) => {
+  const formRef = useRef<HTMLFormElement>(null)
   const initialState = { message: null, errors: {} }
   const actionHandler = category
     ? updateCategory.bind(null, String(category.id))
     : createCategory
-  const [state, dispatch] = useFormState(actionHandler as any, initialState)
-  const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
-    label: role.title,
-    value: role.slug,
-  }))
+  const [state, dispatch] = useActionState(actionHandler as any, initialState)
 
-  const params = useParams()
-  const router = useRouter()
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [imgLoading, setImgLoading] = useState(false)
   const title = category ? 'ویرایش دسته بندی' : 'افزودن دسته بندی'
   const description = category ? 'ویرایش دسته بندی' : 'افزودن دسته بندی'
-  const toastMessage = category
-    ? 'دسته بندی بروزرسانی شد'
-    : 'دسته بندی اضافه شد'
-  const action = category ? 'ذخیره تغییرات' : 'ذخیره'
 
   const parentOptions: Option[] = allCategories.map((category: Category) => {
     return {
@@ -126,6 +86,19 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
       })
   }, [state])
 
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!formRef.current) return
+
+      const formData = new FormData(formRef.current)
+      const entries = Object.fromEntries(formData.entries())
+
+      console.log('[🔁 فرم هر 5 ثانیه]:', entries)
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
+
   return (
     <>
       <AlertModal
@@ -148,7 +121,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full">
+      <form action={dispatch} className="space-y-8 w-full" ref={formRef}>
         {/* Product Media image */}
         <section className="mt-2 rounded-md  p-4 md:mt-0 md:p-6">
           <FileUpload
@@ -157,6 +130,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             state={state}
             maxFiles={1}
             allowedFileTypes={{ 'image/*': [] }}
+            defaultValues={category?.image}
           />
         </section>
         <div className="md:grid md:grid-cols-3 gap-8">

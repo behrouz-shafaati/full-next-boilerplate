@@ -24,6 +24,7 @@ export type State = {
     title?: string[]
   }
   message?: string | null
+  success: boolean
 }
 
 /**
@@ -43,13 +44,19 @@ export async function createPost(prevState: State, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      success: false,
     }
   }
 
   try {
     const params = await sanitizePostData(validatedFields)
-    console.log('#887 params:', params)
-    await postCtrl.create({ params })
+    const slug = await generateUniqueSlug(params.title)
+    const cleanedParams = {
+      ...params,
+      slug,
+    }
+    console.log('#887 cleanedParams:', cleanedParams)
+    await postCtrl.create({ params: cleanedParams })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -59,6 +66,7 @@ export async function createPost(prevState: State, formData: FormData) {
     }
     return {
       message: 'خطای پایگاه داده: ایجاد مطلب ناموفق بود.',
+      success: false,
     }
   }
 
@@ -81,27 +89,31 @@ export async function updatePost(
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      success: false,
     }
   }
   try {
     const params = await sanitizePostData(validatedFields)
-    console.log('#6666 params in update post: ', JSON.stringify(params))
     await postCtrl.findOneAndUpdate({
       filters: id,
       params,
     })
+
+    revalidatePath('/dashboard/posts')
+    return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.' }
+    return {
+      message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.',
+      success: false,
+    }
   }
-  revalidatePath('/dashboard/posts')
-  redirect('/dashboard/posts')
 }
 
 export async function deletePost(id: string) {
   try {
     await postCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود' }
+    return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود', success: false }
   }
   await postCtrl.delete({ filters: [id] })
   revalidatePath('/dashboard/posts')

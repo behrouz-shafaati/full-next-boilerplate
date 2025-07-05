@@ -1,32 +1,32 @@
-'use client';
-import { DeleteCategory } from '@/components/forms/category-form';
-import { AlertModal } from '@/components/modal/alert-modal';
-import { Button } from '@/components/ui/button';
+'use client'
+import { DeleteCategory } from '@/features/category/ui/category-form'
+import { AlertModal } from '@/components/modal/alert-modal'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Category } from '@/lib/entity/category/interface';
-import { Edit, MoreHorizontal, Trash } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+} from '@/components/ui/dropdown-menu'
+import { Category } from '@/lib/entity/category/interface'
+import { Edit, MoreHorizontal, Trash } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 interface CellActionProps {
-  data: Category;
+  data: Category
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data }) => {
-  const [loading, setLoading] = useState(false);
-  const [open, setOpen] = useState(false);
-  const router = useRouter();
+  const [loading, setLoading] = useState(false)
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
 
   const onConfirm = async () => {
-    setLoading(true);
-    DeleteCategory(data.id);
-  };
+    setLoading(true)
+    DeleteCategory(data.id)
+  }
 
   return (
     <>
@@ -57,5 +57,5 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuContent>
       </DropdownMenu>
     </>
-  );
-};
+  )
+}

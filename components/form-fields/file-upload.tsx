@@ -50,6 +50,7 @@ interface FileUploadProps {
   allowedFileTypes?: any
   showDeleteButton?: boolean
   responseHnadler?: (FileDetails: FileDetails) => void
+  onChange?: () => void
 }
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
@@ -64,6 +65,7 @@ const FileUpload = forwardRef(function FileUpload(
     allowedFileTypes,
     showDeleteButton = true,
     responseHnadler,
+    onChange,
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
 ) {
@@ -134,6 +136,9 @@ const FileUpload = forwardRef(function FileUpload(
 
     const FileDetails: FileDetails = await uploadFile(formData)
     if (responseHnadler) responseHnadler(FileDetails)
+    requestAnimationFrame(() => {
+      onChange?.()
+    })
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -183,10 +188,16 @@ const FileUpload = forwardRef(function FileUpload(
     }
     setFiles(items)
     deleteFile(deletedItem.id)
+    requestAnimationFrame(() => {
+      onChange?.()
+    })
   }
 
   const removeAll = () => {
     setFiles([])
+    requestAnimationFrame(() => {
+      onChange?.()
+    })
   }
 
   const unCheckMainAllFiles = () => {
@@ -235,7 +246,7 @@ const FileUpload = forwardRef(function FileUpload(
   }))
 
   const makeIdsClean = () => {
-    if (maxFiles == 1) return files[0]?.id
+    if (maxFiles == 1) return files.length == 1 ? files[0]?.id : ''
     return JSON.stringify(files.map((file) => file.id))
   }
 
@@ -244,12 +255,9 @@ const FileUpload = forwardRef(function FileUpload(
       <div>
         {/* title */}
         <p className="text-md mb-2">{title}</p>
-        <textarea
-          name={name}
-          className="hidden"
-          value={makeIdsClean()}
-          readOnly
-        />
+        {/* {files.length > 0 && ( */}
+        <textarea name={name} value={makeIdsClean()} readOnly hidden />
+        {/* )} */}
         {/* Dropzone */}
         <div
           {...getRootProps({
@@ -278,7 +286,7 @@ const FileUpload = forwardRef(function FileUpload(
                 key={index}
                 className="max-h-20 h-22 group relative rounded-md min-h-12"
               >
-                {file?.src && (
+                {(file?.src || file?.preview) && (
                   <Image
                     src={file?.preview || file?.src}
                     alt={file?.name || file?.alt}

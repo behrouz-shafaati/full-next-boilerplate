@@ -12,17 +12,13 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
   const { id } = resolvedParams
 
-  let menu = null,
-    allMenus
+  let menu = null
   let pageBreadCrumb = {
     title: 'افزودن',
     link: '/dashboard/menus/create',
   }
   if (id !== 'create') {
-    ;[menu, allMenus] = await Promise.all([
-      menuCtrl.findById({ id }),
-      menuCtrl.findAll({}),
-    ])
+    ;[menu] = await Promise.all([menuCtrl.findById({ id })])
 
     if (!menu) {
       notFound()
@@ -31,8 +27,6 @@ export default async function Page({ params }: PageProps) {
       title: menu.title,
       link: `/dashboard/menus/${id}`,
     }
-  } else {
-    ;[allMenus] = await Promise.all([menuCtrl.findAll({})])
   }
 
   const breadcrumbItems = [
