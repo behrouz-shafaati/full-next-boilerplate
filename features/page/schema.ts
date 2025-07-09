@@ -4,11 +4,17 @@ import { PageSchema } from './interface'
 const pageSchema = new Schema<PageSchema>(
   {
     title: { type: String, required: true },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: false, default: null },
     content: {
       type: Schema.Types.Mixed, // whole page structure as JSON
       required: true,
     },
+    type: {
+      type: String,
+      enum: ['page', 'template'],
+      default: 'page',
+    },
+    templateFor: { type: String, required: false, unique: false },
     status: {
       type: String,
       enum: ['draft', 'published'],

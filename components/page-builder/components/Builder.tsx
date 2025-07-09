@@ -16,15 +16,28 @@ import SortableRow from '../blocks/row/SortableRow'
 import ToolsSection from './toolsSection'
 import { Button } from '@/components/ui/button'
 import { blockRegistry } from '../registry/blockRegistry'
+import { SubmitButton } from '@/components/form-fields/submit-button'
+import { Category } from '@/features/category/interface'
 
 type props = {
+  name: string
+  submitFormHandler: any
   initialContent?: PageContent
+  allTemplates: PageContent[]
+  allCategories: Category[]
 }
 
-export default function PageBuilder({ initialContent }: props) {
+export default function PageBuilder({
+  initialContent,
+  name,
+  submitFormHandler,
+  allTemplates,
+  allCategories,
+}: props) {
   const router = useRouter()
   const {
     content,
+
     addRow,
     getJson,
     addElementToColumn,
@@ -34,6 +47,8 @@ export default function PageBuilder({ initialContent }: props) {
     activeElement,
     reorderRows,
     deselectBlock,
+    setContent,
+    resetContent,
   } = useBuilderStore()
 
   const findColumnContainingElement = (elementId: string) => {
@@ -143,10 +158,12 @@ export default function PageBuilder({ initialContent }: props) {
     }
   }
 
-  useEffect(() => {
-    console.log('#665 rows:', content.rows)
-  }, [content])
+  useEffect(() => {}, [content])
 
+  useEffect(() => {
+    if (initialContent) setContent(initialContent)
+    else resetContent()
+  }, [initialContent])
   return (
     <>
       <DndContext
@@ -157,16 +174,23 @@ export default function PageBuilder({ initialContent }: props) {
         <div className="flex  h-screen w-full ">
           {/* نوار ابزار */}
           <aside className="relative h-screen w-80 shrink-0 bg-slate-50 overflow-y-auto overflow-x-hidden ">
-            <ToolsSection page={initialContent || null} />
+            <ToolsSection
+              page={content || null}
+              allTemplates={allTemplates}
+              allCategories={allCategories}
+            />
             <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
-              <Button>ذخیره</Button>
-              <Button
-                type="button"
-                variant="secondary"
-                onClick={() => router.back()}
-              >
-                بازگشت
-              </Button>
+              <form action={submitFormHandler}>
+                <textarea readOnly name={name} value={getJson()} />
+                <SubmitButton />
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => router.back()}
+                >
+                  بازگشت
+                </Button>
+              </form>
             </div>
           </aside>
           {/* ناحیه ساخت صفحه */}
@@ -195,10 +219,6 @@ export default function PageBuilder({ initialContent }: props) {
             >
               افزودن ردیف
             </Button>
-
-            <pre className="mt-4 bg-gray-100 p-4">
-              <code>{getJson()}</code>
-            </pre>
           </div>
         </div>
       </DndContext>

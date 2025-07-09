@@ -4,18 +4,12 @@ import { z } from 'zod'
 import menuCtrl from '@/features/menu/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { State } from '@/types'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   itemsJson: z.string({}),
 })
-
-export type State = {
-  errors?: {
-    title?: string[]
-  }
-  message?: string | null
-}
 
 /**
  * Creates a menu with the given form data.

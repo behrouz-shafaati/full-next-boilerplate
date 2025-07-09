@@ -2,6 +2,7 @@ import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
 import pageSchema from './schema'
 import pageService from './service'
+import settingsCtrl from '../settings/controller'
 
 class controller extends baseController {
   /**
@@ -53,11 +54,8 @@ class controller extends baseController {
   }
 
   async find(payload: QueryFind) {
-    console.log('#3008 payload:', payload)
     payload.filters = this.standardizationFilters(payload.filters)
-    console.log('#3009 payload:', payload)
     const result = await super.find(payload)
-    console.log('#3010 payload result:', result)
     return result
   }
 
@@ -66,8 +64,17 @@ class controller extends baseController {
   }
 
   async findOneAndUpdate(payload: Update) {
-    console.log('#3326 payload:', payload)
     return super.findOneAndUpdate(payload)
+  }
+
+  async getHomePage() {
+    const settings = await settingsCtrl.find({
+      filters: { type: 'site-settings' },
+    })
+    console.log('#2346 settings.data: ', settings.data[0])
+    const homePage = await this.findById({ id: settings.data[0].homePageId })
+    console.log('#2346 HomePage: ', homePage)
+    return homePage
   }
 }
 

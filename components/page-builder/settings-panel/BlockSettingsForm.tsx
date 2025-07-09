@@ -1,4 +1,3 @@
-import Form from '@rjsf/core'
 import validator from '@rjsf/validator-ajv8'
 import { useBuilderStore } from '../store/useBuilderStore'
 import { blockRegistry } from '../registry/blockRegistry'

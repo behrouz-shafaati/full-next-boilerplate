@@ -1,4 +1,4 @@
-import { Schema, Types } from 'mongoose';
+import { Schema, Types } from 'mongoose'
 
 export type {
   Model,
@@ -17,7 +17,7 @@ export type {
   QueryResult,
   Location,
   Id,
-};
+}
 
 // req contetnt interface
 // type ReqDataSources {
@@ -27,114 +27,115 @@ export type {
 
 // All mongoose interfaces extends from this interface
 type Model = {
-  id: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-};
+  id: string
+  createdAt?: Date
+  updatedAt?: Date
+}
 type SchemaModel = {
-  id: Schema.Types.ObjectId;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deleted: Boolean;
-};
+  id: Schema.Types.ObjectId
+  createdAt?: Date
+  updatedAt?: Date
+  deleted: Boolean
+}
 
 // All server response interface
 type ServerResponse<T> = {
-  ok: number;
-  message: string;
-  data: QueryResponse<T>;
-};
+  ok: number
+  message: string
+  data: QueryResponse<T>
+}
 
 type QueryResponse<T> = {
-  data: T[];
-  nextPage: number;
-  totalPages: number;
-  totalDocuments: number;
-};
+  data: T[]
+  nextPage: number
+  totalPages: number
+  totalDocuments: number
+}
 
 type Pagination = {
-  page: number | 'off';
-  perPage: number;
-};
+  page: number | 'off'
+  perPage: number
+}
 
 type Log = {
-  variables?: any;
-  successful: boolean;
-  error: any;
-};
+  variables?: any
+  successful: boolean
+  error: any
+}
 
 // DB Query interfaces
 
 type Create = {
-  params: any;
-  saveLog?: boolean;
-};
+  params: any
+  saveLog?: boolean
+}
 type QueryFind = {
-  filters?: any & { orderBy?: string; order?: string };
-  pagination?: Pagination;
-  saveLog?: boolean;
-  sort?: any;
-  populate?: string;
-};
+  filters?: any & { orderBy?: string; order?: string }
+  pagination?: Pagination
+  saveLog?: boolean
+  sort?: any
+  populate?: string
+}
 type QueryFindById = {
-  id: any;
-  saveLog?: boolean;
-};
+  id: any
+  saveLog?: boolean
+}
 type QueryFindOne = {
-  filters: any;
-  populate?: string;
-  saveLog?: boolean;
-};
+  filters: any
+  populate?: string
+  saveLog?: boolean
+}
 type Update = {
-  filters: any;
-  params: any;
-  saveLog?: boolean;
-};
+  filters: any
+  params: any
+  saveLog?: boolean
+  options?: any
+}
 type Delete = {
-  filters: Id[] | string[];
-  saveLog?: boolean;
-};
+  filters: Id[] | string[]
+  saveLog?: boolean
+}
 
 type DeleteMany = {
-  filters: object;
-  saveLog?: boolean;
-};
+  filters: object
+  saveLog?: boolean
+}
 
 type QueryResult = {
-  data: any;
-  nextPage: number;
-  totalPages: number;
-  totalDocuments: number;
-};
+  data: any
+  nextPage: number
+  totalPages: number
+  totalDocuments: number
+}
 
 type Location = {
-  lat: string;
-  long: string;
-};
+  lat: string
+  long: string
+}
 
 interface AggregateQuery {
-  $match?: { [key: string]: any }; // برای فیلتر کردن داده‌ها
+  $match?: { [key: string]: any } // برای فیلتر کردن داده‌ها
   $group?: {
-    _id: any;
-    [key: string]: any;
-  }; // برای گروه‌بندی داده‌ها
-  $project?: { [key: string]: any }; // برای انتخاب فیلدهای خاص
-  $sort?: { [key: string]: 1 | -1 }; // برای مرتب‌سازی داده‌ها
-  $limit?: number; // برای محدود کردن تعداد نتایج
-  $skip?: number; // برای نادیده گرفتن تعداد مشخصی از نتایج
+    _id: any
+    [key: string]: any
+  } // برای گروه‌بندی داده‌ها
+  $project?: { [key: string]: any } // برای انتخاب فیلدهای خاص
+  $sort?: { [key: string]: 1 | -1 } // برای مرتب‌سازی داده‌ها
+  $limit?: number // برای محدود کردن تعداد نتایج
+  $skip?: number // برای نادیده گرفتن تعداد مشخصی از نتایج
   $lookup?: {
-    from: string;
-    localField: string;
-    foreignField: string;
-    as: string;
-  }; // برای ایجاد ارتباط با مجموعه‌های دیگر
-  $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean }; // برای بازکردن آرایه‌ها
-  $addFields?: { [key: string]: any }; // برای اضافه کردن فیلدهای جدید
-  $replaceRoot?: { newRoot: any }; // برای جایگزینی ریشه اسناد
-  $count?: string; // برای شمارش نتایج
+    from: string
+    localField: string
+    foreignField: string
+    as: string
+  } // برای ایجاد ارتباط با مجموعه‌های دیگر
+  $unwind?: string | { path: string; preserveNullAndEmptyArrays?: boolean } // برای بازکردن آرایه‌ها
+  $addFields?: { [key: string]: any } // برای اضافه کردن فیلدهای جدید
+  $replaceRoot?: { newRoot: any } // برای جایگزینی ریشه اسناد
+  $count?: string // برای شمارش نتایج
   // می‌توانید سایر مراحل نیز اضافه کنید
 }
 
 export interface AggregateQueryArray extends Array<AggregateQuery> {}
 
-type Id = Schema.Types.ObjectId;
+type Id = Schema.Types.ObjectId

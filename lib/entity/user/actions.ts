@@ -45,7 +45,7 @@ const FormSchema = z.object({
   image: z.string({}).nullable(),
 })
 
-export type State = {
+type State = {
   errors?: {
     firstName?: string[]
     lastName?: string[]

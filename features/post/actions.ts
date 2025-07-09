@@ -10,7 +10,7 @@ import {
   generateUniqueSlug,
 } from './utils'
 import { getSession } from '@/lib/auth'
-import { Session } from '@/types'
+import { Session, State } from '@/types'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -18,14 +18,6 @@ const FormSchema = z.object({
   status: z.string({}),
   image: z.string().nullable(),
 })
-
-export type State = {
-  errors?: {
-    title?: string[]
-  }
-  message?: string | null
-  success: boolean
-}
 
 /**
  * Creates a post with the given form data.

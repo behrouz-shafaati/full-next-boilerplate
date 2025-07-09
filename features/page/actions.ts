@@ -4,17 +4,11 @@ import { z } from 'zod'
 import pageCtrl from '@/features/page/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { State } from '@/types'
 
 const FormSchema = z.object({
-  title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
+  contentJson: z.string({}),
 })
-
-export type State = {
-  errors?: {
-    title?: string[]
-  }
-  message?: string | null
-}
 
 /**
  * Creates a page with the given form data.
@@ -37,8 +31,18 @@ export async function createPage(prevState: State, formData: FormData) {
   }
 
   try {
+    const content = JSON.parse(validatedFields.data.contentJson)
+    const params = {
+      content,
+      title: content.title,
+      type: content.type,
+      templateFor: content.templateFor,
+      slug: content.slug,
+      status: content.status,
+    }
+    console.log('#234876 params:', params)
     // Create the page
-    await pageCtrl.create({ params: validatedFields.data })
+    await pageCtrl.create({ params })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -73,9 +77,18 @@ export async function updatePage(
     }
   }
   try {
+    const content = JSON.parse(validatedFields.data.contentJson)
+    const params = {
+      content,
+      title: content.title,
+      type: content.type,
+      templateFor: content.templateFor,
+      slug: content.slug,
+      status: content.status,
+    }
     await pageCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
+      params,
     })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }

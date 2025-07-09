@@ -1,25 +1,18 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
+import {
+  PageContent as PageContentComponent,
+  PageRow as PageRowComponent,
+  PageColumn as PageColumnComponent,
+  PageBlock as PageBlockComponent,
+} from '@/components/page-builder/types'
 
-export type PageContent = {
-  rows: PageRow[]
-}
+export type PageContent = PageContentComponent
 
-export type PageRow = {
-  id: string // UUID
-  columns: PageColumn[]
-}
+export type PageRow = PageRowComponent
 
-export type PageColumn = {
-  id: string // UUID
-  width: number // مثلاً 6 یعنی 6 از 12 (مثل Bootstrap)
-  blocks: PageBlock[]
-}
+export type PageColumn = PageColumnComponent
 
-export type PageBlock = {
-  id: string // UUID
-  type: 'text' | 'image' | 'video' | 'gallery' | 'form' | 'product' | 'custom'
-  data: Record<string, any>
-}
+export type PageBlock = PageBlockComponent
 /**
  * اطلاعات پایه برگه که شامل فیلدهای اصلی برگه می‌باشد
  */
@@ -28,6 +21,9 @@ type PageBase = {
    * عنوان برگه
    */
   title: string
+
+  type: 'page' | 'template'
+  templateFor: string
 
   /**
    * محتوای برگه

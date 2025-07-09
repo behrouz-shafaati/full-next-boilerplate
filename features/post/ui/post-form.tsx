@@ -22,7 +22,7 @@ interface PostFormProps {
 
 export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   const formRef = useRef<HTMLFormElement>(null)
-  const initialState = { message: null, errors: {} }
+  const initialState = { message: null, errors: {}, success: true }
   const actionHandler = post
     ? updatePost.bind(null, String(post.id))
     : createPost

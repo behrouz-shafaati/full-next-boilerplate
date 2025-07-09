@@ -35,6 +35,8 @@ import {
   Underline,
   SquareMenu,
   LayoutTemplate,
+  SlidersVertical,
+  StickyNote,
 } from 'lucide-react'
 
 export type Icon = LucideIcon
@@ -73,6 +75,8 @@ export const Icons = {
   underline: Underline,
   squareMenu: SquareMenu,
   layoutTemplate: LayoutTemplate,
+  slidersVertical: SlidersVertical,
+  stickyNote: StickyNote,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
@@ -104,6 +108,12 @@ export default function renderIcon(icon: string | undefined) {
       return <Icons.squareMenu className="mr-2 h-4 w-4" />
     case 'login':
       return <Icons.login className="mr-2 h-4 w-4" />
+    case 'layoutTemplate':
+      return <Icons.layoutTemplate className="mr-2 h-4 w-4" />
+    case 'slidersVertical':
+      return <Icons.slidersVertical className="mr-2 h-4 w-4" />
+    case 'stickyNote':
+      return <Icons.stickyNote className="mr-2 h-4 w-4" />
     default:
       return <Icons.user className="mr-2 h-4 w-4" />
   }

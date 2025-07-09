@@ -1,5 +1,8 @@
 export type PageContent = {
+  id: string // UUID
   title: string
+  slug: string
+  category: string
   rows: PageRow[]
 }
 
@@ -19,6 +22,8 @@ export type PageColumn = {
 
 export type PageBlock = {
   id: string // UUID
+  title?: string // Optional title for the block
+  slug?: string // Optional slug for the block, useful for custom blocks
   // The type is not updatable.
   type:
     | 'row'

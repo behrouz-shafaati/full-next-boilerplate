@@ -15,6 +15,8 @@ import { SubmitButton } from '@/components/form-fields/submit-button'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import PageBuilder from '@/components/page-builder'
+import { Category } from '@/features/category/interface'
+import { Page, PageContent } from '../interface'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
@@ -24,10 +26,16 @@ const formSchema = z.object({
 type PageFormValues = z.infer<typeof formSchema>
 
 interface PageFormProps {
-  initialData: any | null
+  initialData: Page | null
+  allTemplates: PageContent[]
+  allCategories: Category[]
 }
 
-export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
+export const PageForm: React.FC<PageFormProps> = ({
+  initialData: page,
+  allTemplates,
+  allCategories,
+}) => {
   const initialState = { message: null, errors: {} }
   const actionHandler = page
     ? updatePage.bind(null, String(page.id))
@@ -66,11 +74,10 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
       ? '1'
       : '0'
     : '1'
-  console.log('#299 statusDefaultValue:', statusDefaultValue)
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeletePage(page?.id)
+      DeletePage(String(page?.id))
     } catch (error: any) {}
   }
 
@@ -91,8 +98,8 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
         onConfirm={onDelete}
         loading={loading}
       />
-      <div className="flex items-center justify-between">
-        {/* <Heading title={title} description={description} /> */}
+      {/* <div className="flex items-center justify-between">
+        {/* <Heading title={title} description={description} /> * /}
         {page && (
           <Button
             disabled={loading}
@@ -103,16 +110,15 @@ export const PageForm: React.FC<PageFormProps> = ({ initialData: page }) => {
             <Trash className="h-4 w-4" />
           </Button>
         )}
-      </div>
+      </div> * /}
       {/* <Separator /> */}
-      <div className="block">
-        <PageBuilder initialContent={page} />
-      </div>
-      {/* <form action={dispatch} className="w-full">
-        <div className="block">
-          <PageBuilder initialContent={page} />
-        </div>
-      </form> */}
+      <PageBuilder
+        submitFormHandler={dispatch}
+        name="contentJson"
+        {...(page ? { initialContent: page.content } : {})}
+        allTemplates={allTemplates}
+        allCategories={allCategories}
+      />
     </>
   )
 }

@@ -44,14 +44,12 @@ export default function Select({
     value: '',
     label: '',
   }
-  console.log('defaultValue:', defaultValue)
   if (defaultValue)
     for (let j = 0; j < options.length; j++) {
       if (defaultValue === options[j].value) {
         defaultSelectedOption = options[j]
       }
     }
-  console.log('#111 defaultSelectedOption:', defaultSelectedOption)
   const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
   const [value, setValue] = useState(defaultSelectedOption?.value)
 

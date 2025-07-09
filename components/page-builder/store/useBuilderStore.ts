@@ -13,6 +13,8 @@ type State = {
   activeElement: PageBlock | null
   setActiveElement: (el: PageBlock | null) => void
   content: PageContent
+  resetContent: () => void
+  setContent: (content: PageContent) => void
   addRow: () => void
   deleteRow: (rowId: string) => void
   addColumn: (rowId: string) => void
@@ -37,11 +39,19 @@ type State = {
   deselectBlock: () => void
 }
 
+const initialContent = {
+  title: '',
+  type: 'page',
+  slug: '',
+  category: '',
+  status: 'published',
+  rows: [],
+}
+
 export const useBuilderStore = create<State>((set, get) => ({
-  content: {
-    title: '',
-    rows: [],
-  },
+  content: initialContent,
+  resetContent: () => set({ content: initialContent }),
+  setContent: (content) => set({ content }),
   rows: [],
   activeElement: null,
   setActiveElement: (el) => set(() => ({ activeElement: el })),

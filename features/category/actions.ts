@@ -4,6 +4,7 @@ import { z } from 'zod'
 import categoryCtrl from './controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { State } from '@/types'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -12,13 +13,6 @@ const FormSchema = z.object({
   status: z.string({}),
   image: z.string({}).nullable(),
 })
-
-export type State = {
-  errors?: {
-    title?: string[]
-  }
-  message?: string | null
-}
 
 /**
  * Creates a category with the given form data.

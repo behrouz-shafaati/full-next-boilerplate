@@ -1,22 +1,23 @@
-'use client';
+'use client'
 
-import { Fragment, useState, useEffect } from 'react';
-import ComboboxInput from '../ui/combobox-input';
+import { Fragment, useState, useEffect } from 'react'
+import ComboboxInput from '../ui/combobox-input'
 
 export type Option = {
-  value: string;
-  label: string;
-};
+  value: string
+  label: string
+}
 
 type ComboboxProps = {
-  title: string;
-  name: string;
-  defaultValue?: string;
-  options: Option[];
-  placeholder?: string;
-  icon?: any;
-  state?: any;
-};
+  title: string
+  name: string
+  defaultValue?: string
+  options: Option[]
+  placeholder?: string
+  icon?: any
+  state?: any
+  onChange?: (e: any) => void
+}
 export default function Combobox({
   title,
   name,
@@ -25,26 +26,27 @@ export default function Combobox({
   placeholder,
   icon,
   state,
+  onChange,
 }: ComboboxProps) {
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
-  const InputIcon = typeof icon === 'object' ? () => icon : icon;
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
+  const InputIcon = typeof icon === 'object' ? () => icon : icon
   let defaultSelectedOption: Option = {
     value: '',
     label: '',
-  };
-  options = options;
+  }
+  options = options
   if (defaultValue)
     for (let j = 0; j < options.length; j++) {
       if (defaultValue === options[j].value) {
-        defaultSelectedOption = options[j];
+        defaultSelectedOption = options[j]
       }
     }
-  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption);
+  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
 
   useEffect(() => {
-    let value = selectedOption.value;
-  }, [selectedOption]);
+    let value = selectedOption.value
+  }, [selectedOption])
   return (
     <div className="mb-4">
       <label htmlFor={name} className="mb-2 block text-sm font-medium">
@@ -58,7 +60,10 @@ export default function Combobox({
             placeholder={placeholder || 'انتخاب کنید'}
             options={options}
             value={selectedOption.value}
-            onChange={setSelectedOption}
+            onChange={(option) => {
+              setSelectedOption(option)
+              if (onChange) onChange({ target: option })
+            }}
           />
         </div>
         {icon && (
@@ -77,5 +82,5 @@ export default function Combobox({
         </div>
       )}
     </div>
-  );
+  )
 }

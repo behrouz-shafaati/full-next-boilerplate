@@ -1,9 +1,10 @@
-'use server';
+'use server'
 
-import { z } from 'zod';
-import shippingAddressCtrl from './controller';
-import { revalidatePath } from 'next/cache';
-import { redirect } from 'next/navigation';
+import { z } from 'zod'
+import shippingAddressCtrl from './controller'
+import { revalidatePath } from 'next/cache'
+import { redirect } from 'next/navigation'
+import { State } from '@/types'
 
 const FormSchema = z.object({
   name: z.string({}).min(1, { message: 'لطفا نام تحویل گیرنده را وارد کنید.' }),
@@ -17,15 +18,7 @@ const FormSchema = z.object({
   email: z.string({}).nullable(),
   isDefault: z.custom().nullable(), // checkbox
   userId: z.string({}),
-});
-
-export type State = {
-  errors?: {
-    title?: string[];
-  };
-  message?: string | null;
-};
-
+})
 /**
  * Creates a shippingAddress with the given form data.
  *
@@ -40,34 +33,34 @@ export async function createShippingAddress(
   // Validate form fields
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
-  );
+  )
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
-    };
+    }
   }
 
-  const userId = validatedFields.data.userId;
+  const userId = validatedFields.data.userId
   try {
     // Create the shippingAddress
-    await shippingAddressCtrl.create({ params: validatedFields.data });
+    await shippingAddressCtrl.create({ params: validatedFields.data })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
         errors: error.flatten().fieldErrors,
-      };
+      }
     }
     return {
       message: 'خطای پایگاه داده: ایجاد آدرس ناموفق بود.',
-    };
+    }
   }
 
   // Revalidate the path and redirect to the shippingAddress dashboard
-  revalidatePath(`/dashboard/users/${userId}/edit/addresses`);
-  redirect(`/dashboard/users/${userId}/edit/addresses`);
+  revalidatePath(`/dashboard/users/${userId}/edit/addresses`)
+  redirect(`/dashboard/users/${userId}/edit/addresses`)
 }
 
 export async function updateShippingAddress(
@@ -77,34 +70,34 @@ export async function updateShippingAddress(
 ) {
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
-  );
+  )
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
-    };
+    }
   }
-  const userId = validatedFields.data.userId;
+  const userId = validatedFields.data.userId
   try {
     await shippingAddressCtrl.findOneAndUpdate({
       filters: id,
       params: validatedFields.data,
-    });
+    })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی آدرس ناموفق بود.' };
+    return { message: 'خطای پایگاه داده: بروزرسانی آدرس ناموفق بود.' }
   }
-  revalidatePath(`/dashboard/users/${userId}/edit/addresses`);
-  redirect(`/dashboard/users/${userId}/edit/addresses`);
+  revalidatePath(`/dashboard/users/${userId}/edit/addresses`)
+  redirect(`/dashboard/users/${userId}/edit/addresses`)
 }
 
 export async function deleteShippingAddress(id: string) {
   try {
-    await shippingAddressCtrl.delete({ filters: [id] });
+    await shippingAddressCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف آدرس ناموفق بود' };
+    return { message: 'خطای پایگاه داده: حذف آدرس ناموفق بود' }
   }
-  await shippingAddressCtrl.delete({ filters: [id] });
-  revalidatePath('/dashboard/shippingAddresses');
+  await shippingAddressCtrl.delete({ filters: [id] })
+  revalidatePath('/dashboard/shippingAddresses')
 }

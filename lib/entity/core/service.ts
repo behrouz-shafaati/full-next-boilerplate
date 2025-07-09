@@ -159,7 +159,7 @@ export default class service {
    * @param data - The data to update the document with.
    * @returns The updated document.
    */
-  async findOneAndUpdate(filters: any, data: object) {
+  async findOneAndUpdate(filters: any, data: object, options: object) {
     // Connect to the MongoDB database
     await dbConnect()
     // Convert string or ObjectId filters to an object if necessary
@@ -173,7 +173,14 @@ export default class service {
     filters = { ...filters, deleted: false }
     // Find and update the document, and return the updated document
     return toObject(
-      await this.model.findOneAndUpdate(filters, data, { new: true })
+      await this.model.findOneAndUpdate(
+        filters,
+        { $set: data },
+        {
+          new: true,
+          ...options,
+        }
+      )
     )
   }
 

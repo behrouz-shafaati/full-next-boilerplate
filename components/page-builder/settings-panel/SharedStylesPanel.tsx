@@ -33,7 +33,7 @@ export const publicStylesSchema = {
       title: 'Background color',
       default: '#ffffff',
     },
-    'box-shadow': {
+    boxShadow: {
       type: 'object',
       title: 'سایه (Box Shadow)',
       properties: {

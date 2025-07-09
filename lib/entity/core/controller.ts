@@ -227,7 +227,7 @@ export default class controller {
    * @beta
    */
   async findOneAndUpdate(payload: Update) {
-    payload = { saveLog: false, ...payload }
+    payload = { saveLog: false, options: {}, ...payload }
     let result: any
     const previousValues = await this.service.findOne({
       filters: payload.filters,
@@ -242,7 +242,8 @@ export default class controller {
     try {
       result = await this.service.findOneAndUpdate(
         payload.filters,
-        payload.params
+        payload.params,
+        payload.options
       )
       // if (payload.saveLog) {
       //   if (result) log.setResultStatus(true);

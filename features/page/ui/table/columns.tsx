@@ -30,6 +30,10 @@ export const columns: ColumnDef<Page>[] = [
     header: 'عنوان',
   },
   {
+    accessorKey: 'type',
+    header: 'نوع',
+  },
+  {
     accessorKey: 'status',
     header: 'وضعیت',
   },
