@@ -3,6 +3,7 @@ import baseController from '@/lib/entity/core/controller'
 import fileCtrl from '@/lib/entity/file/controller'
 import settingsSchema from './schema'
 import settingsService from './service'
+import { revalidatePath } from 'next/cache'
 
 class controller extends baseController {
   /**
@@ -63,11 +64,13 @@ class controller extends baseController {
 
   async create(payload: Create) {
     console.log('#389 payload:', payload)
+    revalidatePath('/')
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
     console.log('#3323 payload:', payload)
+    revalidatePath('/')
     return super.findOneAndUpdate(payload)
   }
 

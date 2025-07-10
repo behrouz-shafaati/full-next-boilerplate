@@ -20,8 +20,8 @@ export const computedStyles = (
       result.borderRadius = `${value?.top || 0}px ${value?.right || 0}px ${
         value?.bottom || 0
       }px ${value?.left || 0}px`
-    } else if (key === 'box-shadow') {
-      result['box-shadow'] = `${value?.inset ? 'inset ' : ''}${
+    } else if (key === 'boxShadow') {
+      result['boxShadow'] = `${value?.inset ? 'inset ' : ''}${
         value?.x || 0
       }px ${value?.y || 0}px ${value?.blur || 0}px ${value?.spread || 0}px ${
         value?.color || ''
