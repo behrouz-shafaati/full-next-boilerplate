@@ -192,12 +192,12 @@ export default class controller {
    * @beta
    */
   async create(payload: Create): Promise<any> {
-    payload = { saveLog: false, ...payload }
+    payload = { saveLog: false, revalidatePath: '', ...payload }
 
     // log.setVariables(payload);
     let result: any
     try {
-      result = await this.service.create(payload.params)
+      result = await this.service.create(payload.params, payload.revalidatePath)
       // if (payload.saveLog) {
       //   if (result) {
       //     log.setTarget(result.id);
@@ -227,7 +227,7 @@ export default class controller {
    * @beta
    */
   async findOneAndUpdate(payload: Update) {
-    payload = { saveLog: false, options: {}, ...payload }
+    payload = { saveLog: false, options: {}, revalidatePath: '', ...payload }
     let result: any
     const previousValues = await this.service.findOne({
       filters: payload.filters,
@@ -243,7 +243,8 @@ export default class controller {
       result = await this.service.findOneAndUpdate(
         payload.filters,
         payload.params,
-        payload.options
+        payload.options,
+        payload.revalidatePath
       )
       // if (payload.saveLog) {
       //   if (result) log.setResultStatus(true);

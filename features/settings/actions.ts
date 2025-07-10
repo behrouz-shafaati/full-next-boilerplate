@@ -3,13 +3,6 @@
 import { z } from 'zod'
 import settingsCtrl from '@/features/settings/controller'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
-import {
-  extractExcerptFromContentJson,
-  generateExcerpt,
-  generateUniqueSlug,
-} from './utils'
-import { getSession } from '@/lib/auth'
 import { Session, State } from '@/types'
 
 const FormSchema = z.object({
@@ -44,9 +37,9 @@ export async function updateSettings(prevState: State, formData: FormData) {
       filters: { type: 'site-settings' },
       params,
       options: { upsert: true }, // اگر نبود، بساز
+      revalidatePath: '/',
     })
 
-    revalidatePath('/dashboard/settingss')
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
     return {

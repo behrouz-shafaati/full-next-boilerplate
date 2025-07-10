@@ -2,6 +2,7 @@ import mongoose from 'mongoose'
 import { Types } from 'mongoose'
 import { Id, Pagination, QueryFind, QueryResponse } from './interface'
 import dbConnect from '@/lib/dbConnect'
+import { revalidatePath } from 'next/cache'
 
 const makeNewJsonObject = (object: any) => {
   return object
@@ -145,10 +146,12 @@ export default class service {
     }
     return toObject(await this.model.findOne({ ...filters, deleted: false }))
   }
-  async create(data: object) {
+  async create(data: object, revalidate: string) {
     // Connect to the MongoDB database
     await dbConnect()
-    return toObject(await this.model.create(data))
+    const newData = await this.model.create(data)
+    if (revalidate != '') revalidatePath(revalidate)
+    return toObject(newData)
     // Disconnect from the MongoDB database
     // mongoose.disconnect();
   }
@@ -159,7 +162,12 @@ export default class service {
    * @param data - The data to update the document with.
    * @returns The updated document.
    */
-  async findOneAndUpdate(filters: any, data: object, options: object) {
+  async findOneAndUpdate(
+    filters: any,
+    data: object,
+    options: object,
+    revalidate: string
+  ) {
     // Connect to the MongoDB database
     await dbConnect()
     // Convert string or ObjectId filters to an object if necessary
@@ -172,16 +180,17 @@ export default class service {
     // Add 'deleted' filter to exclude deleted documents
     filters = { ...filters, deleted: false }
     // Find and update the document, and return the updated document
-    return toObject(
-      await this.model.findOneAndUpdate(
-        filters,
-        { $set: data },
-        {
-          new: true,
-          ...options,
-        }
-      )
+    const updatedValue = await this.model.findOneAndUpdate(
+      filters,
+      { $set: data },
+      {
+        new: true,
+        ...options,
+      }
     )
+    if (revalidate != '') revalidatePath(revalidate)
+
+    return toObject(updatedValue)
   }
 
   async updateMany(filters: any, data: object, options: object = {}) {
