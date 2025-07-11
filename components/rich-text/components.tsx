@@ -1,12 +1,12 @@
-import React, { ReactNode, Ref, PropsWithChildren } from 'react';
-import ReactDOM from 'react-dom';
-import { cx, css } from '@emotion/css';
+import React, { ReactNode, Ref, PropsWithChildren } from 'react'
+import ReactDOM from 'react-dom'
+import { cx, css } from '@emotion/css'
 
 interface BaseProps {
-  className: string;
-  [key: string]: unknown;
+  className: string
+  [key: string]: unknown
 }
-type OrNull<T> = T | null;
+type OrNull<T> = T | null
 
 export const Button = React.forwardRef<
   HTMLSpanElement,
@@ -32,8 +32,8 @@ export const Button = React.forwardRef<
       `
     )}
   />
-));
-Button.displayName = 'Button';
+))
+Button.displayName = 'Button'
 
 export const EditorValue = React.forwardRef<
   HTMLDivElement,
@@ -42,7 +42,7 @@ export const EditorValue = React.forwardRef<
   const textLines = value.document.nodes
     .map((node) => node.text)
     .toArray()
-    .join('\n');
+    .join('\n')
 
   return (
     <div
@@ -64,7 +64,7 @@ export const EditorValue = React.forwardRef<
           background: #f8f8f8;
         `}
       >
-        Slate's value as text
+        Slate&apos;s value as text
       </div>
       <div
         className={css`
@@ -80,11 +80,11 @@ export const EditorValue = React.forwardRef<
         {textLines}
       </div>
     </div>
-  );
-});
+  )
+})
 
 // اضافه کردن displayName
-EditorValue.displayName = 'EditorValue';
+EditorValue.displayName = 'EditorValue'
 
 export const Instruction = React.forwardRef<
   HTMLDivElement,
@@ -104,10 +104,10 @@ export const Instruction = React.forwardRef<
       `
     )}
   />
-));
+))
 
 // اضافه کردن displayName
-Instruction.displayName = 'Instruction';
+Instruction.displayName = 'Instruction'
 
 export const Menu = React.forwardRef<
   HTMLDivElement,
@@ -130,16 +130,16 @@ export const Menu = React.forwardRef<
       `
     )}
   />
-));
+))
 
 // اضافه کردن displayName
-Menu.displayName = 'Menu';
+Menu.displayName = 'Menu'
 
 export const Portal = ({ children }: { children?: ReactNode }) => {
   return typeof document === 'object'
     ? ReactDOM.createPortal(children, document.body)
-    : null;
-};
+    : null
+}
 
 export const Toolbar = React.forwardRef<
   HTMLDivElement,
@@ -159,7 +159,7 @@ export const Toolbar = React.forwardRef<
       `
     )}
   />
-));
+))
 
 // اضافه کردن displayName
-Toolbar.displayName = 'Toolbar';
+Toolbar.displayName = 'Toolbar'

@@ -16,7 +16,6 @@ type State = {
   resetContent: () => void
   setContent: (content: PageContent) => void
   addRow: () => void
-  deleteRow: (rowId: string) => void
   addColumn: (rowId: string) => void
   addElementToColumn: (colId: string, element: PageBlock) => void
   moveElementWithinColumn: (
@@ -33,6 +32,7 @@ type State = {
   getJson: () => string
   reorderRows: (sourceId: string, destinationId: string) => void
   updateRowColumns: (rowId: string, layout: string) => void
+  deleteItem: (itemId: string) => void
   updatePage: (itemId: string | null, key: string, value: any) => void
   selectedBlock: PageBlock | null
   selectBlock: (block: PageBlock) => void
@@ -69,13 +69,6 @@ export const useBuilderStore = create<State>((set, get) => ({
             columns: [defaultColumn(), defaultColumn(), defaultColumn()],
           },
         ],
-      },
-    })),
-  deleteRow: (rowId) =>
-    set((state) => ({
-      content: {
-        ...state.content,
-        rows: state.content.rows.filter((row) => row.id != rowId),
       },
     })),
   addColumn: (rowId) =>
@@ -299,6 +292,36 @@ export const useBuilderStore = create<State>((set, get) => ({
 
         return { ...row, columns: updatedColumns }
       })
+
+      return {
+        content: { ...state.content, rows: updatedRows },
+      }
+    }),
+  /**
+   *
+   * @param itemId
+   */
+  deleteItem: (itemId) =>
+    set((state) => {
+      if (itemId == null) {
+        return { content: { ...state.content } }
+      }
+
+      const updatedRows = state.content.rows
+        .filter((row) => row.id !== itemId) // حذف row در صورتی که id برابر باشد
+        .map((row) => {
+          const updatedColumns = row.columns
+            .filter((column) => column.id !== itemId) // حذف column در صورت match شدن id
+            .map((column) => {
+              const updatedBlocks = column.blocks.filter(
+                (block) => block.id !== itemId
+              ) // حذف block در صورت match شدن id
+
+              return { ...column, blocks: updatedBlocks }
+            })
+
+          return { ...row, columns: updatedColumns }
+        })
 
       return {
         content: { ...state.content, rows: updatedRows },

@@ -4,6 +4,20 @@ import { Id, Pagination, QueryFind, QueryResponse } from './interface'
 import dbConnect from '@/lib/dbConnect'
 import { revalidatePath } from 'next/cache'
 
+function revalidatePaths(revalidate: string | string[] | undefined) {
+  if (!revalidate) return
+
+  if (Array.isArray(revalidate)) {
+    for (const path of revalidate) {
+      if (typeof path === 'string' && path.trim() !== '') {
+        revalidatePath(path)
+      }
+    }
+  } else if (typeof revalidate === 'string' && revalidate.trim() !== '') {
+    revalidatePath(revalidate)
+  }
+}
+
 const makeNewJsonObject = (object: any) => {
   return object
   const jsonStringObject = JSON.stringify(object)
@@ -150,7 +164,7 @@ export default class service {
     // Connect to the MongoDB database
     await dbConnect()
     const newData = await this.model.create(data)
-    if (revalidate != '') revalidatePath(revalidate)
+    revalidatePaths(revalidate)
     return toObject(newData)
     // Disconnect from the MongoDB database
     // mongoose.disconnect();
@@ -188,7 +202,7 @@ export default class service {
         ...options,
       }
     )
-    if (revalidate != '') revalidatePath(revalidate)
+    revalidatePaths(revalidate)
 
     return toObject(updatedValue)
   }

@@ -1,6 +1,6 @@
 // کامپوننت نمایشی بلاک
 
-import React from 'react'
+import React, { ElementType } from 'react'
 import { PageBlock } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
 
@@ -23,8 +23,22 @@ type TextBlockProps = {
 export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
   const { content, settings } = blockData
 
+  const tagMap: Record<string, ElementType> = {
+    h1: 'h1',
+    h2: 'h2',
+    h3: 'h3',
+    h4: 'h4',
+    h5: 'h5',
+    h6: 'h6',
+    p: 'p',
+    div: 'div',
+    span: 'span',
+    // هر تگ دیگه‌ای که بخوای اضافه کن
+  }
+
+  const Tag: ElementType = tagMap[settings.tag] || 'div'
   return (
-    <p
+    <Tag
       style={{
         fontSize: settings.fontSize || '16px',
         fontWeight: settings.fontWeight || 'normal',
@@ -35,6 +49,6 @@ export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
       {...props}
     >
       {content.text || 'متن پیش‌فرض'}
-    </p>
+    </Tag>
   )
 }

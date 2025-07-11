@@ -2,6 +2,7 @@ export type PageContent = {
   id: string // UUID
   title: string
   slug: string
+  template: string
   category: string
   rows: PageRow[]
 }
@@ -41,6 +42,11 @@ export type PageBlock = {
     margin?: string
     backgroundColor?: string
     borderRadius?: string
+    visibility: {
+      desktop: boolean
+      tablet: boolean
+      mobile: boolean
+    }
     [key: string]: any
   }
   settings?: {

@@ -95,6 +95,15 @@ export const publicStylesSchema = {
       maximum: 100,
       multipleOf: 1,
     },
+    visibility: {
+      type: 'object',
+      title: 'نمایش در دستگاه‌ها',
+      properties: {
+        desktop: { type: 'boolean', title: 'نمایش در دسکتاپ', default: true },
+        tablet: { type: 'boolean', title: 'نمایش در تبلت', default: true },
+        mobile: { type: 'boolean', title: 'نمایش در موبایل', default: true },
+      },
+    },
   },
 }
 

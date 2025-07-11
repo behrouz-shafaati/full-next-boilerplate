@@ -4,7 +4,7 @@ import Text from '@/components/form-fields/text'
 import { PageContent } from '../types'
 import { BlockPalette } from './BlockPalette'
 import { useBuilderStore } from '../store/useBuilderStore'
-import ToolsSectionPage from './toolsSectionPage'
+import ToolsSectionPage from './pageSettings/toolsSectionPage'
 import ToolsSectionBlock from './toolsSectionBlock'
 import { Category } from '@/features/category/interface'
 

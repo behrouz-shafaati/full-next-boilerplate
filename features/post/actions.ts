@@ -48,7 +48,10 @@ export async function createPost(prevState: State, formData: FormData) {
       slug,
     }
     console.log('#887 cleanedParams:', cleanedParams)
-    await postCtrl.create({ params: cleanedParams })
+    await postCtrl.create({
+      params: cleanedParams,
+      revalidatePath: `/blog/${slug}`,
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -89,6 +92,7 @@ export async function updatePost(
     await postCtrl.findOneAndUpdate({
       filters: id,
       params,
+      revalidatePath: `/blog/${params.slug}`,
     })
 
     revalidatePath('/dashboard/posts')

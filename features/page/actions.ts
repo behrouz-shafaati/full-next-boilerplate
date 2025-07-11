@@ -5,6 +5,7 @@ import pageCtrl from '@/features/page/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import settingsCtrl from '../settings/controller'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -42,7 +43,7 @@ export async function createPage(prevState: State, formData: FormData) {
     }
     console.log('#234876 params:', params)
     // Create the page
-    await pageCtrl.create({ params })
+    await pageCtrl.create({ params, revalidatePath: `/${params.slug}` })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -86,9 +87,16 @@ export async function updatePage(
       slug: content.slug,
       status: content.status,
     }
+    let revalidatePath = [`/${params.slug}`]
+    // if is home page so revalidate home page
+    const settings = await settingsCtrl.findOne({
+      filters: { type: 'site-settings' },
+    })
+    if (settings.id === id) revalidatePath = [...revalidatePath, '/']
     await pageCtrl.findOneAndUpdate({
       filters: id,
       params,
+      revalidatePath,
     })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }

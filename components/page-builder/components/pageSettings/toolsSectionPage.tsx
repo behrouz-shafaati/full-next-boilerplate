@@ -1,9 +1,9 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HeadingIcon, MailIcon } from 'lucide-react'
 import Text from '@/components/form-fields/text'
-import { PageContent } from '../types'
-import { BlockPalette } from './BlockPalette'
-import { useBuilderStore } from '../store/useBuilderStore'
+import { PageContent } from '../../types'
+import { BlockPalette } from '../BlockPalette'
+import { useBuilderStore } from '../../store/useBuilderStore'
 import { useDebouncedCallback } from 'use-debounce'
 import Combobox, { Option } from '@/components/form-fields/combobox'
 import { Category } from '@/features/category/interface'
@@ -11,6 +11,8 @@ import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import Select from '@/components/form-fields/select'
 import { v4 as uuidv4 } from 'uuid'
 import { useEffect, useState } from 'react'
+import PageTypeSettings from './PageTypeSettings'
+import TemplateTypeSettings from './TemplateTypeSettings'
 
 type ToolsSectionProp = {
   page: PageContent | null
@@ -25,6 +27,7 @@ export default function ToolsSectionPage({
 }: ToolsSectionProp) {
   const [tabKey, SetTabKey] = useState<String>('')
   const { updatePage, getJson } = useBuilderStore()
+  const json = JSON.parse(getJson())
   const debouncedUpdate = useDebouncedCallback(
     (id, key, form) => updatePage(id, key, form),
     400
@@ -57,88 +60,6 @@ export default function ToolsSectionPage({
       value: 'template',
     },
   ]
-
-  const PageTypeSettings = () => {
-    let templatesOptions: Option[] = allTemplates.map((t: PageContent) => {
-      return {
-        value: String(t.id),
-        label: String(t.title),
-      }
-    })
-    templatesOptions = [
-      {
-        value: '__none__',
-        label: 'بدون قالب',
-      },
-      ...templatesOptions,
-    ]
-    return (
-      <>
-        <Text
-          title="نامک"
-          name="slug"
-          defaultValue={JSON.parse(getJson()).slug || ''}
-          placeholder="نامک"
-          icon={<HeadingIcon className="h-4 w-4" />}
-          className=""
-          onChange={(e) => debouncedUpdate(null, 'slug', e.target.value)}
-        />
-        <Combobox
-          title="قالب"
-          name="template"
-          defaultValue={JSON.parse(getJson()).template || '__none__'}
-          options={templatesOptions}
-          placeholder="قالب"
-          onChange={(e) => debouncedUpdate(null, 'template', e.target.value)}
-        />
-      </>
-    )
-  }
-  const TemplateTypeSettings = () => {
-    const categoryOptions: Option[] = allCategories.map(
-      (category: Category) => {
-        return {
-          value: String(category.id),
-          label:
-            'خانه‌ی دسته‌ی ' +
-            createCatrgoryBreadcrumb(category, category.title),
-        }
-      }
-    )
-    const patternTypeOptions = [
-      {
-        label: 'تمام صفحات',
-        value: 'allPages',
-      },
-      // {
-      //   label: 'صفحه نخست',
-      //   value: 'firstPage',
-      // },
-      {
-        label: 'خانه‌ی مقالات',
-        value: 'blogs',
-      },
-      {
-        label: 'مقاله‌ی تکی',
-        value: 'blog',
-      },
-      {
-        label: 'خانه‌ی دسته بندی مقالات',
-        value: 'categories',
-      },
-      ...categoryOptions,
-    ]
-    return (
-      <Combobox
-        title="برای"
-        name="templateFor"
-        defaultValue={JSON.parse(getJson()).templateFor || 'allPages'}
-        options={patternTypeOptions}
-        placeholder="برای"
-        onChange={(e) => debouncedUpdate(null, 'templateFor', e.target.value)}
-      />
-    )
-  }
 
   useEffect(() => SetTabKey(uuidv4()), [])
 
@@ -173,10 +94,10 @@ export default function ToolsSectionPage({
           onChange={(value) => debouncedUpdate(null, 'type', value)}
         />
         {/* <p>type: {JSON.parse(getJson()).type}</p> */}
-        {JSON.parse(getJson()).type === 'page' ? (
-          <PageTypeSettings />
+        {json.type === 'page' ? (
+          <PageTypeSettings allTemplates={allTemplates} />
         ) : (
-          <TemplateTypeSettings />
+          <TemplateTypeSettings allCategories={allCategories} />
         )}
         {/* Parent */}
         {/* <Combobox
