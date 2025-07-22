@@ -1,78 +1,69 @@
-'use client';
+'use client'
 
-import { Fragment, useState, useEffect } from 'react';
+import { useState } from 'react'
 import MultipleSelectorInput, {
   Option as O,
-} from '../ui/multiple-selector-input';
+} from '../ui/multiple-selector-input'
 
 export interface Option extends O {
-  value: string;
-  label: string;
+  value: string
+  label: string
 }
 
 type MultiSelect = {
-  title: string;
-  name: string;
-  defaultValues?: string[];
-  defaultOptions: Option[];
-  options?: Option[];
-  placeholder?: string;
-  icon?: any;
-  state?: any;
-};
+  title: string
+  name: string
+  defaultValues?: Option[]
+  defaultSuggestions?: Option[]
+  placeholder?: string
+  icon?: any
+  state?: any
+  onChange?: (values: Option[]) => void
+  onSearch?: (query: string) => Promise<Option[]>
+}
 export default function MultiSelect({
   title,
   name,
   defaultValues,
-  defaultOptions,
-  options,
+  defaultSuggestions = [],
   placeholder,
   icon,
   state,
+  onChange,
+  onSearch,
 }: MultiSelect) {
-  const InputIcon = icon;
-  const defaultSelected = [];
-  const defaultSelectedKeys = [];
-  options = options ?? defaultOptions;
-  if (defaultValues)
-    for (let i = 0; i < defaultValues.length; i++) {
-      for (let j = 0; j < options.length; j++) {
-        if (defaultValues[i] === options[j].value) {
-          defaultSelected.push(options[j]);
-          defaultSelectedKeys.push(options[j].value);
-        }
-      }
-    }
-  const [selectedOptions, setSelectedOptions] = useState(defaultSelected);
-  const [selectedValues, setSelectedKeys] = useState(
-    JSON.stringify(defaultSelectedKeys)
-  );
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
+  const InputIcon = icon
+  const [values, setValues] = useState<Option[]>(defaultValues || [])
+  const [defaultOptions, setDefaultOptions] = useState<Option[]>(
+    defaultSuggestions || []
+  )
 
-  useEffect(() => {
-    let keys = selectedOptions.map((option) => option.value);
-    setSelectedKeys(JSON.stringify(keys));
-  }, [selectedOptions]);
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
+
   return (
     <div className="mb-4">
       <label htmlFor={name} className="mb-2 block text-sm font-medium">
         {title}
       </label>
       <div className="relative">
-        <input type="hidden" name={name} value={selectedValues} />
+        <input type="hidden" name={name} value={JSON.stringify(values)} />
         <div className=" top-16">
           <MultipleSelectorInput
             placeholder={placeholder || 'انتخاب کنید'}
-            defaultOptions={options}
-            value={selectedOptions}
+            defaultOptions={defaultOptions || []}
+            value={values}
             hidePlaceholderWhenSelected
-            onChange={setSelectedOptions}
+            onChange={(options) => {
+              setValues(options)
+              onChange?.(options)
+            }}
             emptyIndicator={
               <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
                 چیزی پیدا نشد
               </p>
             }
+            {...(onSearch ? { onSearch: onSearch } : {})}
           />
         </div>
         {icon && (
@@ -89,5 +80,5 @@ export default function MultiSelect({
         </div>
       )}
     </div>
-  );
+  )
 }

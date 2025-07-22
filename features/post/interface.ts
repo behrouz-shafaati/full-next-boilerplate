@@ -35,9 +35,19 @@ type PostBase = {
   slug: string
 
   /**
+   * دسته‌بندی پست
+   */
+  category?: string
+
+  /**
+   * برچسب های پست
+   */
+  tags?: string[]
+
+  /**
    * وضعیت فعال بودن مطلب (در صورت فعال بودن true)
    */
-  status: 'publish' | 'draft'
+  status: 'published' | 'draft'
 }
 
 /**
@@ -48,8 +58,7 @@ export type Post = Model & PostBase
 /**
  * مدل اسکیمای مطلب برای پایگاه داده که شامل اطلاعات پایه مطلب و ویژگی‌های اضافی اسکیمای پایگاه داده می‌باشد
  */
-export type PostSchema = SchemaModel &
-  Omit<PostBase, 'status'> & { status: number }
+export type PostSchema = SchemaModel & PostBase
 
 /**
  * ساختار درخواست ارسال داده‌های مطلب که شامل اطلاعات پایه مطلب می‌باشد

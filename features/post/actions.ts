@@ -7,15 +7,19 @@ import { redirect } from 'next/navigation'
 import {
   extractExcerptFromContentJson,
   generateExcerpt,
-  generateUniqueSlug,
+  generateUniquePostSlug,
 } from './utils'
 import { getSession } from '@/lib/auth'
-import { Session, State } from '@/types'
+import { Option, Session, State } from '@/types'
+import tagCtrl from '../tag/controller'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   contentJson: z.string({}),
   status: z.string({}),
+  category: z.string({}),
+  slug: z.string({}),
+  tags: z.string({}),
   image: z.string().nullable(),
 })
 
@@ -28,46 +32,47 @@ const FormSchema = z.object({
  */
 export async function createPost(prevState: State, formData: FormData) {
   // Validate form fields
+  let newPost = null
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
+  const values = validatedFields.data
+  console.log('#234786 values: ', values)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
       success: false,
+      values,
     }
   }
 
   try {
     const params = await sanitizePostData(validatedFields)
-    const slug = await generateUniqueSlug(params.title)
-    const cleanedParams = {
-      ...params,
-      slug,
-    }
-    console.log('#887 cleanedParams:', cleanedParams)
-    await postCtrl.create({
+    const cleanedParams = await generateUniquePostSlug(params)
+    newPost = await postCtrl.create({
       params: cleanedParams,
-      revalidatePath: `/blog/${slug}`,
+      revalidatePath: `/blog/${cleanedParams?.slug || params.slug}`,
     })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
         errors: error.flatten().fieldErrors,
+        values,
       }
     }
     return {
       message: 'خطای پایگاه داده: ایجاد مطلب ناموفق بود.',
       success: false,
+      values,
     }
   }
-
   // Revalidate the path and redirect to the post dashboard
-  revalidatePath('/dashboard/posts')
-  redirect('/dashboard/posts')
+  revalidatePath(`/dashboard/posts`)
+  if (newPost) redirect(`/dashboard/posts/${newPost.id}`)
+  else redirect(`/dashboard/posts`)
 }
 
 export async function updatePost(
@@ -78,29 +83,35 @@ export async function updatePost(
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
+  const values = validatedFields.data
 
+  console.log('#23478d formData: ', formData)
+  console.log('#2347f6 values: ', values)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
       success: false,
+      values,
     }
   }
   try {
     const params = await sanitizePostData(validatedFields)
+    const cleanedParams = await generateUniquePostSlug(params, id)
     await postCtrl.findOneAndUpdate({
       filters: id,
-      params,
-      revalidatePath: `/blog/${params.slug}`,
+      params: cleanedParams,
+      revalidatePath: `/blog/${cleanedParams?.slug || params.slug}`,
     })
 
     revalidatePath('/dashboard/posts')
-    return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
+    return { message: 'فایل با موفقیت بروز رسانی شد', success: true, values }
   } catch (error) {
     return {
       message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.',
       success: false,
+      values,
     }
   }
 }
@@ -119,6 +130,7 @@ async function sanitizePostData(validatedFields: any) {
   const session = (await getSession()) as Session
   // Create the post
   const postPayload = validatedFields.data
+  const tagsArray: Option[] = JSON.parse(postPayload?.tags || '[]')
   const excerpt = extractExcerptFromContentJson(postPayload.contentJson, 25)
   const image = postPayload.image
     ? postPayload.image == ''
@@ -127,9 +139,10 @@ async function sanitizePostData(validatedFields: any) {
     : null
   const user = session.user.id
   const contentJson = await postCtrl.setFileData(postPayload.contentJson)
-  console.log('#contentJson after set file data: ', contentJson)
+  const tags = await tagCtrl.ensureTagsExist(tagsArray)
   const params = {
     ...postPayload,
+    tags,
     contentJson: JSON.stringify(contentJson),
     excerpt,
     image,

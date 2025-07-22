@@ -5,10 +5,14 @@ import categoryCtrl from './controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import { title } from 'process'
+import { Category } from './interface'
+import { createCatrgoryBreadcrumb } from '@/lib/utils'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   parent: z.string({}).nullable(),
+  slug: z.string({}),
   description: z.string({}),
   status: z.string({}),
   image: z.string({}).nullable(),
@@ -94,4 +98,13 @@ export async function deleteCategory(id: string) {
 
 export async function getAllCategories() {
   return categoryCtrl.findAll({})
+}
+
+export async function searchCategories(query: string) {
+  const results = await categoryCtrl.find({ filters: { query } })
+
+  return results.data.map((cat: Category) => ({
+    label: createCatrgoryBreadcrumb(cat, cat.title),
+    value: String(cat.id),
+  }))
 }

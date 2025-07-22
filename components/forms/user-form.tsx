@@ -22,35 +22,8 @@ import { SubmitButton } from '../form-fields/submit-button'
 import MultipleSelector, { Option } from '../form-fields/multiple-selector'
 import { AlertModal } from '../modal/alert-modal'
 import ProfileUpload from '../form-fields/profile-upload'
+import { Role } from '@/lib/entity/role/interface'
 // import FileUpload from "../file-upload";
-const ImgSchema = z.object({
-  fileName: z.string(),
-  name: z.string(),
-  fileSize: z.number(),
-  size: z.number(),
-  fileKey: z.string(),
-  key: z.string(),
-  fileUrl: z.string(),
-  src: z.string(),
-})
-export const IMG_MAX_LIMIT = 3
-const formSchema = z.object({
-  name: z.string().min(3, { message: 'نام معتبر وارد کنید' }),
-  imgUrl: z
-    .array(ImgSchema)
-    .max(
-      IMG_MAX_LIMIT,
-      `message: You can only add up to ${IMG_MAX_LIMIT} images`
-    )
-    .min(1, { message: 'At least one image must be added.' }),
-  description: z
-    .string()
-    .min(3, { message: 'Product description must be at least 3 characters' }),
-  price: z.coerce.number(),
-  category: z.string().min(1, { message: 'Please select a category' }),
-})
-
-type ProductFormValues = z.infer<typeof formSchema>
 
 interface ProductFormProps {
   initialData: any | null
@@ -62,10 +35,18 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
     ? updateUser.bind(null, String(user.id))
     : createUser
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
-  const roleOptions: Option[] = roleCtrl.getRoles().map((role) => ({
+
+  const allRoles: Role[] = roleCtrl.getRoles()
+  const roleOptions: Option[] = allRoles.map((role) => ({
     label: role.title,
     value: role.slug,
   }))
+  const userRoles: Option[] = user?.roles?.map((slug: string) => {
+    const findedRole: Role | undefined = allRoles.find(
+      (role: Role) => role.slug == slug
+    )
+    return { label: findedRole?.title, value: slug }
+  })
 
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
@@ -157,10 +138,10 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <MultipleSelector
             title="نقش"
             name="roles"
-            defaultValues={user?.roles}
+            defaultValues={userRoles}
             placeholder="نقش های کاربر را انتخاب کنید"
             state={state}
-            defaultOptions={roleOptions}
+            defaultSuggestions={roleOptions}
             icon={ShieldQuestionIcon}
           />
           {/* Password */}

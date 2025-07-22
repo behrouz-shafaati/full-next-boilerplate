@@ -1,10 +1,10 @@
-'use client';
+'use client'
 
-import * as React from 'react';
-import { Check, ChevronsUpDown } from 'lucide-react';
+import * as React from 'react'
+import { Check, ChevronsUpDown } from 'lucide-react'
 
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils'
+import { Button } from '@/components/ui/button'
 import {
   Command,
   CommandEmpty,
@@ -12,44 +12,21 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from '@/components/ui/command';
+} from '@/components/ui/command'
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from '@/components/ui/popover';
-import { Option } from '../form-fields/combobox';
-
-const frameworks = [
-  {
-    value: 'next.js',
-    label: 'Next.js',
-  },
-  {
-    value: 'sveltekit',
-    label: 'SvelteKit',
-  },
-  {
-    value: 'nuxt.js',
-    label: 'Nuxt.js',
-  },
-  {
-    value: 'remix',
-    label: 'Remix',
-  },
-  {
-    value: 'astro',
-    label: 'Astro',
-  },
-];
+} from '@/components/ui/popover'
+import { Option } from '../form-fields/combobox'
 
 type CheckBoxInputProp = {
-  title: string;
-  placeholder?: string;
-  value: string;
-  options: Option[];
-  onChange: (option: Option) => void;
-};
+  title: string
+  placeholder?: string
+  value: string
+  options: Option[]
+  onChange: (option: Option) => void
+}
 
 export default function ComboboxInput({
   options,
@@ -57,7 +34,7 @@ export default function ComboboxInput({
   value,
   onChange,
 }: CheckBoxInputProp) {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(false)
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -83,10 +60,11 @@ export default function ComboboxInput({
               {options.map((option) => (
                 <CommandItem
                   key={option.value}
-                  value={option.value}
+                  // اینجا value رو برابر label می‌ذاریم تا سرچ بر اساس label باشه
+                  value={option.label}
                   onSelect={(currentValue) => {
-                    onChange(option);
-                    setOpen(false);
+                    onChange?.(option)
+                    setOpen(false)
                   }}
                 >
                   <Check
@@ -103,5 +81,5 @@ export default function ComboboxInput({
         </Command>
       </PopoverContent>
     </Popover>
-  );
+  )
 }

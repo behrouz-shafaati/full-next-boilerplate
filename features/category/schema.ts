@@ -9,9 +9,10 @@ const categorySchema = new Schema<CategorySchema>(
       default: null,
     },
     title: { type: String, required: true },
+    slug: { type: String, required: true, unique: true },
     description: { type: String, default: '' },
     image: { type: Schema.Types.ObjectId, ref: 'file' },
-    status: { type: Number, default: 1 },
+    status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
@@ -41,14 +42,8 @@ categorySchema
 categorySchema.index({ title: 1 })
 categorySchema.index({ status: 1 })
 
-const statusMap: any = {
-  0: 'inactive',
-  1: 'active',
-  2: 'stop_sell',
-}
 const transform = (doc: any, ret: any, options: any) => {
   ret.id = ret._id?.toHexString()
-  ret.status = statusMap[ret.status]
   delete ret._id
   delete ret.__v
   delete ret.deleted

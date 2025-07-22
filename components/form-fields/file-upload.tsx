@@ -50,6 +50,8 @@ interface FileUploadProps {
   allowedFileTypes?: any
   showDeleteButton?: boolean
   responseHnadler?: (FileDetails: FileDetails) => void
+  updateFileDetailsHnadler?: (FileDetails: FileDetails[]) => void
+  deleteFileHnadler?: (fileId: string) => void
   onChange?: () => void
 }
 
@@ -65,6 +67,8 @@ const FileUpload = forwardRef(function FileUpload(
     allowedFileTypes,
     showDeleteButton = true,
     responseHnadler,
+    updateFileDetailsHnadler,
+    deleteFileHnadler,
     onChange,
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
@@ -112,6 +116,7 @@ const FileUpload = forwardRef(function FileUpload(
           })(),
           title: file.name.split('.')[0],
           alt: '',
+          href: '',
           description: '',
         })
       )
@@ -131,6 +136,7 @@ const FileUpload = forwardRef(function FileUpload(
     formData.append('id', file?.id)
     formData.append('title', file?.title)
     formData.append('alt', file?.alt)
+    formData.append('href', file?.href)
     formData.append('description', file?.description)
     formData.append('main', file?.main)
 
@@ -148,6 +154,12 @@ const FileUpload = forwardRef(function FileUpload(
     onDrop,
   })
 
+  const handelUpdateFileDetails = async (filesDetails: any) => {
+    const updatedFilesArray = await updateFileDetails(filesDetails)
+
+    if (updateFileDetailsHnadler) updateFileDetailsHnadler(updatedFilesArray)
+  }
+
   useEffect(() => {
     // Revoke the data uris to avoid memory leaks
     // return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
@@ -157,16 +169,17 @@ const FileUpload = forwardRef(function FileUpload(
     const filesDetails: FileDetailsPayload[] = files
       .filter((file) => file?.id)
       .map((file) => {
-        return {
+        const newFile = {
           id: file.id,
           title: file.title,
           alt: file.alt,
+          href: file.href,
           description: file.description,
           main: file.main,
         }
+        return newFile
       })
-
-    updateFileDetails(filesDetails)
+    handelUpdateFileDetails(filesDetails)
   }, [files])
 
   const removeFileById = (id: string) => {
@@ -190,6 +203,7 @@ const FileUpload = forwardRef(function FileUpload(
     deleteFile(deletedItem.id)
     requestAnimationFrame(() => {
       onChange?.()
+      deleteFileHnadler?.(deletedItem.id)
     })
   }
 
@@ -398,6 +412,14 @@ const ModalContent = ({
           value={newFile.alt}
           onChange={(e) =>
             setNewFile((s: any) => ({ ...s, alt: e.target.value }))
+          }
+        />
+        <Text
+          title="لینک"
+          name="href"
+          value={newFile.href}
+          onChange={(e) =>
+            setNewFile((s: any) => ({ ...s, href: e.target.value }))
           }
         />
         <Text

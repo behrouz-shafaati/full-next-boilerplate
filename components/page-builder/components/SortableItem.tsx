@@ -49,13 +49,15 @@ export default function SortableItem({ item, index, colId }: SortableItemProp) {
           <Trash className="h-5 w-5 text-gray-500" />
         </Button>
       </div>
-      <Component
-        blockData={item}
-        onClick={(e) => {
-          e.stopPropagation() // جلوگیری از propagate شدن به document
-          selectBlock(item)
-        }}
-      />
+      <div className="block-wrapper [&_a]:pointer-events-none [&_a]:cursor-default [&_a]:text-muted-foreground">
+        <Component
+          blockData={item}
+          onClick={(e) => {
+            e.stopPropagation() // جلوگیری از propagate شدن به document
+            selectBlock(item)
+          }}
+        />
+      </div>
     </div>
   )
 }

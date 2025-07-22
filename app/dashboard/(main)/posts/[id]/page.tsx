@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { BreadCrumb } from '@/components/breadcrumb'
 import { PostForm } from '@/features/post/ui/post-form'
+import categoryCtrl from '@/features/category/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -13,12 +14,13 @@ interface PageProps {
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
   const { id } = resolvedParams
-  let post = null
+  let post = null,
+    allCategories = {}
   let pageBreadCrumb = {
     title: 'افزودن',
     link: '/dashboard/posts/create',
   }
-
+  ;[allCategories] = await Promise.all([categoryCtrl.findAll({})])
   if (id !== 'create') {
     ;[post] = await Promise.all([postCtrl.findById({ id })])
 
@@ -44,7 +46,7 @@ export default async function Page({ params }: PageProps) {
     <ScrollArea className="h-full">
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
-        <PostForm initialData={post} />
+        <PostForm initialData={post} allCategories={allCategories.data} />
       </div>
     </ScrollArea>
   )

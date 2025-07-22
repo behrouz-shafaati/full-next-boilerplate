@@ -4,7 +4,13 @@ import { PublicStylesForm } from '../settings-panel/SharedStylesPanel'
 import { useBuilderStore } from '../store/useBuilderStore'
 import BackButton from '@/components/ui/backButton'
 
-export default function ToolsSectionBlock() {
+type ToolsSectionBlockProps = {
+  savePage: () => void
+}
+
+export default function ToolsSectionBlock({
+  savePage,
+}: ToolsSectionBlockProps) {
   const { deselectBlock, selectedBlock } = useBuilderStore()
   return (
     <Tabs defaultValue="special-settings" className="rtl relative min-h-screen">
@@ -14,7 +20,7 @@ export default function ToolsSectionBlock() {
         <TabsTrigger value="public-settings">عمومی</TabsTrigger>
       </TabsList>
       <TabsContent value="special-settings" className="p-4">
-        <BlockSettingsForm />
+        <BlockSettingsForm savePage={savePage} />
       </TabsContent>
       <TabsContent value="public-settings" className="p-4">
         <PublicStylesForm />

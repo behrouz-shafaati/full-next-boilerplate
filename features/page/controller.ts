@@ -76,6 +76,13 @@ class controller extends baseController {
     console.log('#2346 HomePage: ', homePage)
     return homePage
   }
+
+  async existSlug(slug: string): Promise<boolean> {
+    const count = await this.countAll({ slug })
+    console.log('#7d736 page count: ', count)
+    if (count > 0) return true
+    return false
+  }
 }
 
 const pageCtrl = new controller(new pageService(pageSchema))

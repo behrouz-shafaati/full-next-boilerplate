@@ -12,12 +12,14 @@ type ToolsSectionProp = {
   page: PageContent | null
   allTemplates: PageContent[]
   allCategories: Category[]
+  savePage: () => void
 }
 
 export default function ToolsSection({
   page,
   allTemplates,
   allCategories,
+  savePage,
 }: ToolsSectionProp) {
   const selectedBlock = useBuilderStore((s) => s.selectedBlock)
   if (selectedBlock == null)
@@ -28,5 +30,5 @@ export default function ToolsSection({
         allCategories={allCategories}
       />
     )
-  return <ToolsSectionBlock />
+  return <ToolsSectionBlock savePage={savePage} />
 }

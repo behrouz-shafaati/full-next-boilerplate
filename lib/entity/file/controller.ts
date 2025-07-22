@@ -85,6 +85,7 @@ class controller extends c_controller {
     let title: string = formData.get('title') as string
     let alt: string = formData.get('alt') as string
     let description: string = formData.get('description') as string
+    let href: string = formData.get('href') as string
     let main: string = formData.get('main') as string
 
     const arrayBuffer = await file.arrayBuffer()
@@ -103,7 +104,11 @@ class controller extends c_controller {
     )
 
     // for images
-    if (mimeType == 'image/jpeg' || mimeType == 'image/png') {
+    if (
+      mimeType == 'image/jpeg' ||
+      mimeType == 'image/png' ||
+      mimeType == 'image/webp'
+    ) {
       const directory = await this.generateDirectory('images')
       patch = directory.patch
       src = directory.src
@@ -178,27 +183,36 @@ class controller extends c_controller {
 
     await this.saveFileInDirectory(buffer, `${tmpPath}/${fileName}`)
     // await fs.writeFile(`${tmpPath}/${fileName}`, buffer);
+    const extension = mimeType == 'image/webp' ? 'webp' : 'png'
     try {
-      if (mimeType == 'image/jpeg' || mimeType == 'image/png') {
+      if (
+        mimeType == 'image/jpeg' ||
+        mimeType == 'image/png' ||
+        mimeType == 'image/webp'
+      ) {
         const tmpFilePath = path.resolve(tmpPath, fileName)
-
         // change extension to .jpeg
         const jpegFileName =
-          fileName.substr(0, fileName.lastIndexOf('.')) + '.png'
+          fileName.substr(0, fileName.lastIndexOf('.')) + '.' + extension
         title = jpegFileName
         const goalFilePath = path.resolve(patch, jpegFileName)
         src = `${src}/${jpegFileName}`
         patch = `${patch}/${jpegFileName}`
         // reduce size
-        await sharp(tmpFilePath)
-          .flatten({ background: { r: 255, g: 255, b: 255 } })
-          .resize(850, 850, {
-            fit: sharp.fit.inside,
-            withoutEnlargement: true,
-          })
-          // .jpeg({ quality: 90 })
-          .png({ quality: 90 })
-          .toFile(goalFilePath)
+        if (extension == 'webp') {
+          //تبدیل به فرمت webp
+          await sharp(tmpFilePath).toFormat('webp').toFile(goalFilePath)
+          fs.unlinkSync(tmpFilePath)
+        } else
+          await sharp(tmpFilePath)
+            .flatten({ background: { r: 255, g: 255, b: 255 } })
+            .resize(850, 850, {
+              fit: sharp.fit.inside,
+              withoutEnlargement: true,
+            })
+            // .jpeg({ quality: 90 })
+            .png({ quality: 90 })
+            .toFile(goalFilePath)
         fs.unlinkSync(tmpFilePath)
       }
     } catch (e: any) {
@@ -211,10 +225,11 @@ class controller extends c_controller {
         title,
         src,
         patch,
-        mimeType: 'image/png',
+        mimeType: `{image/${extension}}`,
         fileSize,
         alt,
         description,
+        href,
         previewPath,
         main,
       },
@@ -228,22 +243,26 @@ class controller extends c_controller {
    * @param filesDetails Array of FileDetailsPayload objects containing the new details for each file.
    */
   async updateFileDetails(filesDetails: FileDetailsPayload[]) {
+    const newFiles = []
     for (const fileDetails of filesDetails) {
       // Find the file by id
       const file = await this.findById({ id: fileDetails.id })
       // Check if the file is not found, null, or already deleted
       if (!file || file == null || file?.deleted) return
       // Update the file details in the database
-      await this.findOneAndUpdate({
+      const newFile = await this.findOneAndUpdate({
         filters: fileDetails.id,
         params: {
           // title: fileDetails.title,
           alt: fileDetails.alt,
           description: fileDetails.description,
+          href: fileDetails.href,
           main: fileDetails.main,
         },
       })
+      newFiles.push(newFile)
     }
+    return newFiles
   }
 
   async deleteFile(id: string) {

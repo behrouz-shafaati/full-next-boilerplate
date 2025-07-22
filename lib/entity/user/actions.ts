@@ -7,6 +7,7 @@ import { redirect } from 'next/navigation'
 import shippingAddressCtrl from '../shippingAddress/controller'
 import { AuthError } from 'next-auth'
 import { login } from '@/lib/auth'
+import { Option } from '@/types'
 
 const FormSchema = z.object({
   firstName: z
@@ -104,9 +105,11 @@ export async function createUser(prevState: State, formData: FormData) {
       roles: JSON.parse(validatedFields.data.roles),
     }
     // Create the user
+    const roles: Option[] = validatedFields.data.roles || []
     const cleanedUserData = {
       ...validatedFields.data,
       ...(validatedFields.data.image === '' && { image: null }),
+      roles: roles.map((role) => role.value),
     }
     await userCtrl.create({ params: cleanedUserData })
   } catch (error) {
@@ -152,9 +155,12 @@ export async function updateUser(
     }
     // validatedFields.data.image ;
     // Create the user
+    console.log('#209 validatedFields.data.roles:', validatedFields.data.roles)
+    const roles: Option[] = validatedFields.data.roles || []
     const cleanedUserData = {
       ...validatedFields.data,
       ...(validatedFields.data.image === '' && { image: null }),
+      roles: roles.map((role) => role.value),
     }
     console.log('#209 validatedFields.data:', validatedFields.data)
     await userCtrl.findOneAndUpdate({
@@ -162,6 +168,7 @@ export async function updateUser(
       params: cleanedUserData,
     })
   } catch (error) {
+    console.log('#2776 error: ', error)
     return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' }
   }
   revalidatePath('/dashboard/users')

@@ -33,3 +33,39 @@ export const computedStyles = (
 
   return result
 }
+
+export const getVisibilityClass = (
+  visibility: {
+    mobile?: boolean
+    tablet?: boolean
+    desktop?: boolean
+  },
+  options?: { display?: string }
+) => {
+  const { mobile = true, tablet = true, desktop = true } = visibility || {}
+
+  const classList: string[] = []
+
+  // موبایل: پایه‌ای‌ترین حالت (پیش‌فرض Tailwind)
+  if (mobile === false) {
+    classList.push('hidden')
+  } else {
+    classList.push('block')
+  }
+
+  // تبلت
+  if (tablet === false) {
+    classList.push('md:hidden')
+  } else {
+    classList.push(`md:${options?.display || 'block'}`)
+  }
+
+  // دسکتاپ
+  if (desktop === false) {
+    classList.push('lg:hidden')
+  } else {
+    classList.push(`lg:${options?.display || 'block'}`)
+  }
+
+  return classList.join(' ')
+}

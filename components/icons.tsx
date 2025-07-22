@@ -37,6 +37,7 @@ import {
   LayoutTemplate,
   SlidersVertical,
   StickyNote,
+  Tag,
 } from 'lucide-react'
 
 export type Icon = LucideIcon
@@ -70,6 +71,7 @@ export const Icons = {
   moon: Moon,
   laptop: Laptop,
   category: Braces,
+  tag: Tag,
   bold: Bold,
   italic: Italic,
   underline: Underline,
@@ -104,6 +106,8 @@ export default function renderIcon(icon: string | undefined) {
       return <Icons.user className="mr-2 h-4 w-4" />
     case 'category':
       return <Icons.category className="mr-2 h-4 w-4" />
+    case 'tag':
+      return <Icons.tag className="mr-2 h-4 w-4" />
     case 'squareMenu':
       return <Icons.squareMenu className="mr-2 h-4 w-4" />
     case 'login':

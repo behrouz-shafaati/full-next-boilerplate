@@ -15,19 +15,36 @@ import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
 import TiptapEditor from '@/components/tiptap-editor'
+import Combobox from '@/components/form-fields/combobox'
+import { Category } from '@/features/category/interface'
+import { Option } from '@/types'
+import { createCatrgoryBreadcrumb } from '@/lib/utils'
+import { Braces as CategoryIcon } from 'lucide-react'
+import TagInput from '@/components/form-fields/TagInput'
+import { searchTags } from '@/features/tag/actions'
+import { Tag } from '@/features/tag/interface'
 
 interface PostFormProps {
   initialData: any | null
+  allCategories: Category[]
 }
 
-export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
+export const PostForm: React.FC<PostFormProps> = ({
+  initialData: post,
+  allCategories,
+}) => {
   const formRef = useRef<HTMLFormElement>(null)
-  const initialState = { message: null, errors: {}, success: true }
+  const initialState = {
+    message: null,
+    errors: {},
+    success: true,
+    values: post,
+  }
+
   const actionHandler = post
     ? updatePost.bind(null, String(post.id))
     : createPost
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
-  console.log('#298 post in form: ', post)
   const params = useParams()
   const router = useRouter()
   const { toast } = useToast()
@@ -36,27 +53,26 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   const [imgLoading, setImgLoading] = useState(false)
   const title = post ? 'ویرایش  مطلب' : 'افزودن مطلب'
   const description = post ? 'ویرایش دسته بندی' : 'افزودن مطلب'
-  const toastMessage = post ? ' مطلب بروزرسانی شد' : 'دسته بندی اضافه شد'
-  const action = post ? 'ذخیره تغییرات' : 'ذخیره'
+
+  const categoryOptions: Option[] = allCategories.map((category: Category) => {
+    return {
+      value: String(category.id),
+      label: createCatrgoryBreadcrumb(category, category.title),
+    }
+  })
 
   const statusOptions = [
     {
       label: 'منتشر شود',
-      value: '1',
+      value: 'published',
     },
     {
       label: 'پیش نویس',
-      value: '0',
+      value: 'draft',
     },
   ]
 
-  console.log('#22 post:', post)
-  const statusDefaultValue = post
-    ? String(post?.status) === 'publish'
-      ? '1'
-      : '0'
-    : '1'
-  console.log('#299 statusDefaultValue:', statusDefaultValue)
+  const statusDefaultValue = post?.status || 'published'
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -82,7 +98,6 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
   // )
 
   // console.log('@33 post contentJson: ', post?.contentJson)
-  console.log('@34 post?.image: ', post?.image)
 
   return (
     <>
@@ -114,8 +129,17 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
             <Text
               title="عنوان"
               name="title"
-              defaultValue={post?.title || ''}
+              defaultValue={state?.values?.title || ''}
               placeholder="عنوان"
+              state={state}
+              icon={<PostIcon className="w-4 h-4" />}
+            />
+            {/* Title */}
+            <Text
+              title="نامک در آدرس"
+              name="slug"
+              defaultValue={post?.slug || ''}
+              placeholder="نامک در آدرس"
               state={state}
               icon={<PostIcon className="w-4 h-4" />}
             />
@@ -129,7 +153,7 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
               onChangeFiles={submitManually}
             />
           </div>
-          <div className="">
+          <div>
             {/* status */}
             <Select
               title="وضعیت"
@@ -140,6 +164,33 @@ export const PostForm: React.FC<PostFormProps> = ({ initialData: post }) => {
               state={state}
               icon={<MailIcon className="w-4 h-4" />}
             />
+          </div>
+          <div>
+            {/* category */}
+            <Combobox
+              title="دسته"
+              name="category"
+              defaultValue={post?.category}
+              options={categoryOptions}
+              placeholder="دسته"
+              state={state}
+              icon={<CategoryIcon className="w-4 h-4" />}
+            />
+          </div>
+          <div>
+            <TagInput
+              name="tags"
+              title="برچسب ها"
+              placeholder="برچسب ها را وارد کنید..."
+              defaultValue={
+                post?.tags.map((tag: Tag) => {
+                  return { label: tag.title, value: tag.id }
+                }) || []
+              }
+              fetchOptions={searchTags}
+            />
+          </div>
+          <div>
             <FileUpload
               name="image"
               title="پوستر مطلب"

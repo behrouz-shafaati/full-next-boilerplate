@@ -53,6 +53,12 @@ class controller extends baseController {
     return filters
   }
 
+  makeCleanDataBeforeSave(data: any) {
+    data.image = data.image == '' ? null : data.image
+    data.category = data.category == '' ? null : data.category
+    return data
+  }
+
   async find(payload: QueryFind) {
     console.log('#3033 payload:', payload)
     payload.filters = this.standardizationFilters(payload.filters)
@@ -62,11 +68,13 @@ class controller extends baseController {
   }
 
   async create(payload: Create) {
+    payload.params = this.makeCleanDataBeforeSave(payload.params)
     console.log('#389 payload:', payload)
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
+    payload.params = this.makeCleanDataBeforeSave(payload.params)
     console.log('#3323 payload:', payload)
     return super.findOneAndUpdate(payload)
   }
@@ -79,9 +87,10 @@ class controller extends baseController {
   }
 
   async setFileData(contentJson: any) {
-    const content = JSON.parse(contentJson)
+    const parsedContent = JSON.parse(contentJson)
+    const content = parsedContent?.content || []
     const contentJsonSetedFileData = await Promise.all(
-      content?.content?.map(async (block: any) => {
+      content.map(async (block: any) => {
         if (block.type === 'image') {
           const image = block.attrs
           const imageFileData = await fileCtrl.findById({ id: image.id })

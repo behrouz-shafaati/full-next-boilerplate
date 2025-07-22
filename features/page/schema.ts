@@ -3,8 +3,14 @@ import { PageSchema } from './interface'
 
 const pageSchema = new Schema<PageSchema>(
   {
-    title: { type: String, required: true },
+    title: { type: String, required: false },
     slug: { type: String, required: false, default: null },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      required: true,
+    },
     content: {
       type: Schema.Types.Mixed, // whole page structure as JSON
       required: true,
@@ -24,6 +30,16 @@ const pageSchema = new Schema<PageSchema>(
   },
   { timestamps: true }
 )
+
+pageSchema
+  .pre('findOne', function (next: any) {
+    this.populate('user')
+    next()
+  })
+  .pre('find', function (next: any) {
+    this.populate('user')
+    next()
+  })
 
 const transform = (doc: any, ret: any, options: any) => {
   ret.id = ret._id?.toHexString()

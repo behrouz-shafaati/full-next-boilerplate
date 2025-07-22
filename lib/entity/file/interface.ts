@@ -7,6 +7,7 @@ export type File = Model & {
   alt: string
   patch: string
   src: string
+  href: string
   mimeType: string
   size: number
   previewPath: string
@@ -19,6 +20,7 @@ export type FileDetailsPayload = {
   title: string
   description: string
   alt: string
+  href: string
   main: boolean
 }
 

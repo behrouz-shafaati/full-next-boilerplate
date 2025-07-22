@@ -40,7 +40,7 @@ const ContentEditor = () => {
 
   return (
     <Select
-      key={`row-block-select-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
+      key={`block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
       title="چینش ستون"
       name="rowColumns"
       defaultValue={selectedBlock.settings.rowColumns}

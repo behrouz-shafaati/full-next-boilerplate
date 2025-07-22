@@ -18,7 +18,6 @@ export default function SortableRow({ row }: { row: PageRow }) {
 
   const { deleteItem, selectBlock, activeElement, selectedBlock } =
     useBuilderStore()
-  console.log('#228 activeElement:', activeElement)
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,

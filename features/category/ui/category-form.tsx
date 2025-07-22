@@ -86,19 +86,6 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
       })
   }, [state])
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (!formRef.current) return
-
-      const formData = new FormData(formRef.current)
-      const entries = Object.fromEntries(formData.entries())
-
-      console.log('[🔁 فرم هر 5 ثانیه]:', entries)
-    }, 5000)
-
-    return () => clearInterval(interval)
-  }, [])
-
   return (
     <>
       <AlertModal
@@ -140,6 +127,14 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             name="title"
             defaultValue={category?.title || ''}
             placeholder="عنوان"
+            state={state}
+            icon={<CategoryIcon className="w-4 h-4" />}
+          />
+          <Text
+            title="نامک"
+            name="slug"
+            defaultValue={category?.slug || ''}
+            placeholder="نامک"
             state={state}
             icon={<CategoryIcon className="w-4 h-4" />}
           />

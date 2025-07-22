@@ -1,24 +1,24 @@
-'use client';
-import { useDraggable } from '@dnd-kit/core';
-import { CSS } from '@dnd-kit/utilities';
+'use client'
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
 
 export default function DraggableWrapper({
   type,
   label,
 }: {
-  type: string;
-  label: string;
+  type: string
+  label: string
 }) {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: `${type}-block`,
     data: {
       type: type,
     },
-  });
+  })
 
   const style = {
     transform: CSS.Translate.toString(transform),
-  };
+  }
 
   return (
     <div
@@ -30,5 +30,5 @@ export default function DraggableWrapper({
     >
       {label}
     </div>
-  );
+  )
 }

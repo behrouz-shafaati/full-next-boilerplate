@@ -8,6 +8,7 @@ const fileSchema = new Schema<SchemaFile>(
     patch: String,
     alt: String,
     src: String,
+    href: String,
     previewPath: String,
     mimeType: String,
     size: Number,

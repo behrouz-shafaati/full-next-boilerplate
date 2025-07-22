@@ -5,7 +5,11 @@ import { useDebouncedCallback } from 'use-debounce'
 import { TailwindForm } from '../../rjsf/shadcn-theme'
 import { uiSchema } from '../../rjsf/uiSchema'
 
-export const BlockSettingsForm = () => {
+type BlockSettingsFormProps = {
+  savePage: () => void
+}
+
+export const BlockSettingsForm = ({ savePage }: BlockSettingsFormProps) => {
   const { selectedBlock, updatePage } = useBuilderStore()
 
   const debouncedUpdate = useDebouncedCallback(
@@ -25,6 +29,7 @@ export const BlockSettingsForm = () => {
       {ContentEditor && (
         <ContentEditor
           key={`content-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
+          savePage={savePage}
         />
       )}
       <TailwindForm

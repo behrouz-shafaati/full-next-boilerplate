@@ -57,23 +57,7 @@ export const PageForm: React.FC<PageFormProps> = ({
   const toastMessage = page ? 'برگه بروزرسانی شد' : 'برگه اضافه شد'
   const action = page ? 'ذخیره تغییرات' : 'ذخیره'
 
-  const statusOptions = [
-    {
-      label: 'فعال',
-      value: '1',
-    },
-    {
-      label: 'غیر فعال',
-      value: '0',
-    },
-  ]
-
-  console.log('#299 page:', page)
-  const statusDefaultValue = page
-    ? String(page?.status) === 'active'
-      ? '1'
-      : '0'
-    : '1'
+  console.log('#299 page:', page?.content.rows)
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -82,7 +66,7 @@ export const PageForm: React.FC<PageFormProps> = ({
   }
 
   useEffect(() => {
-    if (state.message && state.message !== null)
+    if (state?.message && state.message !== null)
       toast({
         variant: 'destructive',
         title: '',
@@ -115,7 +99,9 @@ export const PageForm: React.FC<PageFormProps> = ({
       <PageBuilder
         submitFormHandler={dispatch}
         name="contentJson"
-        {...(page ? { initialContent: page.content } : {})}
+        {...(page
+          ? { initialContent: { ...page.content, slug: page.slug } }
+          : {})}
         allTemplates={allTemplates}
         allCategories={allCategories}
       />

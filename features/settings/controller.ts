@@ -71,28 +71,6 @@ class controller extends baseController {
     console.log('#3323 payload:', payload)
     return super.findOneAndUpdate(payload)
   }
-
-  async existSlug(slug: string): Promise<boolean> {
-    const count = await this.countAll({ slug })
-    console.log('#7736 settings count: ', count)
-    if (count > 0) return true
-    return false
-  }
-
-  async setFileData(contentJson: any) {
-    const content = JSON.parse(contentJson)
-    const contentJsonSetedFileData = await Promise.all(
-      content?.content?.map(async (block: any) => {
-        if (block.type === 'image') {
-          const image = block.attrs
-          const imageFileData = await fileCtrl.findById({ id: image.id })
-          return { type: 'image', attrs: imageFileData }
-        }
-        return block
-      })
-    )
-    return { type: 'doc', content: contentJsonSetedFileData }
-  }
 }
 
 const settingsCtrl = new controller(new settingsService(settingsSchema))

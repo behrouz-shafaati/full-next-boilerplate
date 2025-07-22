@@ -1,37 +1,41 @@
+import { slugify } from '@/lib/utils'
 import postCtrl from './controller'
 const jalaali = require('jalaali-js')
 import readingTime from 'reading-time'
 
 /**
- * تبدیل عنوان به اسلاگ خوانا
- */
-const arabicDiacriticsRegex = /[\u064B-\u0652]/g // اعراب عربی و فارسی مثل ً ُ ِ ّ
-
-export function slugify(title: string): string {
-  return title
-    .normalize('NFC') // نرمال‌سازی حروف فارسی/عربی
-    .replace(arabicDiacriticsRegex, '') // حذف اعراب
-    .replace(/[^\w\u0600-\u06FF\s-]/g, '') // حذف کاراکترهای غیرحرفی (غیراز حروف فارسی و عدد و فاصله)
-    .replace(/\s+/g, '-') // فاصله به خط تیره
-    .replace(/-+/g, '-') // چند خط تیره → یکی
-    .replace(/^-+|-+$/g, '') // حذف خط تیره‌ی اول و آخر
-    .toLowerCase()
-}
-
-/**
  * تولید اسلاگ یکتا با بررسی دیتابیس
  */
-export async function generateUniqueSlug(title: string): Promise<string> {
-  const baseSlug = slugify(title)
+export async function generateUniquePostSlug(
+  params: { slug: string; title: string },
+  postId: string = ''
+): Promise<object> {
+  console.log('#237s8 params: ', params)
+  const baseSlug =
+    params.slug != '' && params.slug != null
+      ? slugify(params.slug)
+      : slugify(params.title)
+  console.log('#237s8 baseSlug: ', baseSlug)
+  // if it is update and slug doesn't change remove slug from parameters
+  if (postId !== '') {
+    const findedPostBySlug = await postCtrl.findOne({
+      filters: { slug: baseSlug },
+    })
+    if (findedPostBySlug && findedPostBySlug.id == postId) {
+      const { slug, ...rest } = params
+      return rest
+    }
+  }
+
+  // if it is new post need to generate new slug
   let slug = baseSlug
   let count = 1
-
   while (await postCtrl.existSlug(slug)) {
     slug = `${baseSlug}-${count}`
     count++
   }
 
-  return slug
+  return { ...params, slug }
 }
 
 export function generateExcerpt(content: string, wordCount = 20): string {

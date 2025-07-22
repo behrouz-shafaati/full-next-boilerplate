@@ -29,4 +29,11 @@ export const uiSchema = {
   'box-shadow': {
     'ui:field': 'ShadowWidget',
   },
+  className: {
+    'ui:widget': 'textarea',
+    'ui:options': {
+      rows: 5,
+      placeholder: 'مثلاً: flex gap-4 justify-center items-center',
+    },
+  },
 }

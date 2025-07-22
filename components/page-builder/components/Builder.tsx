@@ -9,7 +9,7 @@ import {
   MeasuringStrategy,
   pointerWithin,
 } from '@dnd-kit/core'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { PageContent } from '../types'
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import SortableRow from '../blocks/row/SortableRow'
@@ -35,6 +35,7 @@ export default function PageBuilder({
   allCategories,
 }: props) {
   const router = useRouter()
+  const formRef = useRef<HTMLFormElement>(null)
   const {
     content,
 
@@ -103,7 +104,7 @@ export default function PageBuilder({
     }
 
     // حالت 1: کشیدن آیتم جدید از نوار ابزار (text-block)
-    if (activeId === 'text-block') {
+    if (activeId?.endsWith('-block')) {
       const block = blockRegistry[activeData.type]
       // اگر روی ستون خالی انداختیم
       const column = content.rows
@@ -164,6 +165,12 @@ export default function PageBuilder({
     if (initialContent) setContent(initialContent)
     else resetContent()
   }, [initialContent])
+
+  const submitManually = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit() // بهترین راه
+    }
+  }
   return (
     <>
       <DndContext
@@ -178,15 +185,19 @@ export default function PageBuilder({
               page={content || null}
               allTemplates={allTemplates}
               allCategories={allCategories}
+              savePage={submitManually}
             />
             <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
-              <form action={submitFormHandler}>
-                <textarea readOnly name={name} value={getJson()} />
+              <form action={submitFormHandler} ref={formRef}>
+                <textarea readOnly name={name} value={getJson()} hidden />
                 <SubmitButton />
                 <Button
                   type="button"
                   variant="secondary"
-                  onClick={() => router.back()}
+                  onClick={() => {
+                    deselectBlock()
+                    router.back()
+                  }}
                 >
                   بازگشت
                 </Button>
@@ -219,6 +230,7 @@ export default function PageBuilder({
             >
               افزودن ردیف
             </Button>
+            <code>{getJson()}</code>
           </div>
         </div>
       </DndContext>

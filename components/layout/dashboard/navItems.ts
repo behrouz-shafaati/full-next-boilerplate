@@ -53,6 +53,14 @@ export const navItems: SidebarNavItem[] = [
     authorized: ['admin'],
   },
   {
+    slug: 'tag',
+    title: 'برچسب‌ها',
+    href: '/dashboard/tags',
+    icon: 'tag',
+    label: '',
+    authorized: ['admin'],
+  },
+  {
     slug: 'menu',
     title: 'فهرست ها',
     href: '/dashboard/menus',
