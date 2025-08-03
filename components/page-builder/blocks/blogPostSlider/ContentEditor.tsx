@@ -11,6 +11,8 @@ import { getAllCategories } from '@/features/category/actions'
 import TagInputSuggestion from '@/components/form-fields/TagInput'
 import { searchCategories } from '@/features/category/actions'
 import { getAllTags, searchTags } from '@/features/tag/actions'
+import Text from '@/components/form-fields/text'
+import { Tag } from '@/features/tag/interface'
 
 type Props = {
   initialData: any
@@ -32,12 +34,14 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
         (category: Category) => ({
           value: String(category.id),
           label: createCatrgoryBreadcrumb(category, category.title),
+          slug: category.slug,
         })
       )
 
-      const tagOptions: Option[] = allTags.data.map((category: Category) => ({
-        value: String(category.id),
-        label: createCatrgoryBreadcrumb(category, category.title),
+      const tagOptions: Option[] = allTags.data.map((tag: Tag) => ({
+        value: String(tag.id),
+        label: createCatrgoryBreadcrumb(tag, tag.title),
+        slug: tag.slug,
       }))
       setCategoryOptions(categoryOptions)
       setTagOptions(tagOptions)
@@ -49,6 +53,17 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
 
   return (
     <div key={categoryOptions.length}>
+      <Text
+        title="عنوان اسلایدر"
+        name="title"
+        defaultValue={selectedBlock?.content?.title}
+        onChange={(e) => {
+          updatePage(selectedBlock?.id as string, 'content', {
+            ...selectedBlock?.content,
+            title: e.target.value,
+          })
+        }}
+      />
       {/* categories */}
       <MultipleSelector
         title="دسته"

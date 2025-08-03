@@ -7,36 +7,44 @@ import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { FileDetails } from '@/lib/entity/file/interface'
+import { Post } from '@/features/post/interface'
+import LeftSliderButton from '@/components/ui/left-slider-button'
+import RightSliderButton from '@/components/ui/right-slider-button'
+import { Option } from '@/types'
+import { Badge } from '@/components/ui/badge'
+import { ChevronLeft } from 'lucide-react'
+import { buildUrlFromFilters } from '@/lib/utils'
 
 type BlogPostSliderProps = {
+  posts: Post[]
   blockData: {
-    content: [
-      {
-        title: string
-        alt: string
-        description: string
-        src: string
-        href: string
-      }
-    ]
+    id: string
     type: 'blogPostSlider'
-    settings: {}
+    content: {
+      tags: Option[]
+      categories: Option[]
+    }
+    settings: {
+      showArrows: boolean
+      loop: boolean
+      autoplay: boolean
+      autoplayDelay: number
+    }
   } & PageBlock
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const BlogPostSlider = ({
+  posts,
   blockData,
   ...props
 }: BlogPostSliderProps) => {
-  const { content, settings, styles } = blockData
+  const { content, settings } = blockData
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
       direction: 'rtl',
     },
-    [Autoplay({ playOnInit: true, delay: settings?.delay * 1000 || 3000 })]
+    [Autoplay({ playOnInit: false, delay: settings?.delay * 1000 || 3000 })]
   )
 
   const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -62,57 +70,74 @@ export const BlogPostSlider = ({
     : 'w-full h-auto max-w-full'
 
   const { onClick, ...restProps } = props
-  // const images = content.map((img: FileDetails, i: number) => {
-  //   const imageElement = (
-  //     <Image
-  //       src={img.src || '/assets/general-img-landscape.png'}
-  //       alt={img.alt || 'تصویر'}
-  //       //   fill
-  //       width={0}
-  //       height={0}
-  //       sizes="100vw"
-  //       style={{
-  //         objectFit: 'contain',
-  //         ...computedStyles(styles),
-  //       }}
-  //       priority={i === 0}
-  //       className="block w-full h-auto"
-  //       {...props}
-  //     />
-  //   )
-  //   return img.href ? (
-  //     <div className="min-w-full relative" key={i}>
-  //       <Link href={img.href} target="_blank" rel="noopener noreferrer">
-  //         {imageElement}
-  //       </Link>
-  //     </div>
-  //   ) : (
-  //     <div className="min-w-full relative" key={i}>
-  //       {imageElement}
-  //     </div>
-  //   )
-  // })
-
-  return (
-    <div className="relative w-full min-h-10" {...(onClick ? { onClick } : {})}>
-      <div className={`overflow-hidden`} ref={emblaRef}>
-        <div className="flex">
-          <div>hi</div>
+  const postSlids = posts.map((post) => (
+    <div
+      key={post.id}
+      className="embla__slide flex-shrink-0 w-full grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 px-2"
+    >
+      <div className="rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-900">
+        <div className="relative w-full h-52">
+          <Image
+            src={post.image?.src || '/placeholder.png'}
+            alt={post.image?.alt || post.title}
+            layout="fill"
+            objectFit="cover"
+          />
+        </div>
+        <div className="p-4">
+          <h3 className="text-md font-semibold mb-2 line-clamp-2">
+            <Link href={post.link}> {post.title}</Link>
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+            {post.excerpt}
+          </p>
+          <div className="mt-3 text-xs text-gray-400">
+            توسط {post.user?.name}
+          </div>
         </div>
       </div>
+    </div>
+  ))
+  const filters = {
+    tags: content?.tags.map((tag) => tag.slug) || [],
+    categories: content?.categories.map((category) => category.slug) || [],
+  }
+  const archiveUrl = buildUrlFromFilters(filters)
+  return (
+    <div
+      className="relative w-full min-h-10 embla overflow-hidden  py-6"
+      {...(onClick ? { onClick } : {})}
+    >
+      <div className="flex flex-row justify-between pb-2 px-4 ">
+        <div>{content.title}</div>
+        <Link
+          href={`archive/${archiveUrl}`}
+          className="text-xs text-gray-600 font-normal flex flex-row items-center gap-2"
+        >
+          <span>مشاهده همه</span>
+          <ChevronLeft size={20} />
+        </Link>
+      </div>
+      <div className="p-4 flex flex-row gap-2">
+        {content?.tags?.map((tag: Option) => {
+          return (
+            <Link key={tag.slug} href={`archive/tags/${tag.slug}`}>
+              <Badge
+                variant="outline"
+                className="p-2 text-xs text-gray-600 font-normal"
+              >
+                {tag.label}
+              </Badge>
+            </Link>
+          )
+        })}
+      </div>
+      <div className={`embla__viewport`} ref={emblaRef}>
+        <div className="embla__container  flex">{postSlids}</div>
+      </div>
       {/* دکمه‌ها */}
-      <button
-        onClick={scrollPrev}
-        className="absolute top-1/2 left-4 -translate-y-1/2 z-10 bg-black/40 text-white p-1 rounded-full hover:bg-black/70 transition"
-      >
-        <ChevronLeft size={24} />
-      </button>
-      <button
-        onClick={scrollNext}
-        className="absolute top-1/2 right-4 -translate-y-1/2 z-10 bg-black/40 text-white p-1 rounded-full hover:bg-black/70 transition"
-      >
-        <ChevronRight size={24} />
-      </button>
+      <LeftSliderButton scrollPrev={scrollPrev} />
+      <RightSliderButton scrollNext={scrollNext} />
     </div>
   )
 }

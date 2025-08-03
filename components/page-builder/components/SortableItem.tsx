@@ -23,7 +23,7 @@ export default function SortableItem({ item, index, colId }: SortableItemProp) {
     transition,
   }
   const block = blockRegistry[item.type]
-  const Component = block.Renderer
+  const Component = block?.RendererInEditor || block.Renderer
 
   let activeClass = ''
   if (selectedBlock?.id == item.id)

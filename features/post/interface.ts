@@ -25,6 +25,11 @@ type PostBase = {
   contentJson: string
 
   /**
+   * زمان مطالعه به دقیقه
+   */
+  readingTime: number
+
+  /**
    * تصویر پست
    */
   image?: string
@@ -37,7 +42,7 @@ type PostBase = {
   /**
    * دسته‌بندی پست
    */
-  category?: string
+  categories?: string[]
 
   /**
    * برچسب های پست
@@ -48,6 +53,9 @@ type PostBase = {
    * وضعیت فعال بودن مطلب (در صورت فعال بودن true)
    */
   status: 'published' | 'draft'
+
+  // example: 'pen/مقاله-یک'
+  link: string
 }
 
 /**

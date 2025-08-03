@@ -12,12 +12,14 @@ import {
 import { getSession } from '@/lib/auth'
 import { Option, Session, State } from '@/types'
 import tagCtrl from '../tag/controller'
+import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
+import categoryCtrl from '../category/controller'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   contentJson: z.string({}),
   status: z.string({}),
-  category: z.string({}),
+  categories: z.string({}),
   slug: z.string({}),
   tags: z.string({}),
   image: z.string().nullable(),
@@ -71,7 +73,7 @@ export async function createPost(prevState: State, formData: FormData) {
   }
   // Revalidate the path and redirect to the post dashboard
   revalidatePath(`/dashboard/posts`)
-  if (newPost) redirect(`/dashboard/posts/${newPost.id}`)
+  if (newPost) redirect(encodeURI(`/dashboard/posts/${newPost.id}`))
   else redirect(`/dashboard/posts`)
 }
 
@@ -131,6 +133,9 @@ async function sanitizePostData(validatedFields: any) {
   // Create the post
   const postPayload = validatedFields.data
   const tagsArray: Option[] = JSON.parse(postPayload?.tags || '[]')
+
+  // for multi categories select
+  // const categoriesArray: Option[] = JSON.parse(postPayload?.categories || '[]')
   const excerpt = extractExcerptFromContentJson(postPayload.contentJson, 25)
   const image = postPayload.image
     ? postPayload.image == ''
@@ -140,9 +145,15 @@ async function sanitizePostData(validatedFields: any) {
   const user = session.user.id
   const contentJson = await postCtrl.setFileData(postPayload.contentJson)
   const tags = await tagCtrl.ensureTagsExist(tagsArray)
+
+  // for multi categories select
+  // const categories: string[] = await categoryCtrl.ensureCategoryExist(
+  //   categoriesArray
+  // )
   const params = {
     ...postPayload,
     tags,
+    categories: postPayload?.categories,
     contentJson: JSON.stringify(contentJson),
     excerpt,
     image,
@@ -150,4 +161,21 @@ async function sanitizePostData(validatedFields: any) {
   }
 
   return params
+}
+
+export async function getPosts(payload: QueryFind): Promise<QueryResult> {
+  const filters: Record<string, any> = { ...(payload.filters ?? {}) }
+
+  if (!Array.isArray(filters.categories) || filters.categories.length === 0) {
+    delete filters.categories
+  }
+
+  if (!Array.isArray(filters.tags) || filters.tags.length === 0) {
+    delete filters.tags
+  }
+
+  return postCtrl.find({
+    ...payload,
+    filters,
+  })
 }

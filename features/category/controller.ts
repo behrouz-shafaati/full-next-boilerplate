@@ -3,6 +3,7 @@ import baseController from '@/lib/entity/core/controller'
 import categorySchema from './schema'
 import categoryService from './service'
 import { CategoryInput } from './interface'
+import { slugify } from '@/lib/utils'
 
 class controller extends baseController {
   /**
@@ -70,6 +71,12 @@ class controller extends baseController {
 
   async create(payload: Create) {
     payload.params = this.makeCleanDataBeforeSave(payload.params)
+    const existing = await this.findOne({
+      filters: { slug: payload.params.slug },
+    })
+    if (existing) {
+      throw new Error('نامک تکراری است!')
+    }
     return super.create(payload)
   }
 
@@ -80,6 +87,31 @@ class controller extends baseController {
     payload.params.parent =
       payload.params.parent == payload.filters ? null : payload.params.parent
     return super.findOneAndUpdate(payload)
+  }
+
+  async categoryExist(title: string): Promise<boolean> {
+    const count = await this.countAll({ title })
+    if (count == 0) return false
+    return true
+  }
+
+  async ensureCategoryExist(
+    categories: { value: string; label: string }[]
+  ): Promise<string[]> {
+    const categoryIds = []
+    for (let i = 0; i < categories.length; i++) {
+      const category = categories[i]
+      const flgcategoryExist = await this.categoryExist(category.label)
+      if (flgcategoryExist) categoryIds.push(category.value)
+      else {
+        const slug = slugify(category.label)
+        const newTag = await this.create({
+          params: { title: category.label, slug },
+        })
+        categoryIds.push(newTag.id)
+      }
+    }
+    return categoryIds
   }
 }
 

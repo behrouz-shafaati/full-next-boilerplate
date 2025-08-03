@@ -12,6 +12,7 @@ import {
   Delete,
   DeleteMany,
   AggregateQueryArray,
+  QueryResult,
 } from './interface'
 // import logController from "@entity/log/controller";
 import { Types } from 'mongoose'
@@ -45,7 +46,7 @@ export default class controller {
    *
    * @beta
    */
-  async find(payload: QueryFind) {
+  async find(payload: QueryFind): Promise<QueryResult> {
     payload = { saveLog: false, filters: {}, ...payload }
 
     if (payload.filters?.orderBy) {

@@ -23,6 +23,7 @@ import { Braces as CategoryIcon } from 'lucide-react'
 import TagInput from '@/components/form-fields/TagInput'
 import { searchTags } from '@/features/tag/actions'
 import { Tag } from '@/features/tag/interface'
+import MultipleSelec from '@/components/form-fields/multiple-selector'
 
 interface PostFormProps {
   initialData: any | null
@@ -57,6 +58,7 @@ export const PostForm: React.FC<PostFormProps> = ({
   const categoryOptions: Option[] = allCategories.map((category: Category) => {
     return {
       value: String(category.id),
+      label: category.title,
       label: createCatrgoryBreadcrumb(category, category.title),
     }
   })
@@ -165,24 +167,37 @@ export const PostForm: React.FC<PostFormProps> = ({
               icon={<MailIcon className="w-4 h-4" />}
             />
           </div>
-          <div>
-            {/* category */}
-            <Combobox
-              title="دسته"
-              name="category"
-              defaultValue={post?.category}
-              options={categoryOptions}
-              placeholder="دسته"
-              state={state}
-              icon={<CategoryIcon className="w-4 h-4" />}
-            />
-          </div>
+          {/* category */}
+          <Combobox
+            title="دسته"
+            name="categories"
+            defaultValue={post?.categories[0]?.id || null}
+            options={categoryOptions}
+            placeholder="دسته"
+            state={state}
+            icon={<CategoryIcon className="w-4 h-4" />}
+          />
+          {/* categories */}
+          {/* <MultipleSelec
+            title="دسته‌ها"
+            name="categories"
+            defaultValues={
+              post?.categories.map((category: Category) => {
+                return { label: category.title, value: category.id }
+              }) || []
+            }
+            placeholder="دسته‌ها"
+            state={state}
+            defaultSuggestions={categoryOptions}
+            // icon={ShieldQuestionIcon}
+            maxSelected={1}
+          /> */}
           <div>
             <TagInput
               name="tags"
               title="برچسب ها"
               placeholder="برچسب ها را وارد کنید..."
-              defaultValue={
+              defaultValues={
                 post?.tags.map((tag: Tag) => {
                   return { label: tag.title, value: tag.id }
                 }) || []

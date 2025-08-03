@@ -3,6 +3,9 @@ import baseController from '@/lib/entity/core/controller'
 import fileCtrl from '@/lib/entity/file/controller'
 import postSchema from './schema'
 import postService from './service'
+import categoryCtrl from '../category/controller'
+import tagCtrl from '../tag/controller'
+import { getReadingTime } from './utils'
 
 class controller extends baseController {
   /**
@@ -22,6 +25,7 @@ class controller extends baseController {
   standardizationFilters(filters: any): any {
     if (typeof filters != 'object') return {}
     for (const [key, value] of Object.entries(filters)) {
+      if (key == 'categories' || key == 'tags') filters[key] = { $in: value }
       if (typeof value != 'string') continue
       if (
         key == 'userName' ||
@@ -55,8 +59,19 @@ class controller extends baseController {
 
   makeCleanDataBeforeSave(data: any) {
     data.image = data.image == '' ? null : data.image
-    data.category = data.category == '' ? null : data.category
-    return data
+    data.categories = data.categories == '' ? [] : data.categories
+    const json = JSON.parse(data.contentJson)
+    console.log('#3387 post content: ', json)
+    const plainText =
+      json.content
+        ?.filter((block: any) => block.type === 'paragraph')
+        ?.map((block: any) =>
+          block.content?.map((c: any) => c.text || '').join('')
+        )
+        .join('\n') || ''
+
+    const readingTime = getReadingTime(plainText)
+    return { ...data, readingTime }
   }
 
   async find(payload: QueryFind) {
@@ -100,6 +115,26 @@ class controller extends baseController {
       })
     )
     return { type: 'doc', content: contentJsonSetedFileData }
+  }
+
+  async convertCategoriesAndTagSlugToId({
+    categorySlugs,
+    tagSlugs,
+  }: {
+    categorySlugs: string[]
+    tagSlugs: string[]
+  }) {
+    const [categoryiesResult, tagsResult] = await Promise.all([
+      categoryCtrl.find({ filters: { slug: { $in: categorySlugs } } }),
+      tagCtrl.find({ filters: { slug: { $in: tagSlugs } } }),
+    ])
+    const categoryIds = categoryiesResult.data.map(
+      (category: any) => category.id
+    )
+    const tagIds = tagsResult.data.map((tag: any) => tag.id)
+    console.log('#categoryIds:', categoryIds)
+    console.log('#tagIds:', tagIds)
+    return { categoryIds, tagIds }
   }
 }
 

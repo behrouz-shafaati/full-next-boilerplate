@@ -15,6 +15,7 @@ type MultiSelect = {
   name: string
   defaultValues?: Option[]
   defaultSuggestions?: Option[]
+  maxSelected?: number
   placeholder?: string
   icon?: any
   state?: any
@@ -26,6 +27,7 @@ export default function MultiSelect({
   name,
   defaultValues,
   defaultSuggestions = [],
+  maxSelected,
   placeholder,
   icon,
   state,
@@ -64,6 +66,7 @@ export default function MultiSelect({
               </p>
             }
             {...(onSearch ? { onSearch: onSearch } : {})}
+            {...(maxSelected ? { maxSelected } : {})}
           />
         </div>
         {icon && (

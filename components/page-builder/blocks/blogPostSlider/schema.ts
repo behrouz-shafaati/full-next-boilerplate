@@ -1,7 +1,17 @@
 export const BlogPostSliderBlockSchema = {
-  title: 'تنظیمات اسلایدر تصویر ',
+  title: '',
   type: 'object',
   properties: {
+    showMoreLink: {
+      type: 'boolean',
+      title: 'نمایش دکمه بیشتر',
+      default: true,
+    },
+    moreLink: {
+      type: 'string',
+      title: 'لینک دکمه بیشتر',
+      default: '',
+    },
     autoplay: {
       type: 'boolean',
       title: 'پخش خودکار (Autoplay)',

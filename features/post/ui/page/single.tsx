@@ -3,7 +3,7 @@ import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Post } from '../../interface'
 import Image from 'next/image'
-import { formatToJalali, getReadingTime } from '../../utils'
+import { formatToJalali, getReadingTime, timeAgo } from '../../utils'
 
 type props = {
   breadcrumbItems: BreadCrumbType[]
@@ -48,7 +48,7 @@ const SinglePageBlog = ({ breadcrumbItems, post }: props) => {
             <span className="mx-2">|</span>
           </>
         )}
-        <span>تاریخ: {jalaliDate}</span>
+        <span>{timeAgo(post.createdAt)}</span>
         <span className="mx-2">|</span>
         <span>زمان مطالعه: {readingDuration}</span>
       </div>

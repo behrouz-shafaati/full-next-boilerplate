@@ -55,20 +55,16 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const statusOptions = [
     {
       label: 'فعال',
-      value: '1',
+      value: 'active',
     },
     {
       label: 'غیر فعال',
-      value: '0',
+      value: 'inactive',
     },
   ]
 
   console.log('#299 category:', category)
-  const statusDefaultValue = category
-    ? String(category?.status) === 'active'
-      ? '1'
-      : '0'
-    : '1'
+  const statusDefaultValue = category ? String(category?.status) : 'active'
   console.log('#299 statusDefaultValue:', statusDefaultValue)
   const onDelete = async () => {
     try {

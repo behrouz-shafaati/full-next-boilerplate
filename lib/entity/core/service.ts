@@ -10,11 +10,11 @@ function revalidatePaths(revalidate: string | string[] | undefined) {
   if (Array.isArray(revalidate)) {
     for (const path of revalidate) {
       if (typeof path === 'string' && path.trim() !== '') {
-        revalidatePath(path)
+        revalidatePath(encodeURI(path))
       }
     }
   } else if (typeof revalidate === 'string' && revalidate.trim() !== '') {
-    revalidatePath(revalidate)
+    revalidatePath(encodeURI(revalidate))
   }
 }
 

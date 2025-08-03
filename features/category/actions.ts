@@ -49,7 +49,7 @@ export async function createCategory(prevState: State, formData: FormData) {
       }
     }
     return {
-      message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
+      message: ` خطای پایگاه داده: ${error}`,
     }
   }
 

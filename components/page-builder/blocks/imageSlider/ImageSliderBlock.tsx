@@ -7,8 +7,9 @@ import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { FileDetails } from '@/lib/entity/file/interface'
+import LeftSliderButton from '@/components/ui/left-slider-button'
+import RightSliderButton from '@/components/ui/right-slider-button'
 
 type ImageSliderBlockProps = {
   blockData: {
@@ -84,18 +85,8 @@ export const ImageSliderBlock = ({
         <div className="flex">{images}</div>
       </div>
       {/* دکمه‌ها */}
-      <button
-        onClick={scrollPrev}
-        className="absolute top-1/2 left-4 -translate-y-1/2 z-10 bg-black/40 text-white p-1 rounded-full hover:bg-black/70 transition"
-      >
-        <ChevronLeft size={24} />
-      </button>
-      <button
-        onClick={scrollNext}
-        className="absolute top-1/2 right-4 -translate-y-1/2 z-10 bg-black/40 text-white p-1 rounded-full hover:bg-black/70 transition"
-      >
-        <ChevronRight size={24} />
-      </button>
+      <LeftSliderButton scrollPrev={scrollPrev} />
+      <RightSliderButton scrollNext={scrollNext} />
     </div>
   )
 }

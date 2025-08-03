@@ -18,12 +18,13 @@ const postSchema = new Schema<PostSchema>(
       required: false,
     },
     slug: { type: String, required: true, unique: true },
-    category: {
-      type: Schema.Types.ObjectId,
-      ref: 'category',
-      required: false,
-      default: null,
-    },
+    categories: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'category',
+        default: [],
+      },
+    ],
     tags: [
       {
         type: Schema.Types.ObjectId,
@@ -32,6 +33,7 @@ const postSchema = new Schema<PostSchema>(
       },
     ],
     contentJson: { type: String, default: '' },
+    readingTime: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ['draft', 'published'],
@@ -45,7 +47,6 @@ const postSchema = new Schema<PostSchema>(
 // const autoPopulate = function (next) {
 //   this.populate('image')
 //   this.populate('user')
-//   this.populate('category')
 //   this.populate({
 //     path: 'tags',
 //     select: 'name slug',
@@ -57,8 +58,8 @@ postSchema
   .pre('findOne', function (next: any) {
     this.populate('image')
     this.populate('user')
-    this.populate('category')
     this.populate('tags')
+    this.populate('categories')
     // this.populate({
     //   path: 'tags',
     //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
@@ -68,8 +69,8 @@ postSchema
   .pre('find', function (next: any) {
     this.populate('image')
     this.populate('user')
-    this.populate('category')
     this.populate('tags')
+    this.populate('categories')
     // this.populate({
     //   path: 'tags',
     //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
@@ -78,7 +79,9 @@ postSchema
   })
 
 const transform = (doc: any, ret: any, options: any) => {
+  const category = ret?.categories[0] || { slug: '' }
   ret.id = ret._id?.toHexString()
+  ret.link = `${category.slug}/${ret.slug}`
   delete ret._id
   delete ret.__v
   delete ret.deleted
