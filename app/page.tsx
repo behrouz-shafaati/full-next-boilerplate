@@ -1,7 +1,7 @@
 export const dynamic = 'force-static'
 
 import ModeToggle from '@/components/layout/theme-toggle/theme-toggle'
-import { PageRenderer } from '@/components/page-builder/pageRenderer'
+import { PageRenderer } from '@/components/builder-canvas/pageRenderer'
 import pageCtrl from '@/features/page/controller'
 
 export default async function Home() {

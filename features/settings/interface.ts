@@ -20,6 +20,11 @@ type SettingsBase = {
   primaryMenuId: string
 
   /**
+   * شناسه سربرگ پیش فرض
+   */
+  defaultHeaderId: Id
+
+  /**
    * شناسه فوتر اصلی
    */
   footerMenuId: string

@@ -77,6 +77,14 @@ export const navItems: SidebarNavItem[] = [
     authorized: ['admin'],
   },
   {
+    slug: 'header',
+    title: 'سربرگ ها',
+    href: '/dashboard/headers',
+    icon: 'layoutTemplate',
+    label: '',
+    authorized: ['admin'],
+  },
+  {
     slug: 'settings',
     title: 'تنظیمات',
     href: '/dashboard/settings',

@@ -20,15 +20,18 @@ import { Settings } from '../interface'
 import Combobox from '@/components/form-fields/combobox'
 import { Option, State } from '@/types'
 import { HomeIcon } from 'lucide-react'
+import { HeaderContent } from '@/features/header/interface'
 
 interface SettingsFormProps {
   settings: Settings
   allPages: PageContent[]
+  allHeaders: HeaderContent[]
 }
 
 export const SettingsForm: React.FC<SettingsFormProps> = ({
   settings,
   allPages,
+  allHeaders,
 }) => {
   const formRef = useRef<HTMLFormElement>(null)
   const initialState: State = { message: null, errors: {}, success: true }
@@ -48,6 +51,12 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
     return {
       value: String(p.id),
       label: p.title,
+    }
+  })
+  const headersOptions: Option[] = allHeaders.map((h: HeaderContent) => {
+    return {
+      value: String(h.id),
+      label: h.title,
     }
   })
 
@@ -102,12 +111,22 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
       <form action={dispatch} ref={formRef} className="space-y-8 w-full">
         {/* Product Media image */}
         <div className="md:grid md:grid-cols-3 gap-8">
-          {/* Parent */}
+          {/* first page */}
           <Combobox
             title="صفحه نخست"
             name="homePageId"
             defaultValue={String(settings?.homePageId)}
             options={pagesOptions}
+            placeholder=""
+            state={state}
+            icon={<HomeIcon className="w-4 h-4" />}
+          />
+          {/* default header */}
+          <Combobox
+            title="سربرگ پیش فرض"
+            name="defaultHeaderId"
+            defaultValue={String(settings?.defaultHeaderId)}
+            options={headersOptions}
             placeholder=""
             state={state}
             icon={<HomeIcon className="w-4 h-4" />}

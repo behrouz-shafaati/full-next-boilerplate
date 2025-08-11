@@ -1,16 +1,12 @@
+import './initial-load'
 import type { Metadata } from 'next'
 import './globals.css'
-
-import categoryCtrl from '@/features/category/controller'
-import tagCtrl from '@/features/tag/controller'
 import localFont from 'next/font/local'
 import { Session } from '@/types'
 import { getSession } from '@/lib/auth'
 import { Providers } from './providers'
+import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
 
-// to register schemas
-categoryCtrl
-tagCtrl
 // const originalConsoleLog = console.log;
 // console.log = (...args) => {
 //   const stack = new Error().stack.split('\n')[2].trim();

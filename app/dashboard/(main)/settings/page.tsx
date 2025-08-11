@@ -7,6 +7,7 @@ import categoryCtrl from '@/features/category/controller'
 import { SettingsForm } from '@/features/settings/ui/settings-form'
 import settingsCtrl from '@/features/settings/controller'
 import { BreadCrumb } from '@/components/breadcrumb'
+import headerCtrl from '@/features/header/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -15,7 +16,8 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
   const { id } = resolvedParams
   let settings = null,
-    allPages
+    allPages,
+    allHeaders
   let pageBreadCrumb = [
     {
       title: 'تنظیمات',
@@ -23,16 +25,21 @@ export default async function Page({ params }: PageProps) {
     },
   ]
 
-  ;[settings, allPages] = await Promise.all([
+  ;[settings, allPages, allHeaders] = await Promise.all([
     settingsCtrl.findOne({ filters: { type: 'site-settings' } }),
     pageCtrl.findAll({ filters: { type: 'page' } }),
+    headerCtrl.findAll({}),
   ])
 
   return (
     <ScrollArea className="h-full p-4 md:p-8 pt-6">
       <div className="">
         <BreadCrumb items={pageBreadCrumb} />
-        <SettingsForm settings={settings} allPages={allPages.data} />
+        <SettingsForm
+          settings={settings}
+          allPages={allPages.data}
+          allHeaders={allHeaders.data}
+        />
       </div>
     </ScrollArea>
   )

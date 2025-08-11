@@ -1,19 +1,19 @@
-import clsx from 'clsx';
-import { Label } from '../ui/label';
-import { CheckboxInput } from '../ui/checkbox-input';
+import clsx from 'clsx'
+import { Label } from '../ui/label'
+import { CheckboxInput } from '../ui/checkbox-input'
 
 type RadioProps = {
-  name: string;
-  id?: string;
-  className?: string;
-  icon?: any;
-  title: string;
-  checked?: boolean;
-  defaultChecked?: boolean;
-  disabled?: boolean;
-  state?: any;
-  onChange?: (e: any) => void;
-};
+  name: string
+  id?: string
+  className?: string
+  icon?: any
+  title: string
+  checked?: boolean
+  defaultChecked?: boolean
+  disabled?: boolean
+  state?: any
+  onChange?: (value: boolean) => void
+}
 
 export default function Checkbox({
   title,
@@ -27,9 +27,9 @@ export default function Checkbox({
   state,
   onChange,
 }: RadioProps) {
-  const errorMessages = state?.errors?.[name] ?? [];
-  const hasError = state?.errors?.[name]?.length > 0;
-  const Icon = icon;
+  const errorMessages = state?.errors?.[name] ?? []
+  const hasError = state?.errors?.[name]?.length > 0
+  const Icon = icon
   return (
     <fieldset className={`mb-4 ${className}`}>
       {/* <legend className="mb-2 block text-sm font-medium">{title}</legend> */}
@@ -38,7 +38,7 @@ export default function Checkbox({
           <CheckboxInput
             id={id || name}
             name={name}
-            {...(onChange ? { onChange: onChange } : { readOnly: true })}
+            {...(onChange ? { onCheckedChange: onChange } : { readOnly: true })}
             value="on"
             checked={checked}
             defaultChecked={defaultChecked}
@@ -66,5 +66,5 @@ export default function Checkbox({
         )}
       </div>
     </fieldset>
-  );
+  )
 }

@@ -5,6 +5,7 @@ const settingsSchema = new Schema<SettingsSchema>(
   {
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
     homePageId: { type: Schema.Types.ObjectId, ref: 'page' },
+    defaultHeaderId: { type: Schema.Types.ObjectId, ref: 'header' },
     primaryMenuId: String,
     footerMenuId: String,
     theme: {

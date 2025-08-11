@@ -4,6 +4,7 @@ import pageCtrl from '@/features/page/controller'
 import { notFound } from 'next/navigation'
 import { PageForm } from '@/features/page/ui/page-form'
 import categoryCtrl from '@/features/category/controller'
+import headerCtrl from '@/features/header/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -13,16 +14,18 @@ export default async function Page({ params }: PageProps) {
   const { id } = resolvedParams
   let page = null,
     allTemplates,
-    allCategories
+    allCategories,
+    allHeaders
   let pageBreadCrumb = {
     title: 'افزودن',
     link: '/dashboard/pages/create',
   }
   if (id !== 'create') {
-    ;[page, allTemplates, allCategories] = await Promise.all([
+    ;[page, allTemplates, allCategories, allHeaders] = await Promise.all([
       pageCtrl.findById({ id }),
       pageCtrl.findAll({ filters: { type: 'template' } }),
       categoryCtrl.findAll({}),
+      headerCtrl.findAll({}),
     ])
 
     if (!page) {
@@ -33,9 +36,10 @@ export default async function Page({ params }: PageProps) {
       link: `/dashboard/pages/${id}`,
     }
   } else {
-    ;[allTemplates, allCategories] = await Promise.all([
+    ;[allTemplates, allCategories, allHeaders] = await Promise.all([
       pageCtrl.findAll({ filters: { type: 'template' } }),
       categoryCtrl.findAll({}),
+      headerCtrl.findAll({}),
     ])
   }
   return (
@@ -45,6 +49,7 @@ export default async function Page({ params }: PageProps) {
           initialData={page}
           allTemplates={allTemplates.data}
           allCategories={allCategories.data}
+          allHeaders={allHeaders.data}
         />
       </div>
     </ScrollArea>

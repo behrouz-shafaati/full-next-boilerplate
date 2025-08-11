@@ -1,6 +1,7 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
 export type MenuItem = {
+  id: string
   label: string
   url: string
   icon: string

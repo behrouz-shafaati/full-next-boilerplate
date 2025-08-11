@@ -5,6 +5,7 @@ import menuCtrl from '@/features/menu/controller'
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -105,4 +106,7 @@ export async function deleteMenu(id: string) {
 
 export async function getAllMenus() {
   return menuCtrl.findAll({})
+}
+export async function getMenus(payload: QueryFind): Promise<QueryResult> {
+  return menuCtrl.find(payload)
 }

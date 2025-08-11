@@ -24,6 +24,7 @@ type PageBase = {
 
   type: 'page' | 'template'
   templateFor: string
+  header: string
 
   /**
    * محتوای برگه

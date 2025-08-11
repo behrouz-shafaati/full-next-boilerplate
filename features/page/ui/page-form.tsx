@@ -17,6 +17,8 @@ import { AlertModal } from '@/components/modal/alert-modal'
 import PageBuilder from '@/components/page-builder'
 import { Category } from '@/features/category/interface'
 import { Page, PageContent } from '../interface'
+import BuilderPage from '@/components/builder-page'
+import { Header } from '@/features/header/interface'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
@@ -29,12 +31,14 @@ interface PageFormProps {
   initialData: Page | null
   allTemplates: PageContent[]
   allCategories: Category[]
+  allHeaders: Header[]
 }
 
 export const PageForm: React.FC<PageFormProps> = ({
   initialData: page,
   allTemplates,
   allCategories,
+  allHeaders,
 }) => {
   const initialState = { message: null, errors: {} }
   const actionHandler = page
@@ -82,21 +86,8 @@ export const PageForm: React.FC<PageFormProps> = ({
         onConfirm={onDelete}
         loading={loading}
       />
-      {/* <div className="flex items-center justify-between">
-        {/* <Heading title={title} description={description} /> * /}
-        {page && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
-        )}
-      </div> * /}
-      {/* <Separator /> */}
-      <PageBuilder
+      <BuilderPage
+        title="صفحه ساز"
         submitFormHandler={dispatch}
         name="contentJson"
         {...(page
@@ -104,7 +95,17 @@ export const PageForm: React.FC<PageFormProps> = ({
           : {})}
         allTemplates={allTemplates}
         allCategories={allCategories}
+        allHeaders={allHeaders}
       />
+      {/* <PageBuilder
+        submitFormHandler={dispatch}
+        name="contentJson"
+        {...(page
+          ? { initialContent: { ...page.content, slug: page.slug } }
+          : {})}
+        allTemplates={allTemplates}
+        allCategories={allCategories}
+      /> */}
     </>
   )
 }

@@ -390,7 +390,7 @@ const ModalContent = ({
         <div className="relative h-24 ">
           <Image
             src={file?.preview || file?.src}
-            alt={file.name}
+            alt={file?.name || 'uploaded image'}
             width={100}
             height={100}
             className="h-full w-full rounded-md object-contain "
