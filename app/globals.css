@@ -140,3 +140,35 @@ p {
   line-height: 1.75;
   margin-bottom: 1rem;
 }
+
+/* جدول */
+
+.selectedCell {
+  background-color: rgba(59, 130, 246, 0.2);
+  outline: 2px solid rgba(59, 130, 246, 0.8);
+}
+
+table {
+  width: 100%;
+  min-width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+  font-size: 14px;
+}
+
+table th,
+table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+table th {
+  background: #f9fafb;
+  font-weight: 600;
+}
+
+table {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}

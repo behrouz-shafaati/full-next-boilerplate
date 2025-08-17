@@ -112,6 +112,14 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   }
   window.link = link
 
+  const insertTable = () =>
+    editor
+      .chain()
+      .focus()
+      .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+      .run()
+  window.insertTable = insertTable
+
   const activeStates = {
     bold: editor.isActive('bold'),
     italic: editor.isActive('italic'),
@@ -264,6 +272,12 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         </ToggleGroupItem>
         <ToggleGroupItem value="undo" onClick={undo} title="لغو آخرین تغییر">
           <Undo2 />
+        </ToggleGroupItem>
+      </ToggleGroup>
+      <div className="w-px h-6 bg-border block" />
+      <ToggleGroup type="single" value="" className="rtl">
+        <ToggleGroupItem value="link" onClick={insertTable}>
+          افزودن جدول
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

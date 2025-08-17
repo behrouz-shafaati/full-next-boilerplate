@@ -42,6 +42,92 @@ const nodes = {
     parseDOM: [{ tag: 'br' }],
     toDOM: () => ['br'],
   },
+  // ---------- 📌 نودهای جدول ----------
+  table: {
+    content: 'tableRow+',
+    tableRole: 'table',
+    isolating: true,
+    group: 'block',
+    parseDOM: [{ tag: 'table' }],
+    toDOM: () => ['table', ['tbody', 0]],
+  },
+
+  tableRow: {
+    content: '(tableCell | tableHeader)+',
+    tableRole: 'row',
+    parseDOM: [{ tag: 'tr' }],
+    toDOM: () => ['tr', 0],
+  },
+
+  tableCell: {
+    content: 'block+',
+    attrs: {
+      colspan: { default: 1 },
+      rowspan: { default: 1 },
+      colwidth: { default: null },
+    },
+    tableRole: 'cell',
+    isolating: true,
+    parseDOM: [
+      {
+        tag: 'td',
+        getAttrs: (dom: any) => ({
+          colspan: Number(dom.getAttribute('colspan') || 1),
+          rowspan: Number(dom.getAttribute('rowspan') || 1),
+          colwidth: dom.getAttribute('colwidth')
+            ? dom
+                .getAttribute('colwidth')
+                .split(',')
+                .map((n: string) => Number(n))
+            : null,
+        }),
+      },
+    ],
+    toDOM: (node) => [
+      'td',
+      {
+        colspan: node.attrs.colspan,
+        rowspan: node.attrs.rowspan,
+        colwidth: node.attrs.colwidth ? node.attrs.colwidth.join(',') : null,
+      },
+      0,
+    ],
+  },
+
+  tableHeader: {
+    content: 'block+',
+    attrs: {
+      colspan: { default: 1 },
+      rowspan: { default: 1 },
+      colwidth: { default: null },
+    },
+    tableRole: 'header_cell',
+    isolating: true,
+    parseDOM: [
+      {
+        tag: 'th',
+        getAttrs: (dom: any) => ({
+          colspan: Number(dom.getAttribute('colspan') || 1),
+          rowspan: Number(dom.getAttribute('rowspan') || 1),
+          colwidth: dom.getAttribute('colwidth')
+            ? dom
+                .getAttribute('colwidth')
+                .split(',')
+                .map((n: string) => Number(n))
+            : null,
+        }),
+      },
+    ],
+    toDOM: (node) => [
+      'th',
+      {
+        colspan: node.attrs.colspan,
+        rowspan: node.attrs.rowspan,
+        colwidth: node.attrs.colwidth ? node.attrs.colwidth.join(',') : null,
+      },
+      0,
+    ],
+  },
 }
 
 const marks = {

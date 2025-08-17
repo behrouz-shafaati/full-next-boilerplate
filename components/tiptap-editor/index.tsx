@@ -1,10 +1,14 @@
 'use client'
 
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Direction from './extensions/extension-direction'
+import { CustomTable } from './extensions/CustomTable'
+import TableRow from '@tiptap/extension-table-row'
+import TableCell from '@tiptap/extension-table-cell'
+import TableHeader from '@tiptap/extension-table-header'
 import { Underline } from '@tiptap/extension-underline'
 import { Heading } from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
@@ -32,6 +36,17 @@ export default function TiptapEditor({
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
+  // for table tools like aadd row ...
+  const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
+  const handleContextMenu = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement
+    if (target.closest('table')) {
+      e.preventDefault()
+      setPos({ x: e.clientX, y: e.clientY })
+    } else {
+      setPos(null)
+    }
+  }
   const defaultFiles = defaultContent?.content
     ?.filter((block: any) => block.type === 'image')
     .map((block: any) => block.attrs)
@@ -60,6 +75,10 @@ export default function TiptapEditor({
         },
       }),
       CustomImage,
+      CustomTable.configure({ resizable: true }),
+      TableRow,
+      TableHeader,
+      TableCell,
     ],
     content: defaultContent,
     onUpdate({ editor }) {
@@ -103,11 +122,17 @@ export default function TiptapEditor({
           onChange={() => {}}
         />
         <MenuBar editor={editor} />
-        <div className={styles.editor}>
+
+        <div
+          onContextMenu={handleContextMenu}
+          className={`${styles.editor} relative`}
+        >
           <EditorContent
             editor={editor}
             autoFocus
-            className="prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900"
+            className="prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent 
+            focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900
+            "
           />
         </div>
       </div>
