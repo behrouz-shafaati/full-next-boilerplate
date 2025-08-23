@@ -2,14 +2,19 @@
 
 import React from 'react'
 import type { Row } from '@/components/builder-canvas/types'
-import { computedStyles, getVisibilityClass } from '../utils/styleUtils'
+import {
+  combineClassNames,
+  computedStyles,
+  getVisibilityClass,
+} from '../utils/styleUtils'
 import RenderBlock from './RenderBlock'
 
 type Props = {
+  editroMode: boolean
   rows: Row[]
 }
 
-const RendererRows = ({ rows }: Props) => {
+const RendererRows = ({ editroMode = false, rows }: Props) => {
   return (
     <>
       {rows.map((row) => {
@@ -21,22 +26,37 @@ const RendererRows = ({ rows }: Props) => {
           <div
             key={row.id}
             style={{ ...computedStyles(row.styles) }}
-            className={`grid grid-cols-12 gap-4 ${className} ${stickyClass}`}
+            className={`grid grid-cols-12 gap-4 ${combineClassNames(
+              row.classNames || {}
+            )} ${className} ${stickyClass}`}
           >
-            {row.columns.map((col) => (
-              <div
-                key={col.id}
-                className={`flex relative col-span-${col.width} `}
-                style={{
-                  ...computedStyles(col.styles),
-                  ...computedStyles(col.settings),
-                }}
-              >
-                {col.blocks.map((el: any, index: number) => (
-                  <RenderBlock key={el.id} item={el} />
-                ))}
-              </div>
-            ))}
+            {row.columns.map((col) => {
+              const responsiveDesign = row?.settings?.responsiveDesign ?? true
+              if (!responsiveDesign) console.log('#288dsfklhj :', row)
+              const classBaseOnResponsiveDesign = responsiveDesign
+                ? `col-span-12 md:col-span-${col.width}`
+                : `col-span-${col.width} md:col-span-${col.width}`
+              return (
+                <div
+                  key={col.id}
+                  className={`flex relative ${classBaseOnResponsiveDesign} ${combineClassNames(
+                    col.classNames || {}
+                  )} `}
+                  style={{
+                    ...computedStyles(col.styles),
+                    ...computedStyles(col.settings),
+                  }}
+                >
+                  {col.blocks.map((el: any, index: number) => (
+                    <RenderBlock
+                      key={el.id}
+                      item={el}
+                      editroMode={editroMode}
+                    />
+                  ))}
+                </div>
+              )
+            })}
           </div>
         )
       })}

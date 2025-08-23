@@ -20,7 +20,7 @@ import { Settings } from '../interface'
 import Combobox from '@/components/form-fields/combobox'
 import { Option, State } from '@/types'
 import { HomeIcon } from 'lucide-react'
-import { HeaderContent } from '@/features/header/interface'
+import { HeaderContent } from '@/features/template/interface'
 
 interface SettingsFormProps {
   settings: Settings
@@ -122,7 +122,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
             icon={<HomeIcon className="w-4 h-4" />}
           />
           {/* default header */}
-          <Combobox
+          {/* <Combobox
             title="سربرگ پیش فرض"
             name="defaultHeaderId"
             defaultValue={String(settings?.defaultHeaderId)}
@@ -130,7 +130,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
             placeholder=""
             state={state}
             icon={<HomeIcon className="w-4 h-4" />}
-          />
+          /> */}
         </div>
         <SubmitButton />
       </form>

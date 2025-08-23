@@ -2,9 +2,10 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { blockRegistry } from '../registry/blockRegistry'
 import { Block } from '../types'
-import { GripHorizontal, Trash } from 'lucide-react'
+import { GripHorizontal, Settings, Trash } from 'lucide-react'
 import { useBuilderStore } from '../store/useBuilderStore'
 import { Button } from '@/components/ui/button'
+import { combineClassNames } from '../utils/styleUtils'
 
 type SortableItemProp = {
   item: Block
@@ -40,9 +41,21 @@ export default function SortableItem({
       ref={setNodeRef}
       {...attributes}
       style={style}
-      className={`w-full mb-2 relative group/item ${activeClass}`}
+      className={` mb-2 relative group/item ${activeClass}`}
     >
       <div className="absolute -top-6 left-1/2 -translate-x-1/2 p-1 z-10 opacity-0 group-hover/item:opacity-100 transition-opacity flex flex-row">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="size-4"
+          onClick={(e: any) => {
+            e.stopPropagation() // جلوگیری از propagate شدن به document
+            selectBlock(item)
+          }}
+        >
+          <Settings className="h-5 w-5 text-gray-500" />
+        </Button>
         <div {...listeners}>
           <GripHorizontal className="h-5 w-5 ml-2 text-gray-400 cursor-grab" />
         </div>
@@ -63,6 +76,7 @@ export default function SortableItem({
             e.stopPropagation() // جلوگیری از propagate شدن به document
             selectBlock(item)
           }}
+          className={`${combineClassNames(item.classNames || {})}`}
         />
       </div>
     </div>

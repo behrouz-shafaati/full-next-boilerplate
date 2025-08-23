@@ -3,6 +3,7 @@ import validator from '@rjsf/validator-ajv8'
 import { TextWidget } from './widgets/TextWidget'
 import { SelectWidget } from './widgets/SelectWidget'
 import { ColorWidget } from './widgets/ColorWidget'
+import { TailwindBgColorWidget } from './widgets/TailwindBgColorWidget'
 // import { JSONSchema7 } from 'json-schema'
 import clsx from 'clsx'
 import { CheckboxWidget } from './widgets/CheckboxWidget'
@@ -48,6 +49,7 @@ export const CustomTheme = {
     TextWidget, // ✅ این ویجت جایگزین ورودی متنی پیش‌فرض می‌شه
     SelectWidget,
     ColorWidget,
+    TailwindBgColorWidget,
     CheckboxWidget,
     TextareaWidget,
     NumberWidget,

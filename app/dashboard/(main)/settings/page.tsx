@@ -7,7 +7,7 @@ import categoryCtrl from '@/features/category/controller'
 import { SettingsForm } from '@/features/settings/ui/settings-form'
 import settingsCtrl from '@/features/settings/controller'
 import { BreadCrumb } from '@/components/breadcrumb'
-import headerCtrl from '@/features/header/controller'
+import headerCtrl from '@/features/template/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>

@@ -4,7 +4,7 @@ import { useBuilderStore } from '../../store/useBuilderStore'
 import { Button } from '@/components/ui/button'
 import { useDroppable } from '@dnd-kit/core'
 import SortableItem from '../../components/SortableItem'
-import { computedStyles } from '../../utils/styleUtils'
+import { combineClassNames, computedStyles } from '../../utils/styleUtils'
 
 type DroppableColumnProp = {
   rowId: string
@@ -36,14 +36,14 @@ export default function DroppableColumn({
       ref={setNodeRef}
       className={`flex relative border   col-span-${
         col.width
-      } rounded min-h-[100px] transition-all ${
-        isOver ? 'bg-green-100' : 'bg-white'
-      } group/column ${activeClass}`}
+      }  rounded min-h-[100px] transition-all ${combineClassNames(
+        col.classNames || {}
+      )} ${isOver ? 'bg-green-100' : ''} group/column ${activeClass}`}
       style={{ ...computedStyles(col.styles), ...computedStyles(col.settings) }}
     >
       <div
         key={`div-${col.id}`}
-        className="absolute w-full -bottom-9  flex flex-col align-middle items-center justify-between pl-2 gap-2 z-10 opacity-0 group-hover/column:opacity-100 transition-opacity"
+        className="absolute  -bottom-2  flex flex-col align-middle items-center justify-between pl-2 gap-2 z-10 opacity-0 group-hover/column:opacity-100 transition-opacity"
       >
         <Button
           type="button"

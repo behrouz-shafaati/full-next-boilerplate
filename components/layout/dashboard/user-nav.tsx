@@ -1,5 +1,5 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,11 +9,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { getSession, logout } from '@/lib/auth';
-import { Session } from '@/types';
+} from '@/components/ui/dropdown-menu'
+import { getSession, logout } from '@/lib/auth'
+import { Session } from '@/types'
 export async function UserNav() {
-  const session = (await getSession()) as Session;
+  const session = (await getSession()) as Session
   if (session) {
     return (
       <DropdownMenu dir="rtl">
@@ -60,8 +60,8 @@ export async function UserNav() {
             <form
               className="w-full flex  top-0 left-0 h-full"
               action={async () => {
-                'use server';
-                await logout();
+                'use server'
+                await logout()
               }}
             >
               <button className="w-full h-full flex">
@@ -71,6 +71,6 @@ export async function UserNav() {
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    );
+    )
   }
 }

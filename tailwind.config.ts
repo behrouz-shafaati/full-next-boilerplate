@@ -12,6 +12,16 @@ const config = {
   safelist: [
     {
       pattern: /col-span-(1[0-2]|[1-9])/,
+      variants: ['sm', 'md', 'lg', 'xl', '2xl'],
+    },
+    {
+      pattern:
+        /(bg|text|border)-(red|green|blue|yellow|purple|pink|gray|black|white)-(100|200|300|400|500|600|700|800|900)/,
+      variants: ['dark'], // اینجا میگی همه این کلاس‌ها رو با dark هم بساز
+    },
+    {
+      pattern: /(bg|text|border)-(black|white|transparent)/,
+      variants: ['dark'],
     },
   ],
   prefix: '',

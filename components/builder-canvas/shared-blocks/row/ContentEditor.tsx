@@ -38,7 +38,10 @@ const ContentEditor = () => {
     (id, key, form) => update(id, key, form),
     400
   )
-
+  console.log(
+    '#345 selectedBlock?.settings?.responsiveDesign:',
+    selectedBlock?.settings?.responsiveDesign
+  )
   return (
     <>
       <Select
@@ -57,14 +60,27 @@ const ContentEditor = () => {
         }}
       />
 
+      {/* responsive design  */}
+
+      <Checkbox
+        name="responsiveDesign"
+        title="طراحی ریسپانسیو"
+        defaultChecked={selectedBlock?.settings?.responsiveDesign ?? true}
+        onChange={(value: boolean) => {
+          debouncedUpdate(selectedBlock?.id as string, 'settings', {
+            ...selectedBlock?.settings,
+            responsiveDesign: value,
+          })
+        }}
+      />
       {/* sticky  */}
 
       <Checkbox
         name="sticky"
         title="چسبان"
-        defaultChecked={selectedBlock.settings.sticky || false}
+        defaultChecked={selectedBlock?.settings?.sticky ?? false}
         onChange={(value: boolean) => {
-          debouncedUpdate(selectedBlock.id as string, 'settings', {
+          debouncedUpdate(selectedBlock?.id as string, 'settings', {
             ...selectedBlock?.settings,
             sticky: value,
           })

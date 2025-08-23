@@ -179,13 +179,13 @@ export default function Builder({
       >
         <div className="flex  h-screen w-full ">
           {/* نوار ابزار */}
-          <aside className="relative h-screen w-80 shrink-0 bg-slate-50 overflow-y-auto overflow-x-hidden ">
+          <aside className="relative h-screen w-80 shrink-0 bg-slate-50 dark:bg-slate-950 overflow-y-auto overflow-x-hidden ">
             <ToolsSection
               settingsPanel={settingsPanel}
               savePage={submitManually}
               newBlocks={newBlocks}
             />
-            <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 p-2">
+            <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 dark:bg-slate-900 p-2">
               <form action={submitFormHandler} ref={formRef}>
                 <textarea readOnly name={name} value={getJson()} hidden />
                 <SubmitButton />
@@ -228,7 +228,7 @@ export default function Builder({
             >
               افزودن ردیف
             </Button>
-            <code>{getJson()}</code>
+            <code className="ltr">{getJson()}</code>
           </div>
         </div>
       </DndContext>

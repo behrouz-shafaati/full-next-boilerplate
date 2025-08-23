@@ -5,7 +5,7 @@ import { GripVertical, Settings, Trash } from 'lucide-react'
 import DroppableColumn from '../column/DroppableColumn'
 import { useBuilderStore } from '../../store/useBuilderStore'
 import { Button } from '@/components/ui/button'
-import { computedStyles } from '../../utils/styleUtils'
+import { combineClassNames, computedStyles } from '../../utils/styleUtils'
 
 export default function SortableRow({
   row,
@@ -45,7 +45,9 @@ export default function SortableRow({
         {...attributes}
         style={{ ...style, ...computedStyles(row.styles) }}
         key={`${row.id}`}
-        className={`border rounded cursor-default relative group/row transition-all duration-300 ease-in-out`}
+        className={`border rounded cursor-default relative group/row transition-all duration-300 ease-in-out ${combineClassNames(
+          row?.classNames || {}
+        )}`}
       >
         <div
           key={`div-${row.id}`}

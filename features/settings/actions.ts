@@ -7,7 +7,7 @@ import { Session, State } from '@/types'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
-  defaultHeaderId: z.string({}),
+  // defaultHeaderId: z.string({}),
 })
 
 /**

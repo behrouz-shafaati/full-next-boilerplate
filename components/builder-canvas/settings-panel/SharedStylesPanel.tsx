@@ -4,9 +4,28 @@ import { useBuilderStore } from '../store/useBuilderStore'
 import { useDebouncedCallback } from 'use-debounce'
 import { TailwindForm } from '../../rjsf/shadcn-theme'
 import { uiSchema } from '../../rjsf/uiSchema'
+import { title } from 'process'
+
+export const publicClassNamesSchema = {
+  type: 'object',
+  title: 'کلاس‌‌ها',
+  properties: {
+    manualInputs: {
+      type: 'string',
+      title: 'tailwind classes',
+      default: '',
+    },
+    backgroundColor: {
+      type: 'string',
+      title: 'Background color',
+      default: '',
+    },
+  },
+}
 
 export const publicStylesSchema = {
   type: 'object',
+  title: 'استایل‌ها',
   properties: {
     width: {
       type: 'number',
@@ -43,11 +62,6 @@ export const publicStylesSchema = {
         bottom: { type: 'number', title: 'پایین', default: 0 },
         left: { type: 'number', title: 'چپ', default: 0 },
       },
-    },
-    backgroundColor: {
-      type: 'string',
-      title: 'Background color',
-      default: '#ffffff',
     },
     boxShadow: {
       type: 'object',
@@ -136,7 +150,28 @@ export const PublicStylesForm = () => {
   return (
     <>
       <TailwindForm
-        key={`shared-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
+        key={`shared-classNames-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
+        schema={publicClassNamesSchema}
+        uiSchema={uiSchema}
+        formData={selectedBlock.classNames}
+        validator={validator}
+        onChange={(e) =>
+          debouncedUpdate(selectedBlock.id, 'classNames', e.formData)
+        }
+        showErrorList={false}
+        omitExtraData
+        noHtml5Validate
+        liveValidate
+        widgets={{}} // می‌تونی در آینده کاستوم‌سازی کنی
+        templates={{
+          //  حذف دکمه Submit
+          ButtonTemplates: {
+            SubmitButton: () => null,
+          },
+        }}
+      />
+      <TailwindForm
+        key={`shared-styles-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
         schema={publicStylesSchema}
         uiSchema={uiSchema}
         formData={selectedBlock.styles}

@@ -1,13 +1,11 @@
 // رجیستری مرکزی بلاک‌ها
 import { registerBlock } from '@/components/builder-canvas/singletonBlockRegistry'
-import { ImageSliderBlockDef } from '../blocks/imageSlider'
-import { BlogPostSliderBlockDef } from '../blocks/blogPostSlider'
-import { HeaderBlockDef } from '../blocks/header'
+import { TemplateBlockDef } from '../blocks/template-part'
+import { ContentBlockDef } from '../blocks/content'
 
 export const blockRegistry = {
-  imageSlider: ImageSliderBlockDef,
-  blogPostSlider: BlogPostSliderBlockDef,
-  header: HeaderBlockDef,
+  template: TemplateBlockDef,
+  content: ContentBlockDef,
   // ...
 }
 

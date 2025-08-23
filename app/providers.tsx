@@ -1,6 +1,6 @@
 'use client'
 
-import { ThemeProvider } from '@/components/layout/theme-toggle/theme-provider'
+import { ThemeProvider } from '@/components/context/theme-provider'
 import { SessionProvider } from '@/components/context/SessionContext'
 import { Toaster } from '@/components/ui/toaster'
 

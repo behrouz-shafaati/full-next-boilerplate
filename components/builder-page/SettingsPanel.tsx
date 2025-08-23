@@ -12,39 +12,20 @@ import PageTypeSettings from './PageTypeSettings'
 import TemplateTypeSettings from './TemplateTypeSettings'
 import { useBuilderStore } from '../builder-canvas/store/useBuilderStore'
 import { PageContent } from './types'
-import { Header } from '@/features/header/interface'
 import Checkbox from '../form-fields/checkbox'
 
 type SettingsPanelProp = {
   allTemplates: PageContent[]
   allCategories: Category[]
-  allHeaders: Header[]
 }
 
-function SettingsPanel({
-  allCategories,
-  allTemplates,
-  allHeaders,
-}: SettingsPanelProp) {
+function SettingsPanel({ allCategories, allTemplates }: SettingsPanelProp) {
   const { update, getJson } = useBuilderStore()
-  const json = JSON.parse(getJson())
+  const document = JSON.parse(getJson())
   const debouncedUpdate = useDebouncedCallback(
     (id, key, form) => update(id, key, form),
     400
   )
-
-  const headerOptions: Option[] = allHeaders.map((h: Header) => {
-    return {
-      value: String(h.id),
-      label: h.title,
-    }
-  })
-
-  const headerOptionsFinal = [
-    { label: 'والد', value: 'parent' },
-    ...headerOptions,
-    { label: 'بدون سربرگ', value: 'noHeader' },
-  ]
 
   const statusOptions = [
     {
@@ -59,7 +40,7 @@ function SettingsPanel({
 
   const pageTypeOptions = [
     {
-      label: 'صفحه',
+      label: 'برگه',
       value: 'page',
     },
     {
@@ -89,7 +70,7 @@ function SettingsPanel({
         onChange={(value) => debouncedUpdate(null, 'type', value)}
       />
       {/* <p>type: {JSON.parse(getJson()).type}</p> */}
-      {json.type === 'page' ? (
+      {document.type === 'page' ? (
         <PageTypeSettings allTemplates={allTemplates} />
       ) : (
         <TemplateTypeSettings allCategories={allCategories} />

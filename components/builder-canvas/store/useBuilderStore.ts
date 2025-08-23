@@ -1,7 +1,7 @@
 // store/useBuilderStore.ts
 import { create } from 'zustand'
 import { v4 as uuidv4 } from 'uuid'
-import { PageBlock, PageColumn, PageContent, PageRow } from '../types'
+import { Block, Column, Content, Row } from '../types'
 
 const defaultColumn = () => ({
   id: uuidv4(),
@@ -11,14 +11,14 @@ const defaultColumn = () => ({
 })
 
 type State = {
-  activeElement: PageBlock | null
-  setActiveElement: (el: PageBlock | null) => void
-  content: PageContent
+  activeElement: Block | null
+  setActiveElement: (el: Block | null) => void
+  content: Content
   resetContent: () => void
-  setContent: (content: PageContent) => void
+  setContent: (content: Content) => void
   addRow: () => void
   addColumn: (rowId: string) => void
-  addElementToColumn: (colId: string, element: PageBlock) => void
+  addElementToColumn: (colId: string, element: Block) => void
   moveElementWithinColumn: (
     colId: string,
     oldIndex: number,
@@ -35,8 +35,8 @@ type State = {
   updateRowColumns: (rowId: string, layout: string) => void
   deleteItem: (itemId: string) => void
   update: (itemId: string | null, key: string, value: any) => void
-  selectedBlock: PageBlock | null
-  selectBlock: (block: PageBlock) => void
+  selectedBlock: Block | null
+  selectBlock: (block: Block) => void
   deselectBlock: () => void
 }
 
@@ -62,6 +62,7 @@ export const useBuilderStore = create<State>((set, get) => ({
           {
             id: uuidv4(),
             type: 'row',
+            classNames: '',
             styles: {},
             settings: { rowColumns: '4-4-4' },
             columns: [defaultColumn(), defaultColumn(), defaultColumn()],
@@ -133,7 +134,7 @@ export const useBuilderStore = create<State>((set, get) => ({
 
   moveElementBetweenColumns: (sourceColId, targetColId, elementId, newIndex) =>
     set((state) => {
-      let movedElement: PageBlock | undefined
+      let movedElement: Block | undefined
 
       const updatedRows = state.content.rows.map((row) => {
         return {
@@ -207,7 +208,7 @@ export const useBuilderStore = create<State>((set, get) => ({
 
           let index = -1
           // ساخت ستون‌های جدید
-          const newColumns: PageColumn[] = widths.map((width) => {
+          const newColumns: Column[] = widths.map((width) => {
             index++
             return {
               id: uuidv4(),
@@ -272,6 +273,13 @@ export const useBuilderStore = create<State>((set, get) => ({
                 updatedBlock = {
                   ...block,
                   styles: value,
+                }
+              }
+              // آپدیت کلاس
+              if (key === 'classNames' && typeof value === 'object') {
+                updatedBlock = {
+                  ...block,
+                  classNames: value,
                 }
               }
               // آپدیت تنظمیات بلاک

@@ -5,13 +5,7 @@ import localFont from 'next/font/local'
 import { Session } from '@/types'
 import { getSession } from '@/lib/auth'
 import { Providers } from './providers'
-import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
 
-// const originalConsoleLog = console.log;
-// console.log = (...args) => {
-//   const stack = new Error().stack.split('\n')[2].trim();
-//   originalConsoleLog(`[${stack}]`, ...args);
-// };
 const iransans = localFont({
   src: [
     {
@@ -43,8 +37,8 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  console.log('#inf03 render RootLayout in dashboard')
   const session = (await getSession()) as Session
+  console.log('#23409798 session:', session)
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={iransans.className}>

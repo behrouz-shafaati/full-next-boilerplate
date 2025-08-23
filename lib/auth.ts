@@ -93,10 +93,16 @@ export async function logout() {
 }
 
 export async function getSession() {
-  const cookieStore = await cookies()
-  const session = cookieStore.get('session')?.value
-  if (!session) return null
-  return await decrypt(session)
+  try {
+    const cookieStore = await cookies()
+    const session = cookieStore.get('session')?.value
+    console.log('#get session:', session)
+    if (!session) return null
+    return await decrypt(session)
+  } catch (err) {
+    console.error('❌ cookies() called outside request context', err)
+    return null
+  }
 }
 
 export async function updateSession(request: NextRequest) {

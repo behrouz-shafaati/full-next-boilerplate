@@ -1,3 +1,13 @@
+type ClassNames = Record<string, string | undefined | null>
+
+export function combineClassNames(classNames: ClassNames): string {
+  return Object.values(classNames)
+    .filter(Boolean) // حذف null و undefined و ''
+    .map((str) => str.trim())
+    .join(' ')
+    .trim()
+}
+
 export const computedStyles = (
   styles?: Record<string, string>
 ): Record<string, string | number> => {
@@ -5,30 +15,31 @@ export const computedStyles = (
   const result: Record<string, string | number> = {}
 
   for (const [key, value] of Object.entries(safeStyles)) {
-    if (key === 'opacity') {
-      const num = parseFloat(value)
-      result.opacity = isNaN(num) ? 1 : Math.min(Math.max(num / 100, 0), 1)
-    } else if (key === 'padding') {
-      result.padding = `${value?.top || 0}px ${value?.right || 0}px ${
-        value?.bottom || 0
-      }px ${value?.left || 0}px`
-    } else if (key === 'margin') {
-      result.margin = `${value?.top || 0}px ${value?.right || 0}px ${
-        value?.bottom || 0
-      }px ${value?.left || 0}px`
-    } else if (key === 'borderRadius') {
-      result.borderRadius = `${value?.top || 0}px ${value?.right || 0}px ${
-        value?.bottom || 0
-      }px ${value?.left || 0}px`
-    } else if (key === 'boxShadow') {
-      result['boxShadow'] = `${value?.inset ? 'inset ' : ''}${
-        value?.x || 0
-      }px ${value?.y || 0}px ${value?.blur || 0}px ${value?.spread || 0}px ${
-        value?.color || ''
-      }`
-    } else {
-      result[key] = value
-    }
+    if (value)
+      if (key === 'opacity') {
+        const num = parseFloat(value)
+        result.opacity = isNaN(num) ? 1 : Math.min(Math.max(num / 100, 0), 1)
+      } else if (key === 'padding') {
+        result.padding = `${value?.top || 0}px ${value?.right || 0}px ${
+          value?.bottom || 0
+        }px ${value?.left || 0}px`
+      } else if (key === 'margin') {
+        result.margin = `${value?.top || 0}px ${value?.right || 0}px ${
+          value?.bottom || 0
+        }px ${value?.left || 0}px`
+      } else if (key === 'borderRadius') {
+        result.borderRadius = `${value?.top || 0}px ${value?.right || 0}px ${
+          value?.bottom || 0
+        }px ${value?.left || 0}px`
+      } else if (key === 'boxShadow') {
+        result['boxShadow'] = `${value?.inset ? 'inset ' : ''}${
+          value?.x || 0
+        }px ${value?.y || 0}px ${value?.blur || 0}px ${value?.spread || 0}px ${
+          value?.color || ''
+        }`
+      } else {
+        result[key] = value
+      }
   }
 
   return result
@@ -69,4 +80,13 @@ export const getVisibilityClass = (
   }
 
   return classList.join(' ')
+}
+
+export function extractColorClasses(className: string): string {
+  return className
+    .split(/\s+/) // تبدیل استرینگ به آرایه کلاس‌ها
+    .filter((cls) =>
+      /^(dark:)?(bg-|text-|border-|shadow-|placeholder-|ring-)/.test(cls)
+    )
+    .join(' ')
 }

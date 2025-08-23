@@ -4,8 +4,7 @@ import BuilderCanvas from '../builder-canvas'
 import SettingsPanel from './SettingsPanel'
 import { Category } from '@/features/category/interface'
 import { blockRegistry } from './registry/blockRegistry'
-import { blockRegistry as headerBlockregistry } from './../builder-header/registry/blockRegistry'
-import { Header } from '@/features/header/interface'
+import { blockRegistry as templatePartBlockregistry } from '../builder-template/registry/blockRegistry'
 
 type BuilderPageProp = {
   title?: string
@@ -14,7 +13,6 @@ type BuilderPageProp = {
   initialContent?: PageContent
   allTemplates: PageContent[]
   allCategories: Category[]
-  allHeaders: Header[]
 }
 
 export default function BuilderPage({
@@ -24,7 +22,6 @@ export default function BuilderPage({
   submitFormHandler,
   allTemplates,
   allCategories,
-  allHeaders,
 }: BuilderPageProp) {
   return (
     <BuilderCanvas
@@ -34,12 +31,11 @@ export default function BuilderPage({
         <SettingsPanel
           allCategories={allCategories}
           allTemplates={allTemplates}
-          allHeaders={allHeaders}
         />
       }
       submitFormHandler={submitFormHandler}
       initialContent={initialContent}
-      newBlocks={{ ...blockRegistry, ...headerBlockregistry }}
+      newBlocks={{ ...blockRegistry, ...templatePartBlockregistry }}
     />
   )
 }

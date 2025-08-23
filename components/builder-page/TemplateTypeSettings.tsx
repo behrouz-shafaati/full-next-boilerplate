@@ -16,7 +16,7 @@ const TemplateTypeSettings = ({
   )
   const categoryOptions: Option[] = allCategories.map((category: Category) => {
     return {
-      value: String(category.id),
+      value: `category-${String(category.id)}`,
       label:
         'خانه‌ی دسته‌ی ' + createCatrgoryBreadcrumb(category, category.title),
     }

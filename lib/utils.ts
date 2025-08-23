@@ -117,3 +117,9 @@ export function buildUrlFromFilters(filters: Filters): string {
 
   return `${parts.join('/')}`
 }
+
+export function getTemplateFor(templateFor: string): string {
+  if (!templateFor) return 'allPages'
+  const parts = templateFor.split('-')
+  return parts[0] || templateFor
+}

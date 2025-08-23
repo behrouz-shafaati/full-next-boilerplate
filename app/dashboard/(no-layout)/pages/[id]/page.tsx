@@ -4,7 +4,7 @@ import pageCtrl from '@/features/page/controller'
 import { notFound } from 'next/navigation'
 import { PageForm } from '@/features/page/ui/page-form'
 import categoryCtrl from '@/features/category/controller'
-import headerCtrl from '@/features/header/controller'
+import headerCtrl from '@/features/template/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>

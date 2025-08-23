@@ -143,12 +143,12 @@ p {
 
 /* جدول */
 
-.selectedCell {
+.prose .selectedCell {
   background-color: rgba(59, 130, 246, 0.2);
   outline: 2px solid rgba(59, 130, 246, 0.8);
 }
 
-table {
+.prose table {
   width: 100%;
   min-width: 100%;
   border-collapse: collapse;
@@ -156,18 +156,18 @@ table {
   font-size: 14px;
 }
 
-table th,
-table td {
+.prose table th,
+.prose table td {
   border: 1px solid #ddd;
   padding: 8px;
 }
 
-table th {
+.prose table th {
   background: #f9fafb;
   font-weight: 600;
 }
 
-table {
+.prose table {
   display: block;
   overflow-x: auto;
   white-space: nowrap;

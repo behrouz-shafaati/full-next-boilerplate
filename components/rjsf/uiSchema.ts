@@ -3,7 +3,7 @@ export const uiSchema = {
     'ui:widget': 'ColorWidget',
   },
   backgroundColor: {
-    'ui:widget': 'ColorWidget',
+    'ui:widget': 'TailwindBgColorWidget',
   },
   isPublished: {
     'ui:widget': 'CheckboxWidget',

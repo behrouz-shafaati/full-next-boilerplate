@@ -1,8 +1,8 @@
 // کامپوننت نمایشی بلاک
 
 import React, { ElementType } from 'react'
-import { PageBlock } from '../../types'
-import { computedStyles } from '../../utils/styleUtils'
+import { Block } from '../../types'
+import { combineClassNames, computedStyles } from '../../utils/styleUtils'
 
 type TextBlockProps = {
   blockData: {
@@ -17,7 +17,7 @@ type TextBlockProps = {
       color?: string
       text?: string
     }
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
@@ -43,7 +43,6 @@ export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
         fontSize: settings.fontSize || '16px',
         fontWeight: settings.fontWeight || 'normal',
         textAlign: settings.textAlign || 'left',
-        color: settings.color || '#000',
         ...computedStyles(blockData.styles),
       }}
       {...props}

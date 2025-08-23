@@ -3,7 +3,6 @@
 import React from 'react'
 import { Page } from '@/features/page/interface'
 import RendererRows from './RenderRows'
-import RenderHeader from './RenderHeader'
 
 type Props = {
   page: Page
@@ -12,7 +11,7 @@ type Props = {
 export const PageRenderer = ({ page }: Props) => {
   return (
     <>
-      <RendererRows rows={page.content.rows} />
+      <RendererRows rows={page.content.rows} editroMode={false} />
     </>
   )
 }

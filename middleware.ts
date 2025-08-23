@@ -8,9 +8,9 @@ const key = new TextEncoder().encode(secretKey)
 export async function middleware(request: NextRequest) {
   const currentUser = await getSession()
 
-  // if (currentUser && !request.nextUrl.pathname.startsWith('/dashboard')) {
-  //   return Response.redirect(new URL('/dashboard', request.url));
-  // }
+  if (!request.nextUrl.pathname.startsWith('/dashboard')) {
+    return
+  }
 
   if (!currentUser && request.nextUrl.pathname.startsWith('/dashboard')) {
     return Response.redirect(new URL('/login', request.url))

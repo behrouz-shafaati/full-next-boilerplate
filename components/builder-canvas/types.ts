@@ -7,6 +7,10 @@ export type Content = {
 export type Row = {
   id: string // UUID
   type: 'row'
+  classNames?: // tailwind classess
+  {
+    manualInputs: string
+  }
   styles: { [key: string]: string }
   settings: { rowColumns: string }
   columns: Column[]
@@ -16,6 +20,10 @@ export type Column = {
   id: string // UUID
   width: number // مثلاً 6 یعنی 6 از 12 (مثل Bootstrap)
   type: 'column'
+  classNames?: // tailwind classess
+  {
+    manualInputs: string
+  }
   styles: { [key: string]: string }
   settings: { rowColumns: string }
   blocks: Block[]
@@ -37,6 +45,10 @@ export type Block = {
     | 'product'
     | 'custom'
   content?: object
+  classNames?: // tailwind classess
+  {
+    manualInputs: string
+  }
   styles: {
     padding?: string
     margin?: string
