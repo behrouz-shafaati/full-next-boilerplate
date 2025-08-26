@@ -2,6 +2,7 @@
 import '@/components/builder-canvas/registry/blockRegistry'
 import '@/components/builder-page/registry/blockRegistry'
 import '@/components/builder-template/registry/blockRegistry'
+import '@/components/builder-template-part/registry/blockRegistry'
 
 //
 import categoryCtrl from '@/features/category/controller'

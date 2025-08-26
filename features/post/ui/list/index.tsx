@@ -17,15 +17,7 @@ export default async function PostList({ query, page }: PostTableProps) {
   console.log('#276 findResult:', findResult)
   return (
     <>
-      <div className="aspect-[4/1] text-center flex items-center justify-center flex-col bg-slate-50 dark:bg-slate-900 rounded-2xl my-4">
-        <h1 className="scroll-m-20 text-center text-4xl font-extrabold tracking-tight text-balance">
-          مقالات
-        </h1>
-        <span className="text-muted-foreground mt-4 border-t p-4">{`${
-          findResult?.totalDocuments || 0
-        } مقاله`}</span>
-      </div>
-      <div className="columns-1 sm:columns-2 md:columns-3 gap-4 space-y-4">
+      <div className="columns-1 sm:columns-5 md:columns-5 gap-4 space-y-4 m-4">
         {findResult.data.map((post: Post) => {
           return <PostCard key={post.id} post={post} />
         })}

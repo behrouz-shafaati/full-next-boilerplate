@@ -12,12 +12,24 @@ import RenderBlock from './RenderBlock'
 type Props = {
   editroMode: boolean
   rows: Row[]
+  [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
-const RendererRows = ({ editroMode = false, rows }: Props) => {
+const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
+  // فیلتر کردن propsهایی که content_ شروع میشن
+  const contents = Object.entries(rest)
+    .filter(([key]) => key.startsWith('content_'))
+    .map(([key, value]) => ({
+      key, // مثل "content_main" یا "content_title"
+      node: value as React.ReactNode,
+    }))
+  const contentProps = contents.reduce((acc, { key, node }) => {
+    acc[key] = node
+    return acc
+  }, {} as Record<string, React.ReactNode>)
   return (
     <>
-      {rows.map((row) => {
+      {rows?.map((row) => {
         const visibility = row.styles?.visibility
         const className = getVisibilityClass(visibility, { display: 'grid' })
         let stickyClass = ''
@@ -52,6 +64,7 @@ const RendererRows = ({ editroMode = false, rows }: Props) => {
                       key={el.id}
                       item={el}
                       editroMode={editroMode}
+                      {...contentProps}
                     />
                   ))}
                 </div>

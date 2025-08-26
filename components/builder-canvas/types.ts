@@ -44,6 +44,7 @@ export type Block = {
     | 'form'
     | 'product'
     | 'custom'
+    | 'templatePart'
   content?: object
   classNames?: // tailwind classess
   {

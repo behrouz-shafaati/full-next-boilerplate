@@ -16,6 +16,7 @@ type ComboboxProps = {
   placeholder?: string
   icon?: any
   state?: any
+  disabled?: boolean
   onChange?: (e: any) => void
 }
 export default function Combobox({
@@ -26,6 +27,7 @@ export default function Combobox({
   placeholder,
   icon,
   state,
+  disabled = false,
   onChange,
 }: ComboboxProps) {
   const errorMessages = state?.errors?.[name] ?? []
@@ -64,6 +66,7 @@ export default function Combobox({
               setSelectedOption(option)
               if (onChange) onChange({ target: option })
             }}
+            disabled={disabled}
           />
         </div>
         {icon && (

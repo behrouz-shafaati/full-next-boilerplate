@@ -1,21 +1,21 @@
 'use client'
 // کامپوننت نمایشی بلاک
 import React, { useEffect, useState } from 'react'
-import { PageBlock } from '../../../builder-canvas/types'
-import { Template } from './Template'
-import { getTemplate } from '@/features/template/actions'
+import { Block } from '../../../builder-canvas/types'
+import { TemplatePart } from './Template'
+import { getTemplatePart } from '@/features/template-part/actions'
 
 type TemplateBlockEditorProps = {
   blockData: {
-    id: template
-    type: 'template'
+    id: string
+    type: 'templatePart'
     content: {
-      templateId: template
+      templateId: string
     }
     settings: {
       stickyTemplate: boolean
     }
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function TemplateBlockEditor({
@@ -26,14 +26,16 @@ export default function TemplateBlockEditor({
   const { content } = blockData
   useEffect(() => {
     const fetchData = async () => {
-      const [template] = await Promise.all([getTemplate(content?.templateId)])
+      const [template] = await Promise.all([
+        getTemplatePart(content?.templateId),
+      ])
       setTemplate(template)
     }
 
     fetchData()
   }, [content])
   return (
-    <Template
+    <TemplatePart
       template={template}
       blockData={blockData}
       {...props}

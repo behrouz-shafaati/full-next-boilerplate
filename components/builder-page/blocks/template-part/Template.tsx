@@ -8,7 +8,7 @@ type TemplateProps = {
   template: TemplateType
   blockData: {
     id: string
-    type: 'template'
+    type: 'templatePart'
     content: {
       templateId: string
     }
@@ -16,7 +16,7 @@ type TemplateProps = {
   } & PageBlock
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const Template = ({
+export const TemplatePart = ({
   editroMode = false,
   template,
   blockData,
@@ -27,7 +27,11 @@ export const Template = ({
 
   return (
     <section {...props} className={`w-full z-50 ${className}`}>
-      <RendererRows rows={template?.content?.rows} editroMode={editroMode} />
+      <RendererRows
+        rows={template?.content?.rows}
+        editroMode={editroMode}
+        {...props}
+      />
     </section>
   )
 }

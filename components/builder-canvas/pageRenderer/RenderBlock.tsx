@@ -2,11 +2,18 @@ import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegi
 import { Block } from '../types'
 import { combineClassNames, getVisibilityClass } from '../utils/styleUtils'
 
+type RestProps = Record<string, unknown>
+
 type RenderBlockProp = {
   editroMode: boolean
   item: Block
+  contents: React.ReactNode[]
 }
-const RenderBlock = ({ editroMode = false, item }: RenderBlockProp) => {
+const RenderBlock = ({
+  editroMode = false,
+  item,
+  ...rest
+}: RenderBlockProp) => {
   const blocks = getBlockRegistry() // برای محتوا دار بودن این برای رسیدن به این کامپوننت هیچ کامپوننتی نباید از use client‌ استفاده کرده باشد
   const visibility = item.styles?.visibility
   const className = getVisibilityClass(visibility)
@@ -24,15 +31,50 @@ const RenderBlock = ({ editroMode = false, item }: RenderBlockProp) => {
       )
     }
   } else {
-    if (Component)
+    if (Component) {
+      if (item.type.startsWith('content_')) {
+        const node = extractNode(rest, item.type) // مثلا از content_2 میشه 2
+        if (node)
+          return (
+            <Component
+              blockData={item}
+              className={`${className} ${combineClassNames(
+                item.classNames || {}
+              )}`}
+              content={node}
+            />
+          )
+      }
+      if (item.type === 'templatePart') {
+        return (
+          <Component
+            blockData={item}
+            className={`${className} ${combineClassNames(
+              item.classNames || {}
+            )}`}
+            {...rest} // 👈 همه content_n به صورت داینامیک پاس داده میشه
+          />
+        )
+      }
       return (
         <Component
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
         />
       )
+    }
     return <p>رندر بلاک {item.type} ناموفق بود</p>
   }
 }
 
 export default RenderBlock
+
+export function extractNode(
+  rest: RestProps,
+  key: string
+): React.ReactNode | null {
+  if (!key.startsWith('content_')) return null
+  const value = rest[key]
+  if (!value) return null
+  return value as React.ReactNode
+}

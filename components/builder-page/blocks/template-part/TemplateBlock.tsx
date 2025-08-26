@@ -1,27 +1,27 @@
 // کامپوننت نمایشی بلاک
 import React from 'react'
-import { PageBlock } from '../../../builder-canvas/types'
-import { Template } from './Template'
-import { getTemplate } from '@/features/template/actions'
+import { Block } from '../../../builder-canvas/types'
+import { TemplatePart } from './Template'
+import { getTemplatePart } from '@/features/template-part/actions'
 
 type Props = {
   blockData: {
     id: string
-    type: 'template'
+    type: 'templatePart'
     content: {
       templateId: string
     }
     settings: {
       stickyTemplate: boolean
     }
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function TemplateBlock({ blockData, ...props }: Props) {
   const { content } = blockData
-  const [template] = await Promise.all([getTemplate(content?.templateId)])
+  const [template] = await Promise.all([getTemplatePart(content?.templateId)])
   return (
-    <Template
+    <TemplatePart
       template={template}
       blockData={blockData}
       {...props}

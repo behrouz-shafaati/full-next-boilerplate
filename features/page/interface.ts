@@ -21,9 +21,8 @@ type PageBase = {
    * عنوان برگه
    */
   title: string
-
+  user: Id
   type: 'page' | 'template'
-  templateFor: string
   header: string
 
   /**

@@ -15,12 +15,6 @@ const pageSchema = new Schema<PageSchema>(
       type: Schema.Types.Mixed, // whole page structure as JSON
       required: true,
     },
-    type: {
-      type: String,
-      enum: ['page', 'template'],
-      default: 'page',
-    },
-    templateFor: { type: String, required: false, unique: false },
     status: {
       type: String,
       enum: ['draft', 'published'],

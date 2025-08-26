@@ -1,24 +1,27 @@
-export type Content = {
+export type PageContent = {
   id: string // UUID
   title: string
-  rows: Row[]
+  slug: string
+  template: string
+  category: string
+  rows: PageRow[]
 }
 
-export type Row = {
+export type PageRow = {
   id: string // UUID
   type: 'row'
   styles: { [key: string]: string }
   settings: { rowColumns: string }
-  columns: Column[]
+  columns: PageColumn[]
 }
 
-export type Column = {
+export type PageColumn = {
   id: string // UUID
   width: number // مثلاً 6 یعنی 6 از 12 (مثل Bootstrap)
-  blocks: Block[]
+  blocks: PageBlock[]
 }
 
-export type Block = {
+export type PageBlock = {
   id: string // UUID
   title?: string // Optional title for the block
   slug?: string // Optional slug for the block, useful for custom blocks
@@ -49,5 +52,5 @@ export type Block = {
   settings?: {
     [key: string]: any
   }
-  children?: Block[]
+  children?: PageBlock[]
 }

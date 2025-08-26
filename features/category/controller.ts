@@ -2,7 +2,7 @@ import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
 import categorySchema from './schema'
 import categoryService from './service'
-import { CategoryInput } from './interface'
+import { Category, CategoryInput } from './interface'
 import { slugify } from '@/lib/utils'
 
 class controller extends baseController {
@@ -112,6 +112,11 @@ class controller extends baseController {
       }
     }
     return categoryIds
+  }
+
+  async getAllSlugs() {
+    const result = await this.findAll({})
+    return result.data.map((category: Category) => ({ slug: category.slug }))
   }
 }
 

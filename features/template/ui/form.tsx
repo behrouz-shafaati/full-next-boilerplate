@@ -9,6 +9,8 @@ import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import BuilderTemplate from '@/components/builder-template'
 import { Template } from '../interface'
+import { Category } from '@/features/category/interface'
+import CreateTemplateModal from './modal'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
@@ -18,12 +20,24 @@ const formSchema = z.object({
 type TemplateFormValues = z.infer<typeof formSchema>
 
 interface TemplateFormProps {
+  allCategories: Category[]
   initialData: Template | null
 }
 
+const defaultInitialValue = {
+  title: '',
+  type: 'template',
+  status: 'published',
+  rows: [],
+}
+
 export const Form: React.FC<TemplateFormProps> = ({
+  allCategories,
   initialData: Template,
 }) => {
+  const [defaultValue, setDefaultValue] = useState(defaultInitialValue)
+  const [templateFor, setTemplateFor] = useState<string | null>(null)
+  const [showTemplateBuilder, setShowTemplateBuilder] = useState(!!Template)
   const initialState = { message: null, errors: {} }
   const actionHandler = Template
     ? updateTemplate.bind(null, String(Template.id))
@@ -45,7 +59,14 @@ export const Form: React.FC<TemplateFormProps> = ({
   const toastMessage = Template ? 'قالب بروزرسانی شد' : 'قالب اضافه شد'
   const action = Template ? 'ذخیره تغییرات' : 'ذخیره'
 
-  console.log('#299 Template:', Template?.content.rows)
+  const handleTemplateConfirm = (section: string) => {
+    console.log('✅ کاربر انتخاب کرد:', section)
+    setDefaultValue((state) => ({ ...state, templateFor: [section] }))
+    setTemplateFor(section)
+    // اینجا می‌تونی استیت بسازی که مشخص کنه قالب برای کدوم بخشه
+    setShowTemplateBuilder(true)
+  }
+
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -84,11 +105,26 @@ export const Form: React.FC<TemplateFormProps> = ({
         )}
       </div> * /}
       {/* <Separator /> */}
-      <BuilderTemplate
-        name="contentJson"
-        submitFormHandler={dispatch}
-        {...(Template ? { initialContent: { ...Template.content } } : {})}
-      />
+      {!showTemplateBuilder && (
+        <CreateTemplateModal
+          onConfirm={handleTemplateConfirm}
+          allCategories={allCategories}
+        />
+      )}
+      {showTemplateBuilder && (
+        <BuilderTemplate
+          name="contentJson"
+          submitFormHandler={dispatch}
+          allCategories={allCategories}
+          {...(Template
+            ? {
+                initialContent: {
+                  ...Template.content,
+                },
+              }
+            : { initialContent: { ...defaultValue } })}
+        />
+      )}
     </>
   )
 }

@@ -50,7 +50,7 @@ export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
   const hasSubMenu = item.subMenu && item.subMenu.length > 0
   const { className } = props
 
-  console.log('#234897 props in menu:', className)
+  // console.log('#234897 props in menu:', className)
   if (!hasSubMenu) {
     return item.url ? (
       <Link href={item.url} className="hover:text-blue-600 px-2 py-1 block">

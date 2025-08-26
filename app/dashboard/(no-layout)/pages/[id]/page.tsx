@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { PageForm } from '@/features/page/ui/page-form'
 import categoryCtrl from '@/features/category/controller'
 import headerCtrl from '@/features/template/controller'
+import templateCtrl from '@/features/template/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -23,7 +24,7 @@ export default async function Page({ params }: PageProps) {
   if (id !== 'create') {
     ;[page, allTemplates, allCategories, allHeaders] = await Promise.all([
       pageCtrl.findById({ id }),
-      pageCtrl.findAll({ filters: { type: 'template' } }),
+      templateCtrl.findAll({}),
       categoryCtrl.findAll({}),
       headerCtrl.findAll({}),
     ])

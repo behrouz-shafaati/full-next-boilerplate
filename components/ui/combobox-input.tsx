@@ -19,12 +19,14 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover'
 import { Option } from '../form-fields/combobox'
+import Text from '../form-fields/text'
 
 type CheckBoxInputProp = {
   title: string
   placeholder?: string
   value: string
   options: Option[]
+  disabled: boolean
   onChange: (option: Option) => void
 }
 
@@ -32,10 +34,23 @@ export default function ComboboxInput({
   options,
   placeholder = 'یک گزینه را انتخاب کنید',
   value,
+  disabled = false,
   onChange,
 }: CheckBoxInputProp) {
   const [open, setOpen] = React.useState(false)
-
+  if (disabled)
+    return (
+      <Text
+        title=""
+        name="templateFor"
+        disabled
+        value={
+          value
+            ? options.find((option) => option.value === value)?.label
+            : placeholder
+        }
+      />
+    )
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>

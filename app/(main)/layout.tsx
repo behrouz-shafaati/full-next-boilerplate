@@ -20,10 +20,8 @@ export default function DashboardLayout({
 }) {
   return (
     <>
-      <Header />
-      <ScrollArea className="h-full">
-        <main className="w-full pt-16">{children}</main>
-      </ScrollArea>
+      {/* <Header /> */}
+      <ScrollArea className="h-screen">{children}</ScrollArea>
     </>
   )
 }

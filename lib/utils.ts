@@ -120,6 +120,6 @@ export function buildUrlFromFilters(filters: Filters): string {
 
 export function getTemplateFor(templateFor: string): string {
   if (!templateFor) return 'allPages'
-  const parts = templateFor.split('-')
+  const parts = templateFor[0].split('-')
   return parts[0] || templateFor
 }

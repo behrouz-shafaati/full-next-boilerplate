@@ -4,7 +4,7 @@ import BuilderCanvas from '../builder-canvas'
 import SettingsPanel from './SettingsPanel'
 import { Category } from '@/features/category/interface'
 import { blockRegistry } from './registry/blockRegistry'
-import { blockRegistry as templatePartBlockregistry } from '../builder-template/registry/blockRegistry'
+import { blockRegistry as templatePartBlockregistry } from '../builder-template-part/registry/blockRegistry'
 
 type BuilderPageProp = {
   title?: string
@@ -15,9 +15,16 @@ type BuilderPageProp = {
   allCategories: Category[]
 }
 
+const defaultInitialValue = {
+  title: '',
+  type: 'page',
+  status: 'published',
+  rows: [],
+}
+
 export default function BuilderPage({
   title = 'صفحه ساز',
-  initialContent,
+  initialContent = defaultInitialValue,
   name = 'contentJson',
   submitFormHandler,
   allTemplates,

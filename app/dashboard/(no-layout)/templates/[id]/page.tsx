@@ -3,6 +3,7 @@ import React from 'react'
 import templateCtrl from '@/features/template/controller'
 import { notFound } from 'next/navigation'
 import { Form } from '@/features/template/ui/form'
+import categoryCtrl from '@/features/category/controller'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -17,9 +18,12 @@ export default async function Page({ params }: PageProps) {
     title: 'افزودن',
     link: '/dashboard/templates/create',
   }
-  if (id !== 'create') {
-    ;[page] = await Promise.all([templateCtrl.findById({ id })])
 
+  if (id !== 'create') {
+    ;[page, allCategories] = await Promise.all([
+      templateCtrl.findById({ id }),
+      categoryCtrl.findAll({}),
+    ])
     if (!page) {
       notFound()
     }
@@ -27,11 +31,14 @@ export default async function Page({ params }: PageProps) {
       title: page.title,
       link: `/dashboard/templates/${id}`,
     }
+  } else {
+    ;[allCategories] = await Promise.all([categoryCtrl.findAll({})])
   }
+
   return (
     <ScrollArea className="h-full">
       <div className="">
-        <Form initialData={page} />
+        <Form initialData={page} allCategories={allCategories.data} />
       </div>
     </ScrollArea>
   )

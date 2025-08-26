@@ -27,7 +27,7 @@ export default async function Page({ params }: PageProps) {
 
   ;[settings, allPages, allHeaders] = await Promise.all([
     settingsCtrl.findOne({ filters: { type: 'site-settings' } }),
-    pageCtrl.findAll({ filters: { type: 'page' } }),
+    pageCtrl.findAll({}),
     headerCtrl.findAll({}),
   ])
 

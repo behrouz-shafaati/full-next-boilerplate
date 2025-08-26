@@ -42,11 +42,10 @@ export async function createTemplate(prevState: State, formData: FormData) {
   try {
     const params = await sanitizeTemplateData(validatedFields)
     const cleanedParams = await generateUniqueTemplateSlug(params)
-    console.log('#234876 params:', params)
+    console.log('#23487s6 cleanedParams:', cleanedParams)
     // Create the Template
     newTemplate = await templateCtrl.create({
       params: cleanedParams,
-      revalidatePath: `/${cleanedParams?.slug || params.slug}`,
     })
   } catch (error) {
     // Handle database error
@@ -93,16 +92,13 @@ export async function updateTemplate(
     const params = await sanitizeTemplateData(validatedFields)
 
     const cleanedParams = await generateUniqueTemplateSlug(params, id)
-    let revalidatePath = [`/${cleanedParams?.slug || params.slug}`]
     // if is home Template so revalidate home Template
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings.id === id) revalidatePath = [...revalidatePath, '/']
     await templateCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
-      revalidatePath,
     })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
@@ -146,7 +142,6 @@ export async function getTemplates(payload: QueryFind): Promise<QueryResult> {
   return templateCtrl.find(payload)
 }
 export async function getTemplate(templateId: string): Promise<Template> {
-  // if (templateId == undefined) return templateCtrl.getHomeTemplate()
   const result = await templateCtrl.find({ filters: { id: templateId } })
   return result.data[0]
 }

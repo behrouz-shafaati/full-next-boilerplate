@@ -60,21 +60,8 @@ function SettingsPanel({ allCategories, allTemplates }: SettingsPanelProp) {
         onChange={(e) => debouncedUpdate(null, 'title', e.target.value)}
       />
 
-      <Select
-        title="نوع"
-        name="type"
-        defaultValue={JSON.parse(getJson()).type || 'page'}
-        options={pageTypeOptions}
-        placeholder="نوع"
-        icon={<MailIcon className="w-4 h-4" />}
-        onChange={(value) => debouncedUpdate(null, 'type', value)}
-      />
-      {/* <p>type: {JSON.parse(getJson()).type}</p> */}
-      {document.type === 'page' ? (
-        <PageTypeSettings allTemplates={allTemplates} />
-      ) : (
-        <TemplateTypeSettings allCategories={allCategories} />
-      )}
+      <PageTypeSettings allTemplates={allTemplates} />
+
       <Select
         title="وضعیت"
         name="status"

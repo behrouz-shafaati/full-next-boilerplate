@@ -14,6 +14,7 @@ const templateSchema = new Schema<TemplateSchema>(
       type: Schema.Types.Mixed, // whole Template structure as JSON
       required: true,
     },
+    templateFor: [{ type: String, required: false, unique: false }],
     status: {
       type: String,
       enum: ['draft', 'published'],

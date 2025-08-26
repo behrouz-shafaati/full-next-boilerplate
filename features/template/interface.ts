@@ -4,7 +4,7 @@ import {
   Row as TemplateRowComponent,
   Column as TemplateColumnComponent,
   Block as TemplateBlockComponent,
-} from '@/components/builder-template/types'
+} from '@/components/builder-template-part/types'
 
 export type TemplateContent = TemplateContentComponent
 
@@ -28,6 +28,7 @@ type TemplateBase = {
    * محتوای سربرگ
    */
   content: TemplateContent
+  templateFor: [string]
 
   status: 'draft' | 'published'
 }

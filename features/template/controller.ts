@@ -30,7 +30,7 @@ class controller extends baseController {
         key == 'mobile'
       )
         filters[key] = { $regex: new RegExp(value, 'i') }
-      if (key == 'query' && filters?.query == '') {
+      else if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
         filters.$expr = {
@@ -43,6 +43,7 @@ class controller extends baseController {
           },
         }
         delete filters.query
+      } else if (key == 'templateFor') {
       }
 
       if (key == 'id') {
@@ -67,24 +68,46 @@ class controller extends baseController {
     return super.findOneAndUpdate(payload)
   }
 
-  async getHomeTemplate() {
-    const settings = await settingsCtrl.find({
-      filters: { type: 'site-settings' },
-    })
-    console.log('#2346 settings.data: ', settings.data[0])
-    const homeTemplate = await this.findById({
-      id: settings.data[0].defaultTemplateId,
-    })
-    console.log('#2346 HomeTemplate: ', homeTemplate)
-    return homeTemplate
-  }
-
   async existSlug(slug: string): Promise<boolean> {
     const count = await this.countAll({ slug })
     console.log('#7d736 Template count: ', count)
     if (count > 0) return true
     return false
   }
+
+  async getTemplate({ slug }: getTemplateProp) {
+    if (slug == '') return null
+    switch (slug) {
+      case 'allPages':
+        break
+      case 'blog':
+        const [blogTemplateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'blog', status: 'active' } }),
+        ])
+        console.log(
+          '#2 blogTemplateResult.data[0]:',
+          blogTemplateResult.data[0]
+        )
+        if (blogTemplateResult.data[0] != undefined)
+          return blogTemplateResult.data[0]
+        break
+      default:
+    }
+    const [allPageTemplateResult] = await Promise.all([
+      this.find({ filters: { templateFor: 'allPages', status: 'active' } }),
+    ])
+    console.log(
+      '#2 allPageTemplateResult.data[0]:',
+      allPageTemplateResult.data[0]
+    )
+    if (allPageTemplateResult.data[0] != undefined)
+      return allPageTemplateResult.data[0]
+    return null
+  }
+}
+
+type getTemplateProp = {
+  slug: 'allPages' | 'blog' | 'categories' | 'archive'
 }
 
 const templateCtrl = new controller(new templateService(templateSchema))

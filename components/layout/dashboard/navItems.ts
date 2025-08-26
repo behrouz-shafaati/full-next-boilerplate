@@ -76,10 +76,19 @@ export const navItems: SidebarNavItem[] = [
     label: '',
     authorized: ['admin'],
   },
+
   {
     slug: 'template',
     title: 'قالب ها',
     href: '/dashboard/templates',
+    icon: 'layoutTemplate',
+    label: '',
+    authorized: ['admin'],
+  },
+  {
+    slug: 'template-part',
+    title: 'قالب جزئی',
+    href: '/dashboard/template-parts',
     icon: 'layoutTemplate',
     label: '',
     authorized: ['admin'],

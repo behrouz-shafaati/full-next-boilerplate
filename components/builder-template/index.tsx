@@ -1,28 +1,42 @@
+// ورودی اصلی صفحه‌ساز (ترکیب درگ‌اند‌دراپ و بلاک رندر)
+import { PageContent } from './types'
 import BuilderCanvas from '../builder-canvas'
 import SettingsPanel from './SettingsPanel'
+import { Category } from '@/features/category/interface'
 import { blockRegistry } from './registry/blockRegistry'
+import { blockRegistry as pageBlockregistry } from '../builder-page/registry/blockRegistry'
 
-type BuilderHeadreProps = {
+type BuilderPageProp = {
+  title?: string
   name: string
   submitFormHandler: (prevState: any, formData: FormData) => Promise<any>
-  initialContent?: any
+  initialContent?: PageContent
+  allTemplates: PageContent[]
+  allCategories: Category[]
 }
 
-const BuilderTemplate = ({
+export default function BuilderPage({
+  title = 'قالب ساز',
+  initialContent,
   name = 'contentJson',
   submitFormHandler,
-  initialContent,
-}: BuilderHeadreProps) => {
+  allTemplates,
+  allCategories,
+}: BuilderPageProp) {
+  console.log('#0000 initialContent:', initialContent)
   return (
     <BuilderCanvas
-      title="سربرگ ساز"
+      title={title}
       name={name}
-      initialContent={initialContent}
-      settingsPanel={<SettingsPanel />}
+      settingsPanel={
+        <SettingsPanel
+          allCategories={allCategories}
+          allTemplates={allTemplates}
+        />
+      }
       submitFormHandler={submitFormHandler}
-      newBlocks={blockRegistry}
+      initialContent={initialContent}
+      newBlocks={{ ...pageBlockregistry, ...blockRegistry }}
     />
   )
 }
-
-export default BuilderTemplate

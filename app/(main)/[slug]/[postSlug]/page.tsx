@@ -4,12 +4,12 @@ import { notFound } from 'next/navigation'
 import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 
 interface PageProps {
-  params: Promise<{ slug: string }>
+  params: Promise<{ postSlug: string }>
 }
 
 export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
-  const { slug } = resolvedParams
+  const { postSlug: slug } = resolvedParams
   let findResult = null
 
   ;[findResult] = await Promise.all([

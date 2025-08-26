@@ -3,6 +3,7 @@ import baseController from '@/lib/entity/core/controller'
 import pageSchema from './schema'
 import pageService from './service'
 import settingsCtrl from '../settings/controller'
+import { Page } from './interface'
 
 class controller extends baseController {
   /**
@@ -82,6 +83,11 @@ class controller extends baseController {
     console.log('#7d736 page count: ', count)
     if (count > 0) return true
     return false
+  }
+
+  async getAllSlugs() {
+    const result = await this.findAll({})
+    return result.data.map((page: Page) => ({ slug: page.slug }))
   }
 }
 

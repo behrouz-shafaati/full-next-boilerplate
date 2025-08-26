@@ -4,6 +4,7 @@ import { PageContent } from './types'
 import { useBuilderStore } from '../builder-canvas/store/useBuilderStore'
 import { useDebouncedCallback } from 'use-debounce'
 import Combobox, { Option } from '@/components/form-fields/combobox'
+import Link from 'next/link'
 
 const PageTypeSettings = ({
   allTemplates,
@@ -18,7 +19,7 @@ const PageTypeSettings = ({
   )
   const templatesOptions: Option[] = [
     {
-      value: '__none__',
+      value: 'none',
       label: 'بدون قالب',
     },
 
@@ -38,10 +39,16 @@ const PageTypeSettings = ({
         className=""
         onChange={(e) => debouncedUpdate(null, 'slug', e.target.value)}
       />
+
+      <Link
+        className="block w-full p-2 ltr text-left"
+        href={`/${parsedJson.slug}`}
+        target="_blank"
+      >{`/${parsedJson.slug}`}</Link>
       <Combobox
         title="قالب"
         name="template"
-        defaultValue={parsedJson.template || '__none__'}
+        defaultValue={parsedJson.template || 'none'}
         options={templatesOptions}
         placeholder="قالب"
         onChange={(e) => debouncedUpdate(null, 'template', e.target.value)}
