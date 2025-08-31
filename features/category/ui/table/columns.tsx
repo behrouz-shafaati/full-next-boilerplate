@@ -1,9 +1,8 @@
-'use client';
-import { ColumnDef } from '@tanstack/react-table';
-import { CellAction } from './cell-action';
-import { CheckboxInput as Checkbox } from '@/components/ui/checkbox-input';
-import { User } from '@/lib/entity/user/interface';
-import { Category } from '@/lib/entity/category/interface';
+'use client'
+import { ColumnDef } from '@tanstack/react-table'
+import { CellAction } from './cell-action'
+import { CheckboxInput as Checkbox } from '@/components/ui/checkbox-input'
+import { Category } from '@/features/category/interface'
 
 export const columns: ColumnDef<Category>[] = [
   {
@@ -37,4 +36,4 @@ export const columns: ColumnDef<Category>[] = [
     id: 'actions',
     cell: ({ row }) => <CellAction data={row.original} />,
   },
-];
+]

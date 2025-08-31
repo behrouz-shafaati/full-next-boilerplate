@@ -18,7 +18,8 @@ export const BlockPalette = ({ newBlocks }: BlockPaletteProp) => {
           visibleBlock = false
         else if (documnet.type === 'template' && !!block?.inTemplateFor) {
           const templateFor = getTemplateFor(documnet.templateFor)
-          if (!block.inTemplateFor.includes(templateFor)) visibleBlock = false
+          const prefix = templateFor.split('-')[0]
+          if (!block.inTemplateFor.includes(prefix)) visibleBlock = false
         }
         if (block.showInBlocksList && visibleBlock)
           return <DraggableWrapper key={key} type={key} label={block.label} />

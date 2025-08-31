@@ -51,7 +51,7 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
               return (
                 <div
                   key={col.id}
-                  className={`flex relative ${classBaseOnResponsiveDesign} ${combineClassNames(
+                  className={`grid relative ${classBaseOnResponsiveDesign} ${combineClassNames(
                     col.classNames || {}
                   )} `}
                   style={{

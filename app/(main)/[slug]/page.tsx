@@ -1,8 +1,10 @@
 export const dynamic = 'force-static'
 import { PageRenderer } from '@/components/builder-canvas/pageRenderer'
+import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 import categoryCtrl from '@/features/category/controller'
+import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
 import pageCtrl from '@/features/page/controller'
-import DefaultPageBlog from '@/features/post/ui/page'
+import templateCtrl from '@/features/template/controller'
 
 export async function generateStaticParams() {
   const pageSlugs = await pageCtrl.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
@@ -15,7 +17,7 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = params
+  const { slug } = await params
   const [pageResult] = await Promise.all([
     pageCtrl.find({ filters: { slug: slug } }),
   ])
@@ -24,6 +26,15 @@ export default async function Page({ params }: PageProps) {
   if (pageResult?.data[0]) return <PageRenderer page={pageResult?.data[0]} />
 
   // this is a category. for example /computer-learning category
-  return <b>{slug}</b>
-  return <PageCategoryRender slug={slug} />
+  const [template] = await Promise.all([templateCtrl.getTemplate({ slug })])
+  if (template)
+    return (
+      <RendererRows
+        rows={template?.content.rows}
+        editroMode={false}
+        content_all={<b>{slug} - tem</b>}
+      />
+    )
+
+  return <CategoryPostList slug={slug} />
 }

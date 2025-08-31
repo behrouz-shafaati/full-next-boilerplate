@@ -16,15 +16,13 @@ export const PageRenderer = async ({ page }: Props) => {
       templateCtrl.findById({ id: templateId }),
     ])
     return (
-      <>
-        <RendererRows
-          rows={template.content.rows}
-          editroMode={false}
-          content_all={
-            <RendererRows rows={page.content.rows} editroMode={false} />
-          }
-        />
-      </>
+      <RendererRows
+        rows={template.content.rows}
+        editroMode={false}
+        content_all={
+          <RendererRows rows={page.content.rows} editroMode={false} />
+        }
+      />
     )
   }
 

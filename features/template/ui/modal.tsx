@@ -71,7 +71,7 @@ export default function CreateTemplateModal({
       value: 'archive',
     },
     {
-      label: 'خانه‌ی دسته بندی مقالات',
+      label: 'هر دسته بندی',
       value: 'categories',
     },
     ...categoryOptions,

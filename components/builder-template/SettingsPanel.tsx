@@ -1,18 +1,11 @@
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { HeadingIcon, MailIcon } from 'lucide-react'
 import Text from '@/components/form-fields/text'
 import { useDebouncedCallback } from 'use-debounce'
-import Combobox, { Option } from '@/components/form-fields/combobox'
 import { Category } from '@/features/category/interface'
-import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import Select from '@/components/form-fields/select'
-import { v4 as uuidv4 } from 'uuid'
-import { useEffect, useState } from 'react'
-import PageTypeSettings from './PageTypeSettings'
 import TemplateTypeSettings from './TemplateTypeSettings'
 import { useBuilderStore } from '../builder-canvas/store/useBuilderStore'
 import { PageContent } from './types'
-import Checkbox from '../form-fields/checkbox'
 
 type SettingsPanelProp = {
   allTemplates: PageContent[]

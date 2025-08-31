@@ -20,7 +20,7 @@ export default async function ArchivePage({
         <RendererRows
           rows={template.content.rows}
           editroMode={false}
-          content_1={
+          content_all={
             <ArchivePost
               categorySlugs={filters.categories}
               tagSlugs={filters.tags}

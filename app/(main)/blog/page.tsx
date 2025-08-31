@@ -20,7 +20,7 @@ export default async function Page({ searchParams }: PageProps) {
         <RendererRows
           rows={template.content.rows}
           editroMode={false}
-          content_1={<PostList page={Number(page)} query={query} />}
+          content_all={<PostList page={Number(page)} query={query} />}
         />
       </>
     )

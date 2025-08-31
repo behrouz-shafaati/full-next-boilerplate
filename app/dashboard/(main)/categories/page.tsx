@@ -1,5 +1,5 @@
 import { BreadCrumb } from '@/components/breadcrumb'
-import CategoryTable from '@/features/category/ui/category'
+import CategoryTable from '@/features/category/ui/table'
 const breadcrumbItems = [
   { title: 'دسته بندی ها', link: '/dashboard/categories' },
 ]
