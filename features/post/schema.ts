@@ -18,6 +18,10 @@ const postSchema = new Schema<PostSchema>(
       required: false,
     },
     slug: { type: String, required: true, unique: true },
+    mainCategory: {
+      type: Schema.Types.ObjectId,
+      ref: 'category',
+    },
     categories: [
       {
         type: Schema.Types.ObjectId,
@@ -59,6 +63,7 @@ postSchema
     this.populate('image')
     this.populate('user')
     this.populate('tags')
+    this.populate('mainCategory')
     this.populate('categories')
     // this.populate({
     //   path: 'tags',
@@ -70,6 +75,7 @@ postSchema
     this.populate('image')
     this.populate('user')
     this.populate('tags')
+    this.populate('mainCategory')
     this.populate('categories')
     // this.populate({
     //   path: 'tags',

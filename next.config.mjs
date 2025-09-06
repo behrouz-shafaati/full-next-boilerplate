@@ -10,6 +10,11 @@ const nextConfig = {
     // !! WARN !!
     ignoreBuildErrors: true,
   },
-};
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '10mb', // 👈 افزایش به ۱۰ مگابایت
+    },
+  },
+}
 
-export default nextConfig;
+export default nextConfig

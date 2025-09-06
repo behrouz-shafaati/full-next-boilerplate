@@ -123,3 +123,16 @@ export function getTemplateFor(templateFor: string): string {
   const parts = templateFor[0].split('-')
   return parts[0] || templateFor
 }
+
+//************************************* Multi language function *****************************************/
+// اگر بخوای زبان‌های مجاز رو محدود کنی:
+export const SUPPORTED_LANGUAGE = ['fa', 'en'] as const
+type Locale = (typeof SUPPORTED_LANGUAGE)[number]
+
+export function pickLocale(paramsLang?: string[]): Locale {
+  const cand = paramsLang?.[0]
+  return (SUPPORTED_LANGUAGE as readonly string[]).includes(cand ?? '')
+    ? (cand as Locale)
+    : 'fa'
+}
+//******************************************************************************/

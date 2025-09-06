@@ -169,16 +169,16 @@ export const PostForm: React.FC<PostFormProps> = ({
           </div>
           {/* category */}
           <Combobox
-            title="دسته"
-            name="categories"
-            defaultValue={post?.categories[0]?.id || null}
+            title="دسته اصلی"
+            name="mainCategory"
+            defaultValue={post?.mainCategory?.id || null}
             options={categoryOptions}
-            placeholder="دسته"
+            placeholder="دسته اصلی"
             state={state}
             icon={<CategoryIcon className="w-4 h-4" />}
           />
           {/* categories */}
-          {/* <MultipleSelec
+          <MultipleSelec
             title="دسته‌ها"
             name="categories"
             defaultValues={
@@ -190,8 +190,8 @@ export const PostForm: React.FC<PostFormProps> = ({
             state={state}
             defaultSuggestions={categoryOptions}
             // icon={ShieldQuestionIcon}
-            maxSelected={1}
-          /> */}
+            // maxSelected={1}
+          />
           <div>
             <TagInput
               name="tags"

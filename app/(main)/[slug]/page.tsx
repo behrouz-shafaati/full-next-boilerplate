@@ -5,6 +5,8 @@ import categoryCtrl from '@/features/category/controller'
 import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
 import pageCtrl from '@/features/page/controller'
 import templateCtrl from '@/features/template/controller'
+import { pickLocale, SUPPORTED_LANGUAGE } from '@/lib/utils'
+import { redirect } from 'next/navigation'
 
 export async function generateStaticParams() {
   const pageSlugs = await pageCtrl.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
@@ -13,11 +15,15 @@ export async function generateStaticParams() {
 }
 
 interface PageProps {
-  params: { slug: string }
+  params: { lang?: string; slug: string }
 }
 
 export default async function Page({ params }: PageProps) {
-  const { slug } = await params
+  const { lang, slug } = await params
+
+  // زبان پیش‌فرض
+  const locale = pickLocale(lang)
+
   const [pageResult] = await Promise.all([
     pageCtrl.find({ filters: { slug: slug } }),
   ])

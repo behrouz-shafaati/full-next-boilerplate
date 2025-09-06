@@ -16,6 +16,7 @@ import FileUpload, { FileUploadRef } from '../form-fields/file-upload'
 import { FileDetails } from '@/lib/entity/file/interface'
 import DeleteImageWithKey from './extensions/image-delete'
 import { useRef, useState } from 'react'
+import { AdSlot } from './extensions/adSlot'
 
 import styles from './editor.module.css'
 import MenuBar from './menu-bar'
@@ -79,6 +80,7 @@ export default function TiptapEditor({
       TableRow,
       TableHeader,
       TableCell,
+      AdSlot,
     ],
     content: defaultContent,
     onUpdate({ editor }) {

@@ -13,12 +13,12 @@ import { getSession } from '@/lib/auth'
 import { Option, Session, State } from '@/types'
 import tagCtrl from '../tag/controller'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
-import categoryCtrl from '../category/controller'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   contentJson: z.string({}),
   status: z.string({}),
+  mainCategory: z.string({}),
   categories: z.string({}),
   slug: z.string({}),
   tags: z.string({}),
@@ -145,15 +145,20 @@ async function sanitizePostData(validatedFields: any) {
   const user = session.user.id
   const contentJson = await postCtrl.setFileData(postPayload.contentJson)
   const tags = await tagCtrl.ensureTagsExist(tagsArray)
+  const categories = JSON.parse(postPayload?.categories)
 
   // for multi categories select
   // const categories: string[] = await categoryCtrl.ensureCategoryExist(
   //   categoriesArray
   // )
+  console.log(
+    '#29386457832 JSON.parse(postPayload?.categories):',
+    JSON.parse(postPayload?.categories)
+  )
   const params = {
     ...postPayload,
     tags,
-    categories: postPayload?.categories,
+    categories: categories.map((cat: Option) => cat.value),
     contentJson: JSON.stringify(contentJson),
     excerpt,
     image,

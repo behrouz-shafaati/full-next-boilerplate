@@ -120,6 +120,18 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       .run()
   window.insertTable = insertTable
 
+  const insertAdSlot = () =>
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'adSlot',
+      })
+      .run()
+
+  // برای تست می‌تونی بذاری روی window
+  window.insertAdSlot = insertAdSlot
+
   const activeStates = {
     bold: editor.isActive('bold'),
     italic: editor.isActive('italic'),
@@ -278,6 +290,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       <ToggleGroup type="single" value="" className="rtl">
         <ToggleGroupItem value="link" onClick={insertTable}>
           افزودن جدول
+        </ToggleGroupItem>
+        <ToggleGroupItem value="link" onClick={insertAdSlot}>
+          افزودن تبلیغ
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

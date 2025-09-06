@@ -40,6 +40,11 @@ type PostBase = {
   slug: string
 
   /**
+   * دسته‌بندی اصلی پست
+   */
+  mainCategory?: string
+
+  /**
    * دسته‌بندی پست
    */
   categories?: string[]
