@@ -1,5 +1,9 @@
 'use client'
-import { Menu as MenuType, MenuItem } from '@/features/menu/interface'
+import {
+  Menu as MenuType,
+  MenuItem,
+  MenuTranslationSchema,
+} from '@/features/menu/interface'
 import Link from 'next/link'
 import {
   AlignJustify as MenuIcon,
@@ -16,16 +20,30 @@ interface MainMenuProps {
 }
 
 function Menu({ menu, ...props }: MainMenuProps) {
-  const items = menu.items
+  menu.translations = menu?.translations || []
+
+  const locale = 'fa'
+  const translation: MenuTranslationSchema =
+    menu?.translations?.find((t: MenuTranslationSchema) => t.lang === locale) ||
+    menu?.translations[0] ||
+    {}
+  const items = translation.items
 
   return (
     <nav {...props}>
       <div className="container mx-auto flex items-center justify-between p-4">
         {/* دسکتاپ */}
         <nav className="hidden md:flex gap-6">
-          {items?.map((item) => (
-            <MenuItemDesktop key={item.id} item={item} {...props} />
-          ))}
+          {items?.map((item) => {
+            console.log('$--0089 item:', item)
+            return (
+              <MenuItemDesktop
+                key={item.id || item._id}
+                item={item}
+                {...props}
+              />
+            )
+          })}
         </nav>
 
         {/* موبایل */}

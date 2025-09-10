@@ -2,9 +2,9 @@
 
 import { z } from 'zod'
 import countryCtrl from '@/lib/entity/country/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -38,6 +38,10 @@ export async function createCountry(prevState: State, formData: FormData) {
   try {
     // Create the country
     await countryCtrl.create({ params: validatedFields.data })
+    revalidatePathCtrl.revalidate({
+      feature: 'country',
+      slug: [`/dashboard/countries`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -49,9 +53,6 @@ export async function createCountry(prevState: State, formData: FormData) {
       message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
     }
   }
-
-  // Revalidate the path and redirect to the country dashboard
-  revalidatePath('/dashboard/countrys')
   redirect('/dashboard/countrys')
 }
 
@@ -76,10 +77,13 @@ export async function updateCountry(
       filters: id,
       params: validatedFields.data,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'country',
+      slug: [`/dashboard/countries`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
-  revalidatePath('/dashboard/countrys')
   redirect('/dashboard/countrys')
 }
 
@@ -90,5 +94,8 @@ export async function deleteCountry(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await countryCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/countrys')
+  revalidatePathCtrl.revalidate({
+    feature: 'country',
+    slug: [`/dashboard/countries`],
+  })
 }

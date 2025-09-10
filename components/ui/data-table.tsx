@@ -1,4 +1,4 @@
-'use client';
+'use client'
 
 import {
   ColumnDef,
@@ -6,7 +6,7 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   useReactTable,
-} from '@tanstack/react-table';
+} from '@tanstack/react-table'
 
 import {
   Table,
@@ -15,21 +15,21 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Input } from './input';
-import { Button } from './button';
-import { ScrollArea, ScrollBar } from './scroll-area';
-import Search from './search';
-import { QueryResponse } from '@/lib/entity/core/interface';
-import Pagination from './pagination';
-import { Trash } from 'lucide-react';
-import { useEffect, useState } from 'react';
+} from '@/components/ui/table'
+import { Input } from './input'
+import { Button } from './button'
+import { ScrollArea, ScrollBar } from './scroll-area'
+import Search from './search'
+import { QueryResponse } from '@/lib/entity/core/interface'
+import Pagination from './pagination'
+import { Trash } from 'lucide-react'
+import { useEffect, useState } from 'react'
 
 interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
-  response: QueryResponse<TData>;
-  searchTitle: string;
-  groupAction?: any;
+  columns: ColumnDef<TData, TValue>[]
+  response: QueryResponse<TData>
+  searchTitle: string
+  groupAction?: any
 }
 
 export function DataTable<TData, TValue>({
@@ -38,19 +38,19 @@ export function DataTable<TData, TValue>({
   searchTitle,
   groupAction,
 }: DataTableProps<TData, TValue>) {
-  const data = response.data;
+  const data = response.data
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-  });
+  })
   /* this can be used to get the selectedrows */
-  const isSelected = table.getFilteredSelectedRowModel().flatRows.length > 0;
+  const isSelected = table.getFilteredSelectedRowModel().flatRows.length > 0
   const selectedItems = table
     .getFilteredSelectedRowModel()
-    .flatRows.map((row) => row.original);
-  const GroupAction = groupAction;
+    .flatRows.map((row) => row.original)
+  const GroupAction = groupAction
   return (
     <>
       <div className="flex space-x-2 space-x-reverse space-y-2 md:space-y-0 flex-col md:flex-row">
@@ -72,7 +72,7 @@ export function DataTable<TData, TValue>({
                             header.getContext()
                           )}
                     </TableHead>
-                  );
+                  )
                 })}
               </TableRow>
             ))}
@@ -120,5 +120,5 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
     </>
-  );
+  )
 }

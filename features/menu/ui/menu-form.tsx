@@ -10,38 +10,22 @@ import { SubmitButton } from '@/components/form-fields/submit-button'
 import { AlertModal } from '@/components/modal/alert-modal'
 import MenuBuilder from '@/components/menu-builder'
 
-// const initialMenu = [
-//   {
-//     id: '1',
-//     title: 'Home',
-//     url: '/',
-//     icon: 'home',
-//     children: [],
-//   },
-//   {
-//     id: '2',
-//     title: 'Shop',
-//     url: '/shop',
-//     icon: 'shopping-bag',
-//     children: [
-//       {
-//         id: '3',
-//         label: 'Clothing',
-//         url: '/shop/clothing',
-//         icon: 'shirt',
-//         children: [],
-//       },
-//     ],
-//   },
-// ]
-
-const initialMenu = []
 interface MenuFormProps {
   initialData: any | null
 }
 
 export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
-  const initialState = { message: null, errors: {}, values: menu }
+  const locale = 'fa'
+  const translation: any =
+    menu?.translations?.find((t: any) => t.lang === locale) ||
+    menu?.translations[0] ||
+    {}
+  const initialState = {
+    message: null,
+    errors: {},
+    values: { ...menu, translation },
+  }
+
   const isUpdate = menu ? true : false
   const actionHandler = isUpdate
     ? updateMenu.bind(null, String(menu.id))
@@ -53,7 +37,6 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   const title = isUpdate ? 'ویرایش فهرست' : 'افزودن فهرست'
   const description = isUpdate ? 'ویرایش فهرست' : 'افزودن فهرست'
 
-  console.log('#299 menu:', menu)
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -96,18 +79,19 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       {/* <Separator /> */}
       <form action={dispatch} className="w-full space-y-8">
         <div className="gap-8 md:grid md:grid-cols-3">
+          <input type="text" name="lang" className="" value="fa" readOnly />
           {/* Title */}
           <Text
             title="عنوان"
             name="title"
-            defaultValue={state?.values?.title || ''}
+            defaultValue={state?.values?.translation?.title || ''}
             placeholder="عنوان"
             state={state}
             icon={<HeadingIcon className="h-4 w-4" />}
           />
           <MenuBuilder
             name="itemsJson"
-            initialMenu={state?.values?.items || []}
+            initialMenu={state?.values?.translation?.items || []}
             maxDepth={1}
             className="col-span-2"
           />

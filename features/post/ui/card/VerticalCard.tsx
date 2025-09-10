@@ -8,14 +8,14 @@ type VerticalCardProps = {
   imageUrl?: string
   title: string
   excerpt: string
-  slug: string // URL of the post
+  href: string // URL of the post
 }
 
 export default function VerticalCard({
   imageUrl,
   title,
   excerpt,
-  slug,
+  href,
 }: VerticalCardProps) {
   return (
     <Card className="w-full max-w-sm overflow-hidden flex flex-col rounded-2xl shadow-sm break-inside-avoid">
@@ -28,7 +28,7 @@ export default function VerticalCard({
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground line-clamp-3">{excerpt}</p>
         <Button asChild className="mt-auto w-fit">
-          <Link href={`/blog/${slug}`}>ادامه مطلب</Link>
+          <Link href={href}>ادامه مطلب</Link>
         </Button>
       </CardContent>
     </Card>

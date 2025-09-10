@@ -1,18 +1,32 @@
 import mongoose, { Schema, model } from 'mongoose'
 import { SchemaFile } from './interface'
 
+const FileTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: false, default: null }, // "fa", "en", "de", ...
+    title: { type: String, required: true },
+    description: { type: String, default: '' },
+    alt: String,
+  },
+  { _id: false }
+)
+
 const fileSchema = new Schema<SchemaFile>(
   {
-    title: String,
-    description: String,
+    translations: [FileTranslationSchema], // 👈 لیست ترجمه‌ها
     patch: String,
-    alt: String,
     src: String,
     href: String,
     previewPath: String,
     mimeType: String,
     size: Number,
     main: { type: Boolean, default: false },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      required: true,
+    },
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }

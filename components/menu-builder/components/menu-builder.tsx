@@ -86,7 +86,7 @@ export default function MenuBuilder({
           <div className="space-y-2 ">
             {items.map((item) => (
               <SortableItem
-                key={item.id}
+                key={item?.id || item?._id}
                 item={item}
                 depth={0}
                 maxDepth={maxDepth}

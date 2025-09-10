@@ -2,9 +2,9 @@
 
 import { z } from 'zod'
 import cityCtrl from './controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -38,6 +38,10 @@ export async function createCity(prevState: State, formData: FormData) {
   try {
     // Create the city
     await cityCtrl.create({ params: validatedFields.data })
+    revalidatePathCtrl.revalidate({
+      feature: 'city',
+      slug: [`/dashboard/citys`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -49,9 +53,6 @@ export async function createCity(prevState: State, formData: FormData) {
       message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
     }
   }
-
-  // Revalidate the path and redirect to the city dashboard
-  revalidatePath('/dashboard/citys')
   redirect('/dashboard/citys')
 }
 
@@ -76,10 +77,13 @@ export async function updateCity(
       filters: id,
       params: validatedFields.data,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'city',
+      slug: [`/dashboard/citys`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
-  revalidatePath('/dashboard/citys')
   redirect('/dashboard/citys')
 }
 
@@ -90,7 +94,10 @@ export async function deleteCity(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await cityCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/citys')
+  revalidatePathCtrl.revalidate({
+    feature: 'city',
+    slug: [`/dashboard/citys`],
+  })
 }
 
 export async function getCitiesAsOption(provinceId: string) {

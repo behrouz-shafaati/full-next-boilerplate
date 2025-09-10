@@ -6,6 +6,7 @@ import postService from './service'
 import categoryCtrl from '../category/controller'
 import tagCtrl from '../tag/controller'
 import { getReadingTime } from './utils'
+import { Post } from './interface'
 
 class controller extends baseController {
   /**
@@ -135,6 +136,18 @@ class controller extends baseController {
     console.log('#categoryIds:', categoryIds)
     console.log('#tagIds:', tagIds)
     return { categoryIds, tagIds }
+  }
+
+  async getAllSlugs() {
+    const result = await this.findAll({})
+    return result.data.map((post: Post) => ({
+      slug: `${post.mainCategory?.slug}/${post.slug}`,
+    }))
+  }
+
+  async generateStaticParams() {
+    const singlrPostSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
+    return singlrPostSlugs
   }
 }
 

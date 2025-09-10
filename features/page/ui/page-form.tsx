@@ -8,7 +8,7 @@ import { createPage, deletePage, updatePage } from '../actions'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Category } from '@/features/category/interface'
-import { Page, PageContent } from '../interface'
+import { Page, PageContent, PageTranslationSchema } from '../interface'
 import BuilderPage from '@/components/builder-page'
 
 export const IMG_MAX_LIMIT = 3
@@ -31,7 +31,16 @@ export const PageForm: React.FC<PageFormProps> = ({
   allCategories,
   allHeaders,
 }) => {
-  const initialState = { message: null, errors: {} }
+  const locale = 'fa' //  from formData
+  const translation: PageTranslationSchema =
+    page?.translations?.find((t: PageTranslationSchema) => t.lang === locale) ||
+    page?.translations[0] ||
+    {}
+  const initialState = {
+    message: null,
+    errors: {},
+    values: { ...page, translation },
+  }
   const actionHandler = page
     ? updatePage.bind(null, String(page.id))
     : createPage
@@ -52,7 +61,6 @@ export const PageForm: React.FC<PageFormProps> = ({
   const toastMessage = page ? 'برگه بروزرسانی شد' : 'برگه اضافه شد'
   const action = page ? 'ذخیره تغییرات' : 'ذخیره'
 
-  console.log('#299 page:', page?.content.rows)
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -61,9 +69,10 @@ export const PageForm: React.FC<PageFormProps> = ({
   }
 
   useEffect(() => {
+    console.log('#299 page state:', state)
     if (state?.message && state.message !== null)
       toast({
-        variant: 'destructive',
+        variant: state.success ? 'default' : 'destructive',
         title: '',
         description: state.message,
       })
@@ -81,21 +90,21 @@ export const PageForm: React.FC<PageFormProps> = ({
         title="صفحه ساز"
         submitFormHandler={dispatch}
         name="contentJson"
-        {...(page
-          ? { initialContent: { ...page.content, slug: page.slug } }
+        // initialContent={{
+        //   ...state?.values?.translation?.content,
+        //   slug: state?.values?.slug,
+        // }}
+        {...(page || state?.values?.translation?.content
+          ? {
+              initialContent: {
+                ...state?.values?.translation?.content,
+                slug: state?.values?.slug,
+              },
+            }
           : { initialContent: { type: 'page', rows: [] } })}
         allTemplates={allTemplates}
         allCategories={allCategories}
       />
-      {/* <PageBuilder
-        submitFormHandler={dispatch}
-        name="contentJson"
-        {...(page
-          ? { initialContent: { ...page.content, slug: page.slug } }
-          : {})}
-        allTemplates={allTemplates}
-        allCategories={allCategories}
-      /> */}
     </>
   )
 }

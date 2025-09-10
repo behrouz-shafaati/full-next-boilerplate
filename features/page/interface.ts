@@ -1,10 +1,10 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 import {
-  PageContent as PageContentComponent,
-  PageRow as PageRowComponent,
-  PageColumn as PageColumnComponent,
-  PageBlock as PageBlockComponent,
-} from '@/components/page-builder/types'
+  Content as PageContentComponent,
+  Row as PageRowComponent,
+  Column as PageColumnComponent,
+  Block as PageBlockComponent,
+} from '@/components/builder-canvas/types'
 
 export type PageContent = PageContentComponent
 
@@ -13,25 +13,37 @@ export type PageRow = PageRowComponent
 export type PageColumn = PageColumnComponent
 
 export type PageBlock = PageBlockComponent
-/**
- * اطلاعات پایه برگه که شامل فیلدهای اصلی برگه می‌باشد
- */
-type PageBase = {
+
+export type PageTranslationSchema = {
+  /**
+   * زبان مطلب
+   */
+  lang: string // "fa", "en", "de", ...
   /**
    * عنوان برگه
    */
   title: string
-  user: Id
-  type: 'page' | 'template'
-  header: string
 
   /**
    * محتوای برگه
    */
   content: PageContent
+}
+
+/**
+ * اطلاعات پایه برگه که شامل فیلدهای اصلی برگه می‌باشد
+ */
+type PageBase = {
+  user: Id
+  type: 'page' | 'template'
+  header: string
 
   slug: string
 
+  /**
+   * محتوا
+   */
+  translations: [PageTranslationSchema]
   status: 'draft' | 'published'
 }
 

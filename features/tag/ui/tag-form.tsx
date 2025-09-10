@@ -22,8 +22,17 @@ interface TagFormProps {
 }
 
 export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
+  const locale = 'fa'
+  const translation: any =
+    tag?.translations?.find((t: any) => t.lang === locale) ||
+    tag?.translations[0] ||
+    {}
+  const initialState = {
+    message: null,
+    errors: {},
+    values: { ...tag, translation },
+  }
   const formRef = useRef<HTMLFormElement>(null)
-  const initialState = { message: null, errors: {} }
   const actionHandler = tag ? updateTag.bind(null, String(tag.id)) : createTag
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
 
@@ -44,9 +53,6 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
     },
   ]
 
-  console.log('#299 tag:', tag)
-  const statusDefaultValue = tag ? tag?.status : 'active'
-  console.log('#299 statusDefaultValue:', statusDefaultValue)
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -98,11 +104,12 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
           />
         </section>
         <div className="md:grid md:grid-cols-3 gap-8">
+          <input type="text" name="lang" className="" value="fa" readOnly />
           {/* Title */}
           <Text
             title="عنوان"
             name="title"
-            defaultValue={tag?.title || ''}
+            defaultValue={state?.values?.translation?.title || ''}
             placeholder="عنوان"
             state={state}
             icon={<TagIcon className="w-4 h-4" />}
@@ -110,7 +117,7 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
           <Text
             title="نامک"
             name="slug"
-            defaultValue={tag?.slug || ''}
+            defaultValue={state?.values?.slug || ''}
             placeholder="نامک"
             state={state}
             icon={<TagIcon className="w-4 h-4" />}
@@ -119,7 +126,7 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
           <Text
             title="توضیحات"
             name="description"
-            defaultValue={tag?.description}
+            defaultValue={state?.values?.translation?.description}
             placeholder="توضیحات"
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
@@ -128,7 +135,7 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
           <Select
             title="وضعیت"
             name="status"
-            defaultValue={statusDefaultValue}
+            defaultValue={state?.values?.translation?.status || 'active'}
             options={statusOptions}
             placeholder="وضعیت"
             state={state}

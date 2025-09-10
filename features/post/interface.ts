@@ -1,19 +1,14 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
-/**
- * اطلاعات پایه مطلب که شامل فیلدهای اصلی مطلب می‌باشد
- */
-type PostBase = {
+export type PostTranslationSchema = {
+  /**
+   * زبان مطلب
+   */
+  lang: string // "fa", "en", "de", ...
   /**
    * عنوان مطلب
    */
   title: string
-
-  /**
-   * نویسنده پست
-   */
-  user?: string
-
   /**
    * خلاصه‌ای از متن پست
    */
@@ -28,6 +23,15 @@ type PostBase = {
    * زمان مطالعه به دقیقه
    */
   readingTime: number
+}
+/**
+ * اطلاعات پایه مطلب که شامل فیلدهای اصلی مطلب می‌باشد
+ */
+type PostBase = {
+  /**
+   * نویسنده پست
+   */
+  user?: string
 
   /**
    * تصویر پست
@@ -38,6 +42,11 @@ type PostBase = {
    * آدرس یکتای پست
    */
   slug: string
+
+  /**
+   * زیان های مختلف پست
+   */
+  translations: [PostTranslationSchema]
 
   /**
    * دسته‌بندی اصلی پست

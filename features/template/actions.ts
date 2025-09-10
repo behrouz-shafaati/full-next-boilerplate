@@ -2,7 +2,6 @@
 
 import { z } from 'zod'
 import templateCtrl from '@/features/template/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import settingsCtrl from '../settings/controller'
@@ -10,6 +9,7 @@ import { generateUniqueTemplateSlug } from './utils'
 import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { Template } from './interface'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -24,11 +24,11 @@ const FormSchema = z.object({
  */
 export async function createTemplate(prevState: State, formData: FormData) {
   let newTemplate = null
+  const values = Object.fromEntries(formData)
   // Validate form fields
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -47,6 +47,10 @@ export async function createTemplate(prevState: State, formData: FormData) {
     newTemplate = await templateCtrl.create({
       params: cleanedParams,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'template',
+      slug: [`/dashboard/templates`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -62,9 +66,6 @@ export async function createTemplate(prevState: State, formData: FormData) {
       values,
     }
   }
-
-  // Revalidate the path and redirect to the Template dashboard
-  revalidatePath('/dashboard/templates')
   if (newTemplate) redirect(`/dashboard/templates/${newTemplate.id}`)
   redirect('/dashboard/templates')
 }
@@ -74,10 +75,10 @@ export async function updateTemplate(
   prevState: State,
   formData: FormData
 ) {
+  const values = Object.fromEntries(formData)
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -100,20 +101,26 @@ export async function updateTemplate(
       filters: id,
       params: cleanedParams,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'template',
+      slug: [`/dashboard/templates`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
-  revalidatePath('/dashboard/templates')
 }
 
 export async function deleteTemplate(id: string) {
   try {
     await templateCtrl.delete({ filters: [id] })
+    revalidatePathCtrl.revalidate({
+      feature: 'template',
+      slug: [`/dashboard/templates`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await templateCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/templates')
 }
 
 export async function getAllTemplates() {

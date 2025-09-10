@@ -6,12 +6,14 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { BreadCrumb } from '@/components/breadcrumb'
 import { PostForm } from '@/features/post/ui/post-form'
 import categoryCtrl from '@/features/category/controller'
+import { PostTranslationSchema } from '@/features/post/interface'
 
 interface PageProps {
   params: Promise<{ id: string }>
 }
 
 export default async function Page({ params }: PageProps) {
+  const locale = 'fa' //  from formData
   const resolvedParams = await params
   const { id } = resolvedParams
   let post = null,
@@ -27,8 +29,15 @@ export default async function Page({ params }: PageProps) {
     if (!post) {
       notFound()
     }
+    const translation: PostTranslationSchema =
+      post?.translations?.find(
+        (t: PostTranslationSchema) => t.lang === locale
+      ) ||
+      post?.translations[0] ||
+      {}
+
     pageBreadCrumb = {
-      title: post.title,
+      title: translation?.title,
       link: `/dashboard/posts/${id}`,
     }
   }

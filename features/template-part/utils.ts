@@ -8,12 +8,10 @@ export async function generateUniqueTemplatePartSlug(
   params: { slug: string; title: string },
   templatePartId: string = ''
 ): Promise<object> {
-  console.log('#2ddf8 params: ', params)
   const baseSlug =
     params.slug != '' && params.slug != null
       ? slugify(params.slug)
       : slugify(params.title)
-  console.log('#7437s8 baseSlug: ', baseSlug)
   // if it is update and slug doesn't change remove slug from parameters
   if (templatePartId !== '') {
     const findedTemplatePartBySlug = await templatePartCtrl.findOne({
@@ -23,10 +21,6 @@ export async function generateUniqueTemplatePartSlug(
       findedTemplatePartBySlug &&
       findedTemplatePartBySlug.id == templatePartId
     ) {
-      console.log(
-        '#7437s8 found templatePart with same slug: ',
-        findedTemplatePartBySlug
-      )
       const { slug, ...rest } = params
       return rest
     }

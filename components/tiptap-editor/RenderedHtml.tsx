@@ -39,6 +39,12 @@ export default function RenderedHtml({ contentJson }: Props) {
               </Link>
             )
           }
+
+          if (domNode instanceof Element && domNode.name === 'adSlot') {
+            // const href = domNode.attribs?.href
+
+            return <div></div>
+          }
         },
       })}
     </div>

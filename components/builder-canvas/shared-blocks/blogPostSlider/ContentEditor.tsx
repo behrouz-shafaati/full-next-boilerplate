@@ -4,12 +4,16 @@ import React, { useEffect, useState } from 'react'
 import { useBuilderStore } from '@/components/builder-canvas/store/useBuilderStore'
 import MultipleSelector from '@/components/form-fields/multiple-selector'
 import { Option } from '@/types'
-import { Category } from '@/features/category/interface'
+import {
+  Category,
+  CategoryTranslationSchema,
+} from '@/features/category/interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import { getAllCategories } from '@/features/category/actions'
 import { getAllTags, searchTags } from '@/features/tag/actions'
 import Text from '@/components/form-fields/text'
-import { Tag } from '@/features/tag/interface'
+import { Tag, TagTranslationSchema } from '@/features/tag/interface'
+import { PostTranslationSchema } from '@/features/post/interface'
 
 type Props = {
   initialData: any
@@ -17,6 +21,7 @@ type Props = {
 }
 
 export const ContentEditor = ({ initialData, savePage }: Props) => {
+  const locale = 'fa'
   const { selectedBlock, update } = useBuilderStore()
   const [categoryOptions, setCategoryOptions] = useState<Option[]>([])
   const [tagOptions, setTagOptions] = useState<Option[]>([])
@@ -28,18 +33,36 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
         getAllTags(),
       ])
       const categoryOptions: Option[] = allCategories.data.map(
-        (category: Category) => ({
-          value: String(category.id),
-          label: createCatrgoryBreadcrumb(category, category.title),
-          slug: category.slug,
-        })
+        (category: Category) => {
+          const translation: CategoryTranslationSchema =
+            category?.translations?.find(
+              (t: CategoryTranslationSchema) => t.lang === locale
+            ) ||
+            category?.translations[0] ||
+            {}
+          console.log('#456 category:', category)
+          console.log('#456 translation?.title:', translation?.title)
+          return {
+            value: String(category.id),
+            label: createCatrgoryBreadcrumb(category, translation?.title),
+            slug: category.slug,
+          }
+        }
       )
 
-      const tagOptions: Option[] = allTags.data.map((tag: Tag) => ({
-        value: String(tag.id),
-        label: createCatrgoryBreadcrumb(tag, tag.title),
-        slug: tag.slug,
-      }))
+      const tagOptions: Option[] = allTags.data.map((tag: Tag) => {
+        const translation: TagTranslationSchema =
+          tag?.translations?.find(
+            (t: TagTranslationSchema) => t.lang === locale
+          ) ||
+          tag?.translations[0] ||
+          {}
+        return {
+          value: String(tag.id),
+          label: createCatrgoryBreadcrumb(tag, translation?.title),
+          slug: tag.slug,
+        }
+      })
       setCategoryOptions(categoryOptions)
       setTagOptions(tagOptions)
     }

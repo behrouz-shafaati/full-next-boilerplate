@@ -96,7 +96,6 @@ export async function getSession() {
   try {
     const cookieStore = await cookies()
     const session = cookieStore.get('session')?.value
-    console.log('#get session:', session)
     if (!session) return null
     return await decrypt(session)
   } catch (err) {

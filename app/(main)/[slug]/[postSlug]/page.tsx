@@ -1,17 +1,24 @@
+export const dynamic = 'force-static'
 import React from 'react'
 import postCtrl from '@/features/post/controller'
 import { notFound } from 'next/navigation'
 import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 import templateCtrl from '@/features/template/controller'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
+import { PostTranslationSchema } from '@/features/post/interface'
+
+export async function generateStaticParams() {
+  return postCtrl.generateStaticParams()
+}
 
 interface PageProps {
-  params: Promise<{ postSlug: string }>
+  params: Promise<{ slug: string; postSlug: string }>
 }
 
 export default async function Page({ params }: PageProps) {
+  const locale = 'fa'
   const resolvedParams = await params
-  const { postSlug: slug } = resolvedParams
+  const { slug: categorySlug, postSlug: slug } = resolvedParams
   let findResult = null
 
   ;[findResult] = await Promise.all([
@@ -21,8 +28,14 @@ export default async function Page({ params }: PageProps) {
   if (!post) {
     notFound()
   }
+
+  const translation: PostTranslationSchema =
+    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
+    post?.translations[0] ||
+    {}
+
   let pageBreadCrumb = {
-    title: post.title,
+    title: translation?.title,
     link: `/blog/${post.slug}`,
   }
 

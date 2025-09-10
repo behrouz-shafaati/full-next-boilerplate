@@ -1,19 +1,24 @@
 import { BreadCrumb, BreadCrumbType } from '@/components/breadcrumb'
 import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Post } from '../../interface'
+import { Post, PostTranslationSchema } from '../../interface'
 import Image from 'next/image'
 import { formatToJalali, getReadingTime, timeAgo } from '../../utils'
 
 type props = {
+  locale?: string
   breadcrumbItems: BreadCrumbType[]
   post: Post
 }
 
-const SinglePageBlog = ({ breadcrumbItems, post }: props) => {
+const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
+  const translation: PostTranslationSchema =
+    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
+    post?.translations[0] ||
+    {}
   const jalaliDate = formatToJalali(post.createdAt)
   // تبدیل contentJson به متن ساده
-  const json = JSON.parse(post.contentJson)
+  const json = JSON.parse(translation?.contentJson)
   console.log('#3387 post content: ', json)
   const plainText =
     json.content
@@ -40,7 +45,7 @@ const SinglePageBlog = ({ breadcrumbItems, post }: props) => {
           />
         </div>
       )}
-      <h2>{post.title}</h2>
+      <h2>{translation?.title}</h2>
       <div className="text-sm text-gray-500 mb-4">
         {post?.user && (
           <>
@@ -52,7 +57,7 @@ const SinglePageBlog = ({ breadcrumbItems, post }: props) => {
         <span className="mx-2">|</span>
         <span>زمان مطالعه: {readingDuration}</span>
       </div>
-      <RenderedHtml contentJson={post.contentJson} />
+      <RenderedHtml contentJson={translation?.contentJson} />
     </div>
   )
 }

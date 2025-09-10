@@ -2,21 +2,50 @@
 
 import { z } from 'zod'
 import categoryCtrl from './controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { State } from '@/types'
-import { title } from 'process'
-import { Category } from './interface'
+import { Session, State } from '@/types'
+import { Category, CategoryTranslationSchema } from './interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
+import { getSession } from '@/lib/auth'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   parent: z.string({}).nullable(),
+  lang: z.string({}),
   slug: z.string({}),
   description: z.string({}),
   status: z.string({}),
   image: z.string({}).nullable(),
 })
+
+async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+  let prevState = { translations: [] }
+  if (id) {
+    prevState = await categoryCtrl.findById({ id })
+    console.log('#prevState 098776 :', prevState)
+  }
+  const session = (await getSession()) as Session
+  const payload = validatedFields.data
+  const user = session.user.id
+  const translations = [
+    {
+      lang: payload.lang,
+      title: payload.title,
+      description: payload.description,
+    },
+    ...prevState.translations.filter(
+      (t: CategoryTranslationSchema) => t.lang != payload.lang
+    ),
+  ]
+  const params = {
+    ...payload,
+    translations,
+    user,
+  }
+
+  return params
+}
 
 /**
  * Creates a category with the given form data.
@@ -27,6 +56,15 @@ const FormSchema = z.object({
  */
 export async function createCategory(prevState: State, formData: FormData) {
   // Validate form fields
+  const rawValues = Object.fromEntries(formData)
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang,
+      title: rawValues?.title,
+      description: rawValues?.description,
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -35,12 +73,16 @@ export async function createCategory(prevState: State, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
 
   try {
+    const params = await sanitizePostData(validatedFields)
     // Create the category
-    await categoryCtrl.create({ params: validatedFields.data })
+    await categoryCtrl.create({
+      params,
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -50,11 +92,15 @@ export async function createCategory(prevState: State, formData: FormData) {
     }
     return {
       message: ` خطای پایگاه داده: ${error}`,
+      values,
     }
   }
 
   // Revalidate the path and redirect to the category dashboard
-  revalidatePath('/dashboard/categories')
+  revalidatePathCtrl.revalidate({
+    feature: 'category',
+    slug: '/dashboard/categories',
+  })
   redirect('/dashboard/categories')
 }
 
@@ -63,6 +109,7 @@ export async function updateCategory(
   prevState: State,
   formData: FormData
 ) {
+  const values = Object.fromEntries(formData)
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -72,17 +119,22 @@ export async function updateCategory(
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
   try {
+    const params = await sanitizePostData(validatedFields, id)
     await categoryCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
+      params,
     })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
+    return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.', values }
   }
-  revalidatePath('/dashboard/categories')
+  revalidatePathCtrl.revalidate({
+    feature: 'category',
+    slug: '/dashboard/categories',
+  })
   redirect('/dashboard/categories')
 }
 
@@ -90,21 +142,32 @@ export async function deleteCategory(id: string) {
   try {
     await categoryCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
+    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود', values }
   }
   await categoryCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/categories')
+  revalidatePathCtrl.revalidate({
+    feature: 'category',
+    slug: '/dashboard/categories',
+  })
 }
 
 export async function getAllCategories() {
   return categoryCtrl.findAll({})
 }
 
-export async function searchCategories(query: string) {
+export async function searchCategories(query: string, locale: string = 'fa') {
   const results = await categoryCtrl.find({ filters: { query } })
 
-  return results.data.map((cat: Category) => ({
-    label: createCatrgoryBreadcrumb(cat, cat.title),
-    value: String(cat.id),
-  }))
+  return results.data.map((cat: Category) => {
+    const translation: CategoryTranslationSchema =
+      cat?.translations?.find(
+        (t: CategoryTranslationSchema) => t.lang === locale
+      ) ||
+      cat?.translations[0] ||
+      {}
+    return {
+      label: createCatrgoryBreadcrumb(cat, translation?.title),
+      value: String(cat.id),
+    }
+  })
 }

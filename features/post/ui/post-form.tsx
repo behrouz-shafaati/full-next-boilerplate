@@ -16,13 +16,16 @@ import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
 import TiptapEditor from '@/components/tiptap-editor'
 import Combobox from '@/components/form-fields/combobox'
-import { Category } from '@/features/category/interface'
+import {
+  Category,
+  CategoryTranslationSchema,
+} from '@/features/category/interface'
 import { Option } from '@/types'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import { Braces as CategoryIcon } from 'lucide-react'
 import TagInput from '@/components/form-fields/TagInput'
 import { searchTags } from '@/features/tag/actions'
-import { Tag } from '@/features/tag/interface'
+import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
 
 interface PostFormProps {
@@ -34,13 +37,18 @@ export const PostForm: React.FC<PostFormProps> = ({
   initialData: post,
   allCategories,
 }) => {
-  const formRef = useRef<HTMLFormElement>(null)
+  const locale = 'fa'
+  const translation: any =
+    post?.translations?.find((t: any) => t.lang === locale) ||
+    post?.translations[0] ||
+    {}
   const initialState = {
     message: null,
     errors: {},
-    success: true,
-    values: post,
+    values: { ...post, translation },
   }
+
+  const formRef = useRef<HTMLFormElement>(null)
 
   const actionHandler = post
     ? updatePost.bind(null, String(post.id))
@@ -56,10 +64,13 @@ export const PostForm: React.FC<PostFormProps> = ({
   const description = post ? 'ویرایش دسته بندی' : 'افزودن مطلب'
 
   const categoryOptions: Option[] = allCategories.map((category: Category) => {
+    const translation: any =
+      category?.translations?.find((t: any) => t.lang === locale) ||
+      category?.translations[0] ||
+      {}
     return {
       value: String(category.id),
-      label: category.title,
-      label: createCatrgoryBreadcrumb(category, category.title),
+      label: createCatrgoryBreadcrumb(category, translation?.title),
     }
   })
 
@@ -73,8 +84,6 @@ export const PostForm: React.FC<PostFormProps> = ({
       value: 'draft',
     },
   ]
-
-  const statusDefaultValue = post?.status || 'published'
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -83,6 +92,7 @@ export const PostForm: React.FC<PostFormProps> = ({
   }
 
   useEffect(() => {
+    console.log('#sdf post state:', state)
     if (state.message && state.message !== null)
       toast({
         variant: state.success ? 'default' : 'destructive',
@@ -95,12 +105,10 @@ export const PostForm: React.FC<PostFormProps> = ({
       formRef.current.requestSubmit() // بهترین راه
     }
   }
-  // const defaultC = JSON.parse(
-  //   '{"contentJson":{"type":"doc","content":[{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"سلام"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":null},"content":[{"type":"text","text":"s"}]},{"type":"paragraph","attrs":{"dir":"rtl","textAlign":"left"},"content":[{"type":"text","marks":[{"type":"bold"}],"text":"خوبی"}]}]}}'
-  // )
-
-  // console.log('@33 post contentJson: ', post?.contentJson)
-
+  const categoriesArray = Array.isArray(state.values?.categories)
+    ? state.values?.categories
+    : []
+  const tagsArray = Array.isArray(state.values?.tags) ? state.values?.tags : []
   return (
     <>
       <AlertModal
@@ -127,11 +135,12 @@ export const PostForm: React.FC<PostFormProps> = ({
         {/* Product Media image */}
         <div className="md:grid md:grid-cols-3 gap-8">
           <div className="col-span-3">
+            <input type="text" name="lang" className="" value="fa" readOnly />
             {/* Title */}
             <Text
               title="عنوان"
               name="title"
-              defaultValue={state?.values?.title || ''}
+              defaultValue={state?.values?.translation?.title || ''}
               placeholder="عنوان"
               state={state}
               icon={<PostIcon className="w-4 h-4" />}
@@ -140,7 +149,7 @@ export const PostForm: React.FC<PostFormProps> = ({
             <Text
               title="نامک در آدرس"
               name="slug"
-              defaultValue={post?.slug || ''}
+              defaultValue={state?.values?.slug || ''}
               placeholder="نامک در آدرس"
               state={state}
               icon={<PostIcon className="w-4 h-4" />}
@@ -151,7 +160,9 @@ export const PostForm: React.FC<PostFormProps> = ({
             {/* contentJson */}
             <TiptapEditor
               name="contentJson"
-              defaultContent={post ? JSON.parse(post?.contentJson) : {}}
+              defaultContent={
+                post ? JSON.parse(state?.values?.translation?.contentJson) : {}
+              }
               onChangeFiles={submitManually}
             />
           </div>
@@ -160,7 +171,7 @@ export const PostForm: React.FC<PostFormProps> = ({
             <Select
               title="وضعیت"
               name="status"
-              defaultValue={statusDefaultValue}
+              defaultValue={state?.values?.status || 'published'}
               options={statusOptions}
               placeholder="وضعیت"
               state={state}
@@ -171,7 +182,7 @@ export const PostForm: React.FC<PostFormProps> = ({
           <Combobox
             title="دسته اصلی"
             name="mainCategory"
-            defaultValue={post?.mainCategory?.id || null}
+            defaultValue={state.values?.mainCategory?.id || null}
             options={categoryOptions}
             placeholder="دسته اصلی"
             state={state}
@@ -179,11 +190,17 @@ export const PostForm: React.FC<PostFormProps> = ({
           />
           {/* categories */}
           <MultipleSelec
-            title="دسته‌ها"
+            title="سایر دسته‌ها"
             name="categories"
             defaultValues={
-              post?.categories.map((category: Category) => {
-                return { label: category.title, value: category.id }
+              categoriesArray.map((category: Category) => {
+                const translation: CategoryTranslationSchema =
+                  category?.translations?.find(
+                    (t: CategoryTranslationSchema) => t.lang === locale
+                  ) ||
+                  category?.translations[0] ||
+                  {}
+                return { label: translation?.title, value: category.id }
               }) || []
             }
             placeholder="دسته‌ها"
@@ -198,8 +215,14 @@ export const PostForm: React.FC<PostFormProps> = ({
               title="برچسب ها"
               placeholder="برچسب ها را وارد کنید..."
               defaultValues={
-                post?.tags.map((tag: Tag) => {
-                  return { label: tag.title, value: tag.id }
+                tagsArray.map((tag: Tag) => {
+                  const translation: TagTranslationSchema =
+                    tag?.translations?.find(
+                      (t: CategoryTranslationSchema) => t.lang === locale
+                    ) ||
+                    tag?.translations[0] ||
+                    {}
+                  return { label: translation?.title, value: tag.id }
                 }) || []
               }
               fetchOptions={searchTags}
@@ -210,7 +233,7 @@ export const PostForm: React.FC<PostFormProps> = ({
               name="image"
               title="پوستر مطلب"
               maxFiles={1}
-              defaultValues={post?.image || null}
+              defaultValues={state.values?.image || null}
               onChange={submitManually}
             />
           </div>

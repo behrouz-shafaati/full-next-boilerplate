@@ -210,16 +210,18 @@ export default function Builder({
               deselectBlock()
             }}
           >
-            <SortableContext
-              items={content.rows.map((row) => row.id)}
-              strategy={verticalListSortingStrategy}
-            >
-              <div>
-                {content.rows.map((row) => (
-                  <SortableRow key={row.id} row={row} newBlocks={newBlocks} />
-                ))}
-              </div>
-            </SortableContext>
+            {content?.rows && (
+              <SortableContext
+                items={content?.rows?.map((row) => row.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                <div>
+                  {content?.rows?.map((row) => (
+                    <SortableRow key={row.id} row={row} newBlocks={newBlocks} />
+                  ))}
+                </div>
+              </SortableContext>
+            )}
 
             <Button
               type="button"

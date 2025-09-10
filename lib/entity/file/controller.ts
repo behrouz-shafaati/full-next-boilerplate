@@ -3,7 +3,13 @@ import c_controller from '@/lib/entity/core/controller'
 
 import fileSchema from './schema'
 import fileService from './service'
-import { FileDetails, FileDetailsPayload } from './interface'
+import {
+  FileDetails,
+  FileDetailsPayload,
+  FileTranslationSchema,
+} from './interface'
+import { getSession } from '@/lib/auth'
+import { Session } from '@/types'
 // import imgurClient from "./imgur";
 // const multer = require('multer');
 const sharp = require('sharp')
@@ -87,6 +93,7 @@ class controller extends c_controller {
     let description: string = formData.get('description') as string
     let href: string = formData.get('href') as string
     let main: string = formData.get('main') as string
+    let lang: string | null = (formData.get('lang') as string) || 'fa'
 
     const arrayBuffer = await file.arrayBuffer()
     const buffer = new Uint8Array(arrayBuffer)
@@ -219,20 +226,25 @@ class controller extends c_controller {
       console.log('#903 Error in upload file:', e)
     }
 
+    const params = {
+      _id,
+      title,
+      src,
+      patch,
+      mimeType: `{image/${extension}}`,
+      fileSize,
+      alt,
+      description,
+      href,
+      previewPath,
+      main,
+      lang,
+    }
+
+    const cleanParams = await this.sanitizePostData(params, _id)
+    console.log('#2345897 cleanParams:', cleanParams)
     let fileInfo: FileDetails = await this.create({
-      params: {
-        _id,
-        title,
-        src,
-        patch,
-        mimeType: `{image/${extension}}`,
-        fileSize,
-        alt,
-        description,
-        href,
-        previewPath,
-        main,
-      },
+      params: cleanParams,
     })
     return fileInfo
   }
@@ -250,15 +262,22 @@ class controller extends c_controller {
       // Check if the file is not found, null, or already deleted
       if (!file || file == null || file?.deleted) return
       // Update the file details in the database
+      const params = {
+        title: fileDetails.title,
+        alt: fileDetails.alt,
+        description: fileDetails.description,
+        href: fileDetails.href,
+        main: fileDetails.main,
+        lang: fileDetails.lang,
+      }
+
+      const cleanParams = await this.sanitizePostData(
+        params,
+        String(fileDetails.id)
+      )
       const newFile = await this.findOneAndUpdate({
         filters: fileDetails.id,
-        params: {
-          // title: fileDetails.title,
-          alt: fileDetails.alt,
-          description: fileDetails.description,
-          href: fileDetails.href,
-          main: fileDetails.main,
-        },
+        params: cleanParams,
       })
       newFiles.push(newFile)
     }
@@ -270,6 +289,35 @@ class controller extends c_controller {
     console.log('#32 delete file patch:', file.patch)
     fs.unlinkSync(file.patch)
     return this.delete({ filters: [id] })
+  }
+
+  async sanitizePostData(params: any, id?: string | undefined) {
+    let prevState = { translations: [] }
+    if (id) {
+      const prevFile = await this.findById({ id })
+      if (prevFile) prevState = prevFile
+      console.log('#prevState 098776 :', prevState)
+    }
+    const session = (await getSession()) as Session
+    const user = session.user.id
+    const translations = [
+      {
+        lang: params.lang,
+        title: params.title,
+        alt: params.alt,
+        description: params.description,
+      },
+      ...prevState?.translations.filter(
+        (t: FileTranslationSchema) => t.lang != params.lang
+      ),
+    ]
+    const cleanParams = {
+      ...params,
+      translations,
+      user,
+    }
+
+    return cleanParams
   }
 }
 

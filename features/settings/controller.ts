@@ -3,7 +3,6 @@ import baseController from '@/lib/entity/core/controller'
 import fileCtrl from '@/lib/entity/file/controller'
 import settingsSchema from './schema'
 import settingsService from './service'
-import { revalidatePath } from 'next/cache'
 
 class controller extends baseController {
   /**

@@ -4,6 +4,7 @@ import pageSchema from './schema'
 import pageService from './service'
 import settingsCtrl from '../settings/controller'
 import { Page } from './interface'
+import categoryCtrl from '../category/controller'
 
 class controller extends baseController {
   /**
@@ -85,9 +86,15 @@ class controller extends baseController {
     return false
   }
 
-  async getAllSlugs() {
+  async getAllSlugs(): Promise<{ slug: string }[]> {
     const result = await this.findAll({})
     return result.data.map((page: Page) => ({ slug: page.slug }))
+  }
+
+  async generateStaticParams() {
+    const pageSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
+    const categorySlug = await categoryCtrl.getAllSlugs()
+    return [...pageSlugs, ...categorySlug]
   }
 }
 

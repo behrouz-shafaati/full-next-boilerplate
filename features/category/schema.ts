@@ -1,6 +1,15 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { CategorySchema } from './interface'
 
+const CategoryTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    title: { type: String, required: true },
+    description: { type: String, default: '' },
+  },
+  { _id: false }
+)
+
 const categorySchema = new Schema<CategorySchema>(
   {
     parent: {
@@ -8,11 +17,16 @@ const categorySchema = new Schema<CategorySchema>(
       ref: 'category',
       default: null,
     },
-    title: { type: String, required: true },
     slug: { type: String, required: true, unique: true },
-    description: { type: String, default: '' },
+    translations: [CategoryTranslationSchema], // 👈 لیست ترجمه‌ها
     image: { type: Schema.Types.ObjectId, ref: 'file' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      required: true,
+    },
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }

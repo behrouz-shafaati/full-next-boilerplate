@@ -1,5 +1,21 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
+export type CategoryTranslationSchema = {
+  /**
+   * زبان مطلب
+   */
+  lang: string // "fa", "en", "de", ...
+  /**
+   * عنوان دسته بندی
+   */
+  title: string
+
+  /**
+   * توضیحات مربوط به دسته‌بندی
+   */
+  description: string
+}
+
 /**
  * اطلاعات پایه دسته‌بندی که شامل فیلدهای اصلی دسته‌بندی می‌باشد
  */
@@ -10,19 +26,14 @@ type CategoryBase = {
   parent: Category | null
 
   /**
-   * عنوان دسته‌بندی
-   */
-  title: string
-
-  /**
    * عنوان برچسب
    */
   slug: string
 
   /**
-   * توضیحات مربوط به دسته‌بندی
+   * محتوا
    */
-  description: string
+  translations: [CategoryTranslationSchema]
 
   /**
    * شناسه تصویر دسته‌بندی
@@ -33,6 +44,11 @@ type CategoryBase = {
    * وضعیت فعال بودن دسته‌بندی (در صورت فعال بودن true)
    */
   status: 'active' | 'inactive'
+
+  /**
+   * کاربر سازنده
+   */
+  user: Id
 }
 
 /**

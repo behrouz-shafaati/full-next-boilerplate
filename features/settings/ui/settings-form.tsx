@@ -15,7 +15,7 @@ import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
 import TiptapEditor from '@/components/tiptap-editor'
-import { PageContent } from '@/features/page/interface'
+import { PageContent, PageTranslationSchema } from '@/features/page/interface'
 import { Settings } from '../interface'
 import Combobox from '@/components/form-fields/combobox'
 import { Option, State } from '@/types'
@@ -33,6 +33,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   allPages,
   allHeaders,
 }) => {
+  const locale = 'fa'
   const formRef = useRef<HTMLFormElement>(null)
   const initialState: State = { message: null, errors: {}, success: true }
   const [state, dispatch] = useActionState(updateSettings as any, initialState)
@@ -48,9 +49,13 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const action = settings ? 'ذخیره تغییرات' : 'ذخیره'
 
   const pagesOptions: Option[] = allPages.map((p: PageContent) => {
+    const translation: PageTranslationSchema =
+      p?.translations?.find((t: PageTranslationSchema) => t.lang === locale) ||
+      p?.translations[0] ||
+      {}
     return {
       value: String(p.id),
-      label: p.title,
+      label: translation?.title,
     }
   })
   const headersOptions: Option[] = allHeaders.map((h: HeaderContent) => {

@@ -4,11 +4,13 @@ import React from 'react'
 import tagCtrl from '@/features/tag/controller'
 import { notFound } from 'next/navigation'
 import { TagForm } from '@/features/tag/ui/tag-form'
+import { TagTranslationSchema } from '@/features/tag/interface'
 
 interface PageProps {
   params: Promise<{ id: string }>
 }
 export default async function Page({ params }: PageProps) {
+  const locale = 'fa' //  from formData
   const resolvedParams = await params
   const { id } = resolvedParams
   let tag = null,
@@ -26,8 +28,14 @@ export default async function Page({ params }: PageProps) {
     if (!tag) {
       notFound()
     }
+
+    const translation: TagTranslationSchema =
+      tag?.translations?.find((t: TagTranslationSchema) => t.lang === locale) ||
+      tag?.translations[0] ||
+      {}
+
     pageBreadCrumb = {
-      title: tag.title,
+      title: translation?.title,
       link: `/dashboard/tags/${id}`,
     }
   } else {
@@ -35,7 +43,7 @@ export default async function Page({ params }: PageProps) {
   }
 
   const breadcrumbItems = [
-    { title: 'دسته ها', link: '/dashboard/tags' },
+    { title: 'برچسب ها', link: '/dashboard/tags' },
     pageBreadCrumb,
   ]
   return (

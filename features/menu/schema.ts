@@ -15,10 +15,24 @@ MenuItemSchema.add({
   subMenu: [MenuItemSchema],
 })
 
-const menuSchema = new Schema<MenuSchema>(
+const MenuTranslationSchema = new Schema(
   {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
     title: { type: String, required: true },
     items: [MenuItemSchema],
+  },
+  { _id: false }
+)
+
+const menuSchema = new Schema<MenuSchema>(
+  {
+    translations: [MenuTranslationSchema], // 👈 لیست ترجمه‌ها
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+      default: null,
+      required: true,
+    },
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }

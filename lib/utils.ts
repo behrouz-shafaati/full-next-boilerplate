@@ -58,10 +58,15 @@ export const generatePagination = (currentPage: number, totalPages: number) => {
 
 export const createCatrgoryBreadcrumb = (
   category: any,
-  title: string
+  title: string,
+  locale: string = 'fa'
 ): string => {
   if (category?.parent) {
-    title = `${category.parent.title} > ${title}`
+    const translation: any =
+      category.parent?.translations?.find((t: any) => t.lang === locale) ||
+      category.parent?.translations[0] ||
+      {}
+    title = `${translation?.title} > ${title}`
     return createCatrgoryBreadcrumb(category.parent, title)
   }
   return title
@@ -129,8 +134,8 @@ export function getTemplateFor(templateFor: string): string {
 export const SUPPORTED_LANGUAGE = ['fa', 'en'] as const
 type Locale = (typeof SUPPORTED_LANGUAGE)[number]
 
-export function pickLocale(paramsLang?: string[]): Locale {
-  const cand = paramsLang?.[0]
+export function pickLocale(paramsLang?: string): Locale {
+  const cand = paramsLang
   return (SUPPORTED_LANGUAGE as readonly string[]).includes(cand ?? '')
     ? (cand as Locale)
     : 'fa'

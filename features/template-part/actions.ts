@@ -2,7 +2,6 @@
 
 import { z } from 'zod'
 import templatePartCtrl from '@/features/template-part/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import settingsCtrl from '../settings/controller'
@@ -10,6 +9,7 @@ import { generateUniqueTemplatePartSlug } from './utils'
 import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { TemplatePart } from './interface'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -24,11 +24,11 @@ const FormSchema = z.object({
  */
 export async function createTemplatePart(prevState: State, formData: FormData) {
   let newTemplatePart = null
+  const values = Object.fromEntries(formData.entries())
   // Validate form fields
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -46,7 +46,13 @@ export async function createTemplatePart(prevState: State, formData: FormData) {
     // Create the TemplatePart
     newTemplatePart = await templatePartCtrl.create({
       params: cleanedParams,
-      revalidatePath: `/${cleanedParams?.slug || params.slug}`,
+    })
+    revalidatePathCtrl.revalidate({
+      feature: 'templatePart',
+      slug: [
+        `/${cleanedParams?.slug || params.slug}`,
+        `/dashboard/template-parts`,
+      ],
     })
   } catch (error) {
     // Handle database error
@@ -63,9 +69,6 @@ export async function createTemplatePart(prevState: State, formData: FormData) {
       values,
     }
   }
-
-  // Revalidate the path and redirect to the TemplatePart dashboard
-  revalidatePath('/dashboard/templateParts')
   if (newTemplatePart)
     redirect(`/dashboard/template-parts/${newTemplatePart.id}`)
   redirect('/dashboard/template-parts')
@@ -76,10 +79,10 @@ export async function updateTemplatePart(
   prevState: State,
   formData: FormData
 ) {
+  const values = Object.fromEntries(formData.entries())
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -103,12 +106,14 @@ export async function updateTemplatePart(
     await templatePartCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
-      revalidatePath,
+    })
+    revalidatePathCtrl.revalidate({
+      feature: 'templatePart',
+      slug: [...revalidatePath, `/dashboard/template-parts`],
     })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
-  revalidatePath('/dashboard/template-parts')
 }
 
 export async function deleteTemplatePart(id: string) {
@@ -118,7 +123,10 @@ export async function deleteTemplatePart(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await templatePartCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/template-parts')
+  revalidatePathCtrl.revalidate({
+    feature: 'templatePart',
+    slug: [`/dashboard/template-parts`],
+  })
 }
 
 export async function getAllTemplateParts() {

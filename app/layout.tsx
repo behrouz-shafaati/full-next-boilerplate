@@ -38,7 +38,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   const session = (await getSession()) as Session
-  console.log('#23409798 session:', session)
+  // console.log('#23409798 session:', session)
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={iransans.className}>

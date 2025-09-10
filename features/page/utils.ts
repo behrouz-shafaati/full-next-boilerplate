@@ -8,19 +8,16 @@ export async function generateUniquePageSlug(
   params: { slug: string; title: string },
   pageId: string = ''
 ): Promise<object> {
-  console.log('#2ddf8 params: ', params)
   const baseSlug =
     params.slug != '' && params.slug != null
       ? slugify(params.slug)
       : slugify(params.title)
-  console.log('#7437s8 baseSlug: ', baseSlug)
   // if it is update and slug doesn't change remove slug from parameters
   if (pageId !== '') {
     const findedPageBySlug = await pageCtrl.findOne({
       filters: { slug: baseSlug },
     })
     if (findedPageBySlug && findedPageBySlug.id == pageId) {
-      console.log('#7437s8 found page with same slug: ', findedPageBySlug)
       const { slug, ...rest } = params
       return rest
     }

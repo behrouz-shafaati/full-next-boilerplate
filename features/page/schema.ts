@@ -1,18 +1,27 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { PageSchema } from './interface'
 
+const PageTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    title: { type: String, required: true },
+    content: {
+      type: Schema.Types.Mixed, // whole page structure as JSON
+      required: true,
+    },
+    description: { type: String, default: '' },
+  },
+  { _id: false }
+)
+
 const pageSchema = new Schema<PageSchema>(
   {
-    title: { type: String, required: false },
     slug: { type: String, required: false, default: null },
+    translations: [PageTranslationSchema], // 👈 لیست ترجمه‌ها
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',
       default: null,
-      required: true,
-    },
-    content: {
-      type: Schema.Types.Mixed, // whole page structure as JSON
       required: true,
     },
     status: {

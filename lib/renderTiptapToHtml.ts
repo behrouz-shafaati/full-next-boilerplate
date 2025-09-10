@@ -42,6 +42,57 @@ const nodes = {
     parseDOM: [{ tag: 'br' }],
     toDOM: () => ['br'],
   },
+  // 👇 تعریف adSlot برای رندر سمت سرور
+  adSlot: {
+    group: 'block',
+    atom: true,
+    attrs: {
+      slotId: { default: null },
+    },
+    parseDOM: [
+      {
+        tag: 'ad-slot',
+        getAttrs: (dom: any) => ({
+          slotId: dom.getAttribute('data-slot-id'),
+        }),
+      },
+    ],
+    toDOM: (node) => [
+      'ad-slot',
+      node.attrs.slotId ? { 'data-slot-id': node.attrs.slotId } : {},
+    ],
+  },
+  heading: {
+    content: 'inline*',
+    group: 'block',
+    defining: true,
+    attrs: {
+      level: { default: 1 }, // h1 تا h6
+      dir: { default: null }, // برای راست به چپ یا چپ به راست
+      textAlign: { default: null }, // برای تراز متن
+    },
+    parseDOM: [
+      { tag: 'h1', attrs: { level: 1 } },
+      { tag: 'h2', attrs: { level: 2 } },
+      { tag: 'h3', attrs: { level: 3 } },
+      { tag: 'h4', attrs: { level: 4 } },
+      { tag: 'h5', attrs: { level: 5 } },
+      { tag: 'h6', attrs: { level: 6 } },
+    ],
+    toDOM(node) {
+      const attrs: any = {}
+      if (node.attrs.dir) attrs.dir = node.attrs.dir
+      if (node.attrs.textAlign)
+        attrs.style = `text-align: ${node.attrs.textAlign}`
+
+      return [
+        'h' + node.attrs.level,
+        attrs,
+        0, // محتوای inline (مثل bold, italic, text)
+      ]
+    },
+  },
+
   // ---------- 📌 نودهای جدول ----------
   table: {
     content: 'tableRow+',

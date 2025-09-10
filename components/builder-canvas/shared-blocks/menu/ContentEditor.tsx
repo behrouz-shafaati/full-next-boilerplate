@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { useBuilderStore } from '@/components/builder-canvas/store/useBuilderStore'
 import { getAllMenus } from '@/features/menu/actions'
 import { Option } from '@/types'
-import { Menu } from '@/features/menu/interface'
+import { Menu, MenuTranslationSchema } from '@/features/menu/interface'
 import Combobox from '@/components/form-fields/combobox'
 
 type Props = {
@@ -13,15 +13,24 @@ type Props = {
 }
 
 export const ContentEditor = ({ initialData, savePage }: Props) => {
+  const locale = 'fa'
   const { selectedBlock, update } = useBuilderStore()
   const [menuOptions, setMenuOptions] = useState<Option[]>([])
   useEffect(() => {
     const fetchData = async () => {
       const [allMenus] = await Promise.all([getAllMenus()])
-      const menuOptions: Option[] = allMenus.data.map((menu: Menu) => ({
-        value: String(menu.id),
-        label: menu.title,
-      }))
+      const menuOptions: Option[] = allMenus.data.map((menu: Menu) => {
+        const translation: MenuTranslationSchema =
+          menu?.translations?.find(
+            (t: MenuTranslationSchema) => t.lang === locale
+          ) ||
+          menu?.translations[0] ||
+          {}
+        return {
+          value: String(menu.id),
+          label: translation?.title,
+        }
+      })
       setMenuOptions(menuOptions)
     }
 

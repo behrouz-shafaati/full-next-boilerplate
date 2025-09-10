@@ -2,12 +2,12 @@
 
 import { z } from 'zod'
 import userCtrl from '@/lib/entity/user/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import shippingAddressCtrl from '../shippingAddress/controller'
 import { AuthError } from 'next-auth'
 import { login } from '@/lib/auth'
 import { Option } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   firstName: z
@@ -112,6 +112,10 @@ export async function createUser(prevState: State, formData: FormData) {
       roles: roles.map((role) => role.value),
     }
     await userCtrl.create({ params: cleanedUserData })
+    revalidatePathCtrl.revalidate({
+      feature: 'user',
+      slug: [`/dashboard/users`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -123,9 +127,6 @@ export async function createUser(prevState: State, formData: FormData) {
       message: 'خطای پایگاه داده: ایجاد کاربر ناموفق بود.',
     }
   }
-
-  // Revalidate the path and redirect to the user dashboard
-  revalidatePath('/dashboard/users')
   redirect('/dashboard/users')
 }
 
@@ -167,23 +168,28 @@ export async function updateUser(
       filters: id,
       params: cleanedUserData,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'user',
+      slug: [`/dashboard/users`],
+    })
   } catch (error) {
     console.log('#2776 error: ', error)
     return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' }
   }
-  revalidatePath('/dashboard/users')
   redirect('/dashboard/users')
 }
 
 export async function deleteUser(id: string) {
   try {
     await userCtrl.delete({ filters: [id] })
+    revalidatePathCtrl.revalidate({
+      feature: 'user',
+      slug: [`/dashboard/users`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' }
   }
   await userCtrl.delete({ filters: [id] })
-  // Revalidate the path and redirect to the user dashboard
-  revalidatePath('/dashboard/users')
   redirect('/dashboard/users')
 }
 

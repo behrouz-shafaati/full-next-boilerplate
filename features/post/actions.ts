@@ -2,7 +2,6 @@
 
 import { z } from 'zod'
 import postCtrl from '@/features/post/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import {
   extractExcerptFromContentJson,
@@ -13,12 +12,18 @@ import { getSession } from '@/lib/auth'
 import { Option, Session, State } from '@/types'
 import tagCtrl from '../tag/controller'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
+import { PostTranslationSchema } from './interface'
+import categoryCtrl from '../category/controller'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   contentJson: z.string({}),
+  lang: z.string({}),
   status: z.string({}),
-  mainCategory: z.string({}),
+  mainCategory: z
+    .string({})
+    .min(1, { message: 'لطفا دسته‌ی اصلی را مشخص کنید.' }),
   categories: z.string({}),
   slug: z.string({}),
   tags: z.string({}),
@@ -35,11 +40,18 @@ const FormSchema = z.object({
 export async function createPost(prevState: State, formData: FormData) {
   // Validate form fields
   let newPost = null
+  const rawValues = Object.fromEntries(formData.entries())
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang || 'fa',
+      title: rawValues?.title || '',
+      contentJson: rawValues.contentJson || '',
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
-  console.log('#234786 values: ', values)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -53,11 +65,22 @@ export async function createPost(prevState: State, formData: FormData) {
   try {
     const params = await sanitizePostData(validatedFields)
     const cleanedParams = await generateUniquePostSlug(params)
+    const mainCategory = await categoryCtrl.findById({
+      id: cleanedParams.mainCategory,
+    })
     newPost = await postCtrl.create({
       params: cleanedParams,
-      revalidatePath: `/blog/${cleanedParams?.slug || params.slug}`,
+    })
+    // Revalidate the path
+    revalidatePathCtrl.revalidate({
+      feature: 'post',
+      slug: [
+        `/${mainCategory.slug}/${cleanedParams?.slug}`,
+        `/dashboard/posts`,
+      ],
     })
   } catch (error) {
+    console.log('#error in create post:', error)
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -71,8 +94,6 @@ export async function createPost(prevState: State, formData: FormData) {
       values,
     }
   }
-  // Revalidate the path and redirect to the post dashboard
-  revalidatePath(`/dashboard/posts`)
   if (newPost) redirect(encodeURI(`/dashboard/posts/${newPost.id}`))
   else redirect(`/dashboard/posts`)
 }
@@ -82,13 +103,19 @@ export async function updatePost(
   prevState: State,
   formData: FormData
 ) {
+  let updatedPost = {}
+  const rawValues = Object.fromEntries(formData.entries())
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang || 'fa',
+      title: rawValues?.title || '',
+      contentJson: rawValues.contentJson || '',
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
-
-  console.log('#23478d formData: ', formData)
-  console.log('#2347f6 values: ', values)
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -99,21 +126,29 @@ export async function updatePost(
     }
   }
   try {
-    const params = await sanitizePostData(validatedFields)
+    const params = await sanitizePostData(validatedFields, id)
     const cleanedParams = await generateUniquePostSlug(params, id)
-    await postCtrl.findOneAndUpdate({
+    const mainCategory = await categoryCtrl.findById({
+      id: cleanedParams.mainCategory,
+    })
+    updatedPost = await postCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
-      revalidatePath: `/blog/${cleanedParams?.slug || params.slug}`,
     })
-
-    revalidatePath('/dashboard/posts')
+    // Revalidate the path
+    revalidatePathCtrl.revalidate({
+      feature: 'post',
+      slug: [
+        `/${mainCategory.slug}/${cleanedParams?.slug}`,
+        `/dashboard/posts`,
+      ],
+    })
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true, values }
   } catch (error) {
     return {
       message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.',
       success: false,
-      values,
+      values: updatedPost,
     }
   }
 }
@@ -125,10 +160,19 @@ export async function deletePost(id: string) {
     return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود', success: false }
   }
   await postCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/posts')
+  // Revalidate the path
+  revalidatePathCtrl.revalidate({
+    feature: 'post',
+    slug: [`/dashboard/posts`],
+  })
 }
 
-async function sanitizePostData(validatedFields: any) {
+async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+  let prevState = { translations: [] }
+  if (id) {
+    prevState = await postCtrl.findById({ id })
+    console.log('#prevState 098776 :', prevState)
+  }
   const session = (await getSession()) as Session
   // Create the post
   const postPayload = validatedFields.data
@@ -144,6 +188,7 @@ async function sanitizePostData(validatedFields: any) {
     : null
   const user = session.user.id
   const contentJson = await postCtrl.setFileData(postPayload.contentJson)
+  // CHECK IF TAG DOES'T EXIST CREATE IT
   const tags = await tagCtrl.ensureTagsExist(tagsArray)
   const categories = JSON.parse(postPayload?.categories)
 
@@ -155,12 +200,23 @@ async function sanitizePostData(validatedFields: any) {
     '#29386457832 JSON.parse(postPayload?.categories):',
     JSON.parse(postPayload?.categories)
   )
+  const translations = [
+    {
+      lang: postPayload.lang,
+      title: postPayload.title,
+      excerpt,
+      contentJson: JSON.stringify(contentJson),
+      readingTime: postPayload.readingTime,
+    },
+    ...prevState.translations.filter(
+      (t: PostTranslationSchema) => t.lang != postPayload.lang
+    ),
+  ]
   const params = {
     ...postPayload,
+    translations,
     tags,
     categories: categories.map((cat: Option) => cat.value),
-    contentJson: JSON.stringify(contentJson),
-    excerpt,
     image,
     user,
   }

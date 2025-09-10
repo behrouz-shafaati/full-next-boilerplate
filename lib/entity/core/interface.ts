@@ -68,7 +68,6 @@ type Log = {
 type Create = {
   params: any
   saveLog?: boolean
-  revalidatePath?: string | string[]
 }
 type QueryFind = {
   filters?: any & { orderBy?: string; order?: string }
@@ -91,7 +90,6 @@ type Update = {
   params: any
   saveLog?: boolean
   options?: any
-  revalidatePath?: string | string[]
 }
 type Delete = {
   filters: Id[] | string[]

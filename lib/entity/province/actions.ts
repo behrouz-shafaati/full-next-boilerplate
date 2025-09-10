@@ -2,10 +2,10 @@
 
 import { z } from 'zod'
 import Ctrl from '@/lib/entity/province/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Province } from './interface'
 import { State } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -39,6 +39,10 @@ export async function createProvince(prevState: State, formData: FormData) {
   try {
     // Create the
     await Ctrl.create({ params: validatedFields.data })
+    revalidatePathCtrl.revalidate({
+      feature: 'province',
+      slug: [`/dashboard/provinces`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -50,9 +54,6 @@ export async function createProvince(prevState: State, formData: FormData) {
       message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
     }
   }
-
-  // Revalidate the path and redirect to the  dashboard
-  revalidatePath('/dashboard/provinces')
   redirect('/dashboard/provinces')
 }
 
@@ -77,10 +78,13 @@ export async function updateProvince(
       filters: id,
       params: validatedFields.data,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'province',
+      slug: [`/dashboard/provinces`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
-  revalidatePath('/dashboard/provinces')
   redirect('/dashboard/provinces')
 }
 
@@ -91,7 +95,10 @@ export async function deleteProvince(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await Ctrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/provinces')
+  revalidatePathCtrl.revalidate({
+    feature: 'province',
+    slug: [`/dashboard/provinces`],
+  })
 }
 
 export async function getProvincesAsOption() {

@@ -7,10 +7,13 @@ export type MenuItem = {
   icon: string
   subMenu: MenuItem[]
 }
-/**
- * اطلاعات پایه فهرست که شامل فیلدهای اصلی فهرست می‌باشد
- */
-type MenuBase = {
+
+export type MenuTranslationSchema = {
+  /**
+   * زبان مطلب
+   */
+  lang: string // "fa", "en", "de", ...
+
   /**
    * عنوان فهرست
    */
@@ -20,6 +23,21 @@ type MenuBase = {
    * آیتم های مربوط به فهرست
    */
   items: MenuItem[]
+}
+
+/**
+ * اطلاعات پایه فهرست که شامل فیلدهای اصلی فهرست می‌باشد
+ */
+type MenuBase = {
+  /**
+   * محتوا
+   */
+  translations: [MenuTranslationSchema]
+
+  /**
+   * کاربر سازنده
+   */
+  user: Id
 }
 
 /**

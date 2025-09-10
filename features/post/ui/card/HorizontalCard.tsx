@@ -8,14 +8,14 @@ type HorizontalCardProps = {
   imageUrl?: string
   title: string
   excerpt: string
-  slug: string
+  href: string
 }
 
 export default function HorizontalCard({
   imageUrl,
   title,
   excerpt,
-  slug,
+  href,
 }: HorizontalCardProps) {
   return (
     <Card className="w-full flex flex-col sm:flex-row overflow-hidden rounded-2xl shadow-sm break-inside-avoid">
@@ -28,7 +28,7 @@ export default function HorizontalCard({
         <h2 className="text-lg font-semibold">{title}</h2>
         <p className="text-sm text-muted-foreground line-clamp-3">{excerpt}</p>
         <Button asChild className="mt-auto w-fit">
-          <Link href={`/blog/${slug}`}>ادامه مطلب</Link>
+          <Link href={href}>ادامه مطلب</Link>
         </Button>
       </CardContent>
     </Card>

@@ -2,9 +2,9 @@
 
 import { z } from 'zod'
 import shippingAddressCtrl from './controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   name: z.string({}).min(1, { message: 'لطفا نام تحویل گیرنده را وارد کنید.' }),
@@ -46,6 +46,10 @@ export async function createShippingAddress(
   try {
     // Create the shippingAddress
     await shippingAddressCtrl.create({ params: validatedFields.data })
+    revalidatePathCtrl.revalidate({
+      feature: 'shippingAddress',
+      slug: [`/dashboard/users/${userId}/edit/addresses`],
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -57,9 +61,6 @@ export async function createShippingAddress(
       message: 'خطای پایگاه داده: ایجاد آدرس ناموفق بود.',
     }
   }
-
-  // Revalidate the path and redirect to the shippingAddress dashboard
-  revalidatePath(`/dashboard/users/${userId}/edit/addresses`)
   redirect(`/dashboard/users/${userId}/edit/addresses`)
 }
 
@@ -85,10 +86,13 @@ export async function updateShippingAddress(
       filters: id,
       params: validatedFields.data,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'shippingAddress',
+      slug: [`/dashboard/users/${userId}/edit/addresses`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی آدرس ناموفق بود.' }
   }
-  revalidatePath(`/dashboard/users/${userId}/edit/addresses`)
   redirect(`/dashboard/users/${userId}/edit/addresses`)
 }
 
@@ -99,5 +103,8 @@ export async function deleteShippingAddress(id: string) {
     return { message: 'خطای پایگاه داده: حذف آدرس ناموفق بود' }
   }
   await shippingAddressCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/shippingAddresses')
+  //  revalidatePathCtrl.revalidate({
+  //       feature: 'shippingAddress',
+  //       slug: [`/dashboard/users/${userId}/edit/addresses`],
+  //     })
 }

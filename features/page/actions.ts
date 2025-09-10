@@ -2,12 +2,12 @@
 
 import { z } from 'zod'
 import pageCtrl from '@/features/page/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import settingsCtrl from '../settings/controller'
 import { generateUniquePageSlug } from './utils'
 import { getSession } from '@/lib/auth'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -23,10 +23,25 @@ const FormSchema = z.object({
 export async function createPage(prevState: State, formData: FormData) {
   let newPage = null
   // Validate form fields
+  const rawValues = Object.fromEntries(formData)
+
+  const content = JSON.parse(rawValues?.contentJson)
+  const values = {
+    ...rawValues,
+    title: content?.title || '', // for generate slug
+    type: content.type,
+    templateFor: content.templateFor,
+    slug: content.slug,
+    status: content.status,
+    translation: {
+      lang: content?.lang || 'fa',
+      title: content?.title || '',
+      content,
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -39,14 +54,18 @@ export async function createPage(prevState: State, formData: FormData) {
 
   try {
     const params = await sanitizePageData(validatedFields)
-    const cleanedParams = await generateUniquePageSlug(params)
     console.log('#234876 params:', params)
+    const cleanedParams = await generateUniquePageSlug(params)
     // Create the page
     newPage = await pageCtrl.create({
       params: cleanedParams,
-      revalidatePath: `/${cleanedParams?.slug || params.slug}`,
+    })
+    revalidatePathCtrl.revalidate({
+      feature: 'page',
+      slug: [`/${cleanedParams?.slug || params.slug}`, '/dashboard/pages'],
     })
   } catch (error) {
+    console.log('%error:', error)
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -56,14 +75,11 @@ export async function createPage(prevState: State, formData: FormData) {
       }
     }
     return {
-      message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
+      message: 'خطای پایگاه داده: ایجاد برگه ناموفق بود.',
       success: false,
       values,
     }
   }
-
-  // Revalidate the path and redirect to the page dashboard
-  revalidatePath('/dashboard/pages')
   if (newPage) redirect(`/dashboard/pages/${newPage.id}`)
   redirect('/dashboard/pages')
 }
@@ -73,11 +89,27 @@ export async function updatePage(
   prevState: State,
   formData: FormData
 ) {
+  let cleanedParams = {},
+    updatedPage = {}
+  const rawValues = Object.fromEntries(formData.entries())
+
+  const content = JSON.parse(rawValues?.contentJson)
+  const values = {
+    ...rawValues,
+    title: content?.title || '', // for generate slug
+    type: content.type,
+    templateFor: content.templateFor,
+    slug: content.slug,
+    status: content.status,
+    translation: {
+      lang: content?.lang || 'fa',
+      title: content?.title || '',
+      content,
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  const values = validatedFields.data
-
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
     return {
@@ -88,52 +120,76 @@ export async function updatePage(
     }
   }
   try {
-    const params = await sanitizePageData(validatedFields)
+    const params = await sanitizePageData(validatedFields, id)
 
-    const cleanedParams = await generateUniquePageSlug(params, id)
+    cleanedParams = await generateUniquePageSlug(params, id)
+    console.log('#cleanedParams in update:', cleanedParams)
     let revalidatePath = [`/${cleanedParams?.slug || params.slug}`]
     // if is home page so revalidate home page
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
     if (settings.id === id) revalidatePath = [...revalidatePath, '/']
-    await pageCtrl.findOneAndUpdate({
+    updatedPage = await pageCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
-      revalidatePath,
+    })
+    revalidatePathCtrl.revalidate({
+      feature: 'page',
+      slug: [...revalidatePath, '/dashboard/pages'],
     })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
+    return { message: 'خطای پایگاه داده: بروزرسانی برگه ناموفق بود.' }
   }
-  revalidatePath('/dashboard/pages')
+  return {
+    message: 'بروزرسانی با موفقیت انجام شد',
+    success: true,
+    values: { ...updatedPage, translation: cleanedParams?.translations[0] },
+  }
 }
 
 export async function deletePage(id: string) {
   try {
     await pageCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
+    return { message: 'خطای پایگاه داده: حذف برگه ناموفق بود' }
   }
   await pageCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/pages')
+  revalidatePathCtrl.revalidate({ feature: 'page', slug: ['/dashboard/pages'] })
 }
 
 export async function getAllPages() {
   return pageCtrl.findAll({})
 }
 
-async function sanitizePageData(validatedFields: any) {
+async function sanitizePageData(validatedFields: any, id?: string | undefined) {
+  let prevState = { translations: [] }
+  if (id) {
+    prevState = await pageCtrl.findById({ id })
+    console.log('#prevState 098776 :', prevState)
+  }
   const session = (await getSession()) as Session
 
   const user = session.user.id
   // Create the post
   const content = JSON.parse(validatedFields.data.contentJson)
+  console.log('#45897 content in sandigo:', content)
+  const translations = [
+    {
+      lang: content.lang || 'fa',
+      title: content.title || '',
+      content,
+    },
+    // ...prevState.translations.filter(
+    //   (t: PageTranslationSchema) => t.lang != content.lang
+    // ),
+  ]
   const params = {
-    content,
-    title: content.title,
     type: content.type,
+    title: content.title || '', // for generate slug
     templateFor: content.templateFor,
-    slug: content.slug,
+    slug: content.slug || '',
+    translations,
     status: content.status,
     user,
   }

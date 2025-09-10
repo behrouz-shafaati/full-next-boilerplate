@@ -1,18 +1,19 @@
 'use client'
 // کامپوننت نمایشی بلاک
 import React, { useCallback, useEffect, useState } from 'react'
-import { PageBlock } from '../../types'
+import { Block } from '../../types'
 import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
 import Autoplay from 'embla-carousel-autoplay'
-import { Post } from '@/features/post/interface'
+import { Post, PostTranslationSchema } from '@/features/post/interface'
 import LeftSliderButton from '@/components/ui/left-slider-button'
 import RightSliderButton from '@/components/ui/right-slider-button'
 import { Option } from '@/types'
 import { Badge } from '@/components/ui/badge'
 import { ChevronLeft } from 'lucide-react'
 import { buildUrlFromFilters } from '@/lib/utils'
+import { FileTranslationSchema } from '@/lib/entity/file/interface'
 
 type BlogPostSliderProps = {
   posts: Post[]
@@ -29,7 +30,7 @@ type BlogPostSliderProps = {
       autoplay: boolean
       autoplayDelay: number
     }
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const BlogPostSlider = ({
@@ -37,6 +38,7 @@ export const BlogPostSlider = ({
   blockData,
   ...props
 }: BlogPostSliderProps) => {
+  const locale = 'fa'
   const { content, settings } = blockData
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
@@ -69,34 +71,49 @@ export const BlogPostSlider = ({
     : 'w-full h-auto max-w-full'
 
   const { onClick, ...restProps } = props
-  const postSlids = posts.map((post) => (
-    <div
-      key={post.id}
-      className="embla__slide flex-shrink-0 w-full grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 px-2"
-    >
-      <div className="rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-900">
-        <div className="relative w-full h-52">
-          <Image
-            src={post.image?.src || '/placeholder.png'}
-            alt={post.image?.alt || post.title}
-            layout="fill"
-            objectFit="cover"
-          />
-        </div>
-        <div className="p-4">
-          <h3 className="text-md font-semibold mb-2 line-clamp-2">
-            <Link href={post.link}> {post.title}</Link>
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-            {post.excerpt}
-          </p>
-          <div className="mt-3 text-xs text-gray-400">
-            توسط {post.user?.name}
+  const postSlids = posts.map((post) => {
+    const translationPost: PostTranslationSchema =
+      post?.translations?.find(
+        (t: PostTranslationSchema) => t.lang === locale
+      ) ||
+      post?.translations[0] ||
+      {}
+
+    const translationImage: FileTranslationSchema =
+      post.image?.translations?.find(
+        (t: FileTranslationSchema) => t.lang === locale
+      ) ||
+      post.image?.translations[0] ||
+      {}
+    return (
+      <div
+        key={post.id}
+        className="embla__slide flex-shrink-0 w-full grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 px-2"
+      >
+        <div className="rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-900">
+          <div className="relative w-full h-52">
+            <Image
+              src={post.image?.src || '/placeholder.png'}
+              alt={translationImage?.alt || translationImage?.title}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
+          <div className="p-4">
+            <h3 className="text-md font-semibold mb-2 line-clamp-2">
+              <Link href={post.link}> {translationPost?.title}</Link>
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
+              {translationPost?.excerpt}
+            </p>
+            <div className="mt-3 text-xs text-gray-400">
+              توسط {post.user?.name}
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  ))
+    )
+  })
   const filters = {
     tags: content?.tags?.map((tag) => tag.slug) || [],
     categories: content?.categories?.map((category) => category.slug) || [],

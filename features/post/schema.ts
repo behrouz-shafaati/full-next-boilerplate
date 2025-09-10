@@ -1,10 +1,19 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { PostSchema } from './interface'
 
-const postSchema = new Schema<PostSchema>(
+const PostTranslationSchema = new Schema(
   {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
     title: { type: String, required: true },
     excerpt: { type: String, default: '' },
+    contentJson: { type: String, default: '' },
+    readingTime: { type: Number, default: 0 },
+  },
+  { _id: false }
+)
+
+const postSchema = new Schema<PostSchema>(
+  {
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',
@@ -18,6 +27,7 @@ const postSchema = new Schema<PostSchema>(
       required: false,
     },
     slug: { type: String, required: true, unique: true },
+    translations: [PostTranslationSchema], // 👈 لیست ترجمه‌ها
     mainCategory: {
       type: Schema.Types.ObjectId,
       ref: 'category',
@@ -36,8 +46,6 @@ const postSchema = new Schema<PostSchema>(
         default: [],
       },
     ],
-    contentJson: { type: String, default: '' },
-    readingTime: { type: Number, default: 0 },
     status: {
       type: String,
       enum: ['draft', 'published'],

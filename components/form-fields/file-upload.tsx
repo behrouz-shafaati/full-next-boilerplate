@@ -26,6 +26,7 @@ import {
   File as BeFile,
   FileDetails,
   FileDetailsPayload,
+  FileTranslationSchema,
 } from '@/lib/entity/file/interface'
 import { useToast } from '../ui/use-toast'
 const ObjectId = require('bson-objectid')
@@ -114,6 +115,7 @@ const FileUpload = forwardRef(function FileUpload(
             }
             return false
           })(),
+          lang: 'fa',
           title: file.name.split('.')[0],
           alt: '',
           href: '',
@@ -139,6 +141,7 @@ const FileUpload = forwardRef(function FileUpload(
     formData.append('href', file?.href)
     formData.append('description', file?.description)
     formData.append('main', file?.main)
+    formData.append('lang', file?.lang)
 
     const FileDetails: FileDetails = await uploadFile(formData)
     if (responseHnadler) responseHnadler(FileDetails)
@@ -176,6 +179,7 @@ const FileUpload = forwardRef(function FileUpload(
           href: file.href,
           description: file.description,
           main: file.main,
+          lang: file.lang,
         }
         return newFile
       })
@@ -295,51 +299,55 @@ const FileUpload = forwardRef(function FileUpload(
         <section className="">
           {/* Accepted files */}
           <ul className=" mt-4 grid grid-cols-3 gap-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-            {files.map((file, index) => (
-              <li
-                key={index}
-                className="max-h-20 h-22 group relative rounded-md min-h-12"
-              >
-                {(file?.src || file?.preview) && (
-                  <Image
-                    src={file?.preview || file?.src}
-                    alt={file?.name || file?.alt}
-                    width={100}
-                    height={100}
-                    //   onLoad={() => {
-                    //     URL.revokeObjectURL(file.preview);
-                    //   }}
-                    className={clsx(
-                      'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
-                      { 'border-2 border-blue-500': file?.main }
-                    )}
-                    onClick={() => {
-                      setSelectedFileIndex(index)
-                      setIsModalOpen(true)
-                    }}
-                  />
-                )}
-                {showDeleteButton && (
-                  <button
-                    type="button"
-                    className="border-secondary-400 bg-secondary-400 absolute -right-1 -top-1  flex  h-5 w-5 items-center justify-center rounded-full border bg-gray-400 text-white transition-colors hover:bg-red-500 hover:text-white"
-                    onClick={() => removeFile(index)}
-                  >
-                    <XMarkIcon className="hover:fill-secondary-400 h-5 w-5 transition-colors" />
-                  </button>
-                )}
-                <label className="absolute bottom-0 hidden w-full cursor-pointer bg-white p-1 text-xs group-hover:block">
-                  <input
-                    name="main"
-                    type="checkBox"
-                    className="mr-1"
-                    checked={file?.main}
-                    onChange={(e) => handleCheckMainFile(e, index)}
-                  />
-                  <span className="mr-2">اصلی</span>
-                </label>
-              </li>
-            ))}
+            {files.map((file, index) => {
+              console.log('#239847 file:', file)
+              const locale = 'fa' //  from formData
+              return (
+                <li
+                  key={index}
+                  className="max-h-20 h-22 group relative rounded-md min-h-12"
+                >
+                  {(file?.src || file?.preview) && (
+                    <Image
+                      src={file?.preview || file?.src}
+                      alt={file?.title || file?.alt}
+                      width={100}
+                      height={100}
+                      //   onLoad={() => {
+                      //     URL.revokeObjectURL(file.preview);
+                      //   }}
+                      className={clsx(
+                        'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
+                        { 'border-2 border-blue-500': file?.main }
+                      )}
+                      onClick={() => {
+                        setSelectedFileIndex(index)
+                        setIsModalOpen(true)
+                      }}
+                    />
+                  )}
+                  {showDeleteButton && (
+                    <button
+                      type="button"
+                      className="border-secondary-400 bg-secondary-400 absolute -right-1 -top-1  flex  h-5 w-5 items-center justify-center rounded-full border bg-gray-400 text-white transition-colors hover:bg-red-500 hover:text-white"
+                      onClick={() => removeFile(index)}
+                    >
+                      <XMarkIcon className="hover:fill-secondary-400 h-5 w-5 transition-colors" />
+                    </button>
+                  )}
+                  <label className="absolute bottom-0 hidden w-full cursor-pointer bg-white p-1 text-xs group-hover:block">
+                    <input
+                      name="main"
+                      type="checkBox"
+                      className="mr-1"
+                      checked={file?.main}
+                      onChange={(e) => handleCheckMainFile(e, index)}
+                    />
+                    <span className="mr-2">اصلی</span>
+                  </label>
+                </li>
+              )
+            })}
           </ul>
         </section>
         {hasError && (
@@ -383,6 +391,11 @@ const ModalContent = ({
   const [newFile, setNewFile] = useState({
     ...file,
   })
+  const locale = 'fa' //  from formData
+  const translation: FileTranslationSchema =
+    newFile?.translations?.find(
+      (t: FileTranslationSchema) => t.lang === locale
+    ) || {}
   console.log('#0092 file: ', file)
   return (
     <div className="mt-4">
@@ -398,10 +411,11 @@ const ModalContent = ({
         </div>
       </div>
       <div className="mt-4">
+        <input type="text" name="lang" className="" value="fa" readOnly />
         <Text
           title="نام رسانه"
           name="title"
-          value={newFile.title}
+          value={translation?.title}
           onChange={(e) =>
             setNewFile((s: any) => ({ ...s, title: e.target.value }))
           }
@@ -409,7 +423,7 @@ const ModalContent = ({
         <Text
           title="متن جایگزین"
           name="alt"
-          value={newFile.alt}
+          value={translation?.alt}
           onChange={(e) =>
             setNewFile((s: any) => ({ ...s, alt: e.target.value }))
           }
@@ -425,7 +439,7 @@ const ModalContent = ({
         <Text
           title="توضیحات رسانه"
           name="description"
-          value={newFile.description}
+          value={translation?.description}
           onChange={(e) =>
             setNewFile((s: any) => ({ ...s, description: e.target.value }))
           }

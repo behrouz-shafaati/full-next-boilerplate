@@ -1,23 +1,35 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
-/**
- * اطلاعات پایه برچسب که شامل فیلدهای اصلی برچسب می‌باشد
- */
-type TagBase = {
+export type TagTranslationSchema = {
+  /**
+   * زبان مطلب
+   */
+  lang: string // "fa", "en", "de", ...
+
   /**
    * عنوان برچسب
    */
   title: string
 
   /**
+   * توضیحات مربوط به برچسب
+   */
+  description: string
+}
+
+/**
+ * اطلاعات پایه برچسب که شامل فیلدهای اصلی برچسب می‌باشد
+ */
+type TagBase = {
+  /**
    * نامک برچسب
    */
   slug: string
 
   /**
-   * توضیحات مربوط به برچسب
+   * محتوا
    */
-  description: string
+  translations: [TagTranslationSchema]
 
   /**
    * شناسه تصویر برچسب
@@ -28,6 +40,11 @@ type TagBase = {
    * وضعیت فعال بودن برچسب (در صورت فعال بودن true)
    */
   status: 'active' | 'inactive'
+
+  /**
+   * کاربر سازنده
+   */
+  user: Id
 }
 
 /**

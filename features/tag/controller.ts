@@ -21,7 +21,9 @@ class controller extends baseController {
 
   standardizationFilters(filters: any): any {
     if (typeof filters != 'object') return {}
+    // console.log('# in standardizationFilters of tags:')
     for (const [key, value] of Object.entries(filters)) {
+      // console.log({ key, value })
       if (typeof value != 'string') continue
       if (
         key == 'userName' ||
@@ -30,13 +32,49 @@ class controller extends baseController {
         key == 'mobile'
       )
         filters[key] = { $regex: new RegExp(value, 'i') }
+      if (key == 'title' && filters?.title != '') {
+        filters.translations = {
+          $elemMatch: {
+            lang: filters.locale,
+            title: { $regex: filters.title, $options: 'i' },
+          },
+        }
+        delete filters.title
+        delete filters.locale
+      }
       if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
+        /**
+         * توضیح
+
+          $map → برای هر آیتم در translations، title و description رو به هم می‌چسبونه.
+
+          $reduce → همه‌ی اونها رو به یک رشته تبدیل می‌کنه.
+
+          $concat → در نهایت با slug هم اضافه میشه که قابل سرچ باشه.
+
+          $regexMatch → روی اون رشته‌ی نهایی سرچ انجام میشه.
+         */
         filters.$expr = {
           $regexMatch: {
             input: {
-              $concat: ['$title', '$slug', '$description'],
+              $concat: [
+                '$slug', // همچنان خود slug فیلد اصلیه
+                {
+                  $reduce: {
+                    input: {
+                      $map: {
+                        input: '$translations',
+                        as: 't',
+                        in: { $concat: ['$$t.title', ' ', '$$t.description'] },
+                      },
+                    },
+                    initialValue: '',
+                    in: { $concat: ['$$value', ' ', '$$this'] },
+                  },
+                },
+              ],
             },
             regex: filters.query,
             options: 'i',
@@ -78,23 +116,27 @@ class controller extends baseController {
     return super.findOneAndUpdate(payload)
   }
 
-  async tagExist(title: string): Promise<boolean> {
-    const count = await this.countAll({ title })
-    if (count == 0) return false
+  async tagExist(title: string, locale: string = 'fa'): Promise<boolean> {
+    const result = await this.find({ filters: { title, locale } })
+    console.log('#782346 tag serach result:', result)
+    if (result.data.length == 0) return false
     return true
   }
 
   async ensureTagsExist(
-    tags: { value: string; label: string }[]
+    tags: { value: string; label: string }[],
+    locale: string = 'fa'
   ): Promise<string[]> {
     const tagIds = []
     for (let i = 0; i < tags.length; i++) {
       const tag = tags[i]
-      const flgTagExist = await this.tagExist(tag.label)
+      const flgTagExist = await this.tagExist(tag.label, locale)
       if (flgTagExist) tagIds.push(tag.value)
       else {
         const slug = slugify(tag.label)
-        const newTag = await this.create({ params: { title: tag.label, slug } })
+        const newTag = await this.create({
+          params: { translations: { lang: locale, title: tag.label }, slug },
+        })
         tagIds.push(newTag.id)
       }
     }

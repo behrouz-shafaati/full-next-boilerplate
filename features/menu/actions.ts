@@ -2,15 +2,47 @@
 
 import { z } from 'zod'
 import menuCtrl from '@/features/menu/controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { State } from '@/types'
+import { Session, State } from '@/types'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
+import { getSession } from '@/lib/auth'
+import { MenuTranslationSchema } from './interface'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   itemsJson: z.string({}),
+  lang: z.string({}),
 })
+
+async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+  let prevState = { translations: [] }
+  if (id) {
+    prevState = await menuCtrl.findById({ id })
+    console.log('#prevState 098776 :', prevState)
+  }
+  const session = (await getSession()) as Session
+  const payload = validatedFields.data
+  console.log('#iuy982y34 payload:', payload)
+  const user = session.user.id
+  const translations = [
+    {
+      lang: payload.lang,
+      title: payload.title,
+      items: JSON.parse(payload.itemsJson),
+    },
+    ...prevState.translations.filter(
+      (t: MenuTranslationSchema) => t.lang != payload.lang
+    ),
+  ]
+  const params = {
+    ...payload,
+    translations,
+    user,
+  }
+
+  return params
+}
 
 /**
  * Creates a menu with the given form data.
@@ -36,8 +68,14 @@ export async function createMenu(prevState: State, formData: FormData) {
   }
 
   try {
+    const params = await sanitizePostData(validatedFields)
     // Create the menu
-    await menuCtrl.create({ params: validatedFields.data })
+    await menuCtrl.create({ params })
+    // Revalidate the path and redirect to the menu dashboard
+    revalidatePathCtrl.revalidate({
+      feature: 'menu',
+      slug: '/dashboard/menus',
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -54,8 +92,6 @@ export async function createMenu(prevState: State, formData: FormData) {
     }
   }
 
-  // Revalidate the path and redirect to the menu dashboard
-  revalidatePath('/dashboard/menus')
   redirect('/dashboard/menus')
 }
 
@@ -64,7 +100,15 @@ export async function updateMenu(
   prevState: State,
   formData: FormData
 ) {
-  const values = Object.fromEntries(formData)
+  const rawValues = Object.fromEntries(formData)
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang,
+      title: rawValues?.title,
+      itemsJson: rawValues?.itemsJson,
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -79,9 +123,15 @@ export async function updateMenu(
     }
   }
   try {
+    const params = await sanitizePostData(validatedFields, id)
     await menuCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
+      params,
+    })
+    // Revalidate the path and redirect to the menu dashboard
+    revalidatePathCtrl.revalidate({
+      feature: 'menu',
+      slug: '/dashboard/menus',
     })
   } catch (error) {
     return {
@@ -90,7 +140,6 @@ export async function updateMenu(
       message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.',
     }
   }
-  revalidatePath('/dashboard/menus')
   redirect('/dashboard/menus')
 }
 
@@ -101,7 +150,10 @@ export async function deleteMenu(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await menuCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/menus')
+  revalidatePathCtrl.revalidate({
+    feature: 'menu',
+    slug: '/dashboard/menus',
+  })
 }
 
 export async function getAllMenus() {

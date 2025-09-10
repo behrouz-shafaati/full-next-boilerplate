@@ -26,12 +26,11 @@ export const columns: ColumnDef<Menu>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'title',
     header: 'عنوان',
-  },
-  {
-    accessorKey: 'status',
-    header: 'وضعیت',
+    accessorFn: (row) => {
+      const locale = 'fa' // یا از context/state
+      return row.translations?.find((t) => t.lang === locale)?.title ?? ''
+    },
   },
   {
     id: 'actions',

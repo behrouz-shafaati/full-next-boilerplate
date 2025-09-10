@@ -26,8 +26,11 @@ export const columns: ColumnDef<Tag>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'title',
     header: 'نام',
+    accessorFn: (row) => {
+      const locale = 'fa' // یا از context/state
+      return row.translations?.find((t) => t.lang === locale)?.title ?? ''
+    },
   },
   {
     accessorKey: 'status',

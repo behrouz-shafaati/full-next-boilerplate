@@ -4,11 +4,13 @@ import React from 'react'
 import menuCtrl from '@/features/menu/controller'
 import { notFound } from 'next/navigation'
 import { MenuForm } from '@/features/menu/ui/menu-form'
+import { MenuTranslationSchema } from '@/features/menu/interface'
 
 interface PageProps {
   params: Promise<{ id: string }>
 }
 export default async function Page({ params }: PageProps) {
+  const locale = 'fa'
   const resolvedParams = await params
   const { id } = resolvedParams
 
@@ -23,8 +25,14 @@ export default async function Page({ params }: PageProps) {
     if (!menu) {
       notFound()
     }
+    const translation: MenuTranslationSchema =
+      menu?.translations?.find(
+        (t: MenuTranslationSchema) => t.lang === locale
+      ) ||
+      menu?.translations[0] ||
+      {}
     pageBreadCrumb = {
-      title: menu.title,
+      title: translation?.title,
       link: `/dashboard/menus/${id}`,
     }
   }

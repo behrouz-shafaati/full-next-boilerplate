@@ -2,20 +2,48 @@
 
 import { z } from 'zod'
 import tagCtrl from './controller'
-import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
-import { Option, State } from '@/types'
-import { title } from 'process'
-import { Tag } from './interface'
-import { createCatrgoryBreadcrumb } from '@/lib/utils'
+import { Session, State } from '@/types'
+import { Tag, TagTranslationSchema } from './interface'
+import { getSession } from '@/lib/auth'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
   slug: z.string({}).nullable(),
+  lang: z.string({}).nullable(),
   description: z.string({}),
   status: z.string({}),
   image: z.string({}).nullable(),
 })
+
+async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+  let prevState = { translations: [] }
+  if (id) {
+    prevState = await tagCtrl.findById({ id })
+    console.log('#prevState 098776 :', prevState)
+  }
+  const session = (await getSession()) as Session
+  const payload = validatedFields.data
+  const user = session.user.id
+  const translations = [
+    {
+      lang: payload.lang,
+      title: payload.title,
+      description: payload.description,
+    },
+    ...prevState.translations.filter(
+      (t: TagTranslationSchema) => t.lang != payload.lang
+    ),
+  ]
+  const params = {
+    ...payload,
+    translations,
+    user,
+  }
+
+  return params
+}
 
 /**
  * Creates a tag with the given form data.
@@ -25,6 +53,16 @@ const FormSchema = z.object({
  * @returns An object with errors and a message if there are any, or redirects to the tag dashboard.
  */
 export async function createTag(prevState: State, formData: FormData) {
+  const rawValues = Object.fromEntries(formData)
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang,
+      title: rawValues?.title,
+      description: rawValues?.description,
+    },
+  }
+  console.log('#234 values:', values)
   // Validate form fields
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
@@ -34,13 +72,21 @@ export async function createTag(prevState: State, formData: FormData) {
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
 
   try {
+    const params = await sanitizePostData(validatedFields)
     // Create the tag
-    await tagCtrl.create({ params: validatedFields.data })
+    await tagCtrl.create({ params })
+    // Revalidate the path
+    revalidatePathCtrl.revalidate({
+      feature: 'tag',
+      slug: [`/dashboard/tags`],
+    })
   } catch (error) {
+    console.log('#2345 error:', error)
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -49,11 +95,9 @@ export async function createTag(prevState: State, formData: FormData) {
     }
     return {
       message: 'خطای پایگاه داده: ایجاد برچسب ناموفق بود.',
+      values,
     }
   }
-
-  // Revalidate the path and redirect to the tag dashboard
-  revalidatePath('/dashboard/tags')
   redirect('/dashboard/tags')
 }
 
@@ -62,6 +106,7 @@ export async function updateTag(
   prevState: State,
   formData: FormData
 ) {
+  const values = Object.fromEntries(formData.entries())
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -71,39 +116,53 @@ export async function updateTag(
     return {
       errors: validatedFields.error.flatten().fieldErrors,
       message: 'لطفا فیلدهای لازم را پر کنید.',
+      values,
     }
   }
   try {
+    const params = await sanitizePostData(validatedFields, id)
     await tagCtrl.findOneAndUpdate({
       filters: id,
       params: validatedFields.data,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'tag',
+      slug: [`/dashboard/tags`],
+    })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی برچسب ناموفق بود.' }
+    return { message: 'خطای پایگاه داده: بروزرسانی برچسب ناموفق بود.', values }
   }
-  revalidatePath('/dashboard/tags')
   redirect('/dashboard/tags')
 }
 
 export async function deleteTag(id: string) {
   try {
     await tagCtrl.delete({ filters: [id] })
+    revalidatePathCtrl.revalidate({
+      feature: 'tag',
+      slug: [`/dashboard/tags`],
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف برچسب ناموفق بود' }
   }
   await tagCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/tags')
 }
 
 export async function getAllTags() {
   return tagCtrl.findAll({})
 }
 
-export async function searchTags(query: string) {
+export async function searchTags(query: string, locale: string = 'fa') {
   const results = await tagCtrl.find({ filters: { query } })
 
-  return results.data.map((tag: Tag) => ({
-    label: tag.title,
-    value: String(tag.id),
-  }))
+  return results.data.map((tag: Tag) => {
+    const translation: any =
+      tag?.translations?.find((t: any) => t.lang === locale) ||
+      tag?.translations[0] ||
+      {}
+    return {
+      label: translation?.title,
+      value: String(tag.id),
+    }
+  })
 }

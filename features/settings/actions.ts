@@ -2,8 +2,8 @@
 
 import { z } from 'zod'
 import settingsCtrl from '@/features/settings/controller'
-import { revalidatePath } from 'next/cache'
 import { Session, State } from '@/types'
+import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
@@ -38,7 +38,11 @@ export async function updateSettings(prevState: State, formData: FormData) {
       filters: { type: 'site-settings' },
       params,
       options: { upsert: true }, // اگر نبود، بساز
-      revalidatePath: '/',
+    })
+    // Revalidate the path
+    revalidatePathCtrl.revalidate({
+      feature: 'settings',
+      slug: [`/`],
     })
 
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
@@ -57,7 +61,11 @@ export async function deleteSettings(id: string) {
     return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود', success: false }
   }
   await settingsCtrl.delete({ filters: [id] })
-  revalidatePath('/dashboard/settingss')
+  // Revalidate the path
+  revalidatePathCtrl.revalidate({
+    feature: 'settings',
+    slug: [`/dashboard/settingss`],
+  })
 }
 
 async function sanitizeSettingsData(validatedFields: any) {

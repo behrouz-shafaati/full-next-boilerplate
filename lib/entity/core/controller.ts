@@ -1,6 +1,7 @@
 // import { IAction } from "../entity/action/interface";
 // import { Log, LogPayload } from "../entity/log/interface";
 // import log from "@entity/log/controller";
+import { Session } from '@/types'
 import {
   Create,
   QueryFind,
@@ -16,6 +17,7 @@ import {
 } from './interface'
 // import logController from "@entity/log/controller";
 import { Types } from 'mongoose'
+import { getSession } from '@/middleware'
 // import { logEvents } from "@/middleware/logEvents";
 // import getPaginationFiltersFromQuery from "@/utils/getPagenationFiltersFromQuery";
 
@@ -95,7 +97,7 @@ export default class controller {
    *
    * @beta
    */
-  async findAll(payload: QueryFind) {
+  async findAll(payload: QueryFind): Promise<QueryResponse<any>> {
     payload = { saveLog: false, populate: '', filters: {}, ...payload }
     let result: any
     // log.setVariables(payload);
@@ -193,12 +195,14 @@ export default class controller {
    * @beta
    */
   async create(payload: Create): Promise<any> {
-    payload = { saveLog: false, revalidatePath: '', ...payload }
+    const session = (await getSession()) as Session
+    const user = session.user.id
+    payload = { saveLog: false, ...payload }
 
     // log.setVariables(payload);
     let result: any
     try {
-      result = await this.service.create(payload.params, payload.revalidatePath)
+      result = await this.service.create({ ...payload.params, user })
       // if (payload.saveLog) {
       //   if (result) {
       //     log.setTarget(result.id);
@@ -228,7 +232,7 @@ export default class controller {
    * @beta
    */
   async findOneAndUpdate(payload: Update) {
-    payload = { saveLog: false, options: {}, revalidatePath: '', ...payload }
+    payload = { saveLog: false, options: {}, ...payload }
     let result: any
     const previousValues = await this.service.findOne({
       filters: payload.filters,
@@ -244,8 +248,7 @@ export default class controller {
       result = await this.service.findOneAndUpdate(
         payload.filters,
         payload.params,
-        payload.options,
-        payload.revalidatePath
+        payload.options
       )
       // if (payload.saveLog) {
       //   if (result) log.setResultStatus(true);
