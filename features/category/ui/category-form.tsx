@@ -129,7 +129,13 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
           />
         </section>
         <div className="md:grid md:grid-cols-3 gap-8">
-          <input type="text" name="lang" className="" value="fa" readOnly />
+          <input
+            type="text"
+            name="lang"
+            className="hidden"
+            value="fa"
+            readOnly
+          />
 
           {/* Title */}
           <Text

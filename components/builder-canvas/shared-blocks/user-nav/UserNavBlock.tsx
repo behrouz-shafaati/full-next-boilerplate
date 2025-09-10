@@ -5,6 +5,8 @@ import { Block } from '../../types'
 import { Session } from '@/types'
 import { useSession } from '@/components/context/SessionContext'
 import { UserNav } from './UserNav'
+import Link from 'next/link'
+import { Button } from '@/components/custom/button'
 
 type props = {
   blockData: {
@@ -25,7 +27,11 @@ export const UserNavBlock = ({ blockData, ...props }: props) => {
   }, [])
   console.log('#session:', session)
   if (!session) {
-    return <button>ورود</button>
+    return (
+      <Link href={`/login`}>
+        <Button variant={'ghost'}>ورود</Button>
+      </Link>
+    )
   }
   return <UserNav blockData={blockData} user={session?.user} {...props} />
 }

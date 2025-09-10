@@ -61,7 +61,7 @@ export default function MenuBuilder({
 
   return (
     <div className={`p-4 space-y-4 ${className}`}>
-      <textarea readOnly name={name} value={getJson()} />
+      <textarea readOnly name={name} value={getJson()} className="hidden" />
       <button
         type="button"
         onClick={addItem}
@@ -102,9 +102,9 @@ export default function MenuBuilder({
           ) : null}
         </DragOverlay>
       </DndContext>
-      <pre className="bg-gray-100 p-4 mt-4">
+      {/* <pre className="bg-gray-100 p-4 mt-4">
         <code>{getJson()}</code>
-      </pre>
+      </pre> */}
     </div>
   )
 }

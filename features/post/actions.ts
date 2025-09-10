@@ -212,11 +212,14 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
       (t: PostTranslationSchema) => t.lang != postPayload.lang
     ),
   ]
+  const categoriesId = categories.map((cat: Option) => cat.value)
+  if (!categoriesId.includes(postPayload.mainCategory))
+    categoriesId.push(postPayload.mainCategory)
   const params = {
     ...postPayload,
     translations,
     tags,
-    categories: categories.map((cat: Option) => cat.value),
+    categories: categoriesId,
     image,
     user,
   }

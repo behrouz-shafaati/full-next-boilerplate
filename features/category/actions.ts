@@ -83,6 +83,11 @@ export async function createCategory(prevState: State, formData: FormData) {
     await categoryCtrl.create({
       params,
     })
+    // Revalidate the path and redirect to the category dashboard
+    revalidatePathCtrl.revalidate({
+      feature: 'category',
+      slug: '/dashboard/categories',
+    })
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -95,12 +100,6 @@ export async function createCategory(prevState: State, formData: FormData) {
       values,
     }
   }
-
-  // Revalidate the path and redirect to the category dashboard
-  revalidatePathCtrl.revalidate({
-    feature: 'category',
-    slug: '/dashboard/categories',
-  })
   redirect('/dashboard/categories')
 }
 
@@ -128,13 +127,14 @@ export async function updateCategory(
       filters: id,
       params,
     })
+    revalidatePathCtrl.revalidate({
+      feature: 'category',
+      slug: '/dashboard/categories',
+    })
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.', values }
   }
-  revalidatePathCtrl.revalidate({
-    feature: 'category',
-    slug: '/dashboard/categories',
-  })
+
   redirect('/dashboard/categories')
 }
 

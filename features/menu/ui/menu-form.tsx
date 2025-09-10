@@ -79,7 +79,13 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       {/* <Separator /> */}
       <form action={dispatch} className="w-full space-y-8">
         <div className="gap-8 md:grid md:grid-cols-3">
-          <input type="text" name="lang" className="" value="fa" readOnly />
+          <input
+            type="text"
+            name="lang"
+            className="hidden"
+            value="fa"
+            readOnly
+          />
           {/* Title */}
           <Text
             title="عنوان"

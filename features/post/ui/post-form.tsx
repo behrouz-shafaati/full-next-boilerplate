@@ -135,7 +135,13 @@ export const PostForm: React.FC<PostFormProps> = ({
         {/* Product Media image */}
         <div className="md:grid md:grid-cols-3 gap-8">
           <div className="col-span-3">
-            <input type="text" name="lang" className="" value="fa" readOnly />
+            <input
+              type="text"
+              name="lang"
+              className="hidden"
+              value="fa"
+              readOnly
+            />
             {/* Title */}
             <Text
               title="عنوان"

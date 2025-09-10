@@ -33,9 +33,13 @@ function UserAuthFormComponent() {
   const [loading, setLoading] = useState(false)
   const [errorMessage, dispatch] = useActionState(authenticate, undefined)
   const defaultValues = {
-    email: 'behrouz.shafaati@gmail.com',
-    password: '123456',
+    email: '',
+    password: '',
   }
+  // const defaultValues = {
+  //   email: 'behrouz.shafaati@gmail.com',
+  //   password: '123456',
+  // }
   const form = useForm<UserFormValue>({
     resolver: zodResolver(formSchema),
     defaultValues,
@@ -106,7 +110,7 @@ function UserAuthFormComponent() {
           </Button>
         </form>
       </Form>
-      <div className="relative">
+      {/* <div className="relative">
         <div className="absolute inset-0 flex items-center">
           <span className="w-full border-t" />
         </div>
@@ -114,7 +118,7 @@ function UserAuthFormComponent() {
           <span className="bg-background px-2 text-muted-foreground">یا</span>
         </div>
       </div>
-      <GitHubSignInButton />
+      <GitHubSignInButton /> */}
     </>
   )
 }

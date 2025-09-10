@@ -50,7 +50,7 @@ function SettingsPanel({ allCategories, allTemplates }: SettingsPanelProp) {
   ]
   return (
     <>
-      <input type="text" name="lang" className="" value="fa" readOnly />
+      <input type="text" name="lang" className="hidden" value="fa" readOnly />
       <Text
         title="عنوان"
         name="title"

@@ -40,11 +40,13 @@ const PageTypeSettings = ({
         onChange={(e) => debouncedUpdate(null, 'slug', e.target.value)}
       />
 
-      <Link
-        className="block w-full p-2 ltr text-left"
-        href={`/${parsedJson.slug}`}
-        target="_blank"
-      >{`/${parsedJson.slug}`}</Link>
+      {parsedJson.slug && (
+        <Link
+          className="block w-full p-2 ltr text-left"
+          href={`/${parsedJson.slug}`}
+          target="_blank"
+        >{`/${parsedJson.slug}`}</Link>
+      )}
       <Combobox
         title="قالب"
         name="template"

@@ -119,7 +119,7 @@ export default function TiptapEditor({
         <textarea
           value={content}
           name={name}
-          className="w-full ltr"
+          className="w-full ltr hidden"
           read-only="true"
           onChange={() => {}}
         />

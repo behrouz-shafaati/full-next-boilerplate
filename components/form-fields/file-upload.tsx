@@ -411,7 +411,7 @@ const ModalContent = ({
         </div>
       </div>
       <div className="mt-4">
-        <input type="text" name="lang" className="" value="fa" readOnly />
+        <input type="text" name="lang" className="hidden" value="fa" readOnly />
         <Text
           title="نام رسانه"
           name="title"
