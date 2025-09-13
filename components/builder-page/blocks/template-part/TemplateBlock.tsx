@@ -5,6 +5,7 @@ import { TemplatePart } from './Template'
 import { getTemplatePart } from '@/features/template-part/actions'
 
 type Props = {
+  widgetName: string
   blockData: {
     id: string
     type: 'templatePart'
@@ -17,7 +18,11 @@ type Props = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export default async function TemplateBlock({ blockData, ...props }: Props) {
+export default async function TemplateBlock({
+  widgetName,
+  blockData,
+  ...props
+}: Props) {
   const { content } = blockData
   const [template] = await Promise.all([getTemplatePart(content?.templateId)])
   return (

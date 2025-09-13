@@ -69,7 +69,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
 
     fetchData()
     setSelectedTags(selectedBlock?.content?.tags ?? [])
-  }, [])
+  }, [selectedBlock?.content?.tags])
 
   return (
     <div key={categoryOptions.length}>

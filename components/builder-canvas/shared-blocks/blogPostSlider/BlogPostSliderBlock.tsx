@@ -6,6 +6,7 @@ import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
 
 type BlogPostSliderBlockProps = {
+  widgetName: string
   blockData: {
     id: string
     type: 'blogPostSlider'
@@ -23,6 +24,7 @@ type BlogPostSliderBlockProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function BlogPostSliderBlock({
+  widgetName,
   blockData,
   ...props
 }: BlogPostSliderBlockProps) {

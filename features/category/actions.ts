@@ -8,6 +8,7 @@ import { Category, CategoryTranslationSchema } from './interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -84,10 +85,15 @@ export async function createCategory(prevState: State, formData: FormData) {
       params,
     })
     // Revalidate the path and redirect to the category dashboard
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'category',
       slug: '/dashboard/categories',
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -127,10 +133,15 @@ export async function updateCategory(
       filters: id,
       params,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'category',
       slug: '/dashboard/categories',
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.', values }
   }
@@ -145,10 +156,15 @@ export async function deleteCategory(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود', values }
   }
   await categoryCtrl.delete({ filters: [id] })
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'category',
     slug: '/dashboard/categories',
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 export async function getAllCategories() {

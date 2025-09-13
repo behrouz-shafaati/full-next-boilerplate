@@ -8,6 +8,7 @@ import settingsCtrl from '../settings/controller'
 import { generateUniquePageSlug } from './utils'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -60,10 +61,15 @@ export async function createPage(prevState: State, formData: FormData) {
     newPage = await pageCtrl.create({
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'page',
       slug: [`/${cleanedParams?.slug || params.slug}`, '/dashboard/pages'],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     console.log('%error:', error)
     // Handle database error
@@ -124,20 +130,26 @@ export async function updatePage(
 
     cleanedParams = await generateUniquePageSlug(params, id)
     console.log('#cleanedParams in update:', cleanedParams)
-    let revalidatePath = [`/${cleanedParams?.slug || params.slug}`]
+    let varRevalidatePath = [`/${cleanedParams?.slug || params.slug}`]
     // if is home page so revalidate home page
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings.id === id) revalidatePath = [...revalidatePath, '/']
+    if (settings.id === id) varRevalidatePath = [...varRevalidatePath, '/']
     updatedPage = await pageCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'page',
-      slug: [...revalidatePath, '/dashboard/pages'],
+      slug: [...varRevalidatePath, '/dashboard/pages'],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی برگه ناموفق بود.' }
   }
@@ -155,7 +167,15 @@ export async function deletePage(id: string) {
     return { message: 'خطای پایگاه داده: حذف برگه ناموفق بود' }
   }
   await pageCtrl.delete({ filters: [id] })
-  revalidatePathCtrl.revalidate({ feature: 'page', slug: ['/dashboard/pages'] })
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+    feature: 'page',
+    slug: ['/dashboard/pages'],
+  })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 export async function getAllPages() {

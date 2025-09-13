@@ -53,7 +53,7 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       })
 
     console.log('#s665 state: ', state)
-  }, [state])
+  }, [state, toast])
 
   return (
     <>

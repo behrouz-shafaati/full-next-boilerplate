@@ -38,7 +38,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
         }}
         showDeleteButton={true}
       />
-      <code>{JSON.stringify(selectedBlock?.content)}</code>
+      {/* <code>{JSON.stringify(selectedBlock?.content)}</code> */}
     </>
   )
 }

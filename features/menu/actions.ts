@@ -8,6 +8,7 @@ import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { getSession } from '@/lib/auth'
 import { MenuTranslationSchema } from './interface'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -72,10 +73,15 @@ export async function createMenu(prevState: State, formData: FormData) {
     // Create the menu
     await menuCtrl.create({ params })
     // Revalidate the path and redirect to the menu dashboard
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'menu',
       slug: '/dashboard/menus',
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -129,10 +135,15 @@ export async function updateMenu(
       params,
     })
     // Revalidate the path and redirect to the menu dashboard
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'menu',
       slug: '/dashboard/menus',
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return {
       ok: false,
@@ -150,10 +161,15 @@ export async function deleteMenu(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await menuCtrl.delete({ filters: [id] })
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'menu',
     slug: '/dashboard/menus',
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 export async function getAllMenus() {

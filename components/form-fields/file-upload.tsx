@@ -157,13 +157,12 @@ const FileUpload = forwardRef(function FileUpload(
     onDrop,
   })
 
-  const handelUpdateFileDetails = async (filesDetails: any) => {
-    const updatedFilesArray = await updateFileDetails(filesDetails)
-
-    if (updateFileDetailsHnadler) updateFileDetailsHnadler(updatedFilesArray)
-  }
-
   useEffect(() => {
+    const handelUpdateFileDetails = async (filesDetails: any) => {
+      const updatedFilesArray = await updateFileDetails(filesDetails)
+
+      if (updateFileDetailsHnadler) updateFileDetailsHnadler(updatedFilesArray)
+    }
     // Revoke the data uris to avoid memory leaks
     // return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
 
@@ -272,7 +271,7 @@ const FileUpload = forwardRef(function FileUpload(
     <>
       <div>
         {/* title */}
-        <p className="text-md mb-2">{title}</p>
+        <p className="mb-2 text-md">{title}</p>
         {/* {files.length > 0 && ( */}
         <textarea name={name} value={makeIdsClean()} readOnly hidden />
         {/* )} */}
@@ -284,7 +283,7 @@ const FileUpload = forwardRef(function FileUpload(
         >
           <input {...getInputProps()} />
           <div className="flex flex-col items-center justify-center gap-2 text-xs text-gray-400">
-            <ArrowUpTrayIcon className="h-5 w-5 fill-current" />
+            <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
             {isDragActive ? (
               <p>فایل ها را اینجا رها کنید...</p>
             ) : (
@@ -298,14 +297,14 @@ const FileUpload = forwardRef(function FileUpload(
         {/* Preview */}
         <section className="">
           {/* Accepted files */}
-          <ul className=" mt-4 grid grid-cols-3 gap-2 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <ul className="grid grid-cols-3 gap-2 mt-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {files.map((file, index) => {
               console.log('#239847 file:', file)
               const locale = 'fa' //  from formData
               return (
                 <li
                   key={index}
-                  className="max-h-20 h-22 group relative rounded-md min-h-12"
+                  className="relative rounded-md max-h-20 h-22 group min-h-12"
                 >
                   {(file?.src || file?.preview) && (
                     <Image
@@ -324,18 +323,19 @@ const FileUpload = forwardRef(function FileUpload(
                         setSelectedFileIndex(index)
                         setIsModalOpen(true)
                       }}
+                      unoptimized
                     />
                   )}
                   {showDeleteButton && (
                     <button
                       type="button"
-                      className="border-secondary-400 bg-secondary-400 absolute -right-1 -top-1  flex  h-5 w-5 items-center justify-center rounded-full border bg-gray-400 text-white transition-colors hover:bg-red-500 hover:text-white"
+                      className="absolute flex items-center justify-center w-5 h-5 text-white transition-colors bg-gray-400 border rounded-full border-secondary-400 bg-secondary-400 -right-1 -top-1 hover:bg-red-500 hover:text-white"
                       onClick={() => removeFile(index)}
                     >
-                      <XMarkIcon className="hover:fill-secondary-400 h-5 w-5 transition-colors" />
+                      <XMarkIcon className="w-5 h-5 transition-colors hover:fill-secondary-400" />
                     </button>
                   )}
-                  <label className="absolute bottom-0 hidden w-full cursor-pointer bg-white p-1 text-xs group-hover:block">
+                  <label className="absolute bottom-0 hidden w-full p-1 text-xs bg-white cursor-pointer group-hover:block">
                     <input
                       name="main"
                       type="checkBox"
@@ -406,7 +406,8 @@ const ModalContent = ({
             alt={file?.name || 'uploaded image'}
             width={100}
             height={100}
-            className="h-full w-full rounded-md object-contain "
+            className="object-contain w-full h-full rounded-md"
+            unoptimized
           />
         </div>
       </div>
@@ -454,10 +455,10 @@ const ModalContent = ({
           }
         />
       </div>
-      <div className="mt-6 flex justify-end gap-4">
+      <div className="flex justify-end gap-4 mt-6">
         <Button
           onClick={onCloseModal}
-          className="flex h-10 items-center rounded-lg bg-gray-100 px-4 text-sm font-medium text-gray-600 transition-colors hover:bg-gray-200"
+          className="flex items-center h-10 px-4 text-sm font-medium text-gray-600 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
         >
           لفو
         </Button>

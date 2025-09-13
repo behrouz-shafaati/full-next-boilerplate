@@ -4,8 +4,10 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Block } from '../../types'
 import Menu from './Menu'
 import { getMenus } from '@/features/menu/actions'
+import EmptyBlock from '../../components/EmptyBlock'
 
 type MenuBlockProps = {
+  widgetName: string
   blockData: {
     content: { menuId: string }
     type: 'menu'
@@ -13,7 +15,11 @@ type MenuBlockProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const MenuBlockEditor = ({ blockData, ...props }: MenuBlockProps) => {
+export const MenuBlockEditor = ({
+  widgetName,
+  blockData,
+  ...props
+}: MenuBlockProps) => {
   const [menu, setMenu] = useState({})
   const { content } = blockData
 
@@ -21,7 +27,7 @@ export const MenuBlockEditor = ({ blockData, ...props }: MenuBlockProps) => {
     const fetchData = async () => {
       const [result] = await Promise.all([
         getMenus({
-          filters: { id: content.menuId },
+          filters: { id: content?.menuId },
         }),
       ])
       const menus = result.data
@@ -31,5 +37,6 @@ export const MenuBlockEditor = ({ blockData, ...props }: MenuBlockProps) => {
 
     fetchData()
   }, [content])
+  if (!content?.menuId) return <EmptyBlock widgetName={widgetName} {...props} />
   return <Menu menu={menu} {...props} />
 }

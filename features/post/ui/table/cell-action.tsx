@@ -12,6 +12,7 @@ import { Post } from '../../interface'
 import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { createPostHref } from '../../utils'
 
 interface CellActionProps {
   data: Post
@@ -44,14 +45,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
-
-          <DropdownMenuItem onClick={() => router.push(`/blog/${data.slug}`)}>
-            <Eye className="ml-2 h-4 w-4" /> مشاهده
-          </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => router.push(`/dashboard/posts/${data.id}`)}
           >
             <Edit className="ml-2 h-4 w-4" /> بروزرسانی
+          </DropdownMenuItem>
+          <DropdownMenuItem onClick={() => router.push(createPostHref(data))}>
+            <Eye className="ml-2 h-4 w-4" /> مشاهده
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="ml-2 h-4 w-4" /> حذف

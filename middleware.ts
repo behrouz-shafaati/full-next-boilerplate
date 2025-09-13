@@ -25,6 +25,7 @@ export const config = {
   matcher: ['/((?!api|_next/static|_next/image|.*\\.png$).*)'],
 }
 
+// Don't remove this else will happen trace error!
 export async function getSession() {
   const cookieStore = await cookies()
   const session = cookieStore.get('session')?.value

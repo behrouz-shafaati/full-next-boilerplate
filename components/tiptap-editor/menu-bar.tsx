@@ -199,7 +199,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   }
 
   return (
-    <div className="flex flex-row gap-1 py-2 rtl items-center max-w-full">
+    <div className="sticky top-0 z-10 flex flex-row items-center max-w-full gap-1 py-2 overflow-auto bg-white rtl dark:bg-slate-900">
       <ToggleGroup
         type="multiple"
         value={[
@@ -226,7 +226,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <Quote />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="w-px h-6 bg-border block" />
+      <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value={getTypography()} className="rtl">
         <ToggleGroupItem value="h1" onClick={h1}>
           <Heading1 />
@@ -247,7 +247,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <ListOrdered />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="w-px h-6 bg-border block" />
+      <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value={getAlign()} className="rtl">
         <ToggleGroupItem value="left" onClick={left}>
           <AlignLeft />
@@ -262,7 +262,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <AlignJustify />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="w-px h-6 bg-border block" />
+      <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value={getDirection()} className="rtl">
         <ToggleGroupItem value="rtl" onClick={rtl} title="راست چین">
           <PilcrowLeft />
@@ -271,7 +271,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <PilcrowRight />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="w-px h-6 bg-border block" />
+      <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value="" className="rtl">
         <ToggleGroupItem value="link" onClick={link}>
           {activeStates.link ? <Link2Off /> : <Link2 />}
@@ -286,7 +286,7 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
           <Undo2 />
         </ToggleGroupItem>
       </ToggleGroup>
-      <div className="w-px h-6 bg-border block" />
+      <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value="" className="rtl">
         <ToggleGroupItem value="link" onClick={insertTable}>
           افزودن جدول

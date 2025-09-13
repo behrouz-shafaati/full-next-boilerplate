@@ -46,7 +46,9 @@ export default function ComboboxInput({
         disabled
         value={
           value
-            ? options.find((option) => option.value === value)?.label
+            ? options.find((option) => {
+                return option.value === value
+              })?.label
             : placeholder
         }
       />
@@ -62,12 +64,23 @@ export default function ComboboxInput({
         >
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           {value
-            ? options.find((option) => option.value === value)?.label
+            ? options.find((option) => {
+                return option.value === value
+              })?.label
             : placeholder}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full p-0">
-        <Command>
+        <Command
+          filter={(value, search) => {
+            const option = options.find((opt) => opt.value === value)
+            return String(option?.label ?? '')
+              .toLowerCase()
+              .includes(search.toLowerCase())
+              ? 1
+              : 0
+          }}
+        >
           <CommandInput placeholder={`جستجوی ${placeholder}...`} />
           <CommandList>
             <CommandEmpty> موردی یافت نشد </CommandEmpty>
@@ -76,7 +89,7 @@ export default function ComboboxInput({
                 <CommandItem
                   key={option.value}
                   // اینجا value رو برابر label می‌ذاریم تا سرچ بر اساس label باشه
-                  value={option.label}
+                  value={option.value}
                   onSelect={(currentValue) => {
                     onChange?.(option)
                     setOpen(false)

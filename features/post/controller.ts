@@ -5,8 +5,10 @@ import postSchema from './schema'
 import postService from './service'
 import categoryCtrl from '../category/controller'
 import tagCtrl from '../tag/controller'
-import { getReadingTime } from './utils'
+import { createPostHref, getReadingTime } from './utils'
 import { Post } from './interface'
+import { Category } from '../category/interface'
+import { slugify } from '@/lib/utils'
 
 class controller extends baseController {
   /**
@@ -62,7 +64,6 @@ class controller extends baseController {
     data.image = data.image == '' ? null : data.image
     data.categories = data.categories == '' ? [] : data.categories
     const json = JSON.parse(data.contentJson)
-    console.log('#3387 post content: ', json)
     const plainText =
       json.content
         ?.filter((block: any) => block.type === 'paragraph')
@@ -141,13 +142,45 @@ class controller extends baseController {
   async getAllSlugs() {
     const result = await this.findAll({})
     return result.data.map((post: Post) => ({
-      slug: `${post.mainCategory?.slug}/${post.slug}`,
+      slug: createPostHref(post),
     }))
   }
 
   async generateStaticParams() {
     const singlrPostSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
     return singlrPostSlugs
+  }
+
+  async generateUniquePostSlug(
+    params: { slug: string; title: string },
+    postId: string = ''
+  ): Promise<object> {
+    console.log('#237s8 params: ', params)
+    const baseSlug =
+      params.slug != '' && params.slug != null
+        ? slugify(params.slug)
+        : slugify(params.title)
+    console.log('#237s8 baseSlug: ', baseSlug)
+    // if it is update and slug doesn't change remove slug from parameters
+    if (postId !== '') {
+      const findedPostBySlug = await postCtrl.findOne({
+        filters: { slug: baseSlug },
+      })
+      if (findedPostBySlug && findedPostBySlug.id == postId) {
+        const { slug, ...rest } = params
+        return rest
+      }
+    }
+
+    // if it is new post need to generate new slug
+    let slug = baseSlug
+    let count = 1
+    while (await postCtrl.existSlug(slug)) {
+      slug = `${baseSlug}-${count}`
+      count++
+    }
+
+    return { ...params, slug }
   }
 }
 

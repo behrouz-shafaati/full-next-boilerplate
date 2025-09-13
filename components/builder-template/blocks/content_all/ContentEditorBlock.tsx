@@ -8,6 +8,7 @@ import {
 } from '@/components/builder-canvas/utils/styleUtils'
 
 type ContentBlockProps = {
+  widgetName: string
   blockData: {
     content: {
       content: string
@@ -18,6 +19,7 @@ type ContentBlockProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const ContentEditorBlock = ({
+  widgetName,
   blockData,
   ...props
 }: ContentBlockProps) => {

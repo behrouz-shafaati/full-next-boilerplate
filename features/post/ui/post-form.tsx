@@ -27,6 +27,8 @@ import TagInput from '@/components/form-fields/TagInput'
 import { searchTags } from '@/features/tag/actions'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
+import Link from 'next/link'
+import { createPostHref } from '../utils'
 
 interface PostFormProps {
   initialData: any | null
@@ -61,7 +63,13 @@ export const PostForm: React.FC<PostFormProps> = ({
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
   const title = post ? 'ویرایش  مطلب' : 'افزودن مطلب'
-  const description = post ? 'ویرایش دسته بندی' : 'افزودن مطلب'
+  const description = post ? (
+    <Link target="_blank" href={createPostHref(post)}>
+      مشاهده مطلب
+    </Link>
+  ) : (
+    'افزودن مطلب'
+  )
 
   const categoryOptions: Option[] = allCategories.map((category: Category) => {
     const translation: any =

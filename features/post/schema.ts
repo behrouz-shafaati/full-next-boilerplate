@@ -91,6 +91,18 @@ postSchema
     // })
     next()
   })
+  .pre('findOneAndUpdate', function (next: any) {
+    this.populate('image')
+    this.populate('user')
+    this.populate('tags')
+    this.populate('mainCategory')
+    this.populate('categories')
+    // this.populate({
+    //   path: 'tags',
+    //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
+    // })
+    next()
+  })
 
 const transform = (doc: any, ret: any, options: any) => {
   const category = ret?.categories[0] || { slug: '' }

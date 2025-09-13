@@ -29,7 +29,7 @@ export const FourSideBoxWidget = ({
 
   useEffect(() => {
     onChange?.(values)
-  }, [values])
+  }, [values, onChange])
 
   const handleChange = (side: keyof typeof values, val: string) => {
     if (linked) {

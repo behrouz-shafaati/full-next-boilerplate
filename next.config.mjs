@@ -2,6 +2,18 @@
 const nextConfig = {
   images: {
     domains: [], // نیازی به دامنه نیست برای تصاویر محلی
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'ali1354.ir',
+        pathname: '/uploads/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'ali1354.ir',
+        pathname: '/uploads/**',
+      },
+    ],
   },
   typescript: {
     // !! WARN !!

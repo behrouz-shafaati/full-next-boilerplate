@@ -85,19 +85,16 @@ export const TagPopover: React.FC<TagPopoverProps> = ({
     }
   }, [isPopoverOpen])
 
-  const handleOpenChange = useCallback(
-    (open: boolean) => {
-      if (open && triggerContainerRef.current) {
-        setPopoverWidth(triggerContainerRef.current.offsetWidth)
-      }
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (open && triggerContainerRef.current) {
+      setPopoverWidth(triggerContainerRef.current.offsetWidth)
+    }
 
-      if (open) {
-        inputRef.current?.focus()
-        setIsPopoverOpen(open)
-      }
-    },
-    [inputFocused]
-  )
+    if (open) {
+      inputRef.current?.focus()
+      setIsPopoverOpen(open)
+    }
+  }, [])
 
   const handleInputFocus = (
     event:

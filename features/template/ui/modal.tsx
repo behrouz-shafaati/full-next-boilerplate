@@ -34,6 +34,7 @@ export default function CreateTemplateModal({
   onConfirm: (section: string) => void
   allCategories: Category[]
 }) {
+  const locale = 'fa' //  from formData
   const router = useRouter()
   const [open, setOpen] = useState(true) // 👈 همیشه اول باز باشه
   const [templateFor, setTemplateFor] = useState<string | null>(null)
@@ -42,10 +43,15 @@ export default function CreateTemplateModal({
   const [loading, setLoading] = useState(false)
 
   const categoryOptions: Option[] = allCategories.map((category: Category) => {
+    const translation: any =
+      category?.translations?.find((t: any) => t.lang === locale) ||
+      category?.translations[0] ||
+      {}
+
     return {
-      value: `category-${String(category.id)}`,
+      value: String(category.id),
       label:
-        'خانه‌ی دسته‌ی ' + createCatrgoryBreadcrumb(category, category.title),
+        'خانه دسته ' + createCatrgoryBreadcrumb(category, translation?.title),
     }
   })
 

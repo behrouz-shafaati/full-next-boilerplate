@@ -23,6 +23,7 @@ export default function RenderedHtml({ contentJson }: Props) {
                   alt={alt || ''}
                   fill
                   className="object-contain"
+                  unoptimized
                 />
               </div>
             ) : null

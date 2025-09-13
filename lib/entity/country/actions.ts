@@ -5,6 +5,7 @@ import countryCtrl from '@/lib/entity/country/controller'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -38,10 +39,15 @@ export async function createCountry(prevState: State, formData: FormData) {
   try {
     // Create the country
     await countryCtrl.create({ params: validatedFields.data })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'country',
       slug: [`/dashboard/countries`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -77,10 +83,15 @@ export async function updateCountry(
       filters: id,
       params: validatedFields.data,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'country',
       slug: [`/dashboard/countries`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
@@ -94,8 +105,13 @@ export async function deleteCountry(id: string) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
   await countryCtrl.delete({ filters: [id] })
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'country',
     slug: [`/dashboard/countries`],
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }

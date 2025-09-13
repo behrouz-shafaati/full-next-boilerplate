@@ -161,7 +161,13 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
     const [inputValue, setInputValue] = React.useState('')
     const [tagCount, setTagCount] = React.useState(Math.max(0, tags.length))
     const inputRef = React.useRef<HTMLInputElement>(null)
-
+    const filteredAutocompleteOptions = useMemo(() => {
+      return (autocompleteOptions || []).filter((option) =>
+        option.text
+          .toLowerCase()
+          .includes(inputValue ? inputValue.toLowerCase() : '')
+      )
+    }, [inputValue, autocompleteOptions])
     if (
       (maxTags !== undefined && maxTags < 0) ||
       (props.minTags !== undefined && props.minTags < 0)
@@ -404,13 +410,13 @@ const TagInput = React.forwardRef<HTMLInputElement, TagInputProps>(
     // const filteredAutocompleteOptions = autocompleteFilter
     //   ? autocompleteOptions?.filter((option) => autocompleteFilter(option.text))
     //   : autocompleteOptions;
-    const filteredAutocompleteOptions = useMemo(() => {
-      return (autocompleteOptions || []).filter((option) =>
-        option.text
-          .toLowerCase()
-          .includes(inputValue ? inputValue.toLowerCase() : '')
-      )
-    }, [inputValue, autocompleteOptions])
+    // const filteredAutocompleteOptions = useMemo(() => {
+    //   return (autocompleteOptions || []).filter((option) =>
+    //     option.text
+    //       .toLowerCase()
+    //       .includes(inputValue ? inputValue.toLowerCase() : '')
+    //   )
+    // }, [inputValue, autocompleteOptions])
 
     const displayedTags = sortTags ? [...tags].sort() : tags
 

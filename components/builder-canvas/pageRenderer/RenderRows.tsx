@@ -36,6 +36,7 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
         if (row?.settings?.sticky || false) stickyClass = 'sticky top-0 z-50'
         return (
           <div
+            data-row
             key={row.id}
             style={{ ...computedStyles(row.styles) }}
             className={`grid grid-cols-12 gap-4 ${combineClassNames(
@@ -50,8 +51,10 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                 : `col-span-${col.width} md:col-span-${col.width}`
               return (
                 <div
+                  data-column
                   key={col.id}
-                  className={`flex relative ${classBaseOnResponsiveDesign} ${combineClassNames(
+                  //
+                  className={`relative  ${classBaseOnResponsiveDesign} ${combineClassNames(
                     col.classNames || {}
                   )} `}
                   style={{
@@ -59,14 +62,16 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                     ...computedStyles(col.settings),
                   }}
                 >
-                  {col.blocks.map((el: any, index: number) => (
-                    <RenderBlock
-                      key={el.id}
-                      item={el}
-                      editroMode={editroMode}
-                      {...contentProps}
-                    />
-                  ))}
+                  <div className="sticky top-16 ">
+                    {col.blocks.map((el: any, index: number) => (
+                      <RenderBlock
+                        key={el.id}
+                        item={el}
+                        editroMode={editroMode}
+                        {...contentProps}
+                      />
+                    ))}
+                  </div>
                 </div>
               )
             })}

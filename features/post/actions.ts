@@ -3,18 +3,15 @@
 import { z } from 'zod'
 import postCtrl from '@/features/post/controller'
 import { redirect } from 'next/navigation'
-import {
-  extractExcerptFromContentJson,
-  generateExcerpt,
-  generateUniquePostSlug,
-} from './utils'
+import { createPostHref, extractExcerptFromContentJson } from './utils'
 import { getSession } from '@/lib/auth'
 import { Option, Session, State } from '@/types'
 import tagCtrl from '../tag/controller'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
-import { PostTranslationSchema } from './interface'
+import { Post, PostTranslationSchema } from './interface'
 import categoryCtrl from '../category/controller'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -64,21 +61,24 @@ export async function createPost(prevState: State, formData: FormData) {
 
   try {
     const params = await sanitizePostData(validatedFields)
-    const cleanedParams = await generateUniquePostSlug(params)
+    const cleanedParams = await postCtrl.generateUniquePostSlug(params)
     const mainCategory = await categoryCtrl.findById({
       id: cleanedParams.mainCategory,
     })
     newPost = await postCtrl.create({
       params: cleanedParams,
     })
+    const post = await postCtrl.findById({ id: newPost.id })
     // Revalidate the path
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'post',
-      slug: [
-        `/${mainCategory.slug}/${cleanedParams?.slug}`,
-        `/dashboard/posts`,
-      ],
+      slug: [createPostHref(post as Post), `/dashboard/posts`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     console.log('#error in create post:', error)
     // Handle database error
@@ -127,7 +127,7 @@ export async function updatePost(
   }
   try {
     const params = await sanitizePostData(validatedFields, id)
-    const cleanedParams = await generateUniquePostSlug(params, id)
+    const cleanedParams = await postCtrl.generateUniquePostSlug(params, id)
     const mainCategory = await categoryCtrl.findById({
       id: cleanedParams.mainCategory,
     })
@@ -136,13 +136,15 @@ export async function updatePost(
       params: cleanedParams,
     })
     // Revalidate the path
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'post',
-      slug: [
-        `/${mainCategory.slug}/${cleanedParams?.slug}`,
-        `/dashboard/posts`,
-      ],
+      slug: [createPostHref(updatedPost as Post), `/dashboard/posts`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true, values }
   } catch (error) {
     return {
@@ -161,10 +163,15 @@ export async function deletePost(id: string) {
   }
   await postCtrl.delete({ filters: [id] })
   // Revalidate the path
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'post',
     slug: [`/dashboard/posts`],
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 async function sanitizePostData(validatedFields: any, id?: string | undefined) {

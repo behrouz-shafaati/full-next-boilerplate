@@ -43,7 +43,7 @@ export default function SortableItem({
       style={style}
       className={` mb-2 relative group/item ${activeClass}`}
     >
-      <div className="absolute -top-6 left-1/2 -translate-x-1/2 p-1 z-10 opacity-0 group-hover/item:opacity-100 transition-opacity flex flex-row">
+      <div className="absolute z-10 flex flex-row p-1 transition-opacity -translate-x-1/2 opacity-0 -top-6 left-1/2 group-hover/item:opacity-100">
         <Button
           type="button"
           variant="ghost"
@@ -54,10 +54,10 @@ export default function SortableItem({
             selectBlock(item)
           }}
         >
-          <Settings className="h-5 w-5 text-gray-500" />
+          <Settings className="w-5 h-5 text-gray-500" />
         </Button>
         <div {...listeners}>
-          <GripHorizontal className="h-5 w-5 ml-2 text-gray-400 cursor-grab" />
+          <GripHorizontal className="w-5 h-5 ml-2 text-gray-400 cursor-grab" />
         </div>
         <Button
           type="button"
@@ -66,11 +66,12 @@ export default function SortableItem({
           className="size-4"
           onClick={() => deleteItem(item.id)}
         >
-          <Trash className="h-5 w-5 text-gray-500" />
+          <Trash className="w-5 h-5 text-gray-500" />
         </Button>
       </div>
       <div className="block-wrapper [&_a]:pointer-events-none [&_a]:cursor-default [&_a]:text-muted-foreground">
         <Component
+          widgetName={block.label}
           blockData={item}
           onClick={(e: any) => {
             e.stopPropagation() // جلوگیری از propagate شدن به document

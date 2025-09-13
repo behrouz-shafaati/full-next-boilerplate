@@ -18,6 +18,46 @@ const nodes = {
     group: 'inline',
   },
 
+  listItem: {
+    content: 'paragraph block*', // یک پاراگراف و بعد بلوک‌های دیگر
+    defining: true,
+    parseDOM: [{ tag: 'li' }],
+    toDOM: () => ['li', 0],
+  },
+  list_item: {
+    content: 'paragraph block*', // یک پاراگراف و بعد بلوک‌های دیگر
+    defining: true,
+    parseDOM: [{ tag: 'li' }],
+    toDOM: () => ['li', 0],
+  },
+
+  bulletList: {
+    content: 'list_item+',
+    group: 'block',
+    parseDOM: [{ tag: 'ul' }],
+    toDOM: () => ['ul', 0],
+  },
+
+  orderedList: {
+    content: 'list_item+',
+    group: 'block',
+    attrs: { order: { default: 1 } },
+    parseDOM: [
+      {
+        tag: 'ol',
+        getAttrs(dom: any) {
+          return {
+            order: dom.hasAttribute('start') ? +dom.getAttribute('start') : 1,
+          }
+        },
+      },
+    ],
+    toDOM(node: any) {
+      return node.attrs.order === 1
+        ? ['ol', 0]
+        : ['ol', { start: node.attrs.order }, 0]
+    },
+  },
   image: {
     inline: true,
     attrs: { src: {}, alt: { default: null }, title: { default: null } },

@@ -320,8 +320,8 @@ class controller extends c_controller {
     return cleanParams
   }
 }
-
-export default new controller(new fileService(fileSchema))
+const fileCtrl = new controller(new fileService(fileSchema))
+export default fileCtrl
 
 export async function createDir(pathname: string) {
   const __dirname = path.resolve()

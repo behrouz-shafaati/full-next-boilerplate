@@ -10,6 +10,7 @@ import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { Template } from './interface'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -47,10 +48,15 @@ export async function createTemplate(prevState: State, formData: FormData) {
     newTemplate = await templateCtrl.create({
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -101,10 +107,15 @@ export async function updateTemplate(
       filters: id,
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
@@ -113,10 +124,15 @@ export async function updateTemplate(
 export async function deleteTemplate(id: string) {
   try {
     await templateCtrl.delete({ filters: [id] })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }

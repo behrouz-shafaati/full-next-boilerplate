@@ -97,6 +97,7 @@ export const BlogPostSlider = ({
               alt={translationImage?.alt || translationImage?.title}
               layout="fill"
               objectFit="cover"
+              unoptimized
             />
           </div>
           <div className="p-4">

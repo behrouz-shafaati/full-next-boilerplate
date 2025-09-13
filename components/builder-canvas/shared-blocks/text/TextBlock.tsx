@@ -5,6 +5,7 @@ import { Block } from '../../types'
 import { combineClassNames, computedStyles } from '../../utils/styleUtils'
 
 type TextBlockProps = {
+  widgetName: string
   blockData: {
     content: {
       text: string
@@ -20,7 +21,11 @@ type TextBlockProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const TextBlock = ({ blockData, ...props }: TextBlockProps) => {
+export const TextBlock = ({
+  widgetName,
+  blockData,
+  ...props
+}: TextBlockProps) => {
   const { content, settings } = blockData
 
   const tagMap: Record<string, ElementType> = {

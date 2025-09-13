@@ -21,7 +21,13 @@ export default function HorizontalCard({
     <Card className="w-full flex flex-col sm:flex-row overflow-hidden rounded-2xl shadow-sm break-inside-avoid">
       {imageUrl && (
         <div className="relative h-48 sm:h-auto sm:w-48 flex-shrink-0">
-          <Image src={imageUrl} alt={title} fill className="object-cover" />
+          <Image
+            src={imageUrl}
+            alt={title}
+            fill
+            className="object-cover"
+            unoptimized
+          />
         </div>
       )}
       <CardContent className="p-4 flex flex-col gap-3">

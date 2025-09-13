@@ -7,6 +7,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 type TextBlockProps = {
+  widgetName: string
   blockData: {
     content: {
       title: string
@@ -20,7 +21,11 @@ type TextBlockProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const ImageBlock = ({ blockData, ...props }: TextBlockProps) => {
+export const ImageBlock = ({
+  widgetName,
+  blockData,
+  ...props
+}: TextBlockProps) => {
   const { content, settings, styles } = blockData
   props.className = props?.className
     ? `${props?.className} w-full h-auto max-w-full`
@@ -38,6 +43,7 @@ export const ImageBlock = ({ blockData, ...props }: TextBlockProps) => {
         ...computedStyles(styles),
       }}
       {...props}
+      unoptimized
     />
   )
 

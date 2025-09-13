@@ -1,6 +1,6 @@
-'use server';
+'use server'
 // import { NextFunction, Request, Response } from "express";
-import fileCtrl from './controller';
+import fileCtrl from './controller'
 // import requestCtrl from "@entity/request/controller";
 // import express from "express";
 // import createDir from "@/utils/createDirectory";
@@ -63,16 +63,18 @@ import fileCtrl from './controller';
 // }
 
 // const sharp = require('sharp');
-import { FileDetailsPayload } from './interface';
+import { FileDetailsPayload } from './interface'
 
 export async function uploadFile(formData: FormData) {
-  return fileCtrl.saveFile(formData);
+  console.log('#234876 request to upload file')
+  return fileCtrl.saveFile(formData)
 }
 
 export async function updateFileDetails(filesDetails: FileDetailsPayload[]) {
-  return fileCtrl.updateFileDetails(filesDetails);
+  console.log('#234876 request to update File Details')
+  return fileCtrl.updateFileDetails(filesDetails)
 }
 
 export async function deleteFile(id: string) {
-  return fileCtrl.deleteFile(id);
+  return fileCtrl.deleteFile(id)
 }

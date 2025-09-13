@@ -8,6 +8,7 @@ import { AuthError } from 'next-auth'
 import { login } from '@/lib/auth'
 import { Option } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   firstName: z
@@ -112,10 +113,15 @@ export async function createUser(prevState: State, formData: FormData) {
       roles: roles.map((role) => role.value),
     }
     await userCtrl.create({ params: cleanedUserData })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
       slug: [`/dashboard/users`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -168,10 +174,15 @@ export async function updateUser(
       filters: id,
       params: cleanedUserData,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
       slug: [`/dashboard/users`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     console.log('#2776 error: ', error)
     return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' }
@@ -182,10 +193,15 @@ export async function updateUser(
 export async function deleteUser(id: string) {
   try {
     await userCtrl.delete({ filters: [id] })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
       slug: [`/dashboard/users`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' }
   }

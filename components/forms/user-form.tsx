@@ -71,7 +71,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
         title: '',
         description: state.message,
       })
-  }, [state])
+  }, [state, toast])
 
   return (
     <>

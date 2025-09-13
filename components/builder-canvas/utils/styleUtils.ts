@@ -54,7 +54,9 @@ export const getVisibilityClass = (
   options?: { display?: string }
 ) => {
   const { mobile = true, tablet = true, desktop = true } = visibility || {}
-  const display = options?.display || 'grid' // پیش‌فرض نمایش همه جا grid
+
+  //مقدار پیش فرض زیر گرید بود که باعث میشد صفحه از عرض سریز کنه برای همین block‌ جایگزین آن شد
+  const display = options?.display || 'block' // پیش‌فرض نمایش همه جا block
 
   const classList: string[] = []
 

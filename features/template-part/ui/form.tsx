@@ -44,9 +44,11 @@ export const Form: React.FC<TemplatePartFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
-  const title = TemplatePart ? 'ویرایش قالب' : 'افزودن قالب'
-  const description = TemplatePart ? 'ویرایش قالب' : 'افزودن قالب'
-  const toastMessage = TemplatePart ? 'قالب بروزرسانی شد' : 'قالب اضافه شد'
+  const title = TemplatePart ? 'ویرایش قطعه قالب' : 'افزودن قطعه قالب'
+  const description = TemplatePart ? 'ویرایش قطعه قالب' : 'افزودن قطعه قالب'
+  const toastMessage = TemplatePart
+    ? 'قطعه قالب بروزرسانی شد'
+    : 'قطعه قالب اضافه شد'
   const action = TemplatePart ? 'ذخیره تغییرات' : 'ذخیره'
 
   console.log('#299 TemplatePart:', TemplatePart?.content.rows)

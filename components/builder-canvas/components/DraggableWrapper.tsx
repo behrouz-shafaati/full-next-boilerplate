@@ -26,7 +26,7 @@ export default function DraggableWrapper({
       {...listeners}
       {...attributes}
       style={style}
-      className="cursor-grab rounded bg-blue-100 p-2 text-center"
+      className="cursor-grab rounded bg-blue-100 dark:bg-blue-950 p-2 text-center"
     >
       {label}
     </div>

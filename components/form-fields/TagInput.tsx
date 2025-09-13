@@ -59,10 +59,18 @@ export default function TagInput({
   const [activeTagIndex, setActiveTagIndex] = useState<number | null>(null)
   const [suggestions, setSuggestions] = useState<Tag[]>([])
   const [inputValue, setInputValue] = useState<string>('')
+
+  const debouncedSearch = useDebouncedCallback(async (q: string) => {
+    if (!fetchOptions) return
+    if (q.length === 0) return
+    const result = await fetchOptions?.(q)
+    setSuggestions(result.map((item) => ({ text: item.label, id: item.value })))
+  }, 300)
+
   useEffect(() => {
     if (fetchOptions) debouncedSearch(inputValue)
     return () => debouncedSearch.cancel()
-  }, [inputValue])
+  }, [inputValue, debouncedSearch, fetchOptions])
   useEffect(() => {
     if (fixedSuggestions) {
       setSuggestions(
@@ -71,12 +79,6 @@ export default function TagInput({
     }
   }, [fixedSuggestions])
 
-  const debouncedSearch = useDebouncedCallback(async (q: string) => {
-    if (!fetchOptions) return
-    if (q.length === 0) return
-    const result = await fetchOptions?.(q)
-    setSuggestions(result.map((item) => ({ text: item.label, id: item.value })))
-  }, 300)
   if (!display) return null
   const errorMessages = state?.errors?.[name] ?? []
   const hasError = state?.errors?.[name]?.length > 0

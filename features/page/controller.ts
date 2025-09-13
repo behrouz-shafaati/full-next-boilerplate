@@ -74,6 +74,7 @@ class controller extends baseController {
       filters: { type: 'site-settings' },
     })
     console.log('#2346 settings.data: ', settings.data[0])
+    if (!settings.data[0]?.homePageId) return null
     const homePage = await this.findById({ id: settings.data[0].homePageId })
     console.log('#2346 HomePage: ', homePage)
     return homePage

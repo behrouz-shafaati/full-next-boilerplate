@@ -7,6 +7,7 @@ import { Session, State } from '@/types'
 import { Tag, TagTranslationSchema } from './interface'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -81,10 +82,15 @@ export async function createTag(prevState: State, formData: FormData) {
     // Create the tag
     await tagCtrl.create({ params })
     // Revalidate the path
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'tag',
       slug: [`/dashboard/tags`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     console.log('#2345 error:', error)
     // Handle database error
@@ -125,10 +131,15 @@ export async function updateTag(
       filters: id,
       params: validatedFields.data,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'tag',
       slug: [`/dashboard/tags`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی برچسب ناموفق بود.', values }
   }
@@ -138,10 +149,15 @@ export async function updateTag(
 export async function deleteTag(id: string) {
   try {
     await tagCtrl.delete({ filters: [id] })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'tag',
       slug: [`/dashboard/tags`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف برچسب ناموفق بود' }
   }

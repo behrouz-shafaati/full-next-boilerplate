@@ -5,6 +5,7 @@ import shippingAddressCtrl from './controller'
 import { redirect } from 'next/navigation'
 import { State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   name: z.string({}).min(1, { message: 'لطفا نام تحویل گیرنده را وارد کنید.' }),
@@ -46,10 +47,15 @@ export async function createShippingAddress(
   try {
     // Create the shippingAddress
     await shippingAddressCtrl.create({ params: validatedFields.data })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'shippingAddress',
       slug: [`/dashboard/users/${userId}/edit/addresses`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -86,10 +92,15 @@ export async function updateShippingAddress(
       filters: id,
       params: validatedFields.data,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'shippingAddress',
       slug: [`/dashboard/users/${userId}/edit/addresses`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: بروزرسانی آدرس ناموفق بود.' }
   }
@@ -103,8 +114,13 @@ export async function deleteShippingAddress(id: string) {
     return { message: 'خطای پایگاه داده: حذف آدرس ناموفق بود' }
   }
   await shippingAddressCtrl.delete({ filters: [id] })
-  //  revalidatePathCtrl.revalidate({
-  //       feature: 'shippingAddress',
-  //       slug: [`/dashboard/users/${userId}/edit/addresses`],
-  //     })
+  // const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+  //     feature: 'shippingAddress',
+  //     slug: [`/dashboard/users/${userId}/edit/addresses`],
+  //   })
+
+  //   for (const slug of pathes) {
+  //     // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+  //     revalidatePath(slug)
+  //   }
 }

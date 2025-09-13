@@ -81,20 +81,17 @@ export const Autocomplete: React.FC<AutocompleteProps> = ({
     }
   }, [isPopoverOpen])
 
-  const handleOpenChange = useCallback(
-    (open: boolean) => {
-      if (open && triggerContainerRef.current) {
-        const { width } = triggerContainerRef.current.getBoundingClientRect()
-        setPopoverWidth(width)
-      }
-      console.log('#2387 open: ', open)
-      if (open) {
-        inputRef.current?.focus()
-        setIsPopoverOpen(open)
-      }
-    },
-    [inputFocused]
-  )
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (open && triggerContainerRef.current) {
+      const { width } = triggerContainerRef.current.getBoundingClientRect()
+      setPopoverWidth(width)
+    }
+    console.log('#2387 open: ', open)
+    if (open) {
+      inputRef.current?.focus()
+      setIsPopoverOpen(open)
+    }
+  }, [])
 
   const handleInputFocus = (
     event:

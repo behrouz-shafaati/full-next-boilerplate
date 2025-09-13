@@ -52,7 +52,7 @@ const RenderBlock = ({
             className={`${className} ${combineClassNames(
               item.classNames || {}
             )}`}
-            {...rest} // 👈 همه content_n به صورت داینامیک پاس داده میشه
+            {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
           />
         )
       }

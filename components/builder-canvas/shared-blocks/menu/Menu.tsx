@@ -16,10 +16,11 @@ import { useState } from 'react'
 import { extractColorClasses } from '../../utils/styleUtils'
 
 interface MainMenuProps {
+  widgetName: string
   menu: MenuType
 }
 
-function Menu({ menu, ...props }: MainMenuProps) {
+function Menu({ widgetName, menu, ...props }: MainMenuProps) {
   menu.translations = menu?.translations || []
 
   const locale = 'fa'
@@ -31,9 +32,9 @@ function Menu({ menu, ...props }: MainMenuProps) {
 
   return (
     <nav {...props}>
-      <div className="container mx-auto flex items-center justify-between p-4">
+      <div className="container flex items-center justify-between p-4 mx-auto">
         {/* دسکتاپ */}
-        <nav className="hidden md:flex gap-6">
+        <nav className="hidden gap-6 md:flex">
           {items?.map((item) => {
             console.log('$--0089 item:', item)
             return (
@@ -51,7 +52,7 @@ function Menu({ menu, ...props }: MainMenuProps) {
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
-                <MenuIcon className="h-5 w-5" />
+                <MenuIcon className="w-5 h-5" />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="p-4 overflow-y-auto">
@@ -71,7 +72,7 @@ export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
   // console.log('#234897 props in menu:', className)
   if (!hasSubMenu) {
     return item.url ? (
-      <Link href={item.url} className="hover:text-blue-600 px-2 py-1 block">
+      <Link href={item.url} className="block px-2 py-1 hover:text-blue-600">
         {item.label}
       </Link>
     ) : (
@@ -83,10 +84,10 @@ export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
     <div className={`relative group transition-all`}>
       <Link
         href={item.url}
-        className="flex items-center gap-1 hover:text-blue-600 px-2 py-1"
+        className="flex items-center gap-1 px-2 py-1 hover:text-blue-600"
       >
         {item.label}
-        <ChevronDown className="h-4 w-4" />
+        <ChevronDown className="w-4 h-4" />
       </Link>
 
       {/* زیرمنو با hidden و group-hover:block */}
@@ -101,7 +102,7 @@ export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
               <Link
                 key={sub.id}
                 href={sub.url}
-                className="px-4 py-2 hover:bg-gray-100 whitespace-nowrap block"
+                className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
               >
                 {sub.label}
               </Link>
@@ -143,15 +144,15 @@ function MobileMenuItem({ item }: { item: MenuItem }) {
             onClick={() => setOpen(!open)}
           >
             {open ? (
-              <ChevronDown className="h-3 w-3" />
+              <ChevronDown className="w-3 h-3" />
             ) : (
-              <ChevronLeft className="h-3 w-3" />
+              <ChevronLeft className="w-3 h-3" />
             )}
           </button>
         )}
       </div>
       {hasSubMenu && open && (
-        <div className="ml-4 mt-1 flex flex-col gap-1">
+        <div className="flex flex-col gap-1 mt-1 ml-4">
           <MobileMenuList items={item.subMenu!} />
         </div>
       )}

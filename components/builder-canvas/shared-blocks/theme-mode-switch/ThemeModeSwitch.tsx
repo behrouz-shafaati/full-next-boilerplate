@@ -12,8 +12,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { computedStyles } from '../../utils/styleUtils'
+import { Block } from '../../types'
 
 type props = {
+  widgetName: string
   blockData: {
     content: {}
     type: 'userNav'
@@ -21,7 +23,11 @@ type props = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export default function ThemeModeSwitch({ blockData, ...props }: props) {
+export default function ThemeModeSwitch({
+  widgetName,
+  blockData,
+  ...props
+}: props) {
   const { setTheme } = useTheme()
 
   return (

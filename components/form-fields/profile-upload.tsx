@@ -106,6 +106,7 @@ export default function ProfileUpload({
             className={clsx(
               'h-full w-full cursor-pointer rounded-md object-contain shadow-sm'
             )}
+            unoptimized
           />
         </div>
         <div className="flex flex-row gap-2">

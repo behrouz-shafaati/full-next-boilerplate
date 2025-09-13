@@ -163,7 +163,7 @@ export default function Builder({
   useEffect(() => {
     if (initialContent) setContent(initialContent)
     else resetContent()
-  }, [initialContent])
+  }, [setContent, resetContent, initialContent])
 
   const submitManually = () => {
     if (formRef.current) {
@@ -177,15 +177,15 @@ export default function Builder({
         collisionDetection={pointerWithin}
         onDragStart={handleDragStart}
       >
-        <div className="flex  h-screen w-full ">
+        <div className="flex w-full h-screen ">
           {/* نوار ابزار */}
-          <aside className="relative h-screen w-80 shrink-0 bg-slate-50 dark:bg-slate-950 overflow-y-auto overflow-x-hidden ">
+          <aside className="relative h-screen overflow-x-hidden overflow-y-auto w-80 shrink-0 bg-slate-50 dark:bg-slate-950 ">
             <ToolsSection
               settingsPanel={settingsPanel}
               savePage={submitManually}
               newBlocks={newBlocks}
             />
-            <div className="sticky bottom-0 flex w-full flex-row gap-2 bg-slate-100 dark:bg-slate-900 p-2">
+            <div className="sticky bottom-0 flex flex-row w-full gap-2 p-2 bg-slate-100 dark:bg-slate-900">
               <form action={submitFormHandler} ref={formRef}>
                 <textarea readOnly name={name} value={getJson()} hidden />
                 <SubmitButton />
@@ -203,9 +203,9 @@ export default function Builder({
             </div>
           </aside>
           {/* ناحیه ساخت صفحه */}
-          <div className="h-screen w-0 -z-50 "></div>
+          <div className="w-0 h-screen -z-50 "></div>
           <div
-            className="h-screen flex-1 overflow-y-auto rtl:pr-10 ltr:pl-10 py-8"
+            className="flex-1 h-screen py-8 overflow-y-auto rtl:pr-10 ltr:pl-10"
             onClick={() => {
               deselectBlock()
             }}
@@ -226,11 +226,13 @@ export default function Builder({
             <Button
               type="button"
               onClick={addRow}
-              className="mt-10 w-full rounded px-4 py-2 text-white"
+              className="w-full px-4 py-2 mt-10 text-white rounded"
             >
               افزودن ردیف
             </Button>
-            {/* <code className="ltr">{getJson()}</code> */}
+            {/* <div className="p-4 ltr bg-slate-300">
+              <code>{getJson()}</code>
+            </div> */}
           </div>
         </div>
       </DndContext>

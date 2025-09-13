@@ -2,6 +2,9 @@
 
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list'
+import ListItem from '@tiptap/extension-list-item'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Direction from './extensions/extension-direction'
@@ -56,6 +59,9 @@ export default function TiptapEditor({
       StarterKit.configure({
         heading: false, // 👈 اینجا heading داخل StarterKit رو خاموش کن
       }),
+      BulletList,
+      OrderedList,
+      ListItem,
       Image,
       Link.configure({
         openOnClick: false,
@@ -115,11 +121,11 @@ export default function TiptapEditor({
   }
   return (
     <div className="grid grid-cols-12 gap-4">
-      <div className="col-span-10">
+      <div className="col-span-12 md:col-span-10">
         <textarea
           value={content}
           name={name}
-          className="w-full ltr hidden"
+          className="hidden w-full ltr"
           read-only="true"
           onChange={() => {}}
         />
@@ -138,16 +144,18 @@ export default function TiptapEditor({
           />
         </div>
       </div>
-      <div className="col-span-2">
-        <FileUpload
-          name={`${name}Files`}
-          title="رسانه های مطلب"
-          responseHnadler={responseFileUploadHandler}
-          ref={fileUploadRef}
-          showDeleteButton={false}
-          defaultValues={defaultFiles}
-          {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
-        />
+      <div className="col-span-12  md:col-span-2">
+        <div className="sticky top-0 z-10">
+          <FileUpload
+            name={`${name}Files`}
+            title="رسانه های مطلب"
+            responseHnadler={responseFileUploadHandler}
+            ref={fileUploadRef}
+            showDeleteButton={false}
+            defaultValues={defaultFiles}
+            {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
+          />
+        </div>
       </div>
     </div>
   )

@@ -1,12 +1,14 @@
 'use client'
 // کامپوننت نمایشی بلاک
 import React, { useEffect, useState } from 'react'
-import { PageBlock } from '../../types'
+import { Block } from '../../types'
 import { BlogPostSlider } from './BlogPostSlider'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
+import EmptyBlock from '../../components/EmptyBlock'
 
 type BlogPostSliderBlockProps = {
+  widgetName: string
   blockData: {
     id: string
     type: 'blogPostSlider'
@@ -20,10 +22,11 @@ type BlogPostSliderBlockProps = {
       autoplay: boolean
       autoplayDelay: number
     }
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function BlogPostSliderBlockEditor({
+  widgetName,
   blockData,
   ...props
 }: BlogPostSliderBlockProps) {
@@ -46,5 +49,7 @@ export default function BlogPostSliderBlockEditor({
 
     fetchData()
   }, [content])
+  if (posts.length == 0)
+    return <EmptyBlock widgetName={widgetName} {...props} />
   return <BlogPostSlider posts={posts} blockData={blockData} {...props} />
 }

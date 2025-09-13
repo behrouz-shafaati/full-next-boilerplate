@@ -1,42 +1,11 @@
-import { slugify } from '@/lib/utils'
-import postCtrl from './controller'
 const jalaali = require('jalaali-js')
 import readingTime from 'reading-time'
+import { Category } from '../category/interface'
+import { Post } from './interface'
 
 /**
  * تولید اسلاگ یکتا با بررسی دیتابیس
  */
-export async function generateUniquePostSlug(
-  params: { slug: string; title: string },
-  postId: string = ''
-): Promise<object> {
-  console.log('#237s8 params: ', params)
-  const baseSlug =
-    params.slug != '' && params.slug != null
-      ? slugify(params.slug)
-      : slugify(params.title)
-  console.log('#237s8 baseSlug: ', baseSlug)
-  // if it is update and slug doesn't change remove slug from parameters
-  if (postId !== '') {
-    const findedPostBySlug = await postCtrl.findOne({
-      filters: { slug: baseSlug },
-    })
-    if (findedPostBySlug && findedPostBySlug.id == postId) {
-      const { slug, ...rest } = params
-      return rest
-    }
-  }
-
-  // if it is new post need to generate new slug
-  let slug = baseSlug
-  let count = 1
-  while (await postCtrl.existSlug(slug)) {
-    slug = `${baseSlug}-${count}`
-    count++
-  }
-
-  return { ...params, slug }
-}
 
 export function generateExcerpt(content: string, wordCount = 20): string {
   return content.split(' ').slice(0, wordCount).join(' ') + '...'
@@ -125,4 +94,19 @@ export function timeAgo(createdAt: string): string {
       return `${years} سال و ${remainingMonths} ماه قبل`
     }
   }
+}
+
+export function createPostHref(post: Post) {
+  const categorySection: string = createPostCategorysHref(
+    post.mainCategory as Category
+  )
+  return `/${categorySection}${post.slug}`
+}
+
+function createPostCategorysHref(category: Category, href: string = '') {
+  if (!category) return href
+  return createPostCategorysHref(
+    category?.parent,
+    (href = `${category.slug}/${href}`)
+  )
 }

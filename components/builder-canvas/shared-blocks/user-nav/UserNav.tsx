@@ -14,7 +14,9 @@ import {
 import { User } from '@/lib/entity/user/interface'
 import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
+import { useRouter } from 'next/navigation'
 type props = {
+  widgetName: string
   user: User
   blockData: {
     content: {}
@@ -23,7 +25,8 @@ type props = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement>
 
-export function UserNav({ blockData, user, ...props }: props) {
+export function UserNav({ widgetName, blockData, user, ...props }: props) {
+  const router = useRouter()
   const { content, settings, styles } = blockData || {}
   if (user) {
     return (
@@ -35,8 +38,8 @@ export function UserNav({ blockData, user, ...props }: props) {
       >
         <DropdownMenu dir="rtl">
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative h-8 w-8 rounded-full">
-              <Avatar className="h-8 w-8">
+            <Button variant="ghost" className="relative w-8 h-8 rounded-full">
+              <Avatar className="w-8 h-8">
                 <AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
                 <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
               </Avatar>
@@ -53,7 +56,11 @@ export function UserNav({ blockData, user, ...props }: props) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                داشبورد
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              {/* <DropdownMenuItem>
                 پروفایل
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
@@ -64,13 +71,13 @@ export function UserNav({ blockData, user, ...props }: props) {
               <DropdownMenuItem>
                 تنظیمات
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              </DropdownMenuItem> */}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 
             <DropdownMenuItem>
               <form
-                className="w-full flex  top-0 left-0 h-full"
+                className="top-0 left-0 flex w-full h-full"
                 action={async () => {
                   await fetch('/api/logout', {
                     method: 'POST',
@@ -78,7 +85,7 @@ export function UserNav({ blockData, user, ...props }: props) {
                   window.location.href = '/login' // یا هر صفحه‌ای که می‌خوای
                 }}
               >
-                <button className="w-full h-full flex">
+                <button className="flex w-full h-full">
                   خروج <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
                 </button>
               </form>

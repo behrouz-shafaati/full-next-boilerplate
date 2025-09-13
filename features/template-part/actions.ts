@@ -1,6 +1,7 @@
 'use server'
 
 import { z } from 'zod'
+import { revalidatePath } from 'next/cache'
 import templatePartCtrl from '@/features/template-part/controller'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
@@ -47,13 +48,19 @@ export async function createTemplatePart(prevState: State, formData: FormData) {
     newTemplatePart = await templatePartCtrl.create({
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'templatePart',
       slug: [
         `/${cleanedParams?.slug || params.slug}`,
         `/dashboard/template-parts`,
       ],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     // Handle database error
     if (error instanceof z.ZodError) {
@@ -64,7 +71,7 @@ export async function createTemplatePart(prevState: State, formData: FormData) {
       }
     }
     return {
-      message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
+      message: 'خطای پایگاه داده: ایجاد قطعه قالب ناموفق بود.',
       success: false,
       values,
     }
@@ -97,22 +104,28 @@ export async function updateTemplatePart(
     const params = await sanitizeTemplatePartData(validatedFields)
 
     const cleanedParams = await generateUniqueTemplatePartSlug(params, id)
-    let revalidatePath = [`/${cleanedParams?.slug || params.slug}`]
+    let varRevalidatePath = [`/${cleanedParams?.slug || params.slug}`]
     // if is home TemplatePart so revalidate home TemplatePart
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings.id === id) revalidatePath = [...revalidatePath, '/']
+    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath, '/']
     await templatePartCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
     })
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'templatePart',
-      slug: [...revalidatePath, `/dashboard/template-parts`],
+      slug: [...varRevalidatePath, `/dashboard/template-parts`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
-    return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
+    console.log('#234089 update error:', error)
+    return { message: 'خطای پایگاه داده: بروزرسانی قطعه قالب ناموفق بود.' }
   }
 }
 
@@ -120,13 +133,19 @@ export async function deleteTemplatePart(id: string) {
   try {
     await templatePartCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
+    console.log('#234089 delete error:', error)
+    return { message: 'خطای پایگاه داده: حذف قطعه قالب ناموفق بود' }
   }
   await templatePartCtrl.delete({ filters: [id] })
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'templatePart',
     slug: [`/dashboard/template-parts`],
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 export async function getAllTemplateParts() {

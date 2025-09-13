@@ -19,7 +19,7 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
   const jalaliDate = formatToJalali(post.createdAt)
   // تبدیل contentJson به متن ساده
   const json = JSON.parse(translation?.contentJson)
-  console.log('#3387 post content: ', json)
+  console.log('#3387 post content: ', post)
   const plainText =
     json.content
       ?.filter((block: any) => block.type === 'paragraph')
@@ -42,6 +42,7 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
             alt={post?.image?.alt}
             fill
             className="object-contain"
+            unoptimized
           />
         </div>
       )}

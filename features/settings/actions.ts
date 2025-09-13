@@ -4,6 +4,7 @@ import { z } from 'zod'
 import settingsCtrl from '@/features/settings/controller'
 import { Session, State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
+import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
@@ -40,10 +41,15 @@ export async function updateSettings(prevState: State, formData: FormData) {
       options: { upsert: true }, // اگر نبود، بساز
     })
     // Revalidate the path
-    revalidatePathCtrl.revalidate({
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'settings',
       slug: [`/`],
     })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
 
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
@@ -62,10 +68,15 @@ export async function deleteSettings(id: string) {
   }
   await settingsCtrl.delete({ filters: [id] })
   // Revalidate the path
-  revalidatePathCtrl.revalidate({
+  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'settings',
     slug: [`/dashboard/settingss`],
   })
+
+  for (const slug of pathes) {
+    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+    revalidatePath(slug)
+  }
 }
 
 async function sanitizeSettingsData(validatedFields: any) {

@@ -38,16 +38,16 @@ export default function Combobox({
     label: '',
   }
   options = options
-  if (defaultValue)
-    for (let j = 0; j < options.length; j++) {
-      if (defaultValue === options[j].value) {
-        defaultSelectedOption = options[j]
-      }
-    }
-  const [selectedOption, setSelectedOption] = useState(defaultSelectedOption)
+
+  const [selectedOption, setSelectedOption] = useState(null)
 
   useEffect(() => {
-    let value = selectedOption.value
+    if (defaultValue)
+      for (let j = 0; j < options.length; j++) {
+        if (defaultValue === options[j].value) {
+          setSelectedOption(options[j])
+        }
+      }
   }, [selectedOption])
   return (
     <div className="mb-4">
@@ -55,13 +55,14 @@ export default function Combobox({
         {title}
       </label>
       <div className="relative">
-        <input type="hidden" name={name} value={selectedOption.value} />
+        <input type="hidden" name={name} value={selectedOption?.value} />
         <div className=" top-16">
           <ComboboxInput
             title={title}
             placeholder={placeholder || 'انتخاب کنید'}
             options={options}
-            value={selectedOption.value}
+            value={selectedOption?.value}
+            // value={selectedOption.value}
             onChange={(option) => {
               setSelectedOption(option)
               if (onChange) onChange({ target: option })

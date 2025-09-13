@@ -14,6 +14,8 @@ export function TailwindBgColorWidget({ value, onChange }: any) {
       value: className,
     })
   )
+  console.log('#default value: ', value)
+  console.log('#patternTypeOptions: ', patternTypeOptions)
   return (
     <Combobox
       title=""

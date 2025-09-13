@@ -1,7 +1,6 @@
 import categoryCtrl from '@/features/category/controller'
 import pageCtrl from '@/features/page/controller'
 import postCtrl from '@/features/post/controller'
-import { revalidatePath } from 'next/cache'
 
 export type RevalidatePathProp = {
   feature:
@@ -22,73 +21,59 @@ export type RevalidatePathProp = {
 }
 
 class controller {
-  async revalidateAllPagesPaths() {
-    const pageSlugs = await pageCtrl.getAllSlugs()
-    pageSlugs.forEach(({ slug }) => {
-      revalidatePath(slug)
-    })
+  async getAllPagesPaths() {
+    return (await pageCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
-  async revalidateAllPostsPaths() {
-    const postSlugs = await postCtrl.getAllSlugs()
-    postSlugs.forEach(({ slug }) => {
-      revalidatePath(slug)
-    })
+  async getAllPostsPaths() {
+    return (await postCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
-  async revalidateBlogPath() {
-    revalidatePath('blog')
+  async getBlogPath() {
+    return ['blog']
   }
 
-  async revalidateAllCategoriessPaths() {
-    const categorySlugs = await categoryCtrl.getAllSlugs()
-    categorySlugs.forEach(({ slug }) => {
-      revalidatePath(slug)
-    })
+  async getAllCategoriessPaths() {
+    return (await categoryCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
   async revalidateAllPaths() {
-    await this.revalidateAllPagesPaths()
-    await this.revalidateAllPostsPaths()
-    await this.revalidateAllCategoriessPaths()
+    return [
+      ...(await this.getAllPagesPaths()),
+      ...(await this.getAllPostsPaths()),
+      ...(await this.getAllCategoriessPaths()),
+      ...(await this.getBlogPath()),
+    ]
   }
 
-  async revalidate(revalidate: RevalidatePathProp) {
-    if (!revalidate) return
+  async getAllPathesNeedRevalidate(
+    revalidate: RevalidatePathProp
+  ): Promise<string[]> {
+    if (!revalidate) return []
+    let pathes = []
     console.log('#7677 in revalidate:', revalidate)
     const { feature, slug } = revalidate
     if (Array.isArray(slug)) {
       for (const path of slug) {
         if (typeof path === 'string' && path.trim() !== '') {
-          revalidatePath(encodeURI(path))
+          pathes.push(encodeURI(path))
         }
       }
     } else if (typeof slug === 'string' && slug.trim() !== '') {
-      revalidatePath(encodeURI(slug))
+      pathes.push(encodeURI(slug))
     }
 
     switch (feature) {
       case 'post': {
-        this.revalidateBlogPath()
-        break
+        return [...(await this.getBlogPath()), ...pathes]
       }
-      case 'menu': {
-        this.revalidateAllPaths()
-        break
-      }
+      case 'menu':
       case 'category':
       case 'page':
-      case 'template': {
-        this.revalidateAllPaths()
-        break
-      }
-      case 'templatePart': {
-        this.revalidateAllPaths()
-        break
-      }
+      case 'template':
+      case 'templatePart':
       case 'settings': {
-        this.revalidateAllPaths()
-        break
+        return [...(await this.revalidateAllPaths()), ...pathes]
       }
       case 'tag':
       case 'city':
@@ -97,6 +82,7 @@ class controller {
       case 'shippingAddress':
       case 'user':
     }
+    return []
   }
 }
 

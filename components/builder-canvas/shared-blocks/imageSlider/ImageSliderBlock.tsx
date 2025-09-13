@@ -10,8 +10,10 @@ import Autoplay from 'embla-carousel-autoplay'
 import { FileDetails } from '@/lib/entity/file/interface'
 import LeftSliderButton from '@/components/ui/left-slider-button'
 import RightSliderButton from '@/components/ui/right-slider-button'
+import EmptyBlock from '../../components/EmptyBlock'
 
 type ImageSliderBlockProps = {
+  widgetName: string
   blockData: {
     content: [
       {
@@ -28,6 +30,7 @@ type ImageSliderBlockProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const ImageSliderBlock = ({
+  widgetName,
   blockData,
   ...props
 }: ImageSliderBlockProps) => {
@@ -47,6 +50,8 @@ export const ImageSliderBlock = ({
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'
 
+  if (content.length == 0)
+    return <EmptyBlock widgetName={widgetName} {...props} />
   const { onClick, ...restProps } = props
   const images = content.map((img: FileDetails, i: number) => {
     const imageElement = (
@@ -64,16 +69,17 @@ export const ImageSliderBlock = ({
         priority={i === 0}
         className="block w-full h-auto"
         {...props}
+        unoptimized
       />
     )
     return img.href ? (
-      <div className="min-w-full relative" key={i}>
+      <div className="relative min-w-full" key={i}>
         <Link href={img.href} target="_blank" rel="noopener noreferrer">
           {imageElement}
         </Link>
       </div>
     ) : (
-      <div className="min-w-full relative" key={i}>
+      <div className="relative min-w-full" key={i}>
         {imageElement}
       </div>
     )
