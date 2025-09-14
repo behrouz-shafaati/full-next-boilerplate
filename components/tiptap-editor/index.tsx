@@ -2,9 +2,6 @@
 
 import { useEditor, EditorContent, ReactNodeViewRenderer } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
-import BulletList from '@tiptap/extension-bullet-list'
-import OrderedList from '@tiptap/extension-ordered-list'
-import ListItem from '@tiptap/extension-list-item'
 import Image from '@tiptap/extension-image'
 import Link from '@tiptap/extension-link'
 import Direction from './extensions/extension-direction'
@@ -24,6 +21,12 @@ import { AdSlot } from './extensions/adSlot'
 import styles from './editor.module.css'
 import MenuBar from './menu-bar'
 import { CustomImage } from './extensions/CustomImage'
+import {
+  Accordion,
+  AccordionItem,
+  AccordionItemContent,
+  AccordionItemTitle,
+} from './extensions/Accordion'
 
 interface TiptapEditor {
   name: string
@@ -59,9 +62,6 @@ export default function TiptapEditor({
       StarterKit.configure({
         heading: false, // 👈 اینجا heading داخل StarterKit رو خاموش کن
       }),
-      BulletList,
-      OrderedList,
-      ListItem,
       Image,
       Link.configure({
         openOnClick: false,
@@ -87,6 +87,10 @@ export default function TiptapEditor({
       TableHeader,
       TableCell,
       AdSlot,
+      Accordion,
+      AccordionItem,
+      AccordionItemContent,
+      AccordionItemTitle,
     ],
     content: defaultContent,
     onUpdate({ editor }) {

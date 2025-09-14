@@ -120,20 +120,18 @@
   z-index: 20;
 }
 
-/* .editor table {
-  border-collapse: collapse;
-  width: 100%;
-  margin: 1rem 0;
+.tiptap-accordion-item {
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  overflow: hidden;
 }
-
-.editor th,
-.editor td {
-  border: 1px solid #ccc; // خطوط بین سلول‌ها 
-  padding: 8px;
-  text-align: center;
+.accordion-header {
+  background: #f9fafb;
 }
-
-.editor th {
-  background-color: #f3f4f6; // رنگ هدر 
-  font-weight: bold;
-} */
+.accordion-title:focus {
+  outline: none;
+}
+.accordion-body {
+  background: white;
+}

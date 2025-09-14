@@ -129,8 +129,75 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       })
       .run()
 
-  // برای تست می‌تونی بذاری روی window
   window.insertAdSlot = insertAdSlot
+
+  const insertAccordion = () =>
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'accordion',
+        content: [
+          {
+            type: 'accordionItem',
+            content: [
+              {
+                type: 'accordionItemTitle',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'عنوان اول' }],
+                  },
+                ],
+              },
+              {
+                type: 'accordionItemContent',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'محتوای اول' }],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'accordionItem',
+            content: [
+              {
+                type: 'accordionItemTitle',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'عنوان دوم' }],
+                  },
+                ],
+              },
+              {
+                type: 'accordionItemContent',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'محتوای دوم' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+      .run()
+
+  if (typeof window !== 'undefined') {
+    ;(window as any).insertAccordion = insertAccordion
+  }
+
+  // برای تست می‌تونی بذاری روی window
+  window.insertAccordion = insertAccordion
 
   const activeStates = {
     bold: editor.isActive('bold'),
@@ -293,6 +360,9 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
         </ToggleGroupItem>
         <ToggleGroupItem value="link" onClick={insertAdSlot}>
           افزودن تبلیغ
+        </ToggleGroupItem>
+        <ToggleGroupItem value="link" onClick={insertAccordion}>
+          افزودن آکاردیون
         </ToggleGroupItem>
       </ToggleGroup>
     </div>

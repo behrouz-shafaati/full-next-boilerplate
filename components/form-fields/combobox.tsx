@@ -55,7 +55,12 @@ export default function Combobox({
         {title}
       </label>
       <div className="relative">
-        <input type="hidden" name={name} value={selectedOption?.value} />
+        <input
+          type="hidden"
+          name={name}
+          value={selectedOption?.value ?? ''}
+          readOnly
+        />
         <div className=" top-16">
           <ComboboxInput
             title={title}

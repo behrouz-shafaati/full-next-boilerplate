@@ -2,7 +2,7 @@ export const textBlockSchema = {
   title: 'تنظیمات متن',
   type: 'object',
   properties: {
-    fontSize: { type: 'string', title: 'اندازه فونت', default: '16px' },
+    fontSize: { type: 'number', title: 'اندازه فونت', default: 16 },
     tag: {
       type: 'string',
       title: 'تگ',

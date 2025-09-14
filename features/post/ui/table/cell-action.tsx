@@ -50,8 +50,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           >
             <Edit className="ml-2 h-4 w-4" /> بروزرسانی
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => router.push(createPostHref(data))}>
-            <Eye className="ml-2 h-4 w-4" /> مشاهده
+          <DropdownMenuItem asChild>
+            <a
+              href={createPostHref(data)}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Eye className="ml-2 h-4 w-4" /> مشاهده
+            </a>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="ml-2 h-4 w-4" /> حذف

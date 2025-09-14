@@ -3,6 +3,55 @@ const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 import { Schema, DOMSerializer, Node as ProseNode } from 'prosemirror-model'
 
+export const accordionNodes = {
+  accordion: {
+    group: 'block',
+    content: 'accordionItems',
+    parseDOM: [{ tag: 'div[data-type="accordion"]' }],
+    toDOM: () => ['div', { 'data-type': 'accordion', class: 'accordion' }, 0],
+  },
+
+  accordionItems: {
+    content: 'accordionItem+',
+    parseDOM: [{ tag: 'div[data-type="accordion-items"]' }],
+    toDOM: () => [
+      'div',
+      { 'data-type': 'accordion-items', class: 'accordion-items' },
+      0,
+    ],
+  },
+
+  accordionItem: {
+    content: 'accordionItemTitle accordionItemContent',
+    parseDOM: [{ tag: 'div[data-type="accordion-item"]' }],
+    toDOM: () => [
+      'div',
+      { 'data-type': 'accordion-item', class: 'accordion-item' },
+      0,
+    ],
+  },
+
+  accordionItemTitle: {
+    content: 'inline*',
+    parseDOM: [{ tag: 'div[data-type="accordion-item-title"]' }],
+    toDOM: () => [
+      'div',
+      { 'data-type': 'accordion-item-title', class: 'accordion-title' },
+      0,
+    ],
+  },
+
+  accordionItemContent: {
+    content: 'block+',
+    parseDOM: [{ tag: 'div[data-type="accordion-item-content"]' }],
+    toDOM: () => [
+      'div',
+      { 'data-type': 'accordion-item-content', class: 'accordion-content' },
+      0,
+    ],
+  },
+}
+
 // 1. تعریف schema ساده بر اساس Tiptap StarterKit + image + link
 const nodes = {
   doc: { content: 'block+' },
@@ -180,6 +229,8 @@ const nodes = {
         colspan: node.attrs.colspan,
         rowspan: node.attrs.rowspan,
         colwidth: node.attrs.colwidth ? node.attrs.colwidth.join(',') : null,
+        class:
+          'border border-gray-300 dark:border-gray-700 px-3 py-2 text-gray-800 dark:text-gray-200',
       },
       0,
     ],
@@ -215,10 +266,13 @@ const nodes = {
         colspan: node.attrs.colspan,
         rowspan: node.attrs.rowspan,
         colwidth: node.attrs.colwidth ? node.attrs.colwidth.join(',') : null,
+        class:
+          'border border-gray-300 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 px-3 py-2 font-semibold text-gray-900 dark:text-gray-100',
       },
       0,
     ],
   },
+  ...accordionNodes,
 }
 
 const marks = {

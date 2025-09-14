@@ -32,11 +32,10 @@ function Menu({ widgetName, menu, ...props }: MainMenuProps) {
 
   return (
     <nav {...props}>
-      <div className="container flex items-center justify-between p-4 mx-auto">
+      <div className="container flex items-center justify-between px-4 mx-auto">
         {/* دسکتاپ */}
         <nav className="hidden gap-6 md:flex">
           {items?.map((item) => {
-            console.log('$--0089 item:', item)
             return (
               <MenuItemDesktop
                 key={item.id || item._id}
@@ -68,8 +67,6 @@ function Menu({ widgetName, menu, ...props }: MainMenuProps) {
 export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
   const hasSubMenu = item.subMenu && item.subMenu.length > 0
   const { className } = props
-
-  // console.log('#234897 props in menu:', className)
   if (!hasSubMenu) {
     return item.url ? (
       <Link href={item.url} className="block px-2 py-1 hover:text-blue-600">
@@ -97,12 +94,12 @@ export function MenuItemDesktop({ item, ...props }: { item: MenuItem }) {
         )}`}
       >
         <div className="flex flex-col">
-          {item.subMenu!.map((sub) =>
+          {item.subMenu!.map((sub, index) =>
             sub?.url ? (
               <Link
-                key={sub.id}
+                key={`Desktop${sub.id ?? index}`}
                 href={sub.url}
-                className="block px-4 py-2 hover:bg-gray-100 whitespace-nowrap"
+                className="block px-4 py-2 hover:opacity-70 whitespace-nowrap"
               >
                 {sub.label}
               </Link>
@@ -140,7 +137,7 @@ function MobileMenuItem({ item }: { item: MenuItem }) {
         </Link>
         {hasSubMenu && (
           <button
-            className="text-sm text-gray-500"
+            className="text-sm hover:opacity-70"
             onClick={() => setOpen(!open)}
           >
             {open ? (

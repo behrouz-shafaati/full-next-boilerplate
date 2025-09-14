@@ -37,6 +37,8 @@ export const computedStyles = (
         }px ${value?.y || 0}px ${value?.blur || 0}px ${value?.spread || 0}px ${
           value?.color || ''
         }`
+      } else if (key === 'fontSize') {
+        result.fontSize = `${value}px `
       } else {
         result[key] = value
       }

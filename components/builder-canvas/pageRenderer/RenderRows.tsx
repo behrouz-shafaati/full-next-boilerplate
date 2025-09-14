@@ -53,7 +53,6 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                 <div
                   data-column
                   key={col.id}
-                  //
                   className={`relative  ${classBaseOnResponsiveDesign} ${combineClassNames(
                     col.classNames || {}
                   )} `}
@@ -62,7 +61,16 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                     ...computedStyles(col.settings),
                   }}
                 >
-                  <div className="sticky top-16 ">
+                  <div
+                    //When the row is sticky don't need sticky column
+                    {...(!row?.settings?.sticky
+                      ? { className: 'sticky top-16 ' }
+                      : {})}
+                    style={{
+                      ...computedStyles(col.styles),
+                      ...computedStyles(col.settings),
+                    }}
+                  >
                     {col.blocks.map((el: any, index: number) => (
                       <RenderBlock
                         key={el.id}
