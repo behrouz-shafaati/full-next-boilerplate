@@ -13,6 +13,7 @@ import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createPostHref } from '../../utils'
+import Link from 'next/link'
 
 interface CellActionProps {
   data: Post
@@ -51,13 +52,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             <Edit className="ml-2 h-4 w-4" /> بروزرسانی
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <a
-              href={createPostHref(data)}
+            <Link
+              href={`/${createPostHref(data)}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Eye className="ml-2 h-4 w-4" /> مشاهده
-            </a>
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="ml-2 h-4 w-4" /> حذف

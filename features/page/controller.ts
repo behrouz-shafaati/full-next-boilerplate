@@ -35,15 +35,29 @@ class controller extends baseController {
       if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
-        filters.$expr = {
-          $regexMatch: {
-            input: {
-              $concat: ['$title', '$description'],
+        filters.$or = [
+          // سرچ روی slug
+          { slug: { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.title
+          { 'translations.title': { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.content
+          {
+            'translations.content': {
+              $regex: filters.query,
+              $options: 'i',
             },
-            regex: filters.query,
-            options: 'i',
           },
-        }
+          // سرچ روی translations.description
+          {
+            'translations.description': {
+              $regex: filters.query,
+              $options: 'i',
+            },
+          },
+        ]
+
         delete filters.query
       }
 
@@ -94,8 +108,7 @@ class controller extends baseController {
 
   async generateStaticParams() {
     const pageSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
-    const categorySlug = await categoryCtrl.getAllSlugs()
-    return [...pageSlugs, ...categorySlug]
+    return [...pageSlugs]
   }
 }
 

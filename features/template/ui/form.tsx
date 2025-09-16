@@ -27,7 +27,7 @@ interface TemplateFormProps {
 const defaultInitialValue = {
   title: '',
   type: 'template',
-  status: 'published',
+  status: 'active',
   rows: [],
 }
 
@@ -120,6 +120,7 @@ export const Form: React.FC<TemplateFormProps> = ({
             ? {
                 initialContent: {
                   ...Template.content,
+                  status: Template.status,
                 },
               }
             : { initialContent: { ...defaultValue } })}

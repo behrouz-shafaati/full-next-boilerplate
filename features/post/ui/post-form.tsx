@@ -10,7 +10,6 @@ import { Heading } from '@/components/ui/heading'
 import { useToast } from '../../../components/ui/use-toast'
 import { createPost, deletePost, updatePost } from '@/features/post/actions'
 import Text from '../../../components/form-fields/text'
-import { SubmitButton } from '../../../components/form-fields/submit-button'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
@@ -170,16 +169,6 @@ export const PostForm: React.FC<PostFormProps> = ({
             />
           </div>
 
-          <div className="col-span-3">
-            {/* contentJson */}
-            <TiptapEditor
-              name="contentJson"
-              defaultContent={
-                post ? JSON.parse(state?.values?.translation?.contentJson) : {}
-              }
-              onChangeFiles={submitManually}
-            />
-          </div>
           <div>
             {/* status */}
             <Select
@@ -251,8 +240,19 @@ export const PostForm: React.FC<PostFormProps> = ({
               onChange={submitManually}
             />
           </div>
+
+          <div className="col-span-3">
+            {/* contentJson */}
+            <TiptapEditor
+              name="contentJson"
+              defaultContent={
+                post ? JSON.parse(state?.values?.translation?.contentJson) : {}
+              }
+              onChangeFiles={submitManually}
+              showSubmitButton={true}
+            />
+          </div>
         </div>
-        <SubmitButton />
       </form>
     </>
   )

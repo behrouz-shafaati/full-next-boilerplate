@@ -4,6 +4,7 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { Post, PostTranslationSchema } from '../../interface'
 import Image from 'next/image'
 import { formatToJalali, getReadingTime, timeAgo } from '../../utils'
+import { getTranslation } from '@/lib/utils'
 
 type props = {
   locale?: string
@@ -12,11 +13,11 @@ type props = {
 }
 
 const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
-  const translation: PostTranslationSchema =
-    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
-    {}
+  const translation: PostTranslationSchema = getTranslation({
+    translations: post?.translations,
+  })
   const jalaliDate = formatToJalali(post.createdAt)
+  let imageCoverTranslation = {}
   // تبدیل contentJson به متن ساده
   const json = JSON.parse(translation?.contentJson)
   console.log('#3387 post content: ', post)
@@ -29,6 +30,10 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
       .join('\n') || ''
 
   const readingDuration = getReadingTime(plainText)
+  if (post?.image)
+    imageCoverTranslation = getTranslation({
+      translations: post?.image?.translations,
+    })
   return (
     <div className=" max-w-4xl m-auto text-justify">
       <div className="flex-1 space-y-4 p-5">
@@ -39,7 +44,8 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
         <div className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4">
           <Image
             src={post?.image?.src}
-            alt={post?.image?.alt}
+            alt={imageCoverTranslation?.alt}
+            title={imageCoverTranslation?.title}
             fill
             className="object-contain"
             unoptimized

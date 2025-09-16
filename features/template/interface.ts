@@ -30,7 +30,7 @@ type TemplateBase = {
   content: TemplateContent
   templateFor: [string]
 
-  status: 'draft' | 'published'
+  status: 'active' | 'deactive'
 }
 
 /**

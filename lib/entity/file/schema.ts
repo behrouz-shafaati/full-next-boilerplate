@@ -38,23 +38,16 @@ fileSchema.pre('find', function (next) {
   next()
 })
 
-fileSchema.set('toObject', {
-  transform: function (doc, ret, options) {
-    ret.id = ret._id.toHexString()
-    ret.extension = ret.mimeType.split('/')[1]
-    delete ret._id
-    delete ret.__v
-  },
-})
+const transform = (doc: any, ret: any, options: any) => {
+  ret.id = ret._id.toHexString()
+  ret.extension = ret.mimeType.split('/')[1]
+  delete ret._id
+  delete ret.__v
+  delete ret.deleted
+}
 
-fileSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
-    ret.id = ret._id.toHexString()
-    ret.extension = ret.mimeType.split('/')[1]
-    delete ret._id
-    delete ret.__v
-    delete ret.deleted
-  },
-})
+fileSchema.set('toObject', { transform })
+
+fileSchema.set('toJSON', { transform })
 
 export default mongoose.models?.file || model<SchemaFile>('file', fileSchema)

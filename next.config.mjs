@@ -5,6 +5,12 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'http',
+        hostname: 'localhost',
+        port: '3000',
+        pathname: '/uploads/images/**',
+      },
+      {
+        protocol: 'http',
         hostname: 'ali1354.ir',
         pathname: '/uploads/**',
       },

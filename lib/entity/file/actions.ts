@@ -75,6 +75,10 @@ export async function updateFileDetails(filesDetails: FileDetailsPayload[]) {
   return fileCtrl.updateFileDetails(filesDetails)
 }
 
+export async function getFiles(fileIds: string[]) {
+  return fileCtrl.findAll({ filters: { _id: { $in: fileIds } } })
+}
+
 export async function deleteFile(id: string) {
   return fileCtrl.deleteFile(id)
 }

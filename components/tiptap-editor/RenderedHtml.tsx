@@ -3,7 +3,10 @@ import parse, { DOMNode, Element } from 'html-react-parser'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AccordionRenderer } from './tiptap-renderers/AccordionRenderer'
-import { TNode } from './type'
+import { AccordionNode, TNode } from './type'
+import fileCtrl from '@/lib/entity/file/controller'
+import { getTranslation } from '@/lib/utils'
+import { File } from '@/lib/entity/file/interface'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -15,19 +18,35 @@ function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
   return out
 }
 
+// تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
+function collectFileIds(node: TNode | undefined, out: string[] = []): string[] {
+  if (!node) return out
+  if (node.type === 'image') out.push(node.attrs.id)
+  if (node.content && node.content.length) {
+    for (const child of node.content) collectFileIds(child, out)
+  }
+  return out
+}
+
 type Props = {
   contentJson: string
 }
 
-export default function RenderedHtml({ contentJson }: Props) {
+export default async function RenderedHtml({ contentJson }: Props) {
   // 1. JSON پارس شده (doc)
   const doc = JSON.parse(contentJson) as TNode
 
   // 2. همه آکاردئون‌ها را از JSON جمع می‌کنیم (ترتیب درخت)
-  const accordions = collectAccordions(doc)
+  const accordions: AccordionNode = collectAccordions(doc) as AccordionNode
 
   // شمارنده برای نگه داشتن هم‌پوشانی HTML <-> JSON
   let accordionIndex = 0
+
+  // 2. همه آکاردئون‌ها را از JSON جمع می‌کنیم (ترتیب درخت)
+  const fileIds: string[] = collectFileIds(doc)
+  const filesMap = await Promise.all(
+    fileIds.map((id) => fileCtrl.findById({ id }))
+  ).then((results) => results.reduce((acc, f) => ({ ...acc, [f.id]: f }), {}))
 
   // 3. HTML تولید شده (سرور) — مثل قبل
   const html = renderTiptapJsonToHtml(doc)
@@ -36,25 +55,35 @@ export default function RenderedHtml({ contentJson }: Props) {
     <div className="prose max-w-none">
       {parse(html, {
         replace(domNode) {
-          console.log(
-            '#234 domNode?.name: ',
-            domNode?.name,
-            " domNode.attribs?.['data-type']:",
-            domNode.attribs?.['data-type']
-          )
+          // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            const { src, alt } = domNode.attribs
-            return src ? (
-              <div className="relative w-full aspect-[2/1] my-4">
+            const { src, id: fileId } = domNode.attribs
+            if (!src) return null
+
+            const file = filesMap[fileId]
+            const translation = getTranslation({
+              translations: file?.translations,
+            })
+            return (
+              <figure className="relative w-full aspect-[2/1] my-4">
                 <Image
                   src={src}
-                  alt={alt || ''}
+                  alt={translation?.alt || translation?.title || ''}
+                  title={translation?.title || ''}
                   fill
-                  className="object-contain"
+                  className="object-contain rounded-lg"
                   unoptimized
                 />
-              </div>
-            ) : null
+                {/* Caption */}
+                {translation?.description && (
+                  <div className=" flex flex-row justify-center absolute bottom-2 w-full  text-center text-white dark:text-gray-900 text-sm md:text-base font-medium ">
+                    <figcaption className="bg-black/20 dark:bg-white/20 backdrop-blur-md w-fit px-4 py-3 rounded-xl">
+                      {translation.description}
+                    </figcaption>
+                  </div>
+                )}
+              </figure>
+            )
           }
 
           if (domNode instanceof Element && domNode.name === 'a') {
@@ -89,7 +118,6 @@ export default function RenderedHtml({ contentJson }: Props) {
             // می‌گیریم JSON متناظر را از آرایه‌ی قبلاً ساخته شده
             const accNode = accordions[accordionIndex++]
 
-            console.log('#234 accNode:', accNode)
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
             return <AccordionRenderer node={accNode} />
           }

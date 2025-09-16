@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -13,10 +13,9 @@ import {
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useRouter } from 'next/navigation'
 import { Category } from '@/features/category/interface'
-import { Option } from '@/types'
-import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import Combobox from '@/components/form-fields/combobox'
 import { getTemplates } from '../actions'
+import { getTemplateForOptions } from '../utils'
 
 type TemplateType = 'page' | 'category' | 'single' | 'home'
 
@@ -42,46 +41,7 @@ export default function CreateTemplateModal({
   const [confirmed, setConfirmed] = useState(false)
   const [loading, setLoading] = useState(false)
 
-  const categoryOptions: Option[] = allCategories.map((category: Category) => {
-    const translation: any =
-      category?.translations?.find((t: any) => t.lang === locale) ||
-      category?.translations[0] ||
-      {}
-
-    return {
-      value: String(category.id),
-      label:
-        'خانه دسته ' + createCatrgoryBreadcrumb(category, translation?.title),
-    }
-  })
-
-  const goalTemplateOptions = [
-    {
-      label: 'تمام صفحات',
-      value: 'allPages',
-    },
-    // {
-    //   label: 'صفحه نخست',
-    //   value: 'firstPage',
-    // },
-    {
-      label: 'خانه‌ی مقالات',
-      value: 'blog',
-    },
-    {
-      label: 'مقاله‌ی تکی',
-      value: 'post',
-    },
-    {
-      label: 'آرشیو مقالات',
-      value: 'archive',
-    },
-    {
-      label: 'هر دسته بندی',
-      value: 'categories',
-    },
-    ...categoryOptions,
-  ]
+  const goalTemplateOptions = getTemplateForOptions({ allCategories })
 
   const handleSelect = async (val: string) => {
     const section = val as TemplateType
@@ -103,6 +63,8 @@ export default function CreateTemplateModal({
     if (existsTemplate && !confirmed) {
       // هنوز تأیید نکرده
       setConfirmed(true)
+      // ✅ به صفحه ساز اجازه بده ادامه بده
+      onConfirm(templateFor)
       return
     }
     console.log('#234589766566 hndle templateFor: ', templateFor)
@@ -148,8 +110,8 @@ export default function CreateTemplateModal({
           <Alert variant="destructive" className="mt-4">
             <AlertTitle>توجه</AlertTitle>
             <AlertDescription>
-              برای این بخش قبلاً قالب ساخته شده. اگر ادامه دهید، قالب قبلی پاک
-              می‌شود.
+              برای این بخش قبلاً قالب ساخته شده. اگر ادامه دهید، قالب قبلی غیر
+              فعال می‌شود.
             </AlertDescription>
           </Alert>
         )}

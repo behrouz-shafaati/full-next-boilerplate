@@ -32,15 +32,22 @@ class controller extends baseController {
       if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
-        filters.$expr = {
-          $regexMatch: {
-            input: {
-              $concat: ['$label', '$description'],
+        filters.$or = [
+          // سرچ روی slug
+          { slug: { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.title
+          { 'translations.title': { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.description
+          {
+            'translations.description': {
+              $regex: filters.query,
+              $options: 'i',
             },
-            regex: filters.query,
-            options: 'i',
           },
-        }
+        ]
+
         delete filters.query
       }
 
@@ -58,25 +65,18 @@ class controller extends baseController {
   }
 
   async find(payload: QueryFind) {
-    console.log('#3008 payload:', payload)
     payload.filters = this.standardizationFilters(payload.filters)
-    console.log('#3009 payload:', payload)
     const result = await super.find(payload)
-    console.log('#3010 payload result:', result)
     return result
   }
 
   async create(payload: Create) {
-    console.log('#3018 payload crearte menu:', payload)
     payload.params = this.prepareDataForSave(payload.params)
-    console.log('#3010 payload crearte menu:', payload)
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
-    console.log('#30sss11 payload crearte menu:', payload)
     payload.params = this.prepareDataForSave(payload.params)
-    console.log('#30sss12 payload crearte menu:', payload)
     return super.findOneAndUpdate(payload)
   }
 }

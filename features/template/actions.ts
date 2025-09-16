@@ -5,7 +5,6 @@ import templateCtrl from '@/features/template/controller'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import settingsCtrl from '../settings/controller'
-import { generateUniqueTemplateSlug } from './utils'
 import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { Template } from './interface'
@@ -42,7 +41,7 @@ export async function createTemplate(prevState: State, formData: FormData) {
 
   try {
     const params = await sanitizeTemplateData(validatedFields)
-    const cleanedParams = await generateUniqueTemplateSlug(params)
+    const cleanedParams = await templateCtrl.generateUniqueTemplateSlug(params)
     console.log('#23487s6 cleanedParams:', cleanedParams)
     // Create the Template
     newTemplate = await templateCtrl.create({
@@ -98,7 +97,10 @@ export async function updateTemplate(
   try {
     const params = await sanitizeTemplateData(validatedFields)
 
-    const cleanedParams = await generateUniqueTemplateSlug(params, id)
+    const cleanedParams = await templateCtrl.generateUniqueTemplateSlug(
+      params,
+      id
+    )
     // if is home Template so revalidate home Template
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
@@ -111,7 +113,7 @@ export async function updateTemplate(
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
-
+    console.log('#pathe need revalidate:', pathes)
     for (const slug of pathes) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)

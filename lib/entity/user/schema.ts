@@ -55,32 +55,24 @@ userSchema
     next()
   })
 
+const transform = (doc: any, ret: any, options: any) => {
+  ret.id = ret._id?.toHexString()
+  ret.name =
+    ret.firstName && ret.lastName
+      ? `${ret.firstName} ${ret.lastName}`
+      : ret.email
+  delete ret._id
+  delete ret.__v
+  // delete ret.password;
+  delete ret.deleted
+}
+
 userSchema.set('toObject', {
-  transform: function (doc, ret, options) {
-    ret.id = ret._id?.toHexString()
-    ret.name =
-      ret.firstName && ret.lastName
-        ? `${ret.firstName} ${ret.lastName}`
-        : ret.email
-    delete ret._id
-    delete ret.__v
-    // delete ret.password;
-    delete ret.deleted
-  },
+  transform,
 })
 
 userSchema.set('toJSON', {
-  transform: function (doc, ret, options) {
-    ret.id = ret._id?.toHexString()
-    ret.name =
-      ret.firstName && ret.lastName
-        ? `${ret.firstName} ${ret.lastName}`
-        : ret.email
-    delete ret._id
-    delete ret.__v
-    // delete ret.password;
-    delete ret.deleted
-  },
+  transform,
 })
 
 export default mongoose.models?.user || model<UserSchema>('user', userSchema)

@@ -56,30 +56,47 @@ class controller extends baseController {
 
           $regexMatch → روی اون رشته‌ی نهایی سرچ انجام میشه.
          */
-        filters.$expr = {
-          $regexMatch: {
-            input: {
-              $concat: [
-                '$slug', // همچنان خود slug فیلد اصلیه
-                {
-                  $reduce: {
-                    input: {
-                      $map: {
-                        input: '$translations',
-                        as: 't',
-                        in: { $concat: ['$$t.title', ' ', '$$t.description'] },
-                      },
-                    },
-                    initialValue: '',
-                    in: { $concat: ['$$value', ' ', '$$this'] },
-                  },
-                },
-              ],
+        // filters.$expr = {
+        //   $regexMatch: {
+        //     input: {
+        //       $concat: [
+        //         '$slug', // همچنان خود slug فیلد اصلیه
+        //         {
+        //           $reduce: {
+        //             input: {
+        //               $map: {
+        //                 input: '$translations',
+        //                 as: 't',
+        //                 in: { $concat: ['$$t.title', ' ', '$$t.description'] },
+        //               },
+        //             },
+        //             initialValue: '',
+        //             in: { $concat: ['$$value', ' ', '$$this'] },
+        //           },
+        //         },
+        //       ],
+        //     },
+        //     regex: filters.query,
+        //     options: 'i',
+        //   },
+        // }
+        // delete filters.query
+        filters.$or = [
+          // سرچ روی slug
+          { slug: { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.title
+          { 'translations.title': { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.description
+          {
+            'translations.description': {
+              $regex: filters.query,
+              $options: 'i',
             },
-            regex: filters.query,
-            options: 'i',
           },
-        }
+        ]
+
         delete filters.query
       }
 

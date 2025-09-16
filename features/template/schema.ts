@@ -17,8 +17,8 @@ const templateSchema = new Schema<TemplateSchema>(
     templateFor: [{ type: String, required: false, unique: false }],
     status: {
       type: String,
-      enum: ['draft', 'published'],
-      default: 'draft',
+      enum: ['deactive', 'active'],
+      default: 'active',
     },
     deleted: { type: Boolean, default: false },
   },

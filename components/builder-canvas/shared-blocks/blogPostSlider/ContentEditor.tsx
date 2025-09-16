@@ -40,8 +40,6 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
             ) ||
             category?.translations[0] ||
             {}
-          console.log('#456 category:', category)
-          console.log('#456 translation?.title:', translation?.title)
           return {
             value: String(category.id),
             label: createCatrgoryBreadcrumb(category, translation?.title),

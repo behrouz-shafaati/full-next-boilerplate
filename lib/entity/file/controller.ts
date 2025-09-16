@@ -257,6 +257,7 @@ class controller extends c_controller {
   async updateFileDetails(filesDetails: FileDetailsPayload[]) {
     const newFiles = []
     for (const fileDetails of filesDetails) {
+      console.log('#987345 filesDetails server:', filesDetails)
       // Find the file by id
       const file = await this.findById({ id: fileDetails.id })
       // Check if the file is not found, null, or already deleted
@@ -274,6 +275,11 @@ class controller extends c_controller {
       const cleanParams = await this.sanitizePostData(
         params,
         String(fileDetails.id)
+      )
+
+      console.log(
+        '#987345 filesDetails server after sanitizePostData:',
+        cleanParams
       )
       const newFile = await this.findOneAndUpdate({
         filters: fileDetails.id,
@@ -300,17 +306,24 @@ class controller extends c_controller {
     }
     const session = (await getSession()) as Session
     const user = session.user.id
-    const translations = [
-      {
-        lang: params.lang,
-        title: params.title,
-        alt: params.alt,
-        description: params.description,
-      },
-      ...prevState?.translations.filter(
-        (t: FileTranslationSchema) => t.lang != params.lang
-      ),
-    ]
+    const translations =
+      params.lang != null
+        ? [
+            {
+              lang: params.lang,
+              title: params.title,
+              alt: params.alt,
+              description: params.description,
+            },
+            ...prevState?.translations.filter(
+              (t: FileTranslationSchema) => t.lang != params.lang
+            ),
+          ]
+        : [
+            ...prevState?.translations.filter(
+              (t: FileTranslationSchema) => t.lang != params.lang
+            ),
+          ]
     const cleanParams = {
       ...params,
       translations,

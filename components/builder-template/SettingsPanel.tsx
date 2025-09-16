@@ -45,7 +45,7 @@ function SettingsPanel({ allCategories, allTemplates }: SettingsPanelProp) {
       <Select
         title="وضعیت"
         name="status"
-        defaultValue={JSON.parse(getJson()).status || ''}
+        defaultValue={JSON.parse(getJson()).status || 'active'}
         options={statusOptions}
         placeholder="وضعیت"
         icon={<MailIcon className="w-4 h-4" />}

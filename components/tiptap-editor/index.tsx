@@ -15,7 +15,7 @@ import TextAlign from '@tiptap/extension-text-align'
 import FileUpload, { FileUploadRef } from '../form-fields/file-upload'
 import { FileDetails } from '@/lib/entity/file/interface'
 import DeleteImageWithKey from './extensions/image-delete'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AdSlot } from './extensions/adSlot'
 
 import styles from './editor.module.css'
@@ -27,12 +27,15 @@ import {
   AccordionItemContent,
   AccordionItemTitle,
 } from './extensions/Accordion'
+import { SubmitButton } from '../form-fields/submit-button'
+import { getFiles } from '@/lib/entity/file/actions'
 
 interface TiptapEditor {
   name: string
   defaultContent?: { [key: string]: any }
   onChange?: (content: string) => void
   onChangeFiles?: () => void
+  showSubmitButton: boolean
 }
 
 export default function TiptapEditor({
@@ -40,9 +43,11 @@ export default function TiptapEditor({
   defaultContent = {},
   onChange,
   onChangeFiles,
+  showSubmitButton,
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
+  const [defaultFiles, setDefaultFiles] = useState([])
   // for table tools like aadd row ...
   const [pos, setPos] = useState<{ x: number; y: number } | null>(null)
   const handleContextMenu = (e: React.MouseEvent) => {
@@ -54,9 +59,30 @@ export default function TiptapEditor({
       setPos(null)
     }
   }
-  const defaultFiles = defaultContent?.content
-    ?.filter((block: any) => block.type === 'image')
-    .map((block: any) => block.attrs)
+
+  useEffect(() => {
+    let active = true
+    async function fetchData() {
+      const defaultFileIds = defaultContent?.content
+        ?.filter((block: any) => block.type === 'image')
+        .map((block: any) => block.attrs.id)
+      if (!defaultFileIds?.length) return
+      try {
+        const files = await getFiles(defaultFileIds)
+        if (active) {
+          console.log('$3495867 defaultFiles:', files)
+          setDefaultFiles(files.data)
+        }
+      } catch (err) {
+        console.error('#2349875 Error fetching files:', err)
+      }
+    }
+    fetchData()
+    return () => {
+      active = false
+    }
+  }, [defaultContent])
+
   const editor: any = useEditor({
     extensions: [
       StarterKit.configure({
@@ -102,6 +128,7 @@ export default function TiptapEditor({
   })
 
   const responseFileUploadHandler = (fileDetails: FileDetails) => {
+    console.log('#2345 fileDetails:', fileDetails)
     const { state, view } = editor
     const pos = state.selection.from
     editor
@@ -111,7 +138,7 @@ export default function TiptapEditor({
         type: 'image',
         attrs: {
           src: fileDetails.src,
-          alt: fileDetails.alt,
+          alt: fileDetails.id,
           title: String(fileDetails.id), // Image Id saved as title
           id: String(fileDetails.id),
         },
@@ -151,6 +178,7 @@ export default function TiptapEditor({
       <div className="col-span-12  md:col-span-2">
         <div className="sticky top-0 z-10">
           <FileUpload
+            key={defaultFiles?.map((f) => f.id).join(',') || 'empty'} // 👈 تغییر باعث remount میشه
             name={`${name}Files`}
             title="رسانه های مطلب"
             responseHnadler={responseFileUploadHandler}
@@ -159,6 +187,7 @@ export default function TiptapEditor({
             defaultValues={defaultFiles}
             {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
           />
+          {showSubmitButton ? <SubmitButton className="mt-4" /> : <></>}
         </div>
       </div>
     </div>

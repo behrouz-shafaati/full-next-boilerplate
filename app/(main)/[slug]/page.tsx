@@ -1,10 +1,8 @@
 export const dynamic = 'force-static'
 import { PageRenderer } from '@/components/builder-canvas/pageRenderer'
-import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
-import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
 import pageCtrl from '@/features/page/controller'
-import templateCtrl from '@/features/template/controller'
 import { pickLocale, SUPPORTED_LANGUAGE } from '@/lib/utils'
+import { notFound } from 'next/navigation'
 
 export async function generateStaticParams() {
   return pageCtrl.generateStaticParams()
@@ -25,20 +23,11 @@ export default async function Page({ params }: PageProps) {
     pageCtrl.find({ filters: { slug: slug } }),
   ])
 
+  if (pageResult?.data.length == 0) {
+    notFound()
+  }
+
   // this is a page
   if (pageResult?.data[0])
     return <PageRenderer page={pageResult?.data[0]} locale={locale} />
-
-  // this is a category. for example /computer-learning category
-  const [template] = await Promise.all([templateCtrl.getTemplate({ slug })])
-  if (template)
-    return (
-      <RendererRows
-        rows={template?.content.rows}
-        editroMode={false}
-        content_all={<CategoryPostList slug={slug} />}
-      />
-    )
-
-  return <CategoryPostList slug={slug} />
 }

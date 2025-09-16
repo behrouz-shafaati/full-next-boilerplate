@@ -10,9 +10,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Category } from '@/features/category/interface'
-import { Edit, MoreHorizontal, Trash } from 'lucide-react'
+import { Edit, Eye, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Link from 'next/link'
+import { buildCategoryHref } from '../../utils'
 
 interface CellActionProps {
   data: Category
@@ -50,6 +52,16 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
             onClick={() => router.push(`/dashboard/categories/${data.id}`)}
           >
             <Edit className="ml-2 h-4 w-4" /> بروزرسانی
+          </DropdownMenuItem>
+
+          <DropdownMenuItem asChild>
+            <Link
+              href={`/${buildCategoryHref(data, '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Eye className="ml-2 h-4 w-4" /> مشاهده
+            </Link>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => setOpen(true)}>
             <Trash className="ml-2 h-4 w-4" /> حذف

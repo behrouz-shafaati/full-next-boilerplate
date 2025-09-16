@@ -97,15 +97,15 @@ export function timeAgo(createdAt: string): string {
 }
 
 export function createPostHref(post: Post) {
-  const categorySection: string = createPostCategorysHref(
+  const categorySection: string = buildCategoryHref(
     post.mainCategory as Category
   )
   return `/${categorySection}${post.slug}`
 }
 
-function createPostCategorysHref(category: Category, href: string = '') {
+export function buildCategoryHref(category: Category, href: string = '') {
   if (!category) return href
-  return createPostCategorysHref(
+  return buildCategoryHref(
     category?.parent,
     (href = `${category.slug}/${href}`)
   )

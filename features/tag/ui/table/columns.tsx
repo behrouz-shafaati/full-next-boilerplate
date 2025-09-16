@@ -4,6 +4,7 @@ import { CellAction } from './cell-action'
 import { CheckboxInput as Checkbox } from '@/components/ui/checkbox-input'
 import { User } from '@/lib/entity/user/interface'
 import { Tag } from '@/features/tag/interface'
+import { Status } from '@/components/Status'
 
 export const columns: ColumnDef<Tag>[] = [
   {
@@ -35,6 +36,7 @@ export const columns: ColumnDef<Tag>[] = [
   {
     accessorKey: 'status',
     header: 'وضعیت',
+    cell: ({ row }) => <Status row={row} />,
   },
   {
     id: 'actions',

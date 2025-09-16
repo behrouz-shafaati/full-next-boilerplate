@@ -2,8 +2,10 @@ import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
 import templateSchema from './schema'
 import templateService from './service'
-import settingsCtrl from '../settings/controller'
 import categoryCtrl from '../category/controller'
+import { slugify } from '@/lib/utils'
+import { Types } from 'mongoose'
+import { Category } from '../category/interface'
 
 class controller extends baseController {
   /**
@@ -37,7 +39,7 @@ class controller extends baseController {
         filters.$expr = {
           $regexMatch: {
             input: {
-              $concat: ['$title', '$description'],
+              $concat: ['$title'],
             },
             regex: filters.query,
             options: 'i',
@@ -62,11 +64,23 @@ class controller extends baseController {
   }
 
   async create(payload: Create) {
-    return super.create(payload)
+    const template = await super.create(payload)
+    await this.deactiveTemplateFor({
+      activeId: template.id,
+      templateFor: template.templateFor,
+    })
+    return template
   }
 
   async findOneAndUpdate(payload: Update) {
-    return super.findOneAndUpdate(payload)
+    const template = await super.findOneAndUpdate(payload)
+    if (template.status == 'active') {
+      await this.deactiveTemplateFor({
+        activeId: template.id,
+        templateFor: template.templateFor,
+      })
+    }
+    return template
   }
 
   async existSlug(slug: string): Promise<boolean> {
@@ -117,22 +131,14 @@ class controller extends baseController {
           return postTemplateResult.data[0]
         break
       default:
-        // بررسی کند که یک دسته بندی خاص اگر هست قالب آن را برگرداند
+        // بررسی کند که یک دسته بندی خاص یا والدهای آن اگر هست قالب آن را برگرداند
         const categoryResult = await categoryCtrl.find({ filters: { slug } })
         if (categoryResult) {
-          const [categoryTemplateResult] = await Promise.all([
-            this.find({
-              filters: {
-                templateFor: `category-${categoryResult.data[0]?.id}`,
-                status: 'active',
-              },
-            }),
+          const [categoryTemplate] = await Promise.all([
+            this.getCategoryTemplate(categoryResult.data[0]),
           ])
-          if (
-            categoryTemplateResult.data[0] != undefined &&
-            categoryTemplateResult.data.length
-          )
-            return categoryTemplateResult.data[0]
+          if (categoryTemplate != undefined && categoryTemplate != null)
+            return categoryTemplate
         }
         // اگر این دسته قالب مخصوصی نداشت از قالب عمومی برای تمام دسته ها استفاده شود
         ;[categoriesTemplateResult] = await Promise.all([
@@ -155,6 +161,72 @@ class controller extends baseController {
     if (allPageTemplateResult.data[0] != undefined)
       return allPageTemplateResult.data[0]
     return null
+  }
+
+  async getCategoryTemplate(cat: Category | null): Promise<any> {
+    if (!cat) return null
+    const [categoryTemplateResult] = await Promise.all([
+      this.find({
+        filters: {
+          templateFor: `category-${cat.id}`,
+          status: 'active',
+        },
+      }),
+    ])
+    if (
+      categoryTemplateResult.data[0] != undefined &&
+      categoryTemplateResult.data.length
+    )
+      return categoryTemplateResult.data[0]
+    return templateCtrl.getCategoryTemplate(cat.parent)
+  }
+
+  /**
+   * تولید اسلاگ یکتا با بررسی دیتابیس
+   */
+  async generateUniqueTemplateSlug(
+    params: { slug: string; title: string },
+    templateId: string = ''
+  ): Promise<object> {
+    const baseSlug =
+      params.slug != '' && params.slug != null
+        ? slugify(params.slug)
+        : slugify(params.title)
+    // if it is update and slug doesn't change remove slug from parameters
+    if (templateId !== '') {
+      const findedTemplateBySlug = await templateCtrl.findOne({
+        filters: { slug: baseSlug },
+      })
+      if (findedTemplateBySlug && findedTemplateBySlug.id == templateId) {
+        const { slug, ...rest } = params
+        return rest
+      }
+    }
+
+    // if it is new template need to generate new slug
+    let slug = baseSlug
+    let count = 1
+    while (await templateCtrl.existSlug(slug)) {
+      slug = `${baseSlug}-${count}`
+      count++
+    }
+    return { ...params, slug }
+  }
+
+  async deactiveTemplateFor({
+    activeId,
+    templateFor,
+  }: {
+    activeId: string
+    templateFor: string[]
+  }) {
+    this.updateMany({
+      filters: {
+        templateFor: { $in: templateFor },
+        _id: { $ne: new Types.ObjectId(activeId) },
+      },
+      params: { $set: { status: 'deactive' } },
+    })
   }
 }
 

@@ -4,6 +4,7 @@ import categorySchema from './schema'
 import categoryService from './service'
 import { Category, CategoryInput } from './interface'
 import { slugify } from '@/lib/utils'
+import { buildCategoryHref } from './utils'
 
 class controller extends baseController {
   /**
@@ -34,15 +35,22 @@ class controller extends baseController {
       if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
-        filters.$expr = {
-          $regexMatch: {
-            input: {
-              $concat: ['$title', '$description'],
+        filters.$or = [
+          // سرچ روی slug
+          { slug: { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.title
+          { 'translations.title': { $regex: filters.query, $options: 'i' } },
+
+          // سرچ روی translations.description
+          {
+            'translations.description': {
+              $regex: filters.query,
+              $options: 'i',
             },
-            regex: filters.query,
-            options: 'i',
           },
-        }
+        ]
+
         delete filters.query
       }
 
@@ -114,9 +122,16 @@ class controller extends baseController {
     return categoryIds
   }
 
+  async generateStaticParams() {
+    const categoriesHomeSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
+    return categoriesHomeSlugs
+  }
+
   async getAllSlugs() {
     const result = await this.findAll({})
-    return result.data.map((category: Category) => ({ slug: category.slug }))
+    return result.data.map((category: Category) => ({
+      slug: buildCategoryHref(category, ''),
+    }))
   }
 }
 

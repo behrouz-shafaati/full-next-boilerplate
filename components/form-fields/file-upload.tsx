@@ -29,6 +29,7 @@ import {
   FileTranslationSchema,
 } from '@/lib/entity/file/interface'
 import { useToast } from '../ui/use-toast'
+import { getTranslation } from '@/lib/utils'
 const ObjectId = require('bson-objectid')
 
 // Type تعریف برای رفرنس
@@ -74,6 +75,7 @@ const FileUpload = forwardRef(function FileUpload(
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
 ) {
+  const locale = 'fa'
   defaultValues = defaultValues == null ? [] : defaultValues
   const { toast } = useToast()
   if (!Array.isArray(defaultValues)) {
@@ -171,14 +173,18 @@ const FileUpload = forwardRef(function FileUpload(
     const filesDetails: FileDetailsPayload[] = files
       .filter((file) => file?.id)
       .map((file) => {
+        const translation = getTranslation({
+          translations: file?.translations,
+          locale,
+        })
         const newFile = {
           id: file.id,
-          title: file.title,
-          alt: file.alt,
+          title: translation.title,
+          alt: translation.alt,
           href: file.href,
-          description: file.description,
+          description: translation.description,
           main: file.main,
-          lang: file.lang,
+          lang: locale,
         }
         return newFile
       })
@@ -264,7 +270,7 @@ const FileUpload = forwardRef(function FileUpload(
 
   const makeIdsClean = () => {
     if (maxFiles == 1) return files.length == 1 ? files[0]?.id : ''
-    return JSON.stringify(files.map((file) => file.id))
+    return JSON.stringify(files.filter((file) => file).map((file) => file.id))
   }
 
   return (
@@ -300,7 +306,6 @@ const FileUpload = forwardRef(function FileUpload(
           <ul className="grid grid-cols-3 gap-2 mt-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {files.map((file, index) => {
               console.log('#239847 file:', file)
-              const locale = 'fa' //  from formData
               return (
                 <li
                   key={index}
@@ -388,15 +393,23 @@ const ModalContent = ({
   onCloseModal: any
   onSave: (newFile: any, index: number) => void
 }) => {
+  const locale = 'fa' //  from formData
+  const translation = getTranslation({
+    translations: file?.translations,
+    locale,
+  })
   const [newFile, setNewFile] = useState({
     ...file,
+    lang: locale,
   })
-  const locale = 'fa' //  from formData
-  const translation: FileTranslationSchema =
-    newFile?.translations?.find(
-      (t: FileTranslationSchema) => t.lang === locale
-    ) || {}
-  console.log('#0092 file: ', file)
+  const handleUpdate = (key: string, value: any) => {
+    setNewFile((s: any) => ({
+      ...s,
+      translations: s.translations.map((t: any) =>
+        t.lang === locale ? { ...t, [key]: value } : t
+      ),
+    }))
+  }
   return (
     <div className="mt-4">
       <div>
@@ -416,23 +429,19 @@ const ModalContent = ({
         <Text
           title="نام رسانه"
           name="title"
-          value={translation?.title}
-          onChange={(e) =>
-            setNewFile((s: any) => ({ ...s, title: e.target.value }))
-          }
+          defaultValue={translation?.title}
+          onChange={(e) => handleUpdate('title', e.target.value)}
         />
         <Text
           title="متن جایگزین"
           name="alt"
-          value={translation?.alt}
-          onChange={(e) =>
-            setNewFile((s: any) => ({ ...s, alt: e.target.value }))
-          }
+          defaultValue={translation?.alt}
+          onChange={(e) => handleUpdate('alt', e.target.value)}
         />
         <Text
           title="لینک"
           name="href"
-          value={newFile.href}
+          defaultValue={newFile.href}
           onChange={(e) =>
             setNewFile((s: any) => ({ ...s, href: e.target.value }))
           }
@@ -440,10 +449,8 @@ const ModalContent = ({
         <Text
           title="توضیحات رسانه"
           name="description"
-          value={translation?.description}
-          onChange={(e) =>
-            setNewFile((s: any) => ({ ...s, description: e.target.value }))
-          }
+          defaultValue={translation?.description}
+          onChange={(e) => handleUpdate('description', e.target.value)}
         />
         <Checkbox
           name="main"

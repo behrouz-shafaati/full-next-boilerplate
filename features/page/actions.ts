@@ -135,7 +135,7 @@ export async function updatePage(
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings.id === id) varRevalidatePath = [...varRevalidatePath, '/']
+    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath, '/']
     updatedPage = await pageCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
@@ -151,6 +151,7 @@ export async function updatePage(
       revalidatePath(slug)
     }
   } catch (error) {
+    console.log('#234234 error:', error)
     return { message: 'خطای پایگاه داده: بروزرسانی برگه ناموفق بود.' }
   }
   return {
@@ -162,19 +163,26 @@ export async function updatePage(
 
 export async function deletePage(id: string) {
   try {
+    const page = await pageCtrl.findById({ id })
     await pageCtrl.delete({ filters: [id] })
+    let varRevalidatePath = [`/${page?.slug}`]
+    // if is home page so revalidate home page
+    const settings = await settingsCtrl.findOne({
+      filters: { type: 'site-settings' },
+    })
+    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath, '/']
+
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+      feature: 'page',
+      slug: [...varRevalidatePath, '/dashboard/pages'],
+    })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف برگه ناموفق بود' }
-  }
-  await pageCtrl.delete({ filters: [id] })
-  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
-    feature: 'page',
-    slug: ['/dashboard/pages'],
-  })
-
-  for (const slug of pathes) {
-    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
-    revalidatePath(slug)
   }
 }
 

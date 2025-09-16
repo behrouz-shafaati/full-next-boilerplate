@@ -33,15 +33,11 @@ class controller extends baseController {
       if (key == 'query' && filters?.query == '') {
         delete filters.query
       } else if (key == 'query') {
-        filters.$expr = {
-          $regexMatch: {
-            input: {
-              $concat: ['$title', '$description'],
-            },
-            regex: filters.query,
-            options: 'i',
-          },
-        }
+        filters.$or = [
+          // سرچ روی title
+          { title: { $regex: filters.query, $options: 'i' } },
+        ]
+
         delete filters.query
       }
 

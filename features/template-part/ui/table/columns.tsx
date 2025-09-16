@@ -3,6 +3,7 @@ import { ColumnDef } from '@tanstack/react-table'
 import { CellAction } from './cell-action'
 import { CheckboxInput as Checkbox } from '@/components/ui/checkbox-input'
 import { TemplatePart } from '@/features/template-part/interface'
+import { Status } from '@/components/Status'
 
 export const columns: ColumnDef<TemplatePart>[] = [
   {
@@ -35,6 +36,7 @@ export const columns: ColumnDef<TemplatePart>[] = [
   {
     accessorKey: 'status',
     header: 'وضعیت',
+    cell: ({ row }) => <Status row={row} />,
   },
   {
     id: 'actions',

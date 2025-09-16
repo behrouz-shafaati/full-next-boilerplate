@@ -234,9 +234,9 @@ export default class controller {
   async findOneAndUpdate(payload: Update) {
     payload = { saveLog: false, options: {}, ...payload }
     let result: any
-    const previousValues = await this.service.findOne({
-      filters: payload.filters,
-    })
+    // const previousValues = await this.service.findOne({
+    //   filters: payload.filters,
+    // })
     // if (payload.saveLog) {
     //   if (typeof payload.filters === "string" || payload.filters === "number") {
     //     log.setTarget(payload.filters);
@@ -275,9 +275,9 @@ export default class controller {
   async updateMany(payload: Update) {
     payload = { saveLog: false, ...payload }
     let result: any
-    const previousValues = await this.service.findAll({
-      filters: payload.filters,
-    })
+    // const previousValues = await this.service.findAll({
+    //   filters: payload.filters,
+    // })
     // if (payload.saveLog) {
     //   log.setVariables(payload);
     //   log.setPreviousValues(previousValues);

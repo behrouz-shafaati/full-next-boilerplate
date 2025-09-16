@@ -140,4 +140,16 @@ export function pickLocale(paramsLang?: string): Locale {
     ? (cand as Locale)
     : 'fa'
 }
+
+export const getTranslation = ({
+  translations,
+  locale = 'fa',
+}: {
+  translations: any[]
+  locale?: string
+}) => {
+  const translation =
+    translations?.find((t) => t.lang === locale) || translations[0] || {}
+  return translation
+}
 //******************************************************************************/

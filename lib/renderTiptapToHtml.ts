@@ -66,6 +66,43 @@ const nodes = {
   text: {
     group: 'inline',
   },
+  blockquote: {
+    content: 'block+',
+    group: 'block',
+    defining: true,
+    attrs: {
+      dir: { default: null },
+      textAlign: { default: null },
+      cite: { default: null },
+    },
+    parseDOM: [
+      {
+        tag: 'blockquote',
+        getAttrs: (el: any) => ({
+          dir: el.getAttribute('dir'),
+          textAlign: el.style.textAlign || null,
+          cite: el.getAttribute('cite'),
+        }),
+      },
+    ],
+    toDOM: (node: any) => {
+      const attrs: Record<string, string> = {}
+      if (node.attrs.dir) attrs.dir = node.attrs.dir
+      if (node.attrs.textAlign)
+        attrs.style = `text-align: ${node.attrs.textAlign};`
+      if (node.attrs.cite) attrs.cite = node.attrs.cite
+
+      return [
+        'blockquote',
+        {
+          ...attrs,
+          class:
+            'border-l-4 border-gray-400 pl-4 italic text-gray-700 dark:text-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 rounded-md my-4 p-4',
+        },
+        0,
+      ]
+    },
+  },
 
   listItem: {
     content: 'paragraph block*', // یک پاراگراف و بعد بلوک‌های دیگر
@@ -109,7 +146,10 @@ const nodes = {
   },
   image: {
     inline: true,
-    attrs: { src: {}, alt: { default: null }, title: { default: null } },
+    attrs: {
+      src: { default: null },
+      id: { default: null },
+    },
     group: 'inline',
     draggable: true,
     parseDOM: [
@@ -117,12 +157,12 @@ const nodes = {
         tag: 'img[src]',
         getAttrs: (dom: any) => ({
           src: dom.getAttribute('src'),
-          alt: dom.getAttribute('alt'),
-          title: dom.getAttribute('title'),
         }),
       },
     ],
-    toDOM: (node) => ['img', node.attrs],
+    toDOM: (node: any) => {
+      return ['img', node.attrs]
+    },
   },
   hardBreak: {
     inline: true,

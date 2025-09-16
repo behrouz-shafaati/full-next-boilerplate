@@ -59,16 +59,6 @@ export default class service {
 
     // Add deleted:false filter to exclude deleted documents
     filters = { ...filters, deleted: false }
-    console.log(
-      'filters: ',
-      filters,
-      ' sort: ',
-      sort,
-      ' skip: ',
-      skip,
-      ' pagination.perPage: ',
-      pagination.perPage
-    )
     // Find documents in the collection based on filters, sort order, and pagination
     // Get the total count of documents that match the filters
     const [result, totalDocuments] = await Promise.all([
