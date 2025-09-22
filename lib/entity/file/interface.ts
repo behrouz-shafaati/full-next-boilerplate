@@ -31,6 +31,7 @@ export type File = Model & {
   size: number
   previewPath: string
   main: boolean
+  attachedTo: [{ feature: string; id: string }]
   /**
    * کاربر سازنده
    */
@@ -46,10 +47,11 @@ export type FileDetailsPayload = {
 }
 
 export type FileDetails = FileDetailsPayload & {
-  lang: string
+  locale: string
   patch: string
   src: string
   mimeType: string
   size: number
   previewPath: string
+  attachedTo: [{ feature: string; id: string }]
 }

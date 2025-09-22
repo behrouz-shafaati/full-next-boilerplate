@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { timeAgo } from '@/features/post/utils'
+import { timeAgo } from '@/lib/utils'
 
 interface PostCardProps {
   post: {

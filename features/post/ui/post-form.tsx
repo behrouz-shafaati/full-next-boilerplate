@@ -244,6 +244,7 @@ export const PostForm: React.FC<PostFormProps> = ({
           <div className="col-span-3">
             {/* contentJson */}
             <TiptapEditor
+              attachedTo={[{ feature: 'post', id: post?.id || null }]}
               name="contentJson"
               defaultContent={
                 post ? JSON.parse(state?.values?.translation?.contentJson) : {}

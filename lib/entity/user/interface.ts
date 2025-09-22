@@ -27,6 +27,11 @@ type UserBase = {
   mobileVerified: boolean
 
   /**
+   * نام کاربری یکتای کاربر
+   */
+  userName: string
+
+  /**
    * ایمیل کاربر
    */
   email: string

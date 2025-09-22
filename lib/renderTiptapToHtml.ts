@@ -55,7 +55,7 @@ export const accordionNodes = {
 // 1. تعریف schema ساده بر اساس Tiptap StarterKit + image + link
 const nodes = {
   doc: { content: 'block+' },
-
+  undefined: {},
   paragraph: {
     content: 'inline*',
     group: 'block',
@@ -149,6 +149,7 @@ const nodes = {
     attrs: {
       src: { default: null },
       id: { default: null },
+      translations: { default: null },
     },
     group: 'inline',
     draggable: true,
@@ -161,7 +162,15 @@ const nodes = {
       },
     ],
     toDOM: (node: any) => {
-      return ['img', node.attrs]
+      const { src, id, translations } = node.attrs
+      return [
+        'img',
+        {
+          src,
+          id: id,
+          translations: translations ? JSON.stringify(translations) : null,
+        },
+      ]
     },
   },
   hardBreak: {

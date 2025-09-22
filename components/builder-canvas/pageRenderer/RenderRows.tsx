@@ -45,7 +45,6 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
           >
             {row.columns.map((col) => {
               const responsiveDesign = row?.settings?.responsiveDesign ?? true
-              if (!responsiveDesign) console.log('#288dsfklhj :', row)
               const classBaseOnResponsiveDesign = responsiveDesign
                 ? `col-span-12 md:col-span-${col.width}`
                 : `col-span-${col.width} md:col-span-${col.width}`

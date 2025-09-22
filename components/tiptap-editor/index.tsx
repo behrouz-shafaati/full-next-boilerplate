@@ -36,6 +36,7 @@ interface TiptapEditor {
   onChange?: (content: string) => void
   onChangeFiles?: () => void
   showSubmitButton: boolean
+  attachedTo: [{ feature: string; id: string }]
 }
 
 export default function TiptapEditor({
@@ -44,6 +45,7 @@ export default function TiptapEditor({
   onChange,
   onChangeFiles,
   showSubmitButton,
+  attachedTo,
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
@@ -126,7 +128,6 @@ export default function TiptapEditor({
       onChange?.(text)
     },
   })
-
   const responseFileUploadHandler = (fileDetails: FileDetails) => {
     console.log('#2345 fileDetails:', fileDetails)
     const { state, view } = editor
@@ -151,7 +152,17 @@ export default function TiptapEditor({
     // })
   }
   return (
-    <div className="grid grid-cols-12 gap-4">
+    <div
+      className="grid grid-cols-12 gap-4"
+      onClick={(e) => {
+        const target = e.target as HTMLElement
+        // اگر کلیک روی دکمه یا آیکون یا خود EditorContent بود کاری نکن
+        if (target.closest('button') || target.closest('[data-no-focus]')) {
+          return
+        }
+        editor?.chain().focus().run()
+      }}
+    >
       <div className="col-span-12 md:col-span-10">
         <textarea
           value={content}
@@ -179,6 +190,7 @@ export default function TiptapEditor({
         <div className="sticky top-0 z-10">
           <FileUpload
             key={defaultFiles?.map((f) => f.id).join(',') || 'empty'} // 👈 تغییر باعث remount میشه
+            attachedTo={attachedTo}
             name={`${name}Files`}
             title="رسانه های مطلب"
             responseHnadler={responseFileUploadHandler}

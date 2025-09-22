@@ -5,10 +5,15 @@ import postSchema from './schema'
 import postService from './service'
 import categoryCtrl from '../category/controller'
 import tagCtrl from '../tag/controller'
-import { createPostHref, getReadingTime } from './utils'
+import {
+  createPostHref,
+  getReadingTime,
+  updateFileDetailsInContentJson,
+} from './utils'
 import { Post } from './interface'
 import { Category } from '../category/interface'
-import { slugify } from '@/lib/utils'
+import { getTranslation, slugify } from '@/lib/utils'
+import { FileDetails } from '@/lib/entity/file/interface'
 
 class controller extends baseController {
   /**
@@ -73,7 +78,11 @@ class controller extends baseController {
   makeCleanDataBeforeSave(data: any) {
     data.image = data.image == '' ? null : data.image
     data.categories = data.categories == '' ? [] : data.categories
-    const json = JSON.parse(data.contentJson)
+    const translation = getTranslation({
+      translations: data.translations,
+      locale: data.locale,
+    })
+    const json = JSON.parse(translation.contentJson)
     const plainText =
       json.content
         ?.filter((block: any) => block.type === 'paragraph')
@@ -100,7 +109,6 @@ class controller extends baseController {
 
   async findOneAndUpdate(payload: Update) {
     payload.params = this.makeCleanDataBeforeSave(payload.params)
-    console.log('#3323 payload:', payload)
     return super.findOneAndUpdate(payload)
   }
 
@@ -125,6 +133,24 @@ class controller extends baseController {
       })
     )
     return { type: 'doc', content: contentJsonSetedFileData }
+  }
+
+  async updateContentJsonFileDetails({
+    fileDetails,
+  }: {
+    fileDetails: FileDetails
+  }) {
+    const postId = fileDetails.attachedTo[0].id
+    const post = await this.findById({ id: postId })
+
+    const updatedPost = updateFileDetailsInContentJson({ post, fileDetails })
+    await this.findOneAndUpdate({
+      filters: { _id: post.id },
+      params: {
+        translations: updatedPost.translations,
+        locale: fileDetails.locale,
+      },
+    })
   }
 
   async convertCategoriesAndTagSlugToId({

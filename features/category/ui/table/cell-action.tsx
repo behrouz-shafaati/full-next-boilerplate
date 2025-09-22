@@ -56,7 +56,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
           <DropdownMenuItem asChild>
             <Link
-              href={`/${buildCategoryHref(data, '')}`}
+              href={`${buildCategoryHref(data, '')}`}
               target="_blank"
               rel="noopener noreferrer"
             >

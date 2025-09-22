@@ -163,6 +163,7 @@ export default class service {
     // Add 'deleted' filter to exclude deleted documents
     filters = { ...filters, deleted: false }
     // Find and update the document, and return the updated document
+    console.log('#777 filters in update:', filters)
     const updatedValue = await this.model.findOneAndUpdate(
       filters,
       { $set: data },

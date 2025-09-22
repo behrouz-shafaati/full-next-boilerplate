@@ -27,6 +27,7 @@ const fileSchema = new Schema<SchemaFile>(
       default: null,
       required: true,
     },
+    attachedTo: [{ feature: String, id: String, _id: false }],
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }

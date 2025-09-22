@@ -50,7 +50,7 @@ export default class controller {
    */
   async find(payload: QueryFind): Promise<QueryResult> {
     payload = { saveLog: false, filters: {}, ...payload }
-
+    console.log('#7777 find payload values: ', payload)
     if (payload.filters?.orderBy) {
       payload.sort = {}
       const order = payload.filters?.order === 'asc' ? 1 : -1
@@ -196,7 +196,7 @@ export default class controller {
    */
   async create(payload: Create): Promise<any> {
     const session = (await getSession()) as Session
-    const user = session.user.id
+    const user = session?.user.id || null
     payload = { saveLog: false, ...payload }
 
     // log.setVariables(payload);

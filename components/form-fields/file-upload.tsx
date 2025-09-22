@@ -55,6 +55,7 @@ interface FileUploadProps {
   updateFileDetailsHnadler?: (FileDetails: FileDetails[]) => void
   deleteFileHnadler?: (fileId: string) => void
   onChange?: () => void
+  attachedTo?: [{ feature: string; id: string }]
 }
 
 // Context from Function app/ui/components/dropzone.tsx:Dropzone
@@ -72,6 +73,7 @@ const FileUpload = forwardRef(function FileUpload(
     updateFileDetailsHnadler,
     deleteFileHnadler,
     onChange,
+    attachedTo,
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
 ) {
@@ -122,6 +124,8 @@ const FileUpload = forwardRef(function FileUpload(
           alt: '',
           href: '',
           description: '',
+          attachedTo,
+          locale,
         })
       )
 
@@ -144,6 +148,8 @@ const FileUpload = forwardRef(function FileUpload(
     formData.append('description', file?.description)
     formData.append('main', file?.main)
     formData.append('lang', file?.lang)
+    formData.append('attachedTo', file?.attachedTo)
+    formData.append('locale', locale)
 
     const FileDetails: FileDetails = await uploadFile(formData)
     if (responseHnadler) responseHnadler(FileDetails)
@@ -158,7 +164,6 @@ const FileUpload = forwardRef(function FileUpload(
     maxSize: 6 * 1024 * 1000, // 6 MB
     onDrop,
   })
-
   useEffect(() => {
     const handelUpdateFileDetails = async (filesDetails: any) => {
       const updatedFilesArray = await updateFileDetails(filesDetails)
@@ -185,11 +190,14 @@ const FileUpload = forwardRef(function FileUpload(
           description: translation.description,
           main: file.main,
           lang: locale,
+          attachedTo,
+          locale,
         }
+        console.log('#3333333333333 newFile:', newFile)
         return newFile
       })
     handelUpdateFileDetails(filesDetails)
-  }, [files])
+  }, [files, attachedTo])
 
   const removeFileById = (id: string) => {
     const items = [...files]
@@ -403,12 +411,16 @@ const ModalContent = ({
     lang: locale,
   })
   const handleUpdate = (key: string, value: any) => {
-    setNewFile((s: any) => ({
-      ...s,
-      translations: s.translations.map((t: any) =>
-        t.lang === locale ? { ...t, [key]: value } : t
-      ),
-    }))
+    setNewFile((s: any) => {
+      return {
+        ...s,
+        //[{ lang: locale }] => تا یک بار حلقه اجرا بشه و اطلاعات ثبت بشن
+        //[] => اطلاعات از دست میره اینجوری
+        translations: (s.translations ?? [{ lang: locale }]).map((t: any) =>
+          t.lang === locale ? { ...t, [key]: value } : t
+        ),
+      }
+    })
   }
   return (
     <div className="mt-4">

@@ -1,12 +1,10 @@
 import { renderTiptapJsonToHtml } from '@/lib/renderTiptapToHtml'
-import parse, { DOMNode, Element } from 'html-react-parser'
+import parse, { Element } from 'html-react-parser'
 import Image from 'next/image'
 import Link from 'next/link'
 import { AccordionRenderer } from './tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from './type'
-import fileCtrl from '@/lib/entity/file/controller'
 import { getTranslation } from '@/lib/utils'
-import { File } from '@/lib/entity/file/interface'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -19,14 +17,14 @@ function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
 }
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
-function collectFileIds(node: TNode | undefined, out: string[] = []): string[] {
-  if (!node) return out
-  if (node.type === 'image') out.push(node.attrs.id)
-  if (node.content && node.content.length) {
-    for (const child of node.content) collectFileIds(child, out)
-  }
-  return out
-}
+// function collectFileIds(node: TNode | undefined, out: string[] = []): string[] {
+//   if (!node) return out
+//   if (node.type === 'image') out.push(node.attrs.id)
+//   if (node.content && node.content.length) {
+//     for (const child of node.content) collectFileIds(child, out)
+//   }
+//   return out
+// }
 
 type Props = {
   contentJson: string
@@ -43,10 +41,10 @@ export default async function RenderedHtml({ contentJson }: Props) {
   let accordionIndex = 0
 
   // 2. همه آکاردئون‌ها را از JSON جمع می‌کنیم (ترتیب درخت)
-  const fileIds: string[] = collectFileIds(doc)
-  const filesMap = await Promise.all(
-    fileIds.map((id) => fileCtrl.findById({ id }))
-  ).then((results) => results.reduce((acc, f) => ({ ...acc, [f.id]: f }), {}))
+  // const fileIds: string[] = collectFileIds(doc)
+  // const filesMap = await Promise.all(
+  //   fileIds.map((id) => fileCtrl.findById({ id }))
+  // ).then((results) => results.reduce((acc, f) => ({ ...acc, [f.id]: f }), {}))
 
   // 3. HTML تولید شده (سرور) — مثل قبل
   const html = renderTiptapJsonToHtml(doc)
@@ -57,12 +55,11 @@ export default async function RenderedHtml({ contentJson }: Props) {
         replace(domNode) {
           // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            const { src, id: fileId } = domNode.attribs
+            console.log('#2349867 domNode.attribs:', domNode.attribs)
+            const { src, id: fileId, translations } = domNode.attribs
             if (!src) return null
-
-            const file = filesMap[fileId]
             const translation = getTranslation({
-              translations: file?.translations,
+              translations: JSON.parse(translations),
             })
             return (
               <figure className="relative w-full aspect-[2/1] my-4">

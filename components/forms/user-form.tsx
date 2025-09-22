@@ -125,6 +125,15 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
           />
+          {/* userName */}
+          <Text
+            title="نام کاربری"
+            name="userName"
+            defaultValue={user?.userName}
+            placeholder="نام کاربری"
+            state={state}
+            icon={<MailIcon className="w-4 h-4" />}
+          />
           {/* Mobile */}
           <Text
             title="موبایل"

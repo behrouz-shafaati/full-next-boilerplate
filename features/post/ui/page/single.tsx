@@ -1,10 +1,14 @@
+'use server'
 import { BreadCrumb, BreadCrumbType } from '@/components/breadcrumb'
 import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import { Post, PostTranslationSchema } from '../../interface'
 import Image from 'next/image'
-import { formatToJalali, getReadingTime, timeAgo } from '../../utils'
-import { getTranslation } from '@/lib/utils'
+import { formatToJalali, getReadingTime } from '../../utils'
+import { getTranslation, timeAgo } from '@/lib/utils'
+import PostCommentList from '@/features/post-comment/ui/list'
+import { QueryResponse } from '@/lib/entity/core/interface'
+import { PostComment } from '@/features/post-comment/interface'
+import { getPostComments } from '@/features/post-comment/actions'
 
 type props = {
   locale?: string
@@ -12,7 +16,11 @@ type props = {
   post: Post
 }
 
-const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
+const SinglePageBlog = async ({
+  breadcrumbItems,
+  post,
+  locale = 'fa',
+}: props) => {
   const translation: PostTranslationSchema = getTranslation({
     translations: post?.translations,
   })
@@ -20,7 +28,6 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
   let imageCoverTranslation = {}
   // تبدیل contentJson به متن ساده
   const json = JSON.parse(translation?.contentJson)
-  console.log('#3387 post content: ', post)
   const plainText =
     json.content
       ?.filter((block: any) => block.type === 'paragraph')
@@ -34,6 +41,10 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
     imageCoverTranslation = getTranslation({
       translations: post?.image?.translations,
     })
+
+  const postCommentsResult: QueryResponse<PostComment> = await getPostComments({
+    filters: { post: post.id },
+  })
   return (
     <div className=" max-w-4xl m-auto text-justify">
       <div className="flex-1 space-y-4 p-5">
@@ -65,6 +76,8 @@ const SinglePageBlog = ({ breadcrumbItems, post, locale = 'fa' }: props) => {
         <span>زمان مطالعه: {readingDuration}</span>
       </div>
       <RenderedHtml contentJson={translation?.contentJson} />
+
+      <PostCommentList post={post} postCommentsResult={postCommentsResult} />
     </div>
   )
 }

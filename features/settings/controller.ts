@@ -67,7 +67,6 @@ class controller extends baseController {
   }
 
   async findOneAndUpdate(payload: Update) {
-    console.log('#3323 payload:', payload)
     return super.findOneAndUpdate(payload)
   }
 }

@@ -2,6 +2,8 @@
 
 import { Fragment, useState, useEffect } from 'react'
 import ComboboxInput from '../ui/combobox-input'
+import { useDebouncedCallback } from 'use-debounce'
+import { Trash } from 'lucide-react'
 
 export type Option = {
   value: string
@@ -9,27 +11,33 @@ export type Option = {
 }
 
 type ComboboxProps = {
-  title: string
+  title?: string
   name: string
   defaultValue?: string
-  options: Option[]
+  options?: Option[]
+  fetchOptions?: (query: string) => Promise<Option[]>
   placeholder?: string
   icon?: any
   state?: any
   disabled?: boolean
-  onChange?: (e: any) => void
+  onChange?: ({ target }: { target: Option }) => void
+  showClean: boolean
 }
 export default function Combobox({
   title,
   name,
   defaultValue,
   options,
+  fetchOptions,
   placeholder,
   icon,
   state,
   disabled = false,
   onChange,
+  showClean = false,
 }: ComboboxProps) {
+  const initialOptions = options ?? []
+  const [_options, setOptions] = useState<Option[]>(initialOptions)
   const errorMessages = state?.errors?.[name] ?? []
   const hasError = state?.errors?.[name]?.length > 0
   const InputIcon = typeof icon === 'object' ? () => icon : icon
@@ -37,35 +45,51 @@ export default function Combobox({
     value: '',
     label: '',
   }
-  options = options
-
-  const [selectedOption, setSelectedOption] = useState(null)
-
+  const [query, setQuery] = useState<string>('')
+  const [selectedOption, setSelectedOption] = useState<Option | null>(null)
   useEffect(() => {
-    if (defaultValue)
-      for (let j = 0; j < options.length; j++) {
-        if (defaultValue === options[j].value) {
-          setSelectedOption(options[j])
+    if (defaultValue && _options)
+      for (let j = 0; j < _options.length; j++) {
+        if (defaultValue === _options[j].value) {
+          setSelectedOption(_options[j])
         }
       }
-  }, [selectedOption])
+  }, [defaultValue, _options])
+
+  const [loading, setLoading] = useState(false)
+  const debouncedFetchOptions = useDebouncedCallback((query) => {
+    setLoading(true)
+    fetchOptions(query).then((opts) => {
+      setOptions(opts)
+      setLoading(false)
+    })
+  }, 600)
+  useEffect(() => {
+    if (options) {
+      const filteredOptions: Option[] = initialOptions.filter((opt) =>
+        opt.label.toLowerCase().includes(query.toLowerCase())
+      )
+      setOptions(filteredOptions)
+    } else if (fetchOptions) {
+      debouncedFetchOptions(query)
+    } else {
+      console.warn(`شما برای آیتم ${name} گزینه‌ای تنظیم نکرده‌اید`)
+    }
+  }, [query, options, fetchOptions, name])
   return (
     <div className="mb-4">
-      <label htmlFor={name} className="mb-2 block text-sm font-medium">
-        {title}
-      </label>
+      {title ?? (
+        <label htmlFor={name} className="mb-2 block text-sm font-medium">
+          {title}
+        </label>
+      )}
       <div className="relative">
-        <input
-          type="hidden"
-          name={name}
-          value={selectedOption?.value ?? ''}
-          readOnly
-        />
         <div className=" top-16">
           <ComboboxInput
-            title={title}
+            name={name}
+            {...(title ? { title: title } : {})}
             placeholder={placeholder || 'انتخاب کنید'}
-            options={options}
+            options={_options}
             value={selectedOption?.value}
             // value={selectedOption.value}
             onChange={(option) => {
@@ -73,6 +97,9 @@ export default function Combobox({
               if (onChange) onChange({ target: option })
             }}
             disabled={disabled}
+            setQuery={setQuery}
+            loading={loading}
+            showClean={showClean}
           />
         </div>
         {icon && (

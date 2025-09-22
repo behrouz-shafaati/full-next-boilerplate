@@ -16,20 +16,22 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { Input } from './input'
-import { Button } from './button'
 import { ScrollArea, ScrollBar } from './scroll-area'
 import Search from './search'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import Pagination from './pagination'
-import { Trash } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Filters } from '../table-filter/filters'
+import { useCustomSWR } from '@/hooks/use-custom-swr'
+import { useSearchParams } from 'next/navigation'
+import { useUpdatedUrl } from '@/hooks/use-updated-url'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   response: QueryResponse<TData>
   searchTitle: string
   groupAction?: any
+  refetchDataUrl?: string
+  params?: Record<string, string | number>
 }
 
 export function DataTable<TData, TValue>({
@@ -37,10 +39,16 @@ export function DataTable<TData, TValue>({
   response,
   searchTitle,
   groupAction,
+  refetchDataUrl = '#',
+  params = {},
 }: DataTableProps<TData, TValue>) {
-  const data = response.data
+  const { buildUrlWithParams } = useUpdatedUrl()
+  const { data, isLoading } = useCustomSWR({
+    url: buildUrlWithParams(refetchDataUrl),
+    initialData: response,
+  })
   const table = useReactTable({
-    data,
+    data: data.data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -55,7 +63,7 @@ export function DataTable<TData, TValue>({
     <>
       <div className="flex space-x-2 space-x-reverse space-y-2 md:space-y-0 flex-col md:flex-row">
         <Search placeholder={searchTitle} />
-        {isSelected && groupAction && <GroupAction items={selectedItems} />}
+        <Filters table={table} />
       </div>
       <ScrollArea className="">
         <Table className="relative">
@@ -116,9 +124,14 @@ export function DataTable<TData, TValue>({
           {table.getFilteredRowModel().rows.length} ردیف انتخاب شده
         </div>
         <div className="space-x-reverse space-x-2">
-          <Pagination totalPages={response.totalPages} />
+          <Pagination totalPages={data.totalPages} />
         </div>
       </div>
+      {isSelected && groupAction && (
+        <div className="fixed bottom-0 p-4 bg-white dark:bg-gray-950 w-full border-t">
+          <GroupAction items={selectedItems} />
+        </div>
+      )}
     </>
   )
 }

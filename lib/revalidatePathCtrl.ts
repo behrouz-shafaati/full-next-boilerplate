@@ -6,6 +6,7 @@ export type RevalidatePathProp = {
   feature:
     | 'category'
     | 'post'
+    | 'postComment'
     | 'page'
     | 'template'
     | 'templatePart'
@@ -65,7 +66,11 @@ class controller {
 
     switch (feature) {
       case 'post': {
-        return [...(await this.getBlogPath()), ...pathes]
+        return [
+          ...(await this.getBlogPath()),
+          ...(await this.getAllPagesPaths()),
+          ...pathes,
+        ]
       }
       case 'menu':
       case 'category':
@@ -75,6 +80,7 @@ class controller {
       case 'settings': {
         return [...(await this.revalidateAllPaths()), ...pathes]
       }
+      case 'postComment':
       case 'tag':
       case 'city':
       case 'country':

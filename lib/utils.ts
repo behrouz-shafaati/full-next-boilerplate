@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
+import { QueryFind } from './entity/core/interface'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -148,8 +149,85 @@ export const getTranslation = ({
   translations: any[]
   locale?: string
 }) => {
+  if (!translations) return {}
   const translation =
     translations?.find((t) => t.lang === locale) || translations[0] || {}
   return translation
 }
 //******************************************************************************/
+
+export const fetcher = (url: string) => fetch(url).then((r) => r.json())
+
+export function timeAgo(createdAt: string): string {
+  const now = new Date()
+  const past = new Date(createdAt)
+  const diffMs = now.getTime() - past.getTime()
+
+  if (diffMs < 0) return 'در آینده است!'
+
+  const minutes = Math.floor(diffMs / 60000)
+  const hours = Math.floor(diffMs / 3600000)
+  const days = Math.floor(diffMs / 86400000)
+  const months = Math.floor(diffMs / (30 * 86400000))
+  const years = Math.floor(diffMs / (365 * 86400000))
+  if (minutes == 0) return 'همین الان'
+  if (minutes < 60) {
+    return `${minutes} دقیقه قبل`
+  } else if (hours < 24) {
+    return `${hours} ساعت قبل`
+  } else if (days < 30) {
+    return `${days} روز قبل`
+  } else if (months < 12) {
+    return `${months} ماه قبل`
+  } else {
+    // اگر چند سال و چند ماه گذشته باشد
+    const remainingMonths = months % 12
+    if (remainingMonths === 0) {
+      return `${years} سال قبل`
+    } else {
+      return `${years} سال و ${remainingMonths} ماه قبل`
+    }
+  }
+}
+
+// function parseQuery(req: NextRequest): QueryFind {
+export function parseQuery(req: any): QueryFind {
+  const searchParams = req.nextUrl.searchParams
+
+  // pagination
+  const page = searchParams.get('page') ?? 1
+  const perPage = searchParams.get('perPage') ?? 6
+
+  // filters
+  const filters: any = {}
+  searchParams.forEach((value, key) => {
+    if (
+      ![
+        'page',
+        'perPage',
+        'orderBy',
+        'order',
+        'saveLog',
+        'sort',
+        'populate',
+      ].includes(key)
+    ) {
+      filters[key] = value
+    }
+  })
+
+  return {
+    filters: {
+      ...filters,
+      orderBy: searchParams.get('orderBy') ?? undefined,
+      order: searchParams.get('order') ?? undefined,
+    },
+    pagination: {
+      page: page === 'off' ? 'off' : Number(page ?? 1),
+      perPage: Number(perPage ?? 10),
+    },
+    saveLog: searchParams.get('saveLog') === 'true' ? true : false,
+    sort: searchParams.get('sort') ?? undefined,
+    populate: searchParams.get('populate') ?? undefined,
+  }
+}

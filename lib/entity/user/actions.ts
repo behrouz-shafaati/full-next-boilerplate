@@ -21,6 +21,11 @@ const FormSchema = z.object({
       required_error: 'لطفا نام خانوادگی را وارد کنید.',
     })
     .min(1, { message: 'لطفا نام خانوادگی را وارد کنید.' }),
+  userName: z
+    .string({
+      required_error: 'لطفا نام کاربری را وارد کنید.',
+    })
+    .min(1, { message: 'لطفا نام کاربری را وارد کنید.' }),
   email: z
     .string({
       required_error: 'لطفا ایمیل را وارد کنید.',

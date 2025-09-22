@@ -1,5 +1,6 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { PostSchema } from './interface'
+import { createPostHref } from './utils'
 
 const PostTranslationSchema = new Schema(
   {
@@ -107,7 +108,8 @@ postSchema
 const transform = (doc: any, ret: any, options: any) => {
   const category = ret?.categories[0] || { slug: '' }
   ret.id = ret._id?.toHexString()
-  ret.link = `${category.slug}/${ret.slug}`
+  // ret.link = `${category.slug}/${ret.slug}`
+  ret.href = createPostHref(ret)
   delete ret._id
   delete ret.__v
   delete ret.deleted
@@ -120,4 +122,5 @@ postSchema.set('toObject', {
 postSchema.set('toJSON', {
   transform,
 })
+
 export default mongoose.models.post || model<PostSchema>('post', postSchema)

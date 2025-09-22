@@ -102,7 +102,7 @@ export const BlogPostSlider = ({
           </div>
           <div className="p-4">
             <h3 className="text-md font-semibold mb-2 line-clamp-2">
-              <Link href={post.link}> {translationPost?.title}</Link>
+              <Link href={post.href}> {translationPost?.title}</Link>
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
               {translationPost?.excerpt}

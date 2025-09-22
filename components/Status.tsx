@@ -1,11 +1,18 @@
 'use client'
-
 import React from 'react'
-import { CheckCircle, XCircle, Eye, EyeOff } from 'lucide-react'
+import { CheckCircle, XCircle, Eye, EyeOff, Clock1 } from 'lucide-react'
 import { Row } from '@tanstack/react-table'
+import { Badge } from './ui/badge'
 
 // نوع وضعیت‌ها
-type StatusType = 'active' | 'deactive' | 'published' | 'draft'
+type StatusType =
+  | 'active'
+  | 'deactive'
+  | 'published'
+  | 'draft'
+  | 'pending'
+  | 'approved'
+  | 'rejected'
 
 interface StatusProps<T> {
   row: Row<T>
@@ -13,43 +20,73 @@ interface StatusProps<T> {
 }
 
 export const Status = <T,>({ row, accessorKey = 'status' }: StatusProps<T>) => {
-  const status = row.getValue<StatusType>(accessorKey)
-  const isActive = status === 'active' || status === 'published'
+  let status: StatusType | undefined
+
+  if (typeof row?.getValue === 'function') {
+    // TanStack Table Row
+    status = row.getValue<StatusType>(accessorKey!)
+  } else if (row && accessorKey) {
+    // Object ساده
+    status = row[accessorKey as keyof typeof row] as StatusType
+  }
+
+  let isActive
 
   let icon, label
+  switch (status) {
+    case 'active':
+      label = 'فعال'
+      break
+    case 'deactive':
+      label = 'غیر فعال'
+      break
+    case 'published':
+      label = 'منتشر شده'
+      break
+    case 'draft':
+      label = 'پیش نویس'
+      break
+    case 'pending':
+      label = 'در انتظار '
+      break
+    case 'approved':
+      label = 'تایید شده'
+      break
+    case 'rejected':
+      label = 'رد شده'
+      break
+    default:
+      label = 'نامشخص'
+  }
 
   switch (status) {
     case 'active':
     case 'published':
+    case 'approved':
+      isActive = true
       icon = <CheckCircle className="w-4 h-4" />
-      label = status === 'active' ? 'فعال' : 'منتشر شده'
       break
     case 'deactive':
     case 'draft':
+    case 'rejected':
       icon = <XCircle className="w-4 h-4" />
-      label = status === 'deactive' ? 'غیرفعال' : 'پیش‌نویس'
+      isActive = false
       break
     default:
-      icon = <XCircle className="w-4 h-4" />
-      label = 'نامشخص'
+      icon = <Clock1 className="w-4 h-4" />
+      isActive = false
   }
 
   const bgGradient = isActive
-    ? 'bg-gradient-to-r from-green-400 to-green-600 dark:from-green-500 dark:to-green-700 hover:from-green-500 hover:to-green-700'
-    : 'bg-gradient-to-r from-red-400 to-red-600 dark:from-red-500 dark:to-red-700 hover:from-red-500 hover:to-red-700'
+    ? 'rounded-full border-none bg-green-600/10 hover:bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40'
+    : 'rounded-full border-none bg-red-600/15 hover:bg-red-600/15 text-red-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-red-400/15 dark:text-red-400 dark:focus-visible:ring-red-400/40'
 
   return (
-    <div
-      className={`
-        flex items-center gap-2 px-3 py-1.5 rounded-full font-medium shadow-lg
-        text-white transition-all duration-300 transform
-        cursor-default select-none
-        ${bgGradient}
-        hover:scale-105
-      `}
+    <Badge
+      className={` ${bgGradient} p-2 min-w-20 text-center align-middle items-center justify-center`}
     >
-      <span className="flex items-center justify-center w-5 h-5">{icon}</span>
-      <span className="text-sm">{label}</span>
-    </div>
+      {icon}
+      <span className="mr-2">{label}</span>
+    </Badge>
   )
 }

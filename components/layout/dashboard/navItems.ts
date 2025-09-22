@@ -19,6 +19,14 @@ export const navItems: SidebarNavItem[] = [
     authorized: ['admin'],
   },
   {
+    slug: 'post-comment',
+    title: 'نظرات',
+    href: '/dashboard/post-comments',
+    icon: 'stickyNote',
+    label: '',
+    authorized: ['admin'],
+  },
+  {
     slug: 'user',
     title: 'کاربران',
     href: '/dashboard/users',

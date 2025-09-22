@@ -53,7 +53,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link
-              href={`/${createPostHref(data)}`}
+              href={`${createPostHref(data)}`}
               target="_blank"
               rel="noopener noreferrer"
             >

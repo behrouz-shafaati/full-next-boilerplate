@@ -10,6 +10,7 @@ import {
 } from './interface'
 import { getSession } from '@/lib/auth'
 import { Session } from '@/types'
+import postCtrl from '@/features/post/controller'
 // import imgurClient from "./imgur";
 // const multer = require('multer');
 const sharp = require('sharp')
@@ -84,7 +85,6 @@ class controller extends c_controller {
   }
 
   async saveFile(formData: FormData): Promise<FileDetails> {
-    console.log('#0028 in file upload')
     const file = formData.get('file') as File
 
     const _id: string = formData.get('id') as string
@@ -104,7 +104,6 @@ class controller extends c_controller {
     let tmpPath: string = `./public/uploads/tmp`
 
     const { name: defualtFileName, type: mimeType, size: fileSize } = file
-    console.log('#23 _id:', _id)
     const fileName = createFileName(
       title,
       defualtFileName.split('.').pop() as string
@@ -242,10 +241,10 @@ class controller extends c_controller {
     }
 
     const cleanParams = await this.sanitizePostData(params, _id)
-    console.log('#2345897 cleanParams:', cleanParams)
     let fileInfo: FileDetails = await this.create({
       params: cleanParams,
     })
+    this.handleAfterUpdateFile({ file: { ...fileInfo, locale: lang } })
     return fileInfo
   }
 
@@ -257,7 +256,6 @@ class controller extends c_controller {
   async updateFileDetails(filesDetails: FileDetailsPayload[]) {
     const newFiles = []
     for (const fileDetails of filesDetails) {
-      console.log('#987345 filesDetails server:', filesDetails)
       // Find the file by id
       const file = await this.findById({ id: fileDetails.id })
       // Check if the file is not found, null, or already deleted
@@ -270,6 +268,8 @@ class controller extends c_controller {
         href: fileDetails.href,
         main: fileDetails.main,
         lang: fileDetails.lang,
+        attachedTo: fileDetails.attachedTo,
+        locale: fileDetails.locale,
       }
 
       const cleanParams = await this.sanitizePostData(
@@ -277,22 +277,29 @@ class controller extends c_controller {
         String(fileDetails.id)
       )
 
-      console.log(
-        '#987345 filesDetails server after sanitizePostData:',
-        cleanParams
-      )
       const newFile = await this.findOneAndUpdate({
         filters: fileDetails.id,
         params: cleanParams,
+      })
+      this.handleAfterUpdateFile({
+        file: { ...newFile, locale: fileDetails.locale },
       })
       newFiles.push(newFile)
     }
     return newFiles
   }
 
+  async handleAfterUpdateFile({ file }: { file: FileDetails }) {
+    if (file?.attachedTo.length == 0) return
+    switch (file.attachedTo[0].feature) {
+      case 'post':
+        postCtrl.updateContentJsonFileDetails({ fileDetails: file })
+        break
+    }
+  }
+
   async deleteFile(id: string) {
     const file = await this.findById({ id })
-    console.log('#32 delete file patch:', file.patch)
     fs.unlinkSync(file.patch)
     return this.delete({ filters: [id] })
   }
@@ -302,7 +309,6 @@ class controller extends c_controller {
     if (id) {
       const prevFile = await this.findById({ id })
       if (prevFile) prevState = prevFile
-      console.log('#prevState 098776 :', prevState)
     }
     const session = (await getSession()) as Session
     const user = session.user.id
