@@ -2,7 +2,7 @@ import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
 import pageSchema from './schema'
 import pageService from './service'
-import settingsCtrl from '../settings/controller'
+import settingsCtrl, { getSettings } from '../settings/controller'
 import { Page } from './interface'
 import categoryCtrl from '../category/controller'
 
@@ -84,12 +84,9 @@ class controller extends baseController {
   }
 
   async getHomePage() {
-    const settings = await settingsCtrl.find({
-      filters: { type: 'site-settings' },
-    })
-    console.log('#2346 settings.data: ', settings.data[0])
-    if (!settings.data[0]?.homePageId) return null
-    const homePage = await this.findById({ id: settings.data[0].homePageId })
+    const homePageId = await getSettings('homePageId')
+    if (homePageId == null) return null
+    const homePage = await this.findById({ id: homePageId })
     console.log('#2346 HomePage: ', homePage)
     return homePage
   }

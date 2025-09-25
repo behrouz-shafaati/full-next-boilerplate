@@ -15,8 +15,7 @@ export async function GET(req: Request) {
     // }
     // return Response.json(await decrypt(session))
 
-    const commentsResult = await postCommentCtrl.find(query)
-    console.log('# -------------- commentsResult:', commentsResult)
+    const commentsResult = await postCommentCtrl.find(query, false)
     return NextResponse.json(commentsResult)
   } catch (err) {
     console.error('Error fetching comments:', err)

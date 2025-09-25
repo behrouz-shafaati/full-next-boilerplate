@@ -8,6 +8,7 @@ import { revalidatePath } from 'next/cache'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
+  commentApprovalRequired: z.string({}).nullable().optional(),
   // defaultHeaderId: z.string({}),
 })
 
@@ -20,6 +21,7 @@ const FormSchema = z.object({
  */
 
 export async function updateSettings(prevState: State, formData: FormData) {
+  console.log('#234 form data', Array.from(formData.entries()))
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -85,6 +87,8 @@ async function sanitizeSettingsData(validatedFields: any) {
   const settingsPayload = validatedFields.data
   const params = {
     ...settingsPayload,
+    commentApprovalRequired:
+      settingsPayload?.commentApprovalRequired == 'on' ? true : false,
   }
 
   return params

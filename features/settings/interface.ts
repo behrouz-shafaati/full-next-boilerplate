@@ -15,6 +15,11 @@ type SettingsBase = {
   homePageId: Id
 
   /**
+   * نمایش دیدگاه‌ها فقط بعد از تأیید/بررسی
+   */
+  commentApprovalRequired: boolean
+
+  /**
    * شناسه منو‌ی اصلی
    */
   primaryMenuId: string

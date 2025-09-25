@@ -55,7 +55,6 @@ export default async function RenderedHtml({ contentJson }: Props) {
         replace(domNode) {
           // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            console.log('#2349867 domNode.attribs:', domNode.attribs)
             const { src, id: fileId, translations } = domNode.attribs
             if (!src) return null
             const translation = getTranslation({

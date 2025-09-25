@@ -73,3 +73,31 @@ class controller extends baseController {
 
 const settingsCtrl = new controller(new settingsService(settingsSchema))
 export default settingsCtrl
+
+/**
+ * Fetch site settings and return either the full settings object
+ * or a specific value by key.
+ *
+ * @param {string} [key=''] - The key of the setting to retrieve.
+ * If omitted or empty, the full settings object is returned.
+ * @returns {Promise<Record<string, unknown> | unknown | null>}
+ * - If no key is provided, returns the full settings object.
+ * - If a key is provided, returns the value for that key or null if not found.
+ */
+export const getSettings = async (
+  key: string = ''
+): Promise<Record<string, unknown> | unknown | null> => {
+  const result = await settingsCtrl.find({
+    filters: { type: 'site-settings' },
+  })
+
+  const settings: Record<string, unknown> = result?.data?.[0] ?? {}
+
+  if (!key) {
+    return settings
+  }
+
+  return Object.prototype.hasOwnProperty.call(settings, key)
+    ? settings[key]
+    : null
+}

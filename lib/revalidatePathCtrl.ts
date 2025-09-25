@@ -81,6 +81,7 @@ class controller {
         return [...(await this.revalidateAllPaths()), ...pathes]
       }
       case 'postComment':
+        return [...pathes]
       case 'tag':
       case 'city':
       case 'country':

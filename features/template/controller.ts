@@ -154,10 +154,6 @@ class controller extends baseController {
     const [allPageTemplateResult] = await Promise.all([
       this.find({ filters: { templateFor: 'allPages', status: 'active' } }),
     ])
-    console.log(
-      '#2 allPageTemplateResult.data[0]:',
-      allPageTemplateResult.data[0]
-    )
     if (allPageTemplateResult.data[0] != undefined)
       return allPageTemplateResult.data[0]
     return null

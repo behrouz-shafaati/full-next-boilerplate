@@ -20,18 +20,17 @@ import { Settings } from '../interface'
 import Combobox from '@/components/form-fields/combobox'
 import { Option, State } from '@/types'
 import { HomeIcon } from 'lucide-react'
-import { HeaderContent } from '@/features/template/interface'
+import { getTranslation } from '@/lib/utils'
+import Switch from '@/components/form-fields/switch'
 
 interface SettingsFormProps {
   settings: Settings
   allPages: PageContent[]
-  allHeaders: HeaderContent[]
 }
 
 export const SettingsForm: React.FC<SettingsFormProps> = ({
   settings,
   allPages,
-  allHeaders,
 }) => {
   const locale = 'fa'
   const formRef = useRef<HTMLFormElement>(null)
@@ -49,19 +48,13 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const action = settings ? 'ذخیره تغییرات' : 'ذخیره'
 
   const pagesOptions: Option[] = allPages.map((p: PageContent) => {
-    const translation: PageTranslationSchema =
-      p?.translations?.find((t: PageTranslationSchema) => t.lang === locale) ||
-      p?.translations[0] ||
-      {}
+    const translation: PageTranslationSchema = getTranslation({
+      translations: p.translations,
+      locale,
+    })
     return {
       value: String(p.id),
       label: translation?.title,
-    }
-  })
-  const headersOptions: Option[] = allHeaders.map((h: HeaderContent) => {
-    return {
-      value: String(h.id),
-      label: h.title,
     }
   })
 
@@ -136,6 +129,12 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
             state={state}
             icon={<HomeIcon className="w-4 h-4" />}
           /> */}
+
+          <Switch
+            name="commentApprovalRequired"
+            title="نمایش دیدگاه‌ها فقط بعد از تأیید/بررسی"
+            defaultChecked={settings?.commentApprovalRequired ?? true}
+          />
         </div>
         <SubmitButton />
       </form>

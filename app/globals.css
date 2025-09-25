@@ -49,6 +49,12 @@
   }
 }
 
+@layer utilities {
+  .ltr {
+    direction: ltr;
+  }
+}
+
 /* styles.css */
 .collapsibleDropdown {
   overflow: hidden;

@@ -8,7 +8,7 @@ import { getTranslation, timeAgo } from '@/lib/utils'
 import PostCommentList from '@/features/post-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '@/features/post-comment/interface'
-import { getPostComments } from '@/features/post-comment/actions'
+import { getPostCommentsForClient } from '@/features/post-comment/actions'
 
 type props = {
   locale?: string
@@ -42,9 +42,10 @@ const SinglePageBlog = async ({
       translations: post?.image?.translations,
     })
 
-  const postCommentsResult: QueryResponse<PostComment> = await getPostComments({
-    filters: { post: post.id },
-  })
+  const postCommentsResult: QueryResponse<PostComment> =
+    await getPostCommentsForClient({
+      filters: { post: post.id },
+    })
   return (
     <div className=" max-w-4xl m-auto text-justify">
       <div className="flex-1 space-y-4 p-5">

@@ -21,6 +21,7 @@ import { Post } from '../post/interface'
 import { renderTiptapJsonToHtml } from '@/lib/renderTiptapToHtml'
 import { buildCommentTree } from './utils'
 import { getTranslation } from '@/lib/utils'
+import { getSettings } from '../settings/controller'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -82,9 +83,8 @@ export async function createPostComment(
       feature: 'postComment',
       slug: [createPostHref(post as Post), `/dashboard/postComments`],
     })
-
     for (const slug of pathes) {
-      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.+
       revalidatePath(slug)
     }
 
@@ -295,4 +295,10 @@ export async function getPostComments(
     filters,
     sort: { createdAt: 1 },
   })
+}
+
+export async function getPostCommentsForClient(payload: QueryFind) {
+  const commentApprovalRequired = await getSettings('commentApprovalRequired')
+  if (commentApprovalRequired) payload.filters.status = 'approved'
+  return getPostComments(payload)
 }
