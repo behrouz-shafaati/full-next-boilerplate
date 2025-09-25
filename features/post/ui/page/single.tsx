@@ -60,7 +60,6 @@ const SinglePageBlog = async ({
             title={imageCoverTranslation?.title}
             fill
             className="object-contain"
-            unoptimized
           />
         </div>
       )}

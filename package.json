@@ -72,6 +72,7 @@
     "jose": "^5.6.3",
     "jsdom": "^26.1.0",
     "lucide-react": "^0.378.0",
+    "mime": "^4.1.0",
     "mongoose": "^8.3.5",
     "next": "15.3.1",
     "next-auth": "^5.0.0-beta.18",

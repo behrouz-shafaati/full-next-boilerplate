@@ -28,7 +28,6 @@ export default function PostListItem({ post }: PostCardProps) {
             alt={post.image.alt || post.title}
             fill
             className="object-cover"
-            unoptimized
           />
         ) : (
           <div className="w-full h-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-300 text-sm">

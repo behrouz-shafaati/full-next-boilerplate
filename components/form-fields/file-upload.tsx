@@ -336,7 +336,6 @@ const FileUpload = forwardRef(function FileUpload(
                         setSelectedFileIndex(index)
                         setIsModalOpen(true)
                       }}
-                      unoptimized
                     />
                   )}
                   {showDeleteButton && (
@@ -432,7 +431,6 @@ const ModalContent = ({
             width={100}
             height={100}
             className="object-contain w-full h-full rounded-md"
-            unoptimized
           />
         </div>
       </div>

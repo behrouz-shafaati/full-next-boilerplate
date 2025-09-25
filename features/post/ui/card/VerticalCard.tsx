@@ -21,13 +21,7 @@ export default function VerticalCard({
     <Card className="w-full max-w-sm overflow-hidden flex flex-col rounded-2xl shadow-sm break-inside-avoid">
       {imageUrl && (
         <div className="relative w-full aspect-[2/1]">
-          <Image
-            src={imageUrl}
-            alt={title}
-            fill
-            className="object-cover"
-            unoptimized
-          />
+          <Image src={imageUrl} alt={title} fill className="object-cover" />
         </div>
       )}
       <CardContent className="p-4 flex flex-col gap-3">

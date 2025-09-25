@@ -43,7 +43,6 @@ export const ImageBlock = ({
         ...computedStyles(styles),
       }}
       {...props}
-      unoptimized
     />
   )
 

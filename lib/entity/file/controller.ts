@@ -33,22 +33,6 @@ class controller extends c_controller {
   constructor(service: any) {
     super(service)
   }
-  //   async handleUpload() {
-  //     const maxSize = 25 * 1024 * 1024; // max size = 25 mg
-  //     const storage = multer.diskStorage({
-  //       destination: (req: any, file: any, cb: any) => {
-  //         cb(null, './src/uploads/temp');
-  //       },
-  //       filename: (req: any, file: any, cb: any) => {
-  //         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-  //         cb(null, uniqueSuffix + '.' + file.originalname.split('.').pop());
-  //       },
-  //     });
-  //     const upload = multer({ storage: storage, limits: { fileSize: maxSize } });
-
-  //     const uploadFile = upload.fields([{ name: 'file', maxCount: 1 }]);
-  //     return uploadFile;
-  //   }
 
   async generateDirectory(
     fileType: string
@@ -56,8 +40,8 @@ class controller extends c_controller {
     const yearNumber = new Date().getFullYear()
     const monthNumber = new Date().getMonth()
     const dayNumber = new Date().getDate()
-    const src = `/uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
-    const patch = `./public/uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
+    const src = `/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
+    const patch = `./uploads/${fileType}/${yearNumber}/${monthNumber}/${dayNumber}`
     await createDir(patch)
     return { src, patch }
   }
@@ -101,7 +85,7 @@ class controller extends c_controller {
     let previewPath: string = ''
     let src: string = ''
     let patch: string = ''
-    let tmpPath: string = `./public/uploads/tmp`
+    let tmpPath: string = `./uploads/tmp`
 
     const { name: defualtFileName, type: mimeType, size: fileSize } = file
     const fileName = createFileName(
@@ -202,7 +186,7 @@ class controller extends c_controller {
           fileName.substr(0, fileName.lastIndexOf('.')) + '.' + extension
         title = jpegFileName
         const goalFilePath = path.resolve(patch, jpegFileName)
-        src = `${src}/${jpegFileName}`
+        src = `/api/file${src}/${jpegFileName}`
         patch = `${patch}/${jpegFileName}`
         // reduce size
         if (extension == 'webp') {

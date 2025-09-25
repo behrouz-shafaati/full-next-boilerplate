@@ -68,7 +68,6 @@ export default async function RenderedHtml({ contentJson }: Props) {
                   title={translation?.title || ''}
                   fill
                   className="object-contain rounded-lg"
-                  unoptimized
                 />
                 {/* Caption */}
                 {translation?.description && (

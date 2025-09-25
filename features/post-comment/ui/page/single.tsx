@@ -52,7 +52,6 @@ const SinglePageBlog = ({
             title={imageCoverTranslation?.title}
             fill
             className="object-contain"
-            unoptimized
           />
         </div>
       )}

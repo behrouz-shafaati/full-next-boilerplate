@@ -69,7 +69,6 @@ export const ImageSliderBlock = ({
         priority={i === 0}
         className="block w-full h-auto"
         {...props}
-        unoptimized
       />
     )
     return img.href ? (
