@@ -59,7 +59,14 @@ const SinglePageBlog = async ({
             alt={imageCoverTranslation?.alt}
             title={imageCoverTranslation?.title}
             fill
-            className="object-contain"
+            // className="object-contain"
+            className="object-cover"
+            priority
+            quality={70}
+            sizes="(max-width: 640px) 100vw, 
+           (max-width: 1024px) 80vw, 
+           (max-width: 1536px) 1080px, 
+           1920px"
           />
         </div>
       )}

@@ -33,6 +33,10 @@ const nextConfig = {
       bodySizeLimit: '10mb', // 👈 افزایش به ۱۰ مگابایت
     },
   },
+  compiler: {
+    // 👇 کد جاوااسکریپت مدرن‌تر و کوچیک‌تر
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 }
 
 export default nextConfig

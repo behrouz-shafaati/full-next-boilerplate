@@ -175,36 +175,59 @@ class controller extends c_controller {
     // await fs.writeFile(`${tmpPath}/${fileName}`, buffer);
     const extension = mimeType == 'image/webp' ? 'webp' : 'png'
     try {
-      if (
-        mimeType == 'image/jpeg' ||
-        mimeType == 'image/png' ||
-        mimeType == 'image/webp'
-      ) {
+      if (mimeType.startsWith('image/')) {
         const tmpFilePath = path.resolve(tmpPath, fileName)
-        // change extension to .jpeg
-        const jpegFileName =
-          fileName.substr(0, fileName.lastIndexOf('.')) + '.' + extension
-        title = jpegFileName
-        const goalFilePath = path.resolve(patch, jpegFileName)
-        src = `/api/file${src}/${jpegFileName}`
-        patch = `${patch}/${jpegFileName}`
-        // reduce size
-        if (extension == 'webp') {
-          //تبدیل به فرمت webp
-          await sharp(tmpFilePath).toFormat('webp').toFile(goalFilePath)
-          fs.unlinkSync(tmpFilePath)
-        } else
-          await sharp(tmpFilePath)
-            .flatten({ background: { r: 255, g: 255, b: 255 } })
-            .resize(850, 850, {
-              fit: sharp.fit.inside,
-              withoutEnlargement: true,
-            })
-            // .jpeg({ quality: 90 })
-            .png({ quality: 90 })
-            .toFile(goalFilePath)
-        fs.unlinkSync(tmpFilePath)
+
+        // تغییر نام به webp
+        const webpFileName =
+          fileName.substring(0, fileName.lastIndexOf('.')) + '.webp'
+        title = webpFileName
+        const goalFilePath = path.resolve(patch, webpFileName)
+        src = `/api/file${src}/${webpFileName}`
+        patch = `${patch}/${webpFileName}`
+
+        // تبدیل به webp + بهینه‌سازی
+        await sharp(tmpFilePath)
+          .resize(850, 850, {
+            fit: sharp.fit.inside,
+            withoutEnlargement: true,
+          })
+          .webp({ quality: 80 }) // کیفیت پیشنهادی برای وب
+          .toFile(goalFilePath)
+
+        // پاک کردن فایل موقت بعد از اتمام پردازش
+        safeUnlink(tmpFilePath)
       }
+      // if (
+      //   mimeType == 'image/jpeg' ||
+      //   mimeType == 'image/png' ||
+      //   mimeType == 'image/webp'
+      // ) {
+      //   const tmpFilePath = path.resolve(tmpPath, fileName)
+      //   // change extension to .jpeg
+      //   const jpegFileName =
+      //     fileName.substr(0, fileName.lastIndexOf('.')) + '.' + extension
+      //   title = jpegFileName
+      //   const goalFilePath = path.resolve(patch, jpegFileName)
+      //   src = `/api/file${src}/${jpegFileName}`
+      //   patch = `${patch}/${jpegFileName}`
+      //   // reduce size
+      //   if (extension == 'webp') {
+      //     //تبدیل به فرمت webp
+      //     await sharp(tmpFilePath).toFormat('webp').toFile(goalFilePath)
+      //     fs.unlinkSync(tmpFilePath)
+      //   } else
+      //     await sharp(tmpFilePath)
+      //       .flatten({ background: { r: 255, g: 255, b: 255 } })
+      //       .resize(850, 850, {
+      //         fit: sharp.fit.inside,
+      //         withoutEnlargement: true,
+      //       })
+      //       // .jpeg({ quality: 90 })
+      //       .png({ quality: 90 })
+      //       .toFile(goalFilePath)
+      //   fs.unlinkSync(tmpFilePath)
+      // }
     } catch (e: any) {
       console.log('#903 Error in upload file:', e)
     }
@@ -342,4 +365,25 @@ function createFileName(title: string, fileExtension: string) {
   // }
   // generate random file name if title is empty
   return `${uniqueSuffix}.${fileExtension}`
+}
+
+function safeUnlink(filePath: string, retries = 10, delay = 500) {
+  let attempt = 0
+
+  function tryUnlink() {
+    try {
+      fs.unlinkSync(filePath)
+      // موفق شد
+      // console.log("tmp file deleted:", filePath);
+    } catch (err: any) {
+      if (err.code === 'EBUSY' && attempt < retries) {
+        attempt++
+        setTimeout(tryUnlink, delay)
+      } else if (err.code !== 'ENOENT') {
+        console.warn('cannot delete tmp file:', err)
+      }
+    }
+  }
+
+  tryUnlink()
 }

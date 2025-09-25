@@ -57,7 +57,7 @@ export default function MenuBuilder({
     reorderItems(active.id as string, over.id as string)
   }
 
-  useEffect(() => setItems(initialMenu), [])
+  useEffect(() => setItems(initialMenu), [initialMenu, setItems])
 
   return (
     <div className={`p-4 space-y-4 ${className}`}>

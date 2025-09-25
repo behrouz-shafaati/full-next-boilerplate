@@ -197,7 +197,7 @@ const FileUpload = forwardRef(function FileUpload(
         return newFile
       })
     handelUpdateFileDetails(filesDetails)
-  }, [files, attachedTo])
+  }, [files, attachedTo, updateFileDetailsHnadler])
 
   const removeFileById = (id: string) => {
     const items = [...files]

@@ -1,5 +1,5 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Button } from '@/components/ui/button'
+import { Button, ButtonProps } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +12,23 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { getSession, logout } from '@/lib/auth'
 import { Session } from '@/types'
+import React from 'react'
+
+const AvatarButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (props, ref) => <Button ref={ref} {...props} />
+)
+AvatarButton.displayName = 'AvatarButton'
+
 export async function UserNav() {
   const session = (await getSession()) as Session
   if (session) {
     return (
       <DropdownMenu dir="rtl">
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+          <AvatarButton
+            variant="ghost"
+            className="relative h-8 w-8 rounded-full"
+          >
             <Avatar className="h-8 w-8">
               <AvatarImage
                 src={session.user?.image ?? ''}
@@ -26,7 +36,7 @@ export async function UserNav() {
               />
               <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
             </Avatar>
-          </Button>
+          </AvatarButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">

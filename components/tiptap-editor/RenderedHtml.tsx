@@ -61,13 +61,18 @@ export default async function RenderedHtml({ contentJson }: Props) {
               translations: JSON.parse(translations),
             })
             return (
-              <figure className="relative w-full aspect-[2/1] my-4">
+              <figure className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4">
                 <Image
                   src={src}
                   alt={translation?.alt || translation?.title || ''}
                   title={translation?.title || ''}
                   fill
-                  className="object-contain rounded-lg"
+                  className="object-cover "
+                  quality={70}
+                  sizes="(max-width: 640px) 100vw, 
+           (max-width: 1024px) 80vw, 
+           (max-width: 1536px) 1080px, 
+           1920px"
                 />
                 {/* Caption */}
                 {translation?.description && (
@@ -91,7 +96,8 @@ export default async function RenderedHtml({ contentJson }: Props) {
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                // className="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors"
+                className="text-blue-600 dark:text-blue-400 hover:underline hover:text-blue-800 dark:hover:text-blue-300 transition-colors object-cover"
               >
                 {domNode.children?.[0]?.data || href}
               </Link>
