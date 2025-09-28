@@ -84,6 +84,7 @@ class controller extends c_controller {
 
     let previewPath: string = ''
     let src: string = ''
+    let fullSrc: string = ''
     let patch: string = ''
     let tmpPath: string = `./uploads/tmp`
 
@@ -178,14 +179,26 @@ class controller extends c_controller {
       if (mimeType.startsWith('image/')) {
         const tmpFilePath = path.resolve(tmpPath, fileName)
 
+        // اسم فایل پایه (بدون پسوند)
+        const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
+
+        // مسیر و نام فایل بهینه‌شده (small)
         // تغییر نام به webp
-        const webpFileName =
-          fileName.substring(0, fileName.lastIndexOf('.')) + '.webp'
+        const webpFileName = `${baseName}.webp`
         title = webpFileName
         const goalFilePath = path.resolve(patch, webpFileName)
         src = `/api/file${src}/${webpFileName}`
         patch = `${patch}/${webpFileName}`
 
+        // مسیر و نام فایل Full (full.webp)
+        const fullFileName = `${baseName}-full.webp`
+        const fullFilePath = path.resolve(
+          patch.replace(webpFileName, ''),
+          fullFileName
+        )
+        fullSrc = `/api/file${src.replace(webpFileName, '')}/${fullFileName}`
+
+        // 1) ذخیره نسخه بهینه‌شده برای وب
         // تبدیل به webp + بهینه‌سازی
         await sharp(tmpFilePath)
           .resize(850, 850, {
@@ -194,6 +207,15 @@ class controller extends c_controller {
           })
           .webp({ quality: 80 }) // کیفیت پیشنهادی برای وب
           .toFile(goalFilePath)
+
+        // 2) ذخیره نسخه Full با کیفیت اصلی
+        await sharp(tmpFilePath)
+          .resize(1200, 1200, {
+            fit: sharp.fit.inside,
+            withoutEnlargement: true,
+          })
+          .webp({ quality: 95 }) // کیفیت بالا برای full
+          .toFile(fullFilePath)
 
         // پاک کردن فایل موقت بعد از اتمام پردازش
         safeUnlink(tmpFilePath)
@@ -236,6 +258,7 @@ class controller extends c_controller {
       _id,
       title,
       src,
+      fullSrc,
       patch,
       mimeType: `{image/${extension}}`,
       fileSize,

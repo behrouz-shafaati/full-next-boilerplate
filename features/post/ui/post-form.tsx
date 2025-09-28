@@ -27,6 +27,7 @@ import { searchTags } from '@/features/tag/actions'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
 import Link from 'next/link'
+import MultipleSelector from '@/components/form-fields/multiple-selector'
 import { createPostHref } from '../utils'
 
 interface PostFormProps {
@@ -240,6 +241,23 @@ export const PostForm: React.FC<PostFormProps> = ({
               onChange={submitManually}
             />
           </div>
+          {/* <div>
+            <MultipleSelector
+                    title="مطالب مرتبط"
+                    name="relatedPosts"
+                    defaultValues={selectedBlock?.content?.tags ?? []}
+                    placeholder=""
+                    defaultSuggestions={tagOptions}
+                    onChange={(values) => {
+                      update(selectedBlock?.id as string, 'content', {
+                        ...selectedBlock?.content,
+                        tags: values,
+                      })
+                    }}
+                    onSearch={searchTags}
+                    // icon={ShieldQuestionIcon}
+                  />
+          </div> */}
 
           <div className="col-span-3">
             {/* contentJson */}

@@ -79,6 +79,7 @@ export const createCatrgoryBreadcrumb = (
 const arabicDiacriticsRegex = /[\u064B-\u0652]/g // اعراب عربی و فارسی مثل ً ُ ِ ّ
 
 export function slugify(title: string): string {
+  if (!title) return ''
   return title
     .normalize('NFC') // نرمال‌سازی حروف فارسی/عربی
     .replace(arabicDiacriticsRegex, '') // حذف اعراب

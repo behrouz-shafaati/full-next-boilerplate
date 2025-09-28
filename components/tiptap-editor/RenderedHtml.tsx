@@ -4,7 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { AccordionRenderer } from './tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from './type'
-import { getTranslation } from '@/lib/utils'
+import { getTranslation, slugify } from '@/lib/utils'
+import VideoEmbedRenderer from './tiptap-renderers/VideoEmbedRenderer'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -121,6 +122,39 @@ export default async function RenderedHtml({ contentJson }: Props) {
 
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
             return <AccordionRenderer node={accNode} />
+          }
+
+          // اگر توی renderTiptapJsonToHtml از div با data-type="videoEmbed" استفاده کردی:
+          if (
+            domNode instanceof Element &&
+            (domNode.attribs?.['data-type'] === 'videoEmbed' ||
+              domNode.name === 'videoEmbed')
+          ) {
+            // پاس دادن JSON به کامپوننت client-side امن است (serializable)
+            return <VideoEmbedRenderer node={domNode} />
+          }
+          // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مطالب بهشون دسترسی داشت
+          if (
+            domNode instanceof Element &&
+            ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)
+          ) {
+            const text = domNode.children?.[0]?.data
+            const id = slugify(text)
+            const Tag = `${domNode.name}` as keyof JSX.IntrinsicElements
+
+            return (
+              <Tag
+                key={id}
+                id={id}
+                dir={domNode.attribs.dir}
+                style={{
+                  textAlign: domNode.attribs.textAlign,
+                  scrollMarginTop: '80px',
+                }}
+              >
+                {text}
+              </Tag>
+            )
           }
         },
       })}

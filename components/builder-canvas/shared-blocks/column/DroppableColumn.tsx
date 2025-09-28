@@ -34,7 +34,7 @@ export default function DroppableColumn({
   return (
     <div
       ref={setNodeRef}
-      className={`flex relative border   col-span-${
+      className={`flex flex-col relative border   col-span-${
         col.width
       }  rounded min-h-[100px] transition-all ${combineClassNames(
         col.classNames || {}
@@ -43,7 +43,7 @@ export default function DroppableColumn({
     >
       <div
         key={`div-${col.id}`}
-        className="absolute  -bottom-2  flex flex-col align-middle items-center justify-between pl-2 gap-2 z-10 opacity-0 group-hover/column:opacity-100 transition-opacity"
+        className="absolute  -bottom-2   align-middle items-center justify-between pl-2 gap-2 z-10 opacity-0 group-hover/column:opacity-100 transition-opacity"
       >
         <Button
           type="button"

@@ -9,22 +9,27 @@ import {
   Heading3,
   Heading4,
   Heading5,
+  HelpCircle,
   Italic,
   Link2,
   Link2Off,
   List,
+  ListCollapse,
   ListOrdered,
+  Megaphone,
   Minus,
   PilcrowLeft,
   PilcrowRight,
   Quote,
   Redo2,
   Strikethrough,
+  Table,
   Underline as UnderlineIcon,
   Undo2,
 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 import { Editor } from '@tiptap/core'
+import { AddVideoButton } from './component/AddVideoButton'
 
 const MenuBar = ({ editor }: { editor: Editor }) => {
   if (!editor) {
@@ -356,14 +361,19 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
       <div className="block w-px h-6 bg-border" />
       <ToggleGroup type="single" value="" className="rtl">
         <ToggleGroupItem value="link" onClick={insertTable}>
-          افزودن جدول
+          <Table />
         </ToggleGroupItem>
         <ToggleGroupItem value="link" onClick={insertAdSlot}>
-          افزودن تبلیغ
+          <Megaphone />
         </ToggleGroupItem>
         <ToggleGroupItem value="link" onClick={insertAccordion}>
-          افزودن آکاردیون
+          <ListCollapse />
         </ToggleGroupItem>
+        <ToggleGroupItem value="link" onClick={insertAccordion}>
+          <HelpCircle />
+        </ToggleGroupItem>
+
+        <AddVideoButton editor={editor} />
       </ToggleGroup>
     </div>
   )

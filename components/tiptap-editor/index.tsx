@@ -17,6 +17,7 @@ import { FileDetails } from '@/lib/entity/file/interface'
 import DeleteImageWithKey from './extensions/image-delete'
 import { useEffect, useRef, useState } from 'react'
 import { AdSlot } from './extensions/adSlot'
+import { VideoEmbed } from './extensions/VideoEmbed'
 
 import styles from './editor.module.css'
 import MenuBar from './menu-bar'
@@ -119,6 +120,7 @@ export default function TiptapEditor({
       AccordionItem,
       AccordionItemContent,
       AccordionItemTitle,
+      VideoEmbed,
     ],
     content: defaultContent,
     onUpdate({ editor }) {
@@ -185,6 +187,7 @@ export default function TiptapEditor({
             "
           />
         </div>
+        {/* <div className="p-2 ltr">{content}</div> */}
       </div>
       <div className="col-span-12  md:col-span-2">
         <div className="sticky top-0 z-10">

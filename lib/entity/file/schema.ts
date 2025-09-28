@@ -16,6 +16,7 @@ const fileSchema = new Schema<SchemaFile>(
     translations: [FileTranslationSchema], // 👈 لیست ترجمه‌ها
     patch: String,
     src: String,
+    fullSrc: String,
     href: String,
     previewPath: String,
     mimeType: String,

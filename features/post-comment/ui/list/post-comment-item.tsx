@@ -31,7 +31,7 @@ export function PostCommentItem({ postComment, depth = 0 }: CommentItemProps) {
         </Avatar>
         <div className="flex-1">
           <div className="flex items-center gap-2">
-            <span className="font-semibold">
+            <span className="text-sm font-semibold">
               {postComment.author?.name || 'ناشناس'}
             </span>
             <span className="text-sm text-gray-500">

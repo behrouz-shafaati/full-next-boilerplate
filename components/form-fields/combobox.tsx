@@ -66,9 +66,10 @@ export default function Combobox({
   }, 600)
   useEffect(() => {
     if (options) {
-      const filteredOptions: Option[] = initialOptions.filter((opt) =>
-        opt.label.toLowerCase().includes(query.toLowerCase())
-      )
+      const filteredOptions: Option[] = initialOptions.filter((opt) => {
+        const label = opt.label || '' // اگر label وجود ندارد، مقدار خالی
+        return label.toString().toLowerCase().includes(query.toLowerCase())
+      })
       setOptions(filteredOptions)
     } else if (fetchOptions) {
       debouncedFetchOptions(query)

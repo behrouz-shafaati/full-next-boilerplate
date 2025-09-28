@@ -1,7 +1,6 @@
 'use client'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '../../interface'
-import { CommentForm } from '../comment-form'
 import { Post } from '@/features/post/interface'
 import { PostCommentItem } from './post-comment-item'
 import { useCustomSWR } from '@/hooks/use-custom-swr'
@@ -29,7 +28,6 @@ export default function PostCommentList({
             <PostCommentItem key={postComment.id} postComment={postComment} />
           )
         })}
-        <CommentForm initialData={post} />
       </div>
     </>
   )

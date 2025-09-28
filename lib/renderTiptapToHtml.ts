@@ -1,7 +1,9 @@
 // lib/renderTiptapJsonToHtml.ts
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
+import { getTextFromNode } from '@/components/tiptap-editor/utils'
 import { Schema, DOMSerializer, Node as ProseNode } from 'prosemirror-model'
+import { slugify } from './utils'
 
 export const accordionNodes = {
   accordion: {
@@ -206,8 +208,8 @@ const nodes = {
     defining: true,
     attrs: {
       level: { default: 1 }, // h1 تا h6
-      dir: { default: null }, // برای راست به چپ یا چپ به راست
-      textAlign: { default: null }, // برای تراز متن
+      dir: { default: null }, // راست‌چین یا چپ‌چین
+      textAlign: { default: null }, // تراز متن
     },
     parseDOM: [
       { tag: 'h1', attrs: { level: 1 } },
@@ -219,15 +221,18 @@ const nodes = {
     ],
     toDOM(node) {
       const attrs: any = {}
+
       if (node.attrs.dir) attrs.dir = node.attrs.dir
       if (node.attrs.textAlign)
         attrs.style = `text-align: ${node.attrs.textAlign}`
 
-      return [
-        'h' + node.attrs.level,
-        attrs,
-        0, // محتوای inline (مثل bold, italic, text)
-      ]
+      // استخراج متن heading به صورت recursive
+      const textContent = getTextFromNode(node)
+
+      // اضافه کردن id
+      attrs.id = slugify(textContent)
+
+      return ['h' + node.attrs.level, attrs, 0]
     },
   },
 
@@ -322,6 +327,76 @@ const nodes = {
     ],
   },
   ...accordionNodes,
+  videoEmbed: {
+    group: 'block',
+    atom: true, // چون داخلش محتوای دیگری نمیاد
+
+    attrs: {
+      src: { default: null },
+      title: { default: null },
+    },
+
+    parseDOM: [
+      {
+        tag: 'iframe[src]',
+        getAttrs: (dom: any) => {
+          const el = dom as HTMLIFrameElement
+          return {
+            src: el.getAttribute('src'),
+            title: el.getAttribute('title'),
+          }
+        },
+      },
+    ],
+
+    toDOM: (node: any) => [
+      'iframe',
+      {
+        src: node.attrs.src,
+        title: node.attrs.title || 'Embedded Video',
+        width: '560',
+        height: '315',
+        allowfullscreen: 'true',
+        loading: 'lazy',
+        'data-type': 'videoEmbed',
+      },
+    ],
+  },
+  mention: {
+    group: 'inline',
+    inline: true,
+    atom: true, // نود اتمی → یک واحد جدا
+    selectable: false,
+
+    attrs: {
+      id: { default: null },
+      label: { default: '' },
+      mentionSuggestionChar: { default: '@' },
+    },
+
+    parseDOM: [
+      {
+        tag: 'span[data-mention]',
+        getAttrs: (dom: HTMLElement) => ({
+          id: dom.getAttribute('data-id'),
+          label: dom.getAttribute('data-label'),
+          mentionSuggestionChar: dom.getAttribute('data-char') || '@',
+        }),
+      },
+    ],
+
+    toDOM: (node) => [
+      'span',
+      {
+        'data-mention': '',
+        'data-id': node.attrs.id,
+        'data-label': node.attrs.label,
+        'data-char': node.attrs.mentionSuggestionChar,
+        class: 'mention',
+      },
+      `${node.attrs.mentionSuggestionChar}${node.attrs.label}`,
+    ],
+  },
 }
 
 const marks = {

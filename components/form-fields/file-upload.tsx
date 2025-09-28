@@ -313,7 +313,6 @@ const FileUpload = forwardRef(function FileUpload(
           {/* Accepted files */}
           <ul className="grid grid-cols-3 gap-2 mt-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             {files.map((file, index) => {
-              console.log('#239847 file:', file)
               return (
                 <li
                   key={index}

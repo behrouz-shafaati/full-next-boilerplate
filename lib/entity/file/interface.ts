@@ -25,7 +25,14 @@ export type File = Model & {
   translations: [FileTranslationSchema]
   extension: string
   patch: string
+  /**
+   * آدرس تصویر بهینه شده
+   */
   src: string
+  /**
+   * آدرس تصویر با اندازه اصلی
+   */
+  fullSrc: string
   href: string
   mimeType: string
   size: number

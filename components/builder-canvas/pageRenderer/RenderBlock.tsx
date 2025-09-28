@@ -33,7 +33,7 @@ const RenderBlock = ({
   } else {
     if (Component) {
       if (item.type.startsWith('content_')) {
-        const node = extractNode(rest, item.type) // مثلا از content_2 میشه 2
+        const node = extractNode(rest, item.type) // محتوای مورد نظر استخراج میشود
         if (node)
           return (
             <Component
@@ -41,7 +41,7 @@ const RenderBlock = ({
               className={`${className} ${combineClassNames(
                 item.classNames || {}
               )}`}
-              content={node}
+              content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
             />
           )
       }
