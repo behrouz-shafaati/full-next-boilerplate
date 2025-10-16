@@ -11,7 +11,7 @@ type Props = {
 export const ContentEditor = ({ initialData, savePage }: Props) => {
   const { selectedBlock, update } = useBuilderStore()
   const defaultValu =
-    selectedBlock?.content?.src !== null ? selectedBlock?.content : null
+    selectedBlock?.content?.srcMedium !== null ? selectedBlock?.content : null
   return (
     <>
       <FileUpload

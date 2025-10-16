@@ -39,7 +39,7 @@ const DeleteImageWithKey = Extension.create({
             const selectedNode = selection.node
 
             if (selectedNode.type.name === 'image') {
-              const imageSrc = selectedNode.attrs.src
+              const imageSrc = selectedNode.attrs.srcSmall
               const imageId = selectedNode.attrs?.id || selectedNode.attrs.title
 
               if (this.options.deleteFileHandler) {

@@ -26,16 +26,36 @@ import {
   Table,
   Underline as UnderlineIcon,
   Undo2,
+  Image as ImageIcon,
 } from 'lucide-react'
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 import { Editor } from '@tiptap/core'
 import { AddVideoButton } from './component/AddVideoButton'
+import { useState } from 'react'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog'
+import { Button } from '../custom/button'
+import { ScrollArea } from '../ui/scroll-area'
+import FileUpload from '../form-fields/file-upload'
+import StickyBox from 'react-sticky-box'
 
-const MenuBar = ({ editor }: { editor: Editor }) => {
+const MenuBar = ({
+  editor,
+  fileUploadSettings,
+}: {
+  editor: Editor
+  fileUploadSettings: any
+}) => {
   if (!editor) {
     return null
   }
-
+  const [openGallery, setOpenGallery] = useState(false)
   const bold = () => editor.chain().focus().toggleBold().run()
   window.bold = bold
   const italic = () => editor.chain().focus().toggleItalic().run()
@@ -204,6 +224,74 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
   // برای تست می‌تونی بذاری روی window
   window.insertAccordion = insertAccordion
 
+  const insertFaq = () =>
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'faq',
+        content: [
+          {
+            type: 'accordionItem',
+            content: [
+              {
+                type: 'accordionItemTitle',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'سوال اول' }],
+                  },
+                ],
+              },
+              {
+                type: 'accordionItemContent',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'پاسخ سوال اول' }],
+                  },
+                ],
+              },
+            ],
+          },
+          {
+            type: 'accordionItem',
+            content: [
+              {
+                type: 'accordionItemTitle',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'سوال دوم' }],
+                  },
+                ],
+              },
+              {
+                type: 'accordionItemContent',
+                content: [
+                  {
+                    type: 'paragraph',
+                    attrs: { dir: 'rtl', textAlign: null },
+                    content: [{ type: 'text', text: 'پاسخ سوال دوم' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      })
+      .run()
+
+  if (typeof window !== 'undefined') {
+    ;(window as any).insertFaq = insertFaq
+  }
+
+  // برای تست می‌تونی بذاری روی window
+  window.insertFaq = insertFaq
+
   const activeStates = {
     bold: editor.isActive('bold'),
     italic: editor.isActive('italic'),
@@ -236,8 +324,8 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     json: editor.getJSON(),
   }
 
-  if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
-    window.ReactNativeWebView.postMessage(
+  if (window.ReactNativeWebView && window.ReactNativeWebView.articleMessage) {
+    window.ReactNativeWebView.articleMessage(
       JSON.stringify({
         data,
         activeStates,
@@ -270,112 +358,254 @@ const MenuBar = ({ editor }: { editor: Editor }) => {
     return ''
   }
 
-  return (
-    <div className="sticky top-0 z-10 flex flex-row items-center max-w-full gap-1 py-2 overflow-auto bg-white rtl dark:bg-slate-900">
-      <ToggleGroup
-        type="multiple"
-        value={[
-          activeStates.bold ? 'bold' : '',
-          activeStates.italic ? 'italic' : '',
-          activeStates.blockQuote ? 'blockQuote' : '',
-          activeStates.underline ? 'underline' : '',
-        ]}
-        className="rtl"
-      >
-        <ToggleGroupItem value="bold" onClick={bold}>
-          <Bold />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="italic" onClick={italic}>
-          <Italic />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="underline" onClick={underline}>
-          <UnderlineIcon />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="strikethrough" onClick={strike}>
-          <Strikethrough />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="blockQuote" onClick={blockQuote}>
-          <Quote />
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <div className="block w-px h-6 bg-border" />
-      <ToggleGroup type="single" value={getTypography()} className="rtl">
-        <ToggleGroupItem value="h1" onClick={h1}>
-          <Heading1 />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="h2" onClick={h2}>
-          <Heading2 />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="h3" onClick={h3}>
-          <Heading3 />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="h4" onClick={h4}>
-          <Heading4 />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="bulletList" onClick={bulletList}>
-          <List />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="orderedList" onClick={orderedList}>
-          <ListOrdered />
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <div className="block w-px h-6 bg-border" />
-      <ToggleGroup type="single" value={getAlign()} className="rtl">
-        <ToggleGroupItem value="left" onClick={left}>
-          <AlignLeft />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="center" onClick={center}>
-          <AlignCenter />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="right" onClick={right}>
-          <AlignRight />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="justify" onClick={justify}>
-          <AlignJustify />
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <div className="block w-px h-6 bg-border" />
-      <ToggleGroup type="single" value={getDirection()} className="rtl">
-        <ToggleGroupItem value="rtl" onClick={rtl} title="راست چین">
-          <PilcrowLeft />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="ltr" onClick={ltr} title="چپ چین">
-          <PilcrowRight />
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <div className="block w-px h-6 bg-border" />
-      <ToggleGroup type="single" value="" className="rtl">
-        <ToggleGroupItem value="link" onClick={link}>
-          {activeStates.link ? <Link2Off /> : <Link2 />}
-        </ToggleGroupItem>
-        <ToggleGroupItem value="horizontalRule" onClick={horizontalRule}>
-          <Minus />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="redo" onClick={redo} title="بازیابی تغییر">
-          <Redo2 />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="undo" onClick={undo} title="لغو آخرین تغییر">
-          <Undo2 />
-        </ToggleGroupItem>
-      </ToggleGroup>
-      <div className="block w-px h-6 bg-border" />
-      <ToggleGroup type="single" value="" className="rtl">
-        <ToggleGroupItem value="link" onClick={insertTable}>
-          <Table />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="link" onClick={insertAdSlot}>
-          <Megaphone />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="link" onClick={insertAccordion}>
-          <ListCollapse />
-        </ToggleGroupItem>
-        <ToggleGroupItem value="link" onClick={insertAccordion}>
-          <HelpCircle />
-        </ToggleGroupItem>
+  function openModalGallery() {
+    // setError(null);
+    // setFile(null);
+    // setPreview(null);
+    setOpenGallery(true)
+  }
 
-        <AddVideoButton editor={editor} />
-      </ToggleGroup>
-    </div>
+  function closeModalGallery() {
+    setOpenGallery(false)
+    // setFile(null);
+    // setPreview(null);
+    // setLoading(false);
+    // setError(null);
+  }
+
+  return (
+    <>
+      <StickyBox className=" z-10 flex flex-row items-center max-w-full gap-1 py-2 overflow-auto bg-white rtl dark:bg-slate-900">
+        <ToggleGroup
+          type="multiple"
+          value={[
+            activeStates.bold ? 'bold' : '',
+            activeStates.italic ? 'italic' : '',
+            activeStates.blockQuote ? 'blockQuote' : '',
+            activeStates.underline ? 'underline' : '',
+          ]}
+          className="rtl"
+        >
+          <ToggleGroupItem value="bold" onClick={bold} aria-label="Bold">
+            <Bold />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="italic" onClick={italic} aria-label="Italic">
+            <Italic />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="underline"
+            onClick={underline}
+            aria-label="Underline"
+          >
+            <UnderlineIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="strikethrough"
+            onClick={strike}
+            aria-label="Strike through"
+          >
+            <Strikethrough />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="blockQuote"
+            onClick={blockQuote}
+            aria-label="Block Quote"
+          >
+            <Quote />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <div className="block w-px h-6 bg-border" />
+        <ToggleGroup type="single" value={getTypography()} className="rtl">
+          <ToggleGroupItem value="h1" onClick={h1} aria-label="H1">
+            <Heading1 />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="h2" onClick={h2} aria-label="H2">
+            <Heading2 />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="h3" onClick={h3} aria-label="H3">
+            <Heading3 />
+          </ToggleGroupItem>
+          <ToggleGroupItem value="h4" onClick={h4} aria-label="H4">
+            <Heading4 />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="bulletList"
+            onClick={bulletList}
+            aria-label="Bullet list"
+          >
+            <List />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="orderedList"
+            onClick={orderedList}
+            aria-label="Ordered list"
+          >
+            <ListOrdered />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <div className="block w-px h-6 bg-border" />
+        <ToggleGroup type="single" value={getAlign()} className="rtl">
+          <ToggleGroupItem value="left" onClick={left} aria-label="Align left">
+            <AlignLeft />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="center"
+            onClick={center}
+            aria-label="Align center"
+          >
+            <AlignCenter />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="right"
+            onClick={right}
+            aria-label="Align right"
+          >
+            <AlignRight />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="justify"
+            onClick={justify}
+            aria-label="Align justify"
+          >
+            <AlignJustify />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <div className="block w-px h-6 bg-border" />
+        <ToggleGroup type="single" value={getDirection()} className="rtl">
+          <ToggleGroupItem
+            value="rtl"
+            onClick={rtl}
+            title="راست چین"
+            aria-label="Right to left"
+          >
+            <PilcrowLeft />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="ltr"
+            onClick={ltr}
+            title="چپ چین"
+            aria-label="Left to right"
+          >
+            <PilcrowRight />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <div className="block w-px h-6 bg-border" />
+        <ToggleGroup type="single" value="" className="rtl">
+          <ToggleGroupItem value="link" onClick={link} aria-label="Link">
+            {activeStates.link ? <Link2Off /> : <Link2 />}
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="horizontalRule"
+            onClick={horizontalRule}
+            aria-label="Horizontal rule"
+          >
+            <Minus />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="redo"
+            onClick={redo}
+            title="بازیابی تغییر"
+            aria-label="Redo"
+          >
+            <Redo2 />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="undo"
+            onClick={undo}
+            title="لغو آخرین تغییر"
+            aria-label="Undo"
+          >
+            <Undo2 />
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <div className="block w-px h-6 bg-border" />
+        <ToggleGroup type="single" value="" className="rtl">
+          <ToggleGroupItem
+            value="link"
+            onClick={openModalGallery}
+            title="تصویر"
+            aria-label="Image"
+          >
+            <ImageIcon />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="link"
+            onClick={insertTable}
+            title="جدول"
+            aria-label="Table"
+          >
+            <Table />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="link"
+            onClick={insertAdSlot}
+            title="جایگاه تبلیغات"
+            aria-label="Ad"
+          >
+            <Megaphone />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="link"
+            onClick={insertAccordion}
+            title="آکاردئون"
+            aria-label="Accordion"
+          >
+            <ListCollapse />
+          </ToggleGroupItem>
+          <ToggleGroupItem
+            value="link"
+            onClick={insertFaq}
+            title="سوالات متداول"
+            aria-label="FAQ"
+          >
+            <HelpCircle />
+          </ToggleGroupItem>
+
+          <AddVideoButton editor={editor} />
+        </ToggleGroup>
+      </StickyBox>
+      {/* full-screen modal */}
+      <Dialog
+        open={openGallery}
+        onOpenChange={(val) => (val ? openModalGallery() : closeModalGallery())}
+      >
+        <DialogContent className="mb-8 h-[calc(100vh-2rem)] min-w-[calc(100vw-2rem)] grid-cols-1 auto-rows-max">
+          <DialogHeader className="contents py-4 ">
+            <DialogTitle className="block px-6 h-fit">تصاویر مقاله</DialogTitle>
+            {/* <DialogDescription className="text-sm text-slate-500">
+              برای درج، عکس را انتخاب و "درج" را بزن
+            </DialogDescription> */}
+          </DialogHeader>
+          <ScrollArea className="px-6 pb-16">
+            <FileUpload
+              key={
+                fileUploadSettings.defaultFiles?.map((f) => f.id).join(',') ||
+                'empty'
+              } // 👈 تغییر باعث remount میشه
+              attachedTo={fileUploadSettings.attachedFilesTo}
+              name={fileUploadSettings.name}
+              title="رسانه های مقاله"
+              responseHnadler={fileUploadSettings.responseFileUploadHandler}
+              ref={fileUploadSettings.fileUploadRef}
+              showDeleteButton={false}
+              defaultValues={fileUploadSettings.defaultFiles}
+              {...(fileUploadSettings.onChangeFiles
+                ? { onChange: fileUploadSettings.onChangeFiles }
+                : {})}
+            />
+          </ScrollArea>
+          <DialogFooter className="fixed bottom-0 w-full  px-6 pb-6 bg-white dark:bg-slate-900">
+            <Button variant="ghost" onClick={closeModalGallery}>
+              بستن
+            </Button>
+            {/* 
+            <Button className="ml-auto" loading={true}>
+              {false ? 'در حال درج...' : 'درج'}
+            </Button> */}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   )
 }
 

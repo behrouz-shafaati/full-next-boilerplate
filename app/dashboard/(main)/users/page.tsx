@@ -1,4 +1,4 @@
-import UsersTable from '@/components/tables/user/users-table'
+import UsersTable from '@/features/user/ui/table/users-table'
 import { BreadCrumb } from '@/components/breadcrumb'
 const breadcrumbItems = [{ title: 'کاربران', link: '/dashboard/users' }]
 

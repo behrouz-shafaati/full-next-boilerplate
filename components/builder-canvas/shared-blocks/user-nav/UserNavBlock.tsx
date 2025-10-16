@@ -1,12 +1,11 @@
 // کامپوننت نمایشی بلاک
 'use client'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Block } from '../../types'
-import { Session } from '@/types'
-import { useSession } from '@/components/context/SessionContext'
 import { UserNav } from './UserNav'
 import Link from 'next/link'
 import { Button } from '@/components/custom/button'
+import { CircleUserRound } from 'lucide-react'
 
 type props = {
   blockData: {
@@ -17,19 +16,34 @@ type props = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const UserNavBlock = ({ blockData, ...props }: props) => {
-  const [session, setSession] = useState({})
+  const [loading, setLoading] = useState(true)
+  const [session, setSession] = useState(null)
   // const { user } = useSession()
   const { content } = blockData
   useEffect(() => {
     fetch('/api/session')
       .then((res) => res.json())
-      .then((data) => setSession(data))
+      .then((data) => {
+        setSession(data)
+        setLoading(false)
+      })
   }, [])
   console.log('#session:', session)
+  if (loading) {
+    return (
+      <div {...props}>
+        <Button variant={'ghost'} className="p-0">
+          <CircleUserRound />
+        </Button>
+      </div>
+    )
+  }
   if (!session) {
     return (
-      <Link href={`/login`}>
-        <Button variant={'ghost'}>ورود</Button>
+      <Link href={`/login`} {...props}>
+        <Button variant={'ghost'} className="p-0">
+          <CircleUserRound />
+        </Button>
       </Link>
     )
   }

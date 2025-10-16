@@ -7,8 +7,9 @@ import { ThemeModeSwitchBlockDef } from '../shared-blocks/theme-mode-switch'
 import { UserNavBlockDef } from '../shared-blocks/user-nav'
 import { registerBlock } from '../singletonBlockRegistry'
 import { ImageSliderBlockDef } from '../shared-blocks/imageSlider'
-import { BlogPostSliderBlockDef } from '../shared-blocks/blogPostSlider'
+import { BlogArticleSliderBlockDef } from '../shared-blocks/blogArticleSlider'
 import { MenuBlockDef } from '../shared-blocks/menu'
+import { ArticleListBlockDef } from '../shared-blocks/ArticleList'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
@@ -17,8 +18,9 @@ export const blockRegistry = {
   themeModdeSwitch: ThemeModeSwitchBlockDef,
   userNav: UserNavBlockDef,
   imageSlider: ImageSliderBlockDef,
-  blogPostSlider: BlogPostSliderBlockDef,
+  blogArticleSlider: BlogArticleSliderBlockDef,
   menu: MenuBlockDef,
+  alticleList: ArticleListBlockDef,
 }
 
 registerBlock(blockRegistry)

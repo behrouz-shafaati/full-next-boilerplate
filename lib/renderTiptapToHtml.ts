@@ -53,6 +53,14 @@ export const accordionNodes = {
     ],
   },
 }
+export const faqNodes = {
+  faq: {
+    group: 'block',
+    content: 'accordionItems',
+    parseDOM: [{ tag: 'div[data-type="faq"]' }],
+    toDOM: () => ['div', { 'data-type': 'faq', class: 'accordion' }, 0],
+  },
+}
 
 // 1. تعریف schema ساده بر اساس Tiptap StarterKit + image + link
 const nodes = {
@@ -327,6 +335,7 @@ const nodes = {
     ],
   },
   ...accordionNodes,
+  ...faqNodes,
   videoEmbed: {
     group: 'block',
     atom: true, // چون داخلش محتوای دیگری نمیاد

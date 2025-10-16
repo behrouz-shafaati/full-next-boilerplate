@@ -1,10 +1,10 @@
 // store/useBuilderStore.ts
 import { create } from 'zustand'
-import { v4 as uuidv4 } from 'uuid'
 import { Block, Column, Content, Row } from '../types'
+import { generateObjectId } from '@/lib/utils/generateObjectId'
 
 const defaultColumn = () => ({
-  id: uuidv4(),
+  id: generateObjectId(),
   type: 'column',
   width: 4,
   blocks: [],
@@ -60,7 +60,7 @@ export const useBuilderStore = create<State>((set, get) => ({
         rows: [
           ...state.content.rows,
           {
-            id: uuidv4(),
+            id: generateObjectId(),
             type: 'row',
             classNames: '',
             styles: {},
@@ -80,7 +80,12 @@ export const useBuilderStore = create<State>((set, get) => ({
                 ...row,
                 columns: [
                   ...row.columns,
-                  { id: uuidv4(), type: 'column', width: 12, blocks: [] },
+                  {
+                    id: generateObjectId(),
+                    type: 'column',
+                    width: 12,
+                    blocks: [],
+                  },
                 ],
               }
             : row
@@ -211,7 +216,7 @@ export const useBuilderStore = create<State>((set, get) => ({
           const newColumns: Column[] = widths.map((width) => {
             index++
             return {
-              id: uuidv4(),
+              id: generateObjectId(),
               type: 'column',
               width,
               blocks: row.columns[index]?.blocks || [], // اگه وجود نداشت، آرایه‌ی خالی

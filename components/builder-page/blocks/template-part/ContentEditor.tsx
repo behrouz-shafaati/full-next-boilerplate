@@ -35,7 +35,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
   return (
     <div key={templateOptions.length}>
       <Combobox
-        title="قالب جزئی"
+        title="قطعه قالب"
         name="templateId"
         defaultValue={selectedBlock?.content?.templateId || ''}
         options={templateOptions}

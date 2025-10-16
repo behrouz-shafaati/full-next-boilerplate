@@ -2,7 +2,7 @@ import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
 export type CategoryTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان مقاله
    */
   lang: string // "fa", "en", "de", ...
   /**

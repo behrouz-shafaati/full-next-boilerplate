@@ -1,4 +1,3 @@
-import { ScrollArea } from '@/components/ui/scroll-area'
 import React from 'react'
 import pageCtrl from '@/features/page/controller'
 import { notFound } from 'next/navigation'
@@ -44,15 +43,13 @@ export default async function Page({ params }: PageProps) {
     ])
   }
   return (
-    <ScrollArea className="h-full">
-      <div className="">
-        <PageForm
-          initialData={page}
-          allTemplates={allTemplates.data}
-          allCategories={allCategories.data}
-          allHeaders={allHeaders.data}
-        />
-      </div>
-    </ScrollArea>
+    <>
+      <PageForm
+        initialData={page}
+        allTemplates={allTemplates.data}
+        allCategories={allCategories.data}
+        allHeaders={allHeaders.data}
+      />
+    </>
   )
 }

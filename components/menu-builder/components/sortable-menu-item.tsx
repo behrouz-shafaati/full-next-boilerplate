@@ -16,7 +16,7 @@ export default function SortableItem({
   maxDepth?: number
 }) {
   const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id: item.id })
+    useSortable({ id: item._id })
   const { deleteItem, updateItem, addChild } = useMenuStore()
 
   const style = {
@@ -42,17 +42,17 @@ export default function SortableItem({
         <input
           className="border px-2 py-1"
           value={item.label}
-          onChange={(e) => updateItem(item.id, { label: e.target.value })}
+          onChange={(e) => updateItem(item._id, { label: e.target.value })}
         />
         <input
           className="border px-2 py-1"
           value={item.url}
-          onChange={(e) => updateItem(item.id, { url: e.target.value })}
+          onChange={(e) => updateItem(item._id, { url: e.target.value })}
         />
         {(typeof maxDepth === 'undefined' || depth < maxDepth) && (
           <button
             type="button"
-            onClick={() => addChild(item.id)}
+            onClick={() => addChild(item._id)}
             className="text-green-600"
           >
             + افزودن
@@ -60,7 +60,7 @@ export default function SortableItem({
         )}
         <button
           type="button"
-          onClick={() => deleteItem(item.id)}
+          onClick={() => deleteItem(item._id)}
           className="text-red-600"
         >
           🗑
@@ -70,13 +70,13 @@ export default function SortableItem({
       {item.subMenu && item.subMenu.length > 0 && (
         <div className="pr-6 space-y-2 mt-2">
           <SortableContext
-            key={item.id}
-            items={item.subMenu.map((c) => c.id)}
+            key={item._id}
+            items={item.subMenu.map((c) => c._id)}
             strategy={verticalListSortingStrategy}
           >
             {item.subMenu.map((child) => (
               <SortableItem
-                key={child.id}
+                key={child._id}
                 item={child}
                 depth={depth + 1}
                 maxDepth={maxDepth}

@@ -29,10 +29,8 @@ export default async function Page({ params }: PageProps) {
     }
   }
   return (
-    <ScrollArea className="h-full">
-      <div className="">
-        <Form initialData={page} />
-      </div>
-    </ScrollArea>
+    <>
+      <Form initialData={page} />
+    </>
   )
 }

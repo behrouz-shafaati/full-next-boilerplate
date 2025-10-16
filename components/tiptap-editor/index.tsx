@@ -28,6 +28,7 @@ import {
   AccordionItemContent,
   AccordionItemTitle,
 } from './extensions/Accordion'
+import { Faq } from './extensions/Faq'
 import { SubmitButton } from '../form-fields/submit-button'
 import { getFiles } from '@/lib/entity/file/actions'
 
@@ -36,8 +37,8 @@ interface TiptapEditor {
   defaultContent?: { [key: string]: any }
   onChange?: (content: string) => void
   onChangeFiles?: () => void
-  showSubmitButton: boolean
-  attachedTo: [{ feature: string; id: string }]
+  attachedFilesTo: [{ feature: string; id: string }]
+  className?: string
 }
 
 export default function TiptapEditor({
@@ -45,8 +46,8 @@ export default function TiptapEditor({
   defaultContent = {},
   onChange,
   onChangeFiles,
-  showSubmitButton,
-  attachedTo,
+  attachedFilesTo,
+  className = '',
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
@@ -120,6 +121,7 @@ export default function TiptapEditor({
       AccordionItem,
       AccordionItemContent,
       AccordionItemTitle,
+      Faq,
       VideoEmbed,
     ],
     content: defaultContent,
@@ -140,7 +142,7 @@ export default function TiptapEditor({
       .insertContentAt(pos, {
         type: 'image',
         attrs: {
-          src: fileDetails.src,
+          src: fileDetails.srcMedium,
           alt: fileDetails.id,
           title: String(fileDetails.id), // Image Id saved as title
           id: String(fileDetails.id),
@@ -153,9 +155,18 @@ export default function TiptapEditor({
     //   onChangeFiles?.()
     // })
   }
+  const fileUploadSettings = {
+    name: `${name}Files`,
+    defaultFiles,
+    attachedFilesTo,
+    responseFileUploadHandler,
+    fileUploadRef,
+    showDeleteButton: false,
+    onChangeFiles,
+  }
   return (
     <div
-      className="grid grid-cols-12 gap-4"
+      className="w-full"
       onClick={(e) => {
         const target = e.target as HTMLElement
         // اگر کلیک روی دکمه یا آیکون یا خود EditorContent بود کاری نکن
@@ -165,46 +176,42 @@ export default function TiptapEditor({
         editor?.chain().focus().run()
       }}
     >
-      <div className="col-span-12 md:col-span-10">
-        <textarea
-          value={content}
-          name={name}
-          className="hidden w-full ltr"
-          read-only="true"
-          onChange={() => {}}
-        />
-        <MenuBar editor={editor} />
+      <textarea
+        value={content}
+        name={name}
+        className="hidden w-full ltr"
+        read-only="true"
+        onChange={() => {}}
+      />
+      <MenuBar editor={editor} fileUploadSettings={fileUploadSettings} />
 
-        <div
-          onContextMenu={handleContextMenu}
-          className={`${styles.editor} relative`}
-        >
-          <EditorContent
-            editor={editor}
-            autoFocus
-            className="prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent 
-            focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900
-            "
-          />
-        </div>
+      <div
+        onContextMenu={handleContextMenu}
+        className={`${styles.editor} relative`}
+      >
+        <EditorContent
+          editor={editor}
+          autoFocus
+          className={`prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent 
+            focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900 ${className}`}
+        />
         {/* <div className="p-2 ltr">{content}</div> */}
       </div>
-      <div className="col-span-12  md:col-span-2">
+      {/* <div className="col-span-12  md:col-span-2">
         <div className="sticky top-0 z-10">
           <FileUpload
             key={defaultFiles?.map((f) => f.id).join(',') || 'empty'} // 👈 تغییر باعث remount میشه
-            attachedTo={attachedTo}
+            attachedTo={attachedFilesTo}
             name={`${name}Files`}
-            title="رسانه های مطلب"
+            title="رسانه های مقاله"
             responseHnadler={responseFileUploadHandler}
             ref={fileUploadRef}
             showDeleteButton={false}
             defaultValues={defaultFiles}
             {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
           />
-          {showSubmitButton ? <SubmitButton className="mt-4" /> : <></>}
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

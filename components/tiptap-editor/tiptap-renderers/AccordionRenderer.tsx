@@ -54,7 +54,7 @@ function renderNode(node: TNode, key: number): React.ReactNode {
 }
 
 export function AccordionRenderer({ node }: { node: AccordionNode }) {
-  if (!node || node.type !== 'accordion') return null
+  if (!node || (node.type !== 'accordion' && node.type !== 'faq')) return null
 
   const items = node.content ?? []
 

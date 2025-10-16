@@ -27,23 +27,39 @@ export const ImageBlock = ({
   ...props
 }: TextBlockProps) => {
   const { content, settings, styles } = blockData
+  console.log('33987 ------------- styles image:', styles)
   props.className = props?.className
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'
+  const { width = '', height = '', ...restStyle } = styles || {}
+  const { className = '', ...restProps } = props || {}
+
   const imageElement = (
-    <Image
-      src={content?.src || '/assets/general-img-landscape.png'}
-      alt={content?.alt || 'تصویر'}
-      //   fill
-      width={40}
-      height={80}
-      sizes="100vw"
+    <div
+      data-image-wrapper
+      className={`relative  ${className}`}
+      {...restProps}
       style={{
-        objectFit: 'contain',
-        ...computedStyles(styles),
+        ...computedStyles({ width, height }),
       }}
-      {...props}
-    />
+    >
+      <Image
+        src={content?.srcSmall || '/assets/general-img-landscape.png'}
+        sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
+        alt={content?.alt || 'تصویر'}
+        fill
+        // {...(!width || !height
+        //   ? { fill: true }
+        //   : {
+        //       width: Number(width),
+        //       height: Number(height),
+        //     })}
+        style={{
+          ...computedStyles(restStyle),
+        }}
+        className="object-cover w-full h-full"
+      />
+    </div>
   )
 
   return content?.href ? (

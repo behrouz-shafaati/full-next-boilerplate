@@ -1,4 +1,5 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
+import { File } from '@/lib/entity/file/interface'
 
 /**
  * اطلاعات پایه تنظیمات که شامل فیلدهای اصلی تنظیمات می‌باشد
@@ -8,6 +9,21 @@ type SettingsBase = {
    * کلید واژه تک داکیومنت مربوط به تنظیمات
    */
   type: 'site-settings'
+
+  /**
+   *   عنوان سایت
+   */
+  site_title: string
+
+  /**
+   *   معرفی کوتاه
+   */
+  site_introduction: string
+
+  /**
+   *   معرفی کوتاه
+   */
+  favicon: File
 
   /**
    * شناسه برگه خانه
@@ -20,12 +36,34 @@ type SettingsBase = {
   commentApprovalRequired: boolean
 
   /**
-   * شناسه منو‌ی اصلی
+   * تایید مالکیت ایمیل کاربران
    */
-  primaryMenuId: string
+  emailVerificationRequired: boolean
 
   /**
-   * شناسه سربرگ پیش فرض
+   * تایید مالکیت شماره موبایل
+   */
+  mobileVerificationRequired: boolean
+
+  /**
+   *
+   */
+  mail_host: string
+  /**
+   *
+   */
+  mail_port: string
+  /**
+   *
+   */
+  mail_username: string
+  /**
+   *
+   */
+  mail_password: string
+
+  /**
+   *
    */
   defaultHeaderId: Id
 
@@ -35,7 +73,7 @@ type SettingsBase = {
   footerMenuId: string
 
   /**
-   * تنظیمات مربوط به پست
+   * تنظیمات مربوط به مقاله
    */
   theme: {
     primaryColor: String

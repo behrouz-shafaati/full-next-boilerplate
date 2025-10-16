@@ -57,8 +57,12 @@ export default function MultiSelect({
             value={values}
             hidePlaceholderWhenSelected
             onChange={(options) => {
-              setValues(options)
-              onChange?.(options)
+              const selectedOptions = defaultOptions.filter((o) =>
+                options.some((opt) => opt.value === o.value)
+              )
+              console.log('#8888888888888 selectedOptions:', selectedOptions)
+              setValues(selectedOptions)
+              onChange?.(selectedOptions)
             }}
             emptyIndicator={
               <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">

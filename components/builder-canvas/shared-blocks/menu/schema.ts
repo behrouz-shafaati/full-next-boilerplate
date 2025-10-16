@@ -2,6 +2,11 @@ export const MenuBlockSchema = {
   title: '',
   type: 'object',
   properties: {
-    // sticky: { type: 'boolean', title: '', default: true },
+    design: {
+      type: 'string',
+      title: 'طرح',
+      enum: ['horizontal', 'vertical'],
+      default: 'horizontal',
+    },
   },
 }

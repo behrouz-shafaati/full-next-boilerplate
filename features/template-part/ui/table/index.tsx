@@ -26,14 +26,14 @@ export default async function TemplatePartTable({
     <>
       <div className="flex items-start justify-between">
         <Heading
-          title={`قالب‌های جزئی (${findResult?.totalDocuments || 0})`}
+          title={`قطعه قالب‌ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت قالب ها"
         />
         <LinkButton
           className="text-xs md:text-sm"
           href="/dashboard/template-parts/create"
         >
-          <Plus className="ml-2 h-4 w-4" /> افزودن قالب جزئی
+          <Plus className="ml-2 h-4 w-4" /> افزودن قطعه قالب
         </LinkButton>
       </div>
       <DataTable

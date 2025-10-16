@@ -5,10 +5,20 @@ import settingsCtrl from '@/features/settings/controller'
 import { Session, State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { Settings } from './interface'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
   commentApprovalRequired: z.string({}).nullable().optional(),
+  emailVerificationRequired: z.string({}).nullable().optional(),
+  mobileVerificationRequired: z.string({}).nullable().optional(),
+  mail_host: z.string({}).nullable().optional(),
+  mail_port: z.string({}).nullable().optional(),
+  mail_username: z.string({}).nullable().optional(),
+  mail_password: z.string({}).nullable().optional(),
+  favicon: z.string({}).nullable().optional(),
+  site_title: z.string({}).nullable().optional(),
+  site_introduction: z.string({}).nullable().optional(),
   // defaultHeaderId: z.string({}),
 })
 
@@ -21,7 +31,6 @@ const FormSchema = z.object({
  */
 
 export async function updateSettings(prevState: State, formData: FormData) {
-  console.log('#234 form data', Array.from(formData.entries()))
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -56,7 +65,7 @@ export async function updateSettings(prevState: State, formData: FormData) {
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
     return {
-      message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.',
+      message: 'خطای پایگاه داده: بروزرسانی مقاله ناموفق بود.',
       success: false,
     }
   }
@@ -66,7 +75,7 @@ export async function deleteSettings(id: string) {
   try {
     await settingsCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود', success: false }
+    return { message: 'خطای پایگاه داده: حذف مقاله ناموفق بود', success: false }
   }
   await settingsCtrl.delete({ filters: [id] })
   // Revalidate the path
@@ -89,6 +98,11 @@ async function sanitizeSettingsData(validatedFields: any) {
     ...settingsPayload,
     commentApprovalRequired:
       settingsPayload?.commentApprovalRequired == 'on' ? true : false,
+    emailVerificationRequired:
+      settingsPayload?.emailVerificationRequired == 'on' ? true : false,
+    mobileVerificationRequired:
+      settingsPayload?.mobileVerificationRequired == 'on' ? true : false,
+    favicon: settingsPayload?.favicon == '' ? null : settingsPayload?.favicon,
   }
 
   return params

@@ -1,5 +1,4 @@
 import { BreadCrumb } from '@/components/breadcrumb'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import React from 'react'
 import menuCtrl from '@/features/menu/controller'
 import { notFound } from 'next/navigation'
@@ -42,11 +41,11 @@ export default async function Page({ params }: PageProps) {
     pageBreadCrumb,
   ]
   return (
-    <ScrollArea className="h-full">
+    <>
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
         <MenuForm initialData={menu} />
       </div>
-    </ScrollArea>
+    </>
   )
 }

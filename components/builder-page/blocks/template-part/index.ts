@@ -6,7 +6,7 @@ import { ContentEditor } from './ContentEditor'
 
 export const TemplatePartBlockDef = {
   type: 'templatePart',
-  label: 'قالب جزئی',
+  label: 'قطعه قالب',
   showInBlocksList: true,
   Renderer: TemplateBlock,
   RendererInEditor: TemplateBlockBlockEditor,

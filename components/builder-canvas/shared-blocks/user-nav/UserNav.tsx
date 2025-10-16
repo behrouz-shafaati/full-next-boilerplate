@@ -11,10 +11,11 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 // import { logout } from '@/lib/auth'
-import { User } from '@/lib/entity/user/interface'
+import { User } from '@/features/user/interface'
 import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 type props = {
   widgetName: string
   user: User
@@ -26,7 +27,9 @@ type props = {
 } & React.HTMLAttributes<HTMLParagraphElement>
 
 export function UserNav({ widgetName, blockData, user, ...props }: props) {
+  const { className, ...res } = props
   const router = useRouter()
+  const defaultAvatar = '/assets/default-profile.png'
   const { content, settings, styles } = blockData || {}
   if (user) {
     return (
@@ -34,15 +37,22 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
         style={{
           ...computedStyles(blockData?.styles || {}),
         }}
-        {...props}
+        className={`${className}`}
+        {...res}
       >
         <DropdownMenu dir="rtl">
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="relative w-8 h-8 rounded-full">
-              <Avatar className="w-8 h-8">
-                <AvatarImage src={user?.image ?? ''} alt={user?.name ?? ''} />
-                <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
-              </Avatar>
+            <Button
+              variant="ghost"
+              className="relative p-0 rounded-full overflow-hidden "
+            >
+              <Image
+                src={user?.image?.srcSmall || defaultAvatar}
+                height={24}
+                width={24}
+                alt={user?.name}
+                className="rounded-[50%]"
+              />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>

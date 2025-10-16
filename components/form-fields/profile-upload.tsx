@@ -18,12 +18,14 @@ export default function ProfileUpload({
   name,
   defaultValue = null,
   state,
+  targetFormat = '',
 }: {
   className?: string
   title: string
   name: string
   defaultValue?: BeFile | null
   state?: any
+  targetFormat: 'png' | ''
 }) {
   const defaultImageUrl = '/assets/default-profile.png'
   const errorMessages = state?.errors?.[name] ?? []
@@ -62,6 +64,7 @@ export default function ProfileUpload({
     formData.append('alt', file.alt)
     formData.append('description', file.description)
     formData.append('main', file.main)
+    formData.append('targetFormat', targetFormat)
 
     console.log('#290 formData:', formData)
     const data = await uploadFile(formData)
@@ -96,7 +99,7 @@ export default function ProfileUpload({
         <div className="w-[74px] h-[74px] relative">
           {/* Accepted files */}
           <Image
-            src={file?.preview || file?.src || defaultImageUrl}
+            src={file?.preview || file?.srcSmall || defaultImageUrl}
             alt={file?.name || file?.alt || defaultImageUrl}
             width={100}
             height={100}

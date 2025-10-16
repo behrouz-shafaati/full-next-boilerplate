@@ -1,6 +1,5 @@
 'use client'
 import { useBuilderStore } from '../store/useBuilderStore'
-import { v4 as uuidv4 } from 'uuid'
 import { useRouter } from 'next/navigation'
 import {
   DndContext,
@@ -16,6 +15,7 @@ import SortableRow from '../shared-blocks/row/SortableRow'
 import ToolsSection from './toolsSection' // <==
 import { Button } from '@/components/ui/button'
 import { SubmitButton } from '@/components/form-fields/submit-button'
+import { generateObjectId } from '@/lib/utils/generateObjectId'
 
 type props = {
   name: string
@@ -112,7 +112,7 @@ export default function Builder({
       console.log('#939 empty Col in new el:', column)
       if (column) {
         addElementToColumn(column.id, {
-          id: uuidv4(),
+          id: generateObjectId(),
           type: activeData.type,
           ...block.defaultSettings,
         })
@@ -123,7 +123,7 @@ export default function Builder({
       console.log('#939 full Col in new el:', targetCol)
       if (targetCol) {
         addElementToColumn(targetCol.id, {
-          id: uuidv4(),
+          id: generateObjectId(),
           type: activeData.type,
           ...block.defaultSettings,
         })
@@ -205,7 +205,7 @@ export default function Builder({
           {/* ناحیه ساخت صفحه */}
           <div className="w-0 h-screen -z-50 "></div>
           <div
-            className="flex-1 h-screen py-8 overflow-y-auto rtl:pr-10 ltr:pl-10"
+            className="flex-1 h-screen py-8 overflow-y-auto p-4 rtl:pr-10 ltr:pl-10"
             onClick={() => {
               deselectBlock()
             }}
@@ -230,7 +230,7 @@ export default function Builder({
             >
               افزودن ردیف
             </Button>
-            <div className="p-4 ltr bg-slate-300">
+            <div className="p-4 ltr bg-slate-300 mt-2 rounded">
               <code>{getJson()}</code>
             </div>
           </div>

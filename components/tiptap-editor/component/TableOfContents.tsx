@@ -45,7 +45,7 @@
 //       dir="rtl"
 //     >
 //       <h2 className="font-semibold mb-3 text-lg text-gray-900 dark:text-gray-100">
-//         فهرست مطالب
+//         فهرست مقالات
 //       </h2>
 //       {renderTree(toc)}
 //     </nav>
@@ -114,7 +114,7 @@ export function TableOfContents({ toc }: Props) {
         className="flex justify-between w-full items-center font-semibold text-lg text-gray-900 dark:text-gray-100 p-4 focus:outline-none"
         onClick={() => setOpen(!open)}
       >
-        <span>فهرست مطالب</span>
+        <span>فهرست مقالات</span>
 
         {/* آیکون شیک chevron */}
         <svg

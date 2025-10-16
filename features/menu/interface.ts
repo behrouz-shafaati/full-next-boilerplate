@@ -10,7 +10,7 @@ export type MenuItem = {
 
 export type MenuTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان مقاله
    */
   lang: string // "fa", "en", "de", ...
 

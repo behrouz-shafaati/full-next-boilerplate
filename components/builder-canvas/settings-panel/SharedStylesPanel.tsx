@@ -4,7 +4,6 @@ import { useBuilderStore } from '../store/useBuilderStore'
 import { useDebouncedCallback } from 'use-debounce'
 import { TailwindForm } from '../../rjsf/shadcn-theme'
 import { uiSchema } from '../../rjsf/uiSchema'
-import { title } from 'process'
 
 export const publicClassNamesSchema = {
   type: 'object',

@@ -1,13 +1,12 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import UserAuthForm from '@/components/forms/user-profile-stepper/user-auth-form';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Metadata } from 'next'
+import Link from 'next/link'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export const metadata: Metadata = {
   title: 'Authentication',
   description: 'Authentication forms built using the components.',
-};
+}
 
 export default function AuthenticationPage() {
   return (
@@ -58,7 +57,7 @@ export default function AuthenticationPage() {
               برای ورود ایمیل و رمز عبور خود را وارد کنید
             </p>
           </div>
-          <UserAuthForm />
+          {/* <UserAuthForm /> */}
           <p className="px-8 text-center text-sm text-muted-foreground">
             با کلیک بر روی ادامه، با{' '}
             <Link
@@ -79,5 +78,5 @@ export default function AuthenticationPage() {
         </div>
       </div>
     </div>
-  );
+  )
 }

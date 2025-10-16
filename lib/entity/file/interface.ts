@@ -2,7 +2,7 @@ import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
 export type FileTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان مقاله
    */
   lang: string // "fa", "en", "de", ...
   /**
@@ -24,15 +24,21 @@ export type File = Model & {
    */
   translations: [FileTranslationSchema]
   extension: string
-  patch: string
+  patchSmall: string
+  patchMedium: string
+  patchLarge: string
   /**
-   * آدرس تصویر بهینه شده
+   * آدرس تصویر بهینه شده موبایل
    */
-  src: string
+  srcSmall: string
+  /**
+   * آدرس تصویر بهینه شده دسکتاپ
+   */
+  srcMedium: string
   /**
    * آدرس تصویر با اندازه اصلی
    */
-  fullSrc: string
+  srcLarge: string
   href: string
   mimeType: string
   size: number

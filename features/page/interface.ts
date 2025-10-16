@@ -16,7 +16,7 @@ export type PageBlock = PageBlockComponent
 
 export type PageTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان مقاله
    */
   lang: string // "fa", "en", "de", ...
   /**

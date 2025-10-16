@@ -10,7 +10,7 @@ import {
 } from './interface'
 import { getSession } from '@/lib/auth'
 import { Session } from '@/types'
-import postCtrl from '@/features/post/controller'
+import articleCtrl from '@/features/article/controller'
 // import imgurClient from "./imgur";
 // const multer = require('multer');
 const sharp = require('sharp')
@@ -77,6 +77,7 @@ class controller extends c_controller {
     let description: string = formData.get('description') as string
     let href: string = formData.get('href') as string
     let main: string = formData.get('main') as string
+    let targetFormat: string = formData.get('targetFormat') as string
     let lang: string | null = (formData.get('lang') as string) || 'fa'
 
     const arrayBuffer = await file.arrayBuffer()
@@ -93,67 +94,22 @@ class controller extends c_controller {
       title,
       defualtFileName.split('.').pop() as string
     )
-
     // for images
-    if (
-      mimeType == 'image/jpeg' ||
-      mimeType == 'image/png' ||
-      mimeType == 'image/webp'
-    ) {
+    if (mimeType.startsWith('image/')) {
       const directory = await this.generateDirectory('images')
       patch = directory.patch
       src = directory.src
-
-      // await sharp(req.files["file"][0].path)
-      //   .resize(750, 750, {
-      //     fit: sharp.fit.inside,
-      //     withoutEnlargement: true,
-      //   })
-      //   .jpeg({ quality: 90 })
-      //   .toFile(filePath);
-
-      // if (process.env.ACTIVE_IMGUR) {
-      //   const response = await imgurClient.upload({
-      //     image: createReadStream(filePath),
-      //     type: "stream",
-      //   });
-      //   // console.log(response.data);
-      //   src = response.data.link;
-      //   fs.unlinkSync(filePath);
-      // }
-      // fs.unlinkSync(req.files["file"][0].path);
     }
     // for svg
     else if (mimeType == 'image/svg+xml') {
       const { src: src, patch: patch } = await this.generateDirectory('images')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
-      //     filePath = path.resolve(directory, file);
-      //   let oldPath = req.files['file'][0].path;
-      //   fs.rename(oldPath, filePath, function (err: any) {
-      //     if (err) throw err;
-      //   });
     }
 
     // for movies
     else if (mimeType == 'video/mp4') {
       const { src: src, patch: patch } = await this.generateDirectory('movies')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
-
-      //   filePath = path.resolve(directory, file);
-      //   let oldPath = req.files['file'][0].path;
-      //   await fs.rename(oldPath, filePath, function (err: any) {
-      //     if (err) throw err;
-      //   });
-
-      //   // to snap shot from frame 1
-
-      //   const preview = 'pre_' + req.files['file'][0].filename + '.jpg';
-      //   previewPath = `${directory}/${preview}`;
-      //   await extractFrames({
-      //     input: filePath,
-      //     output: previewPath,
-      //     offsets: [0],
-      //   });
     }
 
     // for audios
@@ -164,17 +120,14 @@ class controller extends c_controller {
     ) {
       const { src: src, patch: patch } = await this.generateDirectory('audios')
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
-
-      //   filePath = path.resolve(directory, file);
-      //   let oldPath = req.files['file'][0].path;
-      //   fs.rename(oldPath, filePath, function (err: any) {
-      //     if (err) throw err;
-      //   });
     }
 
     await this.saveFileInDirectory(buffer, `${tmpPath}/${fileName}`)
-    // await fs.writeFile(`${tmpPath}/${fileName}`, buffer);
-    const extension = mimeType == 'image/webp' ? 'webp' : 'png'
+
+    const urls: Record<string, string> = {}
+    const patches: Record<string, string> = {}
+    const extension =
+      targetFormat == '' || targetFormat == null ? 'webp' : targetFormat
     try {
       if (mimeType.startsWith('image/')) {
         const tmpFilePath = path.resolve(tmpPath, fileName)
@@ -184,72 +137,48 @@ class controller extends c_controller {
 
         // مسیر و نام فایل بهینه‌شده (small)
         // تغییر نام به webp
-        const webpFileName = `${baseName}.webp`
+        const webpFileName = `${baseName}.${extension}`
         title = webpFileName
-        const goalFilePath = path.resolve(patch, webpFileName)
-        src = `/api/file${src}/${webpFileName}`
-        patch = `${patch}/${webpFileName}`
+        const sizes = [
+          { name: 'Small', width: 640, quality: 70 },
+          { name: 'Medium', width: 768, quality: 80 },
+          { name: 'Large', width: 1280, quality: 90 },
+        ]
+        if (mimeType == 'image/gif') {
+          const destinationFilePath = path.join(patch, `${baseName}.gif`)
 
-        // مسیر و نام فایل Full (full.webp)
-        const fullFileName = `${baseName}-full.webp`
-        const fullFilePath = path.resolve(
-          patch.replace(webpFileName, ''),
-          fullFileName
-        )
-        fullSrc = `/api/file${src.replace(webpFileName, '')}/${fullFileName}`
+          // فقط فایل را کپی کن (بدون پردازش توسط sharp)
+          await fs.promises.copyFile(tmpFilePath, destinationFilePath)
 
-        // 1) ذخیره نسخه بهینه‌شده برای وب
-        // تبدیل به webp + بهینه‌سازی
-        await sharp(tmpFilePath)
-          .resize(850, 850, {
-            fit: sharp.fit.inside,
-            withoutEnlargement: true,
-          })
-          .webp({ quality: 80 }) // کیفیت پیشنهادی برای وب
-          .toFile(goalFilePath)
+          for (const size of sizes) {
+            urls[`src${size.name}`] = `/api/file${src}/${baseName}.gif`
+            patches[`patch${size.name}`] = `${patch}/${baseName}.gif`
+          }
 
-        // 2) ذخیره نسخه Full با کیفیت اصلی
-        await sharp(tmpFilePath)
-          .resize(1200, 1200, {
-            fit: sharp.fit.inside,
-            withoutEnlargement: true,
-          })
-          .webp({ quality: 95 }) // کیفیت بالا برای full
-          .toFile(fullFilePath)
+          // حالا فایل موقت رو پاک کن
+          safeUnlink(tmpFilePath)
+        } else {
+          for (const size of sizes) {
+            const destinationFilePath = path.join(
+              patch,
+              `${baseName}-${size.name}.${extension}`
+            )
+            await sharp(buffer)
+              .resize({ width: size.width, withoutEnlargement: true })
+              .webp({ quality: size.quality })
+              .toFile(destinationFilePath)
+            urls[
+              `src${size.name}`
+            ] = `/api/file${src}/${baseName}-${size.name}.${extension}`
+            patches[
+              `patch${size.name}`
+            ] = `${patch}/${baseName}-${size.name}.${extension}`
+          }
 
-        // پاک کردن فایل موقت بعد از اتمام پردازش
-        safeUnlink(tmpFilePath)
+          // پاک کردن فایل موقت بعد از اتمام پردازش
+          safeUnlink(tmpFilePath)
+        }
       }
-      // if (
-      //   mimeType == 'image/jpeg' ||
-      //   mimeType == 'image/png' ||
-      //   mimeType == 'image/webp'
-      // ) {
-      //   const tmpFilePath = path.resolve(tmpPath, fileName)
-      //   // change extension to .jpeg
-      //   const jpegFileName =
-      //     fileName.substr(0, fileName.lastIndexOf('.')) + '.' + extension
-      //   title = jpegFileName
-      //   const goalFilePath = path.resolve(patch, jpegFileName)
-      //   src = `/api/file${src}/${jpegFileName}`
-      //   patch = `${patch}/${jpegFileName}`
-      //   // reduce size
-      //   if (extension == 'webp') {
-      //     //تبدیل به فرمت webp
-      //     await sharp(tmpFilePath).toFormat('webp').toFile(goalFilePath)
-      //     fs.unlinkSync(tmpFilePath)
-      //   } else
-      //     await sharp(tmpFilePath)
-      //       .flatten({ background: { r: 255, g: 255, b: 255 } })
-      //       .resize(850, 850, {
-      //         fit: sharp.fit.inside,
-      //         withoutEnlargement: true,
-      //       })
-      //       // .jpeg({ quality: 90 })
-      //       .png({ quality: 90 })
-      //       .toFile(goalFilePath)
-      //   fs.unlinkSync(tmpFilePath)
-      // }
     } catch (e: any) {
       console.log('#903 Error in upload file:', e)
     }
@@ -257,8 +186,8 @@ class controller extends c_controller {
     const params = {
       _id,
       title,
-      src,
-      fullSrc,
+      ...urls,
+      ...patches,
       patch,
       mimeType: `{image/${extension}}`,
       fileSize,
@@ -270,7 +199,7 @@ class controller extends c_controller {
       lang,
     }
 
-    const cleanParams = await this.sanitizePostData(params, _id)
+    const cleanParams = await this.sanitizeArticleData(params, _id)
     let fileInfo: FileDetails = await this.create({
       params: cleanParams,
     })
@@ -302,7 +231,7 @@ class controller extends c_controller {
         locale: fileDetails.locale,
       }
 
-      const cleanParams = await this.sanitizePostData(
+      const cleanParams = await this.sanitizeArticleData(
         params,
         String(fileDetails.id)
       )
@@ -322,19 +251,21 @@ class controller extends c_controller {
   async handleAfterUpdateFile({ file }: { file: FileDetails }) {
     if (file?.attachedTo.length == 0) return
     switch (file.attachedTo[0].feature) {
-      case 'post':
-        postCtrl.updateContentJsonFileDetails({ fileDetails: file })
+      case 'article':
+        articleCtrl.updateContentJsonFileDetails({ fileDetails: file })
         break
     }
   }
 
   async deleteFile(id: string) {
     const file = await this.findById({ id })
-    fs.unlinkSync(file.patch)
+    fs.unlinkSync(file.patchSmall)
+    fs.unlinkSync(file.patchLarge)
+    fs.unlinkSync(file.patchMedium)
     return this.delete({ filters: [id] })
   }
 
-  async sanitizePostData(params: any, id?: string | undefined) {
+  async sanitizeArticleData(params: any, id?: string | undefined) {
     let prevState = { translations: [] }
     if (id) {
       const prevFile = await this.findById({ id })

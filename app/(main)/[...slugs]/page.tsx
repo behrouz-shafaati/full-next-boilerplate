@@ -1,29 +1,35 @@
 export const dynamic = 'force-static'
 import React from 'react'
-import postCtrl from '@/features/post/controller'
+import articleCtrl from '@/features/article/controller'
 import { notFound } from 'next/navigation'
-import DefaultSinglePageBlog from '@/features/post/ui/page/single'
+import DefaultSinglePageBlog from '@/features/article/ui/page/single'
 import templateCtrl from '@/features/template/controller'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
-import { PostTranslationSchema } from '@/features/post/interface'
-import { createPostHref, getReadingTime } from '@/features/post/utils'
+import { Article, ArticleTranslationSchema } from '@/features/article/interface'
+import {
+  createArticleHref,
+  generateFAQSchema,
+  generateArticleSchema,
+  getReadingTime,
+} from '@/features/article/utils'
 
 import type { Metadata } from 'next'
 import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
 import { generateTableOfContents } from '@/components/tiptap-editor/utils'
 import { TableOfContents } from '@/components/tiptap-editor/component/TableOfContents'
-import PostCommentList from '@/features/post-comment/ui/list'
+import ArticleCommentList from '@/features/article-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
-import { PostComment } from '@/features/post-comment/interface'
-import { getPostCommentsForClient } from '@/features/post-comment/actions'
-import { CommentForm } from '@/features/post-comment/ui/comment-form'
+import { ArticleComment } from '@/features/article-comment/interface'
+import { getArticleCommentsForClient } from '@/features/article-comment/actions'
+import { CommentForm } from '@/features/article-comment/ui/comment-form'
+import { getSettings } from '@/features/settings/controller'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
 }
 
 export async function generateStaticParams() {
-  return postCtrl.generateStaticParams()
+  return articleCtrl.generateStaticParams()
 }
 
 export async function generateMetadata({
@@ -34,30 +40,52 @@ export async function generateMetadata({
   const { slugs } = resolvedParams
   const slug = slugs[slugs.length - 1]
   let findResult = null
-
+  const siteTitle = (await getSettings('site_title')) as string
   ;[findResult] = await Promise.all([
-    postCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
+    articleCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
   ])
-  const post = findResult?.data[0] || null
-  if (!post) {
+  const article: Article = findResult?.data[0] || null
+  if (!article || article == undefined) {
     return {
       title: 'صفحه یافت نشد',
       description: 'محتوای درخواستی موجود نیست',
     }
   }
-  const href = createPostHref(post.mainCategory)
-  const translation: PostTranslationSchema =
-    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
+  const href = createArticleHref(article.mainCategory)
+  const translation: ArticleTranslationSchema =
+    article?.translations?.find(
+      (t: ArticleTranslationSchema) => t.lang === locale
+    ) ||
+    article?.translations[0] ||
     {}
 
   return {
-    title: translation?.title,
-    description: translation?.excerpt,
+    title: translation?.seoTitle || translation.title,
+    description: translation?.metaDescription || translation?.excerpt,
+    alternates: {
+      canonical: href,
+    },
     openGraph: {
-      title: translation?.title,
-      description: translation?.excerpt,
+      locale: 'fa_IR', // 👈 زبان/منطقه
+      type: 'article',
+      title: translation?.seoTitle || translation.title,
+      description: translation?.metaDescription || translation?.excerpt,
       url: href,
+      siteName: siteTitle,
+      images: [
+        {
+          url: article?.image?.srcSmall,
+          width: 600,
+          height: 315,
+          alt: translation?.seoTitle || translation.title,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: translation?.seoTitle || translation.title,
+      description: translation?.metaDescription || translation?.excerpt,
+      images: [article?.image?.srcSmall],
     },
   }
 }
@@ -70,22 +98,24 @@ export default async function Page({ params }: PageProps) {
   let findResult = null
 
   ;[findResult] = await Promise.all([
-    postCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
+    articleCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
   ])
-  const post = findResult?.data[0] || null
-  if (!post) {
+  const article = findResult?.data[0] || null
+  if (!article) {
     notFound()
   }
 
-  const postCommentsResult: QueryResponse<PostComment> =
-    await getPostCommentsForClient({
-      filters: { post: post.id },
+  const articleCommentsResult: QueryResponse<ArticleComment> =
+    await getArticleCommentsForClient({
+      filters: { article: article.id },
     })
 
-  const href = createPostHref(post.mainCategory)
-  const translation: PostTranslationSchema =
-    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
+  const href = createArticleHref(article.mainCategory)
+  const translation: ArticleTranslationSchema =
+    article?.translations?.find(
+      (t: ArticleTranslationSchema) => t.lang === locale
+    ) ||
+    article?.translations[0] ||
     {}
 
   // تبدیل contentJson به متن ساده
@@ -106,8 +136,8 @@ export default async function Page({ params }: PageProps) {
   }
 
   const metadata = {
-    author: post?.user,
-    createdAt: post.createdAt,
+    author: article?.user,
+    createdAt: article.createdAt,
     readingDuration,
   }
 
@@ -116,46 +146,94 @@ export default async function Page({ params }: PageProps) {
 
   const breadcrumbItems = [{ title: 'بلاگ', link: '/blog' }, pageBreadCrumb]
   const [template] = await Promise.all([
-    templateCtrl.getTemplate({ slug: 'post' }),
+    templateCtrl.getTemplate({ slug: 'article' }),
   ])
+
+  const articleSchema = generateArticleSchema({ article, locale: 'fa' })
+  const faqSchema = generateFAQSchema(translation.contentJson)
+
+  const writeJsonLd = () => (
+    <>
+      {articleSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+        />
+      )}
+
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+      {translation?.jsonLd && translation?.jsonLd == '' && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: translation?.jsonLd }}
+        />
+      )}
+    </>
+  )
+
   if (template)
     return (
-      <RendererRows
-        rows={template?.content.rows}
-        editroMode={false}
-        content_all={
-          <DefaultSinglePageBlog
-            post={post}
-            breadcrumbItems={breadcrumbItems}
-            readingDuration={readingDuration}
+      <>
+        {writeJsonLd()}
+        <>
+          <RendererRows
+            rows={template?.content.rows}
+            editroMode={false}
+            content_all={
+              <DefaultSinglePageBlog
+                article={article}
+                breadcrumbItems={breadcrumbItems}
+                readingDuration={readingDuration}
+                tableOfContent={<TableOfContents toc={toc} />}
+                comments={
+                  <ArticleCommentList
+                    article={article}
+                    articleCommentsResult={articleCommentsResult}
+                  />
+                }
+              />
+            }
+            content_article_title={translation?.title}
+            content_article_cover={article?.image ?? null}
+            content_article_metadata={metadata}
+            content_article_content={
+              <RenderedHtml contentJson={translation?.contentJson} />
+            }
+            content_article_tablecontent={<TableOfContents toc={toc} />}
+            content_article_comments={
+              <ArticleCommentList
+                article={article}
+                articleCommentsResult={articleCommentsResult}
+              />
+            }
+            content_article_comment_form={<CommentForm initialData={article} />}
           />
-        }
-        content_post_title={translation?.title}
-        content_post_cover={post?.image ?? null}
-        content_post_metadata={metadata}
-        content_post_content={
-          <RenderedHtml contentJson={translation?.contentJson} />
-        }
-        content_post_tablecontent={<TableOfContents toc={toc} />}
-        content_post_comments={
-          <PostCommentList
-            post={post}
-            postCommentsResult={postCommentsResult}
-          />
-        }
-        content_post_comment_form={<CommentForm initialData={post} />}
-      />
+        </>
+      </>
     )
 
   return (
-    <DefaultSinglePageBlog
-      post={post}
-      breadcrumbItems={breadcrumbItems}
-      readingDuration={readingDuration}
-      tableOfContent={<TableOfContents toc={toc} />}
-      comments={
-        <PostCommentList post={post} postCommentsResult={postCommentsResult} />
-      }
-    />
+    <>
+      {writeJsonLd()}
+      <>
+        <DefaultSinglePageBlog
+          article={article}
+          breadcrumbItems={breadcrumbItems}
+          readingDuration={readingDuration}
+          tableOfContent={<TableOfContents toc={toc} />}
+          comments={
+            <ArticleCommentList
+              article={article}
+              articleCommentsResult={articleCommentsResult}
+            />
+          }
+        />
+      </>
+    </>
   )
 }

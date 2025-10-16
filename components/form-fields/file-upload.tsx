@@ -197,7 +197,7 @@ const FileUpload = forwardRef(function FileUpload(
         return newFile
       })
     handelUpdateFileDetails(filesDetails)
-  }, [files, attachedTo, updateFileDetailsHnadler])
+  }, [files, attachedTo])
 
   const removeFileById = (id: string) => {
     const items = [...files]
@@ -318,15 +318,12 @@ const FileUpload = forwardRef(function FileUpload(
                   key={index}
                   className="relative rounded-md max-h-20 h-22 group min-h-12"
                 >
-                  {(file?.src || file?.preview) && (
+                  {(file?.srcSmall || file?.preview) && (
                     <Image
-                      src={file?.preview || file?.src}
+                      src={file?.preview || file?.srcSmall}
                       alt={file?.title || file?.alt}
                       width={100}
                       height={100}
-                      //   onLoad={() => {
-                      //     URL.revokeObjectURL(file.preview);
-                      //   }}
                       className={clsx(
                         'h-full w-full cursor-pointer rounded-md object-contain shadow-sm',
                         { 'border-2 border-blue-500': file?.main }
@@ -425,7 +422,7 @@ const ModalContent = ({
       <div>
         <div className="relative h-24 ">
           <Image
-            src={file?.preview || file?.src}
+            src={file?.preview || file?.srcSmall}
             alt={file?.name || 'uploaded image'}
             width={100}
             height={100}
@@ -467,7 +464,7 @@ const ModalContent = ({
           title="رسانه اصلی"
           checked={newFile.main}
           onChange={(e: any) =>
-            setNewFile((s: any) => ({ ...s, main: e.target.checked }))
+            setNewFile((s: any) => ({ ...s, main: e.target?.checked || false }))
           }
         />
       </div>

@@ -8,6 +8,7 @@ import {
   getVisibilityClass,
 } from '../utils/styleUtils'
 import RenderBlock from './RenderBlock'
+import StickyBox from 'react-sticky-box'
 
 type Props = {
   editroMode: boolean
@@ -41,9 +42,16 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
             style={{ ...computedStyles(row.styles) }}
             className={`grid grid-cols-12 gap-4 ${combineClassNames(
               row.classNames || {}
-            )} ${className} ${stickyClass}`}
+            )} ${className} ${stickyClass} `}
           >
             {row.columns.map((col) => {
+              const visibilityClassName = getVisibilityClass(
+                col.styles?.visibility,
+                { display: col.settings?.display }
+              )
+              delete col.settings?.visibility
+              // as default columns content is sticky
+              col.settings = { sticky: true, ...col?.settings }
               const responsiveDesign = row?.settings?.responsiveDesign ?? true
               const classBaseOnResponsiveDesign = responsiveDesign
                 ? `col-span-12 md:col-span-${col.width}`
@@ -54,17 +62,18 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                   key={col.id}
                   className={`relative  ${classBaseOnResponsiveDesign} ${combineClassNames(
                     col.classNames || {}
-                  )} `}
+                  )} ${visibilityClassName}`}
                   style={{
                     ...computedStyles(col.styles),
                     ...computedStyles(col.settings),
                   }}
                 >
                   <div
+                    data-block-wrapper
                     //When the row is sticky don't need sticky column
-                    {...(!row?.settings?.sticky
-                      ? { className: 'sticky top-16 ' }
-                      : {})}
+                    {...(row?.settings?.sticky || col.settings?.sticky == false
+                      ? {}
+                      : { className: 'sticky top-14' })}
                     style={{
                       ...computedStyles(col.styles),
                       ...computedStyles(col.settings),

@@ -123,12 +123,12 @@ class controller extends baseController {
         if (blogTemplateResult.data[0] != undefined)
           return blogTemplateResult.data[0]
         break
-      case 'post': // مقاله تکی
-        const [postTemplateResult] = await Promise.all([
-          this.find({ filters: { templateFor: 'post', status: 'active' } }),
+      case 'article': // مقاله تکی
+        const [articleTemplateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'article', status: 'active' } }),
         ])
-        if (postTemplateResult.data[0] != undefined)
-          return postTemplateResult.data[0]
+        if (articleTemplateResult.data[0] != undefined)
+          return articleTemplateResult.data[0]
         break
       default:
         // بررسی کند که یک دسته بندی خاص یا والدهای آن اگر هست قالب آن را برگرداند
@@ -227,7 +227,7 @@ class controller extends baseController {
 }
 
 type getTemplateProp = {
-  slug: 'allPages' | 'blog' | 'categories' | 'archive' | 'post' | 'category'
+  slug: 'allPages' | 'blog' | 'categories' | 'archive' | 'article' | 'category'
 }
 
 const templateCtrl = new controller(new templateService(templateSchema))

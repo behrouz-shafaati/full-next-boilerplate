@@ -38,7 +38,7 @@ export function getTemplateForOptions({
     },
     {
       label: 'مقاله‌ی تکی',
-      value: 'post',
+      value: 'article',
     },
     {
       label: 'آرشیو مقالات',

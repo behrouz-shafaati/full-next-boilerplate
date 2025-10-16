@@ -1,6 +1,11 @@
 const blockSchema = {
   type: 'object',
   properties: {
+    sticky: {
+      type: 'boolean',
+      title: 'Sticky',
+      default: true,
+    },
     display: {
       type: 'string',
       title: 'Display',

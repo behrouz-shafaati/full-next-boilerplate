@@ -64,28 +64,47 @@ export const getVisibilityClass = (
 
   // موبایل: پایه‌ای‌ترین حالت (پیش‌فرض Tailwind)
   if (mobile === false) {
-    classList.push('hidden')
+    classList.push('!hidden')
   } else {
     classList.push(display)
   }
 
   // تبلت
   if (tablet === false) {
-    classList.push('md:hidden')
+    classList.push('md:!hidden')
   } else {
-    classList.push(`md:${display}`)
+    classList.push(`md:!${display}`)
   }
 
   // دسکتاپ
   if (desktop === false) {
-    classList.push('lg:hidden')
+    classList.push('lg:!hidden')
   } else {
-    classList.push(`lg:${display}`)
+    classList.push(`lg:!${display}`)
   }
 
   return classList.join(' ')
 }
 
+/**
+ * Extracts and returns only color-related Tailwind CSS classes from a given className string.
+ *
+ * This function filters classes that are related to color styling,
+ * including background (`bg-`), text (`text-`), border (`border-`),
+ * shadow (`shadow-`), placeholder (`placeholder-`), and ring (`ring-`),
+ * as well as their dark mode variants (`dark:` prefix).
+ *
+ * @param {string} className - The complete className string containing multiple Tailwind CSS classes.
+ * @returns {string} A new string containing only color-related Tailwind classes, separated by spaces.
+ *
+ * @example
+ * extractColorClasses("bg-red-500 text-white p-4 border border-gray-200")
+ * // returns "bg-red-500 text-white border border-gray-200"
+ *
+ * @example
+ * extractColorClasses("dark:bg-gray-800 text-sm shadow-lg hover:scale-105")
+ * // returns "dark:bg-gray-800 shadow-lg"
+ */
 export function extractColorClasses(className: string): string {
   return className
     .split(/\s+/) // تبدیل استرینگ به آرایه کلاس‌ها

@@ -149,7 +149,7 @@ async function sanitizeTemplateData(validatedFields: any) {
   const session = (await getSession()) as Session
 
   const user = session.user.id
-  // Create the post
+  // Create the article
   const content = JSON.parse(validatedFields.data.contentJson)
   const params = {
     content,

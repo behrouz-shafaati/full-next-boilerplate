@@ -80,13 +80,13 @@ export default function MenuBuilder({
       >
         <SortableContext
           key={`SortableContext`}
-          items={items.map((item) => item.id)}
+          items={items.map((item) => item._id)}
           strategy={verticalListSortingStrategy}
         >
           <div className="space-y-2 ">
             {items.map((item) => (
               <SortableItem
-                key={item?.id || item?._id}
+                key={item?._id || item?._id}
                 item={item}
                 depth={0}
                 maxDepth={maxDepth}
@@ -102,9 +102,9 @@ export default function MenuBuilder({
           ) : null}
         </DragOverlay>
       </DndContext>
-      {/* <pre className="bg-gray-100 p-4 mt-4">
+      <pre className=" ltr bg-slate-200 dark:bg-slate-800 p-4 mt-4">
         <code>{getJson()}</code>
-      </pre> */}
+      </pre>
     </div>
   )
 }

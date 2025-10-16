@@ -1,13 +1,13 @@
-import { Metadata } from 'next';
-import Link from 'next/link';
-import UserAuthForm from '@/components/forms/user-profile-stepper/user-auth-form';
-import { buttonVariants } from '@/components/ui/button';
-import { cn } from '@/lib/utils';
+import { Metadata } from 'next'
+import Link from 'next/link'
+import { buttonVariants } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
+import LoginForm from '@/features/user/ui/login-form'
 
 export const metadata: Metadata = {
   title: 'Authentication',
   description: 'Authentication forms built using the components.',
-};
+}
 
 export default function AuthenticationPage() {
   return (
@@ -49,35 +49,8 @@ export default function AuthenticationPage() {
         </div>
       </div>
       <div className="p-4 lg:p-8 h-full flex items-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-          <div className="flex flex-col space-y-2 text-center">
-            <h1 className="text-2xl font-semibold tracking-tight">
-              ورود به حساب
-            </h1>
-            <p className="text-sm text-muted-foreground">
-              برای ورود ایمیل و رمز عبور خود را وارد کنید
-            </p>
-          </div>
-          <UserAuthForm />
-          <p className="px-8 text-center text-sm text-muted-foreground">
-            با کلیک بر روی ادامه، با{' '}
-            <Link
-              href="/terms"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              شرایط استفاده از خدمات
-            </Link>{' '}
-            و{' '}
-            <Link
-              href="/privacy"
-              className="underline underline-offset-4 hover:text-primary"
-            >
-              حریم خصوصی
-            </Link>{' '}
-            ما موافقت می کنید.
-          </p>
-        </div>
+        <LoginForm />
       </div>
     </div>
-  );
+  )
 }

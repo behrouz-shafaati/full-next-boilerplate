@@ -7,9 +7,21 @@ const settingsSchema = new Schema<SettingsSchema>(
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
     homePageId: { type: Schema.Types.ObjectId, ref: 'page' },
     commentApprovalRequired: { type: Boolean, default: true },
+    emailVerificationRequired: { type: Boolean, default: false },
+    mobileVerificationRequired: { type: Boolean, default: false },
     defaultHeaderId: { type: Schema.Types.ObjectId, ref: 'header' },
-    primaryMenuId: String,
-    footerMenuId: String,
+    favicon: {
+      type: Schema.Types.ObjectId,
+      ref: 'file',
+      default: null,
+      required: false,
+    },
+    site_title: String,
+    site_introduction: String,
+    mail_host: String,
+    mail_port: String,
+    mail_username: String,
+    mail_password: String,
     theme: {
       primaryColor: String,
       backgroundColor: String,
@@ -37,5 +49,19 @@ settingsSchema.set('toObject', {
 settingsSchema.set('toJSON', {
   transform,
 })
+
+settingsSchema
+  .pre('findOne', function (next: any) {
+    this.populate('favicon')
+    next()
+  })
+  .pre('find', function (next: any) {
+    this.populate('favicon')
+    next()
+  })
+  .pre('findOneAndUpdate', function (next: any) {
+    this.populate('favicon')
+    next()
+  })
 export default mongoose.models.settings ||
   model<SettingsSchema>('settings', settingsSchema)

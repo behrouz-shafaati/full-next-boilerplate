@@ -51,6 +51,13 @@ export const Form: React.FC<TemplatePartFormProps> = ({
     : 'قطعه قالب اضافه شد'
   const action = TemplatePart ? 'ذخیره تغییرات' : 'ذخیره'
 
+  const defaultInitialValue = {
+    title: '',
+    type: 'templatePart',
+    status: 'active',
+    rows: [],
+  }
+
   console.log('#299 TemplatePart:', TemplatePart?.content.rows)
   const onDelete = async () => {
     try {
@@ -91,11 +98,11 @@ export const Form: React.FC<TemplatePartFormProps> = ({
       </div> * /}
       {/* <Separator /> */}
       <BuilderTemplatePart
+        initialContent={
+          TemplatePart ? TemplatePart.content : defaultInitialValue
+        }
         name="contentJson"
         submitFormHandler={dispatch}
-        {...(TemplatePart
-          ? { initialContent: { ...TemplatePart.content } }
-          : {})}
       />
     </>
   )

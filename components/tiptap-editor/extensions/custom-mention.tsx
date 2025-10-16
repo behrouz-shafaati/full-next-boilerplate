@@ -1,5 +1,5 @@
 // lib/tiptap/mention.ts
-import { searchUser } from '@/lib/entity/user/actions'
+import { searchUser } from '@/features/user/actions'
 import Mention from '@tiptap/extension-mention'
 import tippy, { Instance } from 'tippy.js'
 import 'tippy.js/dist/tippy.css'

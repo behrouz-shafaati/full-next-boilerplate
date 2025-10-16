@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 import { MenuItem } from '../types/menu'
-import { v4 as uuidv4 } from 'uuid'
+import { generateObjectId } from '@/lib/utils/generateObjectId'
 
 interface MenuStore {
   items: MenuItem[]
@@ -23,7 +23,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
 
   addItem: () => {
     const newItem: MenuItem = {
-      id: uuidv4(),
+      _id: generateObjectId(),
       label: 'New Item',
       url: '#',
       subMenu: [],
@@ -35,13 +35,13 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
     set((state) => {
       const addChildRecursive = (items: MenuItem[]): MenuItem[] =>
         items.map((item) => {
-          if (item.id === parentId) {
+          if (item._id === parentId) {
             return {
               ...item,
               subMenu: [
                 ...(item.subMenu || []),
                 {
-                  id: uuidv4(),
+                  _id: generateObjectId(),
                   label: 'Sub Item',
                   url: '#',
                 },
@@ -61,7 +61,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   deleteItem: (id: string) => {
     const deleteRecursive = (items: MenuItem[]): MenuItem[] =>
       items
-        .filter((item) => item.id !== id)
+        .filter((item) => item._id !== id)
         .map((item) => ({
           ...item,
           subMenu: item.subMenu ? deleteRecursive(item.subMenu) : [],
@@ -73,7 +73,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
   updateItem: (id: string, data: Partial<MenuItem>) => {
     const updateRecursive = (items: MenuItem[]): MenuItem[] =>
       items.map((item) =>
-        item.id === id
+        item._id === id
           ? { ...item, ...data }
           : {
               ...item,
@@ -92,7 +92,7 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
 
     const insertInto = (items: MenuItem[]): MenuItem[] => {
       return items.map((item) => {
-        if (item.id === destinationId) {
+        if (item._id === destinationId) {
           return {
             ...item,
             subMenu: [...(item.subMenu || []), sourceItem],
@@ -114,8 +114,8 @@ export const useMenuStore = create<MenuStore>((set, get) => ({
 
   reorderItems: (sourceId, destinationId) => {
     const reorderRecursive = (items: MenuItem[]): MenuItem[] => {
-      const indexFrom = items.findIndex((i) => i.id === sourceId)
-      const indexTo = items.findIndex((i) => i.id === destinationId)
+      const indexFrom = items.findIndex((i) => i._id === sourceId)
+      const indexTo = items.findIndex((i) => i._id === destinationId)
       if (indexFrom === -1 || indexTo === -1) {
         return items.map((item) => ({
           ...item,
@@ -144,7 +144,7 @@ const findAndRemove = (
 
   const recursiveRemove = (list: MenuItem[]): MenuItem[] => {
     return list.reduce<MenuItem[]>((acc, item) => {
-      if (item.id === id) {
+      if (item._id === id) {
         removed = item
         return acc
       }

@@ -56,7 +56,8 @@ export const ImageSliderBlock = ({
   const images = content.map((img: FileDetails, i: number) => {
     const imageElement = (
       <Image
-        src={img.src || '/assets/general-img-landscape.png'}
+        src={img.srcSmall || '/assets/general-img-landscape.png'}
+        sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
         alt={img.alt || 'تصویر'}
         //   fill
         width={0}

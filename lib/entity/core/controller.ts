@@ -196,7 +196,7 @@ export default class controller {
    */
   async create(payload: Create): Promise<any> {
     const session = (await getSession()) as Session
-    const user = session?.user.id || null
+    const user = payload.params?.user || session?.user.id || null
     payload = { saveLog: false, ...payload }
 
     // log.setVariables(payload);

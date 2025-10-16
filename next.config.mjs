@@ -19,6 +19,10 @@ const nextConfig = {
         hostname: 'ali1354.ir',
         pathname: '/uploads/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'picsum.photos',
+      },
     ],
   },
   typescript: {

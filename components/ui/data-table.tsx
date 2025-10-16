@@ -32,6 +32,10 @@ interface DataTableProps<TData, TValue> {
   groupAction?: any
   refetchDataUrl?: string
   params?: Record<string, string | number>
+  showSearch?: boolean
+  showFilters?: boolean
+  showPagination?: boolean
+  showGroupAction?: boolean
 }
 
 export function DataTable<TData, TValue>({
@@ -40,6 +44,10 @@ export function DataTable<TData, TValue>({
   searchTitle,
   groupAction,
   refetchDataUrl = '#',
+  showSearch = true,
+  showFilters = true,
+  showPagination = true,
+  showGroupAction = true,
   params = {},
 }: DataTableProps<TData, TValue>) {
   const { buildUrlWithParams } = useUpdatedUrl()
@@ -62,8 +70,8 @@ export function DataTable<TData, TValue>({
   return (
     <>
       <div className="flex space-x-2 space-x-reverse space-y-2 md:space-y-0 flex-col md:flex-row">
-        <Search placeholder={searchTitle} />
-        <Filters table={table} />
+        {showSearch && <Search placeholder={searchTitle} />}
+        {showFilters && <Filters table={table} />}
       </div>
       <ScrollArea className="">
         <Table className="relative">
@@ -119,13 +127,17 @@ export function DataTable<TData, TValue>({
         <ScrollBar orientation="horizontal" />
       </ScrollArea>
       <div className="flex items-center justify-end space-x-2 space-x-reverse py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} از{' '}
-          {table.getFilteredRowModel().rows.length} ردیف انتخاب شده
-        </div>
-        <div className="space-x-reverse space-x-2">
-          <Pagination totalPages={data.totalPages} />
-        </div>
+        {showGroupAction && (
+          <div className="flex-1 text-sm text-muted-foreground">
+            {table.getFilteredSelectedRowModel().rows.length} از{' '}
+            {table.getFilteredRowModel().rows.length} ردیف انتخاب شده
+          </div>
+        )}
+        {showPagination && (
+          <div className="space-x-reverse space-x-2">
+            <Pagination totalPages={data.totalPages} />
+          </div>
+        )}
       </div>
       {isSelected && groupAction && (
         <div className="fixed bottom-0 p-4 bg-white dark:bg-gray-950 w-full border-t">

@@ -1,5 +1,5 @@
 export interface MenuItem {
-  id: string
+  _id: string
   label: string
   url: string
   icon?: string

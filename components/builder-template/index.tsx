@@ -15,7 +15,7 @@ type BuilderPageProp = {
   allCategories: Category[]
 }
 
-export default function BuilderPage({
+export default function BuilderTemplate({
   title = 'قالب ساز',
   initialContent,
   name = 'contentJson',

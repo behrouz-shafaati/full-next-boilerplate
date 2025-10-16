@@ -1,42 +1,41 @@
-'use client';
+'use client'
 
-import { User } from '@/lib/entity/user/interface';
-import { Session } from '@/types';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { Session } from '@/types'
+import { createContext, useContext, useState, ReactNode } from 'react'
 
 type UserSession = {
-  id: string;
-  name: string;
-  email: string;
-  roles: string[];
-  image: string;
-};
+  id: string
+  name: string
+  email: string
+  roles: string[]
+  image: string
+}
 interface SessionContextType {
-  session: Session | null; // Define the type of your session object
-  user: UserSession | null;
-  setSession: (session: any) => void;
-  clearSession: () => void;
+  session: Session | null // Define the type of your session object
+  user: UserSession | null
+  setSession: (session: any) => void
+  clearSession: () => void
 }
 
-const SessionContext = createContext<SessionContextType | undefined>(undefined);
+const SessionContext = createContext<SessionContextType | undefined>(undefined)
 
 export const SessionProvider = ({
   children,
   session: inputSession,
 }: {
-  children: ReactNode;
-  session: Session;
+  children: ReactNode
+  session: Session
 }) => {
-  const [session, setSessionState] = useState<Session | null>(inputSession);
-  const user = session?.user || null;
+  const [session, setSessionState] = useState<Session | null>(inputSession)
+  const user = session?.user || null
 
   const setSession = (session: any) => {
-    setSessionState(session);
-  };
+    setSessionState(session)
+  }
 
   const clearSession = () => {
-    setSessionState(null);
-  };
+    setSessionState(null)
+  }
 
   return (
     <SessionContext.Provider
@@ -44,13 +43,13 @@ export const SessionProvider = ({
     >
       {children}
     </SessionContext.Provider>
-  );
-};
+  )
+}
 
 export const useSession = () => {
-  const context = useContext(SessionContext);
+  const context = useContext(SessionContext)
   if (context === undefined) {
-    throw new Error('useSession must be used within a SessionProvider');
+    throw new Error('useSession must be used within a SessionProvider')
   }
-  return context;
-};
+  return context
+}

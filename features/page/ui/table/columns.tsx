@@ -2,7 +2,6 @@
 import { ColumnDef } from '@tanstack/react-table'
 import { CellAction } from './cell-action'
 import { CheckboxInput as Checkbox } from '@/components/ui/checkbox-input'
-import { User } from '@/lib/entity/user/interface'
 import { Page } from '@/features/page/interface'
 import { Status } from '@/components/Status'
 

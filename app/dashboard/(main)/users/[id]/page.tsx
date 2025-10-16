@@ -1,8 +1,7 @@
-import { UserForm } from '@/components/forms/user-form'
+import { UserForm } from '@/features/user/ui/user-form'
 import { BreadCrumb } from '@/components/breadcrumb'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import React from 'react'
-import userCtrl from '@/lib/entity/user/controller'
+import userCtrl from '@/features/user/controller'
 import { notFound } from 'next/navigation'
 
 interface PageProps {
@@ -29,11 +28,11 @@ export default async function Page({ params }: PageProps) {
     pageBreadCrumb,
   ]
   return (
-    <ScrollArea className="h-full">
+    <>
       <div className="flex-1 space-y-4 p-5">
         <BreadCrumb items={breadcrumbItems} />
         <UserForm initialData={user} />
       </div>
-    </ScrollArea>
+    </>
   )
 }

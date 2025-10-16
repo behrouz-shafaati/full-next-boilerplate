@@ -11,13 +11,13 @@ type Props = {
 export const ContentEditor = ({ initialData, savePage }: Props) => {
   const { selectedBlock, update } = useBuilderStore()
   const defaultValu =
-    selectedBlock?.content?.src !== null ? selectedBlock?.content : null
+    selectedBlock?.content?.srcMedium !== null ? selectedBlock?.content : null
   return (
     <>
       <FileUpload
         key={`image-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
         name="image"
-        title="پوستر مطلب"
+        title="پوستر مقاله"
         maxFiles={1}
         defaultValues={defaultValu}
         updateFileDetailsHnadler={(files) => {

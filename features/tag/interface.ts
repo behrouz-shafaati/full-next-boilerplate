@@ -2,7 +2,7 @@ import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 
 export type TagTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان مقاله
    */
   lang: string // "fa", "en", "de", ...
 

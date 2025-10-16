@@ -14,7 +14,10 @@ export const BlockPalette = ({ newBlocks }: BlockPaletteProp) => {
     <div className="flex flex-col gap-2 p-2">
       {Object.entries(allBlocks).map(([key, block]) => {
         let visibleBlock = true
-        if (documnet.type === 'page' && !!block?.inTemplateFor)
+        if (
+          (documnet.type === 'page' || documnet.type === 'templatePart') &&
+          !!block?.inTemplateFor
+        )
           visibleBlock = false
         else if (documnet.type === 'template' && !!block?.inTemplateFor) {
           const templateFor = getTemplateFor(documnet.templateFor)

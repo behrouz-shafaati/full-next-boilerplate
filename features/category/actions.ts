@@ -20,7 +20,10 @@ const FormSchema = z.object({
   image: z.string({}).nullable(),
 })
 
-async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+async function sanitizeArticleData(
+  validatedFields: any,
+  id?: string | undefined
+) {
   let prevState = { translations: [] }
   if (id) {
     prevState = await categoryCtrl.findById({ id })
@@ -79,7 +82,7 @@ export async function createCategory(prevState: State, formData: FormData) {
   }
 
   try {
-    const params = await sanitizePostData(validatedFields)
+    const params = await sanitizeArticleData(validatedFields)
     // Create the category
     await categoryCtrl.create({
       params,
@@ -128,7 +131,7 @@ export async function updateCategory(
     }
   }
   try {
-    const params = await sanitizePostData(validatedFields, id)
+    const params = await sanitizeArticleData(validatedFields, id)
     await categoryCtrl.findOneAndUpdate({
       filters: id,
       params,

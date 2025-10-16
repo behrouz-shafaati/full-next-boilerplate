@@ -53,3 +53,10 @@ export type State = {
   message?: string | null
   success: boolean
 }
+
+export type ActionsState = {
+  errors?: any
+  values?: any
+  message: string | null
+  success: boolean
+}

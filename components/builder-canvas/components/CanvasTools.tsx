@@ -1,7 +1,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { BlockPalette } from './BlockPalette'
-import { v4 as uuidv4 } from 'uuid'
 import { useEffect, useState } from 'react'
+import { generateObjectId } from '@/lib/utils/generateObjectId'
 
 type ToolsSectionProp = {
   settingsPanel: React.ReactNode
@@ -13,7 +13,7 @@ export default function CanvasTools({
   newBlocks = [],
 }: ToolsSectionProp) {
   const [tabKey, SetTabKey] = useState<String>('')
-  useEffect(() => SetTabKey(uuidv4()), [])
+  useEffect(() => SetTabKey(generateObjectId()), [])
 
   return (
     <Tabs

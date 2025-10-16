@@ -2,14 +2,55 @@ const bcrypt = require('bcryptjs')
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { QueryFind } from './entity/core/interface'
+import { jwtVerify, SignJWT } from 'jose'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+const secretKey = 'secret'
+const key = new TextEncoder().encode(secretKey)
+
+export async function encrypt(payload: any) {
+  return await new SignJWT(payload)
+    .setProtectedHeader({ alg: 'HS256' })
+    .setIssuedAt()
+    .setExpirationTime('7d')
+    .sign(key)
+}
+
+export async function decrypt(input: string): Promise<any> {
+  try {
+    const { payload } = await jwtVerify(input, key, {
+      algorithms: ['HS256'],
+    })
+    return payload
+  } catch (error: any) {
+    if (error.name === 'TokenExpiredError') {
+      console.log('Token has expired. Please generate a new one.')
+    } else {
+      console.log('Token verification failed:', error.message)
+    }
+    return null
+  }
+}
+
 export const hashPassword = async (password: string) => {
   const salt = await bcrypt.genSalt(10)
   return bcrypt.hash(password, salt)
+}
+
+// پسورد کاربر رو مقایسه می‌کنیم
+export const comparePassword = async (
+  plainPassword: string,
+  hashedPassword: string
+) => {
+  try {
+    return await bcrypt.compare(plainPassword, hashedPassword)
+  } catch (err) {
+    console.error('Error comparing passwords:', err)
+    return false
+  }
 }
 
 export const haveAccess = (
@@ -112,7 +153,27 @@ export function extractFiltersFromParams(filtersArray: string[] = []): Filters {
   return filters
 }
 
-export function buildUrlFromFilters(filters: Filters): string {
+/**
+ * Builds a URL path segment from a filters object.
+ *
+ * Each key in the `filters` object is appended to the URL
+ * followed by its values joined by commas.
+ *
+ * Example:
+ * ```ts
+ * buildUrlFromFilters({
+ *   category: ['books', 'toys'],
+ *   color: ['red', 'blue'],
+ * })
+ * // Returns: "category/books,toys/color/red,blue"
+ * ```
+ *
+ * @param {Record<string, string[]>} filters - An object where each key represents
+ * a filter name and its value is an array of selected options.
+ *
+ * @returns {string} A URL-friendly string combining all filters and their values.
+ */
+export function buildUrlFromFilters(filters: Record<string, string[]>): string {
   const parts: string[] = []
 
   for (const key in filters) {
@@ -231,4 +292,43 @@ export function parseQuery(req: any): QueryFind {
     sort: searchParams.get('sort') ?? undefined,
     populate: searchParams.get('populate') ?? undefined,
   }
+}
+
+// Helper to safely add optional properties
+export const addIfExists = (key: string, value: any) =>
+  value !== undefined && value !== null && value !== '' ? { [key]: value } : {}
+
+export function toMinutes(seconds: number): string {
+  const m = Math.floor(seconds / 60) // دقیقه
+  const s = seconds % 60 // باقی‌مانده ثانیه
+  return `${m}:${s.toString().padStart(2, '0')}`
+}
+
+/**
+ * Detect whether an identifier is a mobile number or an email.
+ * @param identifier string to check
+ * @returns "mobile" | "email" | "invalid"
+ */
+export function detectIdentifierType(
+  identifier: string
+): 'mobile' | 'email' | 'invalid' {
+  // پاک کردن فاصله و کاراکترهای اضافی
+  const value = identifier.trim()
+
+  // الگوی ساده برای ایمیل
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+
+  // الگوی ساده برای موبایل (ایران)
+  // می‌تونی با توجه به نیازت تغییرش بدی
+  const mobileRegex = /^(\+98|0)?9\d{9}$/
+
+  if (emailRegex.test(value)) {
+    return 'email'
+  }
+
+  if (mobileRegex.test(value)) {
+    return 'mobile'
+  }
+
+  return 'invalid'
 }

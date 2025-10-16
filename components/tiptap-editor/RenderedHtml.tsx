@@ -10,7 +10,7 @@ import VideoEmbedRenderer from './tiptap-renderers/VideoEmbedRenderer'
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
   if (!node) return out
-  if (node.type === 'accordion') out.push(node)
+  if (node.type === 'accordion' || node.type === 'faq') out.push(node)
   if (node.content && node.content.length) {
     for (const child of node.content) collectAccordions(child, out)
   }
@@ -110,12 +110,13 @@ export default async function RenderedHtml({ contentJson }: Props) {
 
             return <div></div>
           }
-
           // اگر توی renderTiptapJsonToHtml از div با data-type="accordion" استفاده کردی:
           if (
             domNode instanceof Element &&
             (domNode.attribs?.['data-type'] === 'accordion' ||
-              domNode.name === 'accordion')
+              domNode.name === 'accordion' ||
+              domNode.name === 'faq' ||
+              domNode.attribs?.['data-type'] === 'faq')
           ) {
             // می‌گیریم JSON متناظر را از آرایه‌ی قبلاً ساخته شده
             const accNode = accordions[accordionIndex++]
@@ -133,7 +134,7 @@ export default async function RenderedHtml({ contentJson }: Props) {
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
             return <VideoEmbedRenderer node={domNode} />
           }
-          // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مطالب بهشون دسترسی داشت
+          // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مقالات بهشون دسترسی داشت
           if (
             domNode instanceof Element &&
             ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)

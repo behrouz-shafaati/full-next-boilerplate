@@ -1,6 +1,6 @@
 // /app/archive/[[...filters]]/page.tsx
 
-import ArchivePost from '@/components/archive'
+import ArchiveArticle from '@/components/archive'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 import templateCtrl from '@/features/template/controller'
 import { extractFiltersFromParams } from '@/lib/utils'
@@ -21,7 +21,7 @@ export default async function ArchivePage({
           rows={template.content.rows}
           editroMode={false}
           content_all={
-            <ArchivePost
+            <ArchiveArticle
               categorySlugs={filters.categories}
               tagSlugs={filters.tags}
             />
@@ -31,6 +31,9 @@ export default async function ArchivePage({
     )
   }
   return (
-    <ArchivePost categorySlugs={filters.categories} tagSlugs={filters.tags} />
+    <ArchiveArticle
+      categorySlugs={filters.categories}
+      tagSlugs={filters.tags}
+    />
   )
 }

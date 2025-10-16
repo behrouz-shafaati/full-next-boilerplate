@@ -13,9 +13,8 @@ function toObject(obj: any): any {
   return JSON.parse(JSON.stringify(obj))
 }
 function standardizationFilters(filters: any): any {
-  if (typeof filters != 'object') return {}
+  if (typeof filters != 'object') return filters
   for (const [key, value] of Object.entries(filters)) {
-    if (typeof value != 'string') continue
     // for id
     if (key == 'id') {
       filters._id = value
@@ -128,6 +127,7 @@ export default class service {
         _id: filters,
       }
     }
+
     if (populate) {
       return await this.model
         .findOne({ ...filters, deleted: false })
@@ -154,6 +154,7 @@ export default class service {
     // Connect to the MongoDB database
     await dbConnect()
     // Convert string or ObjectId filters to an object if necessary
+    filters = standardizationFilters(filters)
     if (typeof filters === 'string' || filters instanceof Types.ObjectId) {
       // eslint-disable-next-line no-param-reassign
       filters = {

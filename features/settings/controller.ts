@@ -3,6 +3,10 @@ import baseController from '@/lib/entity/core/controller'
 import fileCtrl from '@/lib/entity/file/controller'
 import settingsSchema from './schema'
 import settingsService from './service'
+import { Settings } from './interface'
+import userCtrl from '../user/controller'
+import articleCtrl from '../article/controller'
+import articleCommentCtrl from '../article-comment/controller'
 
 class controller extends baseController {
   /**
@@ -74,6 +78,8 @@ class controller extends baseController {
 const settingsCtrl = new controller(new settingsService(settingsSchema))
 export default settingsCtrl
 
+type Key = 'site_title' | ''
+
 /**
  * Fetch site settings and return either the full settings object
  * or a specific value by key.
@@ -85,8 +91,8 @@ export default settingsCtrl
  * - If a key is provided, returns the value for that key or null if not found.
  */
 export const getSettings = async (
-  key: string = ''
-): Promise<Record<string, unknown> | unknown | null> => {
+  key: Key = ''
+): Promise<Record<string, unknown> | unknown | null | Settings> => {
   const result = await settingsCtrl.find({
     filters: { type: 'site-settings' },
   })
@@ -100,4 +106,19 @@ export const getSettings = async (
   return Object.prototype.hasOwnProperty.call(settings, key)
     ? settings[key]
     : null
+}
+
+export const getStats = async () => {
+  const totalUsers = await userCtrl.countAll()
+  const totalArticles = await articleCtrl.countAll()
+  const pendingComments = await articleCommentCtrl.countAll({
+    status: 'pending',
+  })
+  const publishedWeek = await articleCtrl.countThisWeek()
+  return {
+    totalUsers,
+    totalArticles,
+    pendingComments,
+    publishedWeek,
+  }
 }

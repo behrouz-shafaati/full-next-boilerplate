@@ -1,12 +1,12 @@
 import categoryCtrl from '@/features/category/controller'
 import pageCtrl from '@/features/page/controller'
-import postCtrl from '@/features/post/controller'
+import articleCtrl from '@/features/article/controller'
 
 export type RevalidatePathProp = {
   feature:
     | 'category'
-    | 'post'
-    | 'postComment'
+    | 'article'
+    | 'articleComment'
     | 'page'
     | 'template'
     | 'templatePart'
@@ -26,8 +26,8 @@ class controller {
     return (await pageCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
-  async getAllPostsPaths() {
-    return (await postCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
+  async getAllArticlesPaths() {
+    return (await articleCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
   async getBlogPath() {
@@ -38,10 +38,10 @@ class controller {
     return (await categoryCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
-  async revalidateAllPaths() {
+  async getAllPaths() {
     return [
       ...(await this.getAllPagesPaths()),
-      ...(await this.getAllPostsPaths()),
+      ...(await this.getAllArticlesPaths()),
       ...(await this.getAllCategoriessPaths()),
       ...(await this.getBlogPath()),
     ]
@@ -65,22 +65,16 @@ class controller {
     }
 
     switch (feature) {
-      case 'post': {
-        return [
-          ...(await this.getBlogPath()),
-          ...(await this.getAllPagesPaths()),
-          ...pathes,
-        ]
-      }
+      case 'article':
       case 'menu':
       case 'category':
       case 'page':
       case 'template':
       case 'templatePart':
       case 'settings': {
-        return [...(await this.revalidateAllPaths()), ...pathes]
+        return [...(await this.getAllPaths()), ...pathes]
       }
-      case 'postComment':
+      case 'articleComment':
         return [...pathes]
       case 'tag':
       case 'city':

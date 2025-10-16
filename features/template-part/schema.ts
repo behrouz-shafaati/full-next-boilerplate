@@ -16,8 +16,8 @@ const templatePartSchema = new Schema<TemplatePartSchema>(
     },
     status: {
       type: String,
-      enum: ['draft', 'published'],
-      default: 'draft',
+      enum: ['deactive', 'active'],
+      default: 'active',
     },
     deleted: { type: Boolean, default: false },
   },

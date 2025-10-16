@@ -38,5 +38,5 @@ export const MenuBlockEditor = ({
     fetchData()
   }, [content])
   if (!content?.menuId) return <EmptyBlock widgetName={widgetName} {...props} />
-  return <Menu menu={menu} {...props} />
+  return <Menu menu={menu} {...props} blockData={blockData} />
 }

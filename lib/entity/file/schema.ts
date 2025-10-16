@@ -14,9 +14,12 @@ const FileTranslationSchema = new Schema(
 const fileSchema = new Schema<SchemaFile>(
   {
     translations: [FileTranslationSchema], // 👈 لیست ترجمه‌ها
-    patch: String,
-    src: String,
-    fullSrc: String,
+    patchSmall: String,
+    patchLarge: String,
+    patchMedium: String,
+    srcSmall: String,
+    srcMedium: String,
+    srcLarge: String,
     href: String,
     previewPath: String,
     mimeType: String,

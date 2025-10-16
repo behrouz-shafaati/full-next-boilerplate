@@ -47,6 +47,7 @@ export function AddVideoButton({ editor }: { editor: any }) {
         aria-label="Add video"
         value="link"
         onClick={() => setOpen(true)}
+        title="ویدئو"
       >
         <Video />
       </ToggleGroupItem>

@@ -16,7 +16,10 @@ const FormSchema = z.object({
   lang: z.string({}),
 })
 
-async function sanitizePostData(validatedFields: any, id?: string | undefined) {
+async function sanitizeArticleData(
+  validatedFields: any,
+  id?: string | undefined
+) {
   let prevState = { translations: [] }
   if (id) {
     prevState = await menuCtrl.findById({ id })
@@ -69,7 +72,7 @@ export async function createMenu(prevState: State, formData: FormData) {
   }
 
   try {
-    const params = await sanitizePostData(validatedFields)
+    const params = await sanitizeArticleData(validatedFields)
     // Create the menu
     await menuCtrl.create({ params })
     // Revalidate the path and redirect to the menu dashboard
@@ -129,7 +132,7 @@ export async function updateMenu(
     }
   }
   try {
-    const params = await sanitizePostData(validatedFields, id)
+    const params = await sanitizeArticleData(validatedFields, id)
     await menuCtrl.findOneAndUpdate({
       filters: id,
       params,
