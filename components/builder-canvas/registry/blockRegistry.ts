@@ -10,6 +10,8 @@ import { ImageSliderBlockDef } from '../shared-blocks/imageSlider'
 import { BlogArticleSliderBlockDef } from '../shared-blocks/blogArticleSlider'
 import { MenuBlockDef } from '../shared-blocks/menu'
 import { ArticleListBlockDef } from '../shared-blocks/ArticleList'
+import { ButtonBlockDef } from '../shared-blocks/button'
+import { WriteBlockDef } from '../shared-blocks/write'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
@@ -21,6 +23,8 @@ export const blockRegistry = {
   blogArticleSlider: BlogArticleSliderBlockDef,
   menu: MenuBlockDef,
   alticleList: ArticleListBlockDef,
+  button: ButtonBlockDef,
+  write: WriteBlockDef,
 }
 
 registerBlock(blockRegistry)

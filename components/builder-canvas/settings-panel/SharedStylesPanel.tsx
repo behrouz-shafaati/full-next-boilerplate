@@ -29,12 +29,12 @@ export const publicStylesSchema = {
     width: {
       type: 'number',
       title: 'عرض',
-      default: '',
+      default: undefined,
     },
     height: {
       type: 'number',
       title: 'ارتفاع',
-      default: '',
+      default: undefined,
     },
     // display: {
     //   type: 'string',
@@ -46,20 +46,20 @@ export const publicStylesSchema = {
       type: 'object',
       title: 'Padding',
       properties: {
-        top: { type: 'number', title: 'بالا', default: 0 },
-        right: { type: 'number', title: 'راست', default: 0 },
-        bottom: { type: 'number', title: 'پایین', default: 0 },
-        left: { type: 'number', title: 'چپ', default: 0 },
+        top: { type: 'number', title: 'بالا', default: undefined },
+        right: { type: 'number', title: 'راست', default: undefined },
+        bottom: { type: 'number', title: 'پایین', default: undefined },
+        left: { type: 'number', title: 'چپ', default: undefined },
       },
     },
     margin: {
       type: 'object',
       title: 'Margin',
       properties: {
-        top: { type: 'number', title: 'بالا', default: 0 },
-        right: { type: 'number', title: 'راست', default: 0 },
-        bottom: { type: 'number', title: 'پایین', default: 0 },
-        left: { type: 'number', title: 'چپ', default: 0 },
+        top: { type: 'number', title: 'بالا', default: undefined },
+        right: { type: 'number', title: 'راست', default: undefined },
+        bottom: { type: 'number', title: 'پایین', default: undefined },
+        left: { type: 'number', title: 'چپ', default: undefined },
       },
     },
     boxShadow: {
@@ -69,27 +69,27 @@ export const publicStylesSchema = {
         color: {
           type: 'string',
           title: 'رنگ',
-          default: '#000000',
+          default: undefined,
         },
         x: {
           type: 'number',
           title: 'افقی (X)',
-          default: 0,
+          default: undefined,
         },
         y: {
           type: 'number',
           title: 'عمودی (Y)',
-          default: 0,
+          default: undefined,
         },
         blur: {
           type: 'number',
           title: 'محو شدگی (Blur)',
-          default: 0,
+          default: undefined,
         },
         spread: {
           type: 'number',
           title: 'گستردگی (Spread)',
-          default: 0,
+          default: undefined,
         },
         inset: {
           type: 'boolean',
@@ -115,11 +115,20 @@ export const publicStylesSchema = {
       ],
       default: 'none',
     },
-    borderRadius: { type: 'string', title: 'Border radius', default: '0px' },
+    borderRadius: {
+      type: 'object',
+      title: 'Border radius',
+      properties: {
+        top: { type: 'number', title: 'بالا', default: undefined },
+        right: { type: 'number', title: 'راست', default: undefined },
+        bottom: { type: 'number', title: 'پایین', default: undefined },
+        left: { type: 'number', title: 'چپ', default: undefined },
+      },
+    },
     opacity: {
       type: 'number',
       title: 'Opacity',
-      default: 100,
+      default: undefined,
       minimum: 0,
       maximum: 100,
       multipleOf: 1,

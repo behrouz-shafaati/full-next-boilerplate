@@ -1,11 +1,54 @@
 type ClassNames = Record<string, string | undefined | null>
 
-export function combineClassNames(classNames: ClassNames): string {
-  return Object.values(classNames)
-    .filter(Boolean) // حذف null و undefined و ''
-    .map((str) => str.trim())
-    .join(' ')
-    .trim()
+/**
+ * Combines multiple class names into a single string.
+ *
+ * This function is highly flexible and supports the following types of input:
+ * - Strings: added directly.
+ * - Arrays: flattened recursively and each element processed.
+ * - Objects: keys whose values are truthy will be included; nested objects are supported.
+ *
+ * Falsy values (`null`, `undefined`, `''`, `false`) are ignored.
+ * All class names are trimmed and joined with a single space.
+ *
+ * @param {...any} args - Strings, arrays, or objects containing class names.
+ *
+ * @returns {string} A single string with all valid class names, separated by spaces.
+ *
+ * @example
+ * combineClassNames("btn", ["btn-lg", null], { active: true, disabled: false });
+ * // returns "btn btn-lg active"
+ *
+ * @example
+ * combineClassNames({ foo: "bar", nested: { a: "b", c: false } }, "extra");
+ * // returns "bar b extra"
+ */
+export function combineClassNames(...args: any[]): string {
+  const classes: string[] = []
+
+  const process = (input: any) => {
+    if (!input) return
+
+    if (typeof input === 'string') {
+      if (input.trim()) classes.push(input.trim())
+    } else if (Array.isArray(input)) {
+      input.forEach(process)
+    } else if (typeof input === 'object') {
+      Object.entries(input).forEach(([key, value]) => {
+        if (typeof value === 'boolean') {
+          if (value) classes.push(key)
+        } else if (typeof value === 'string') {
+          if (value.trim()) classes.push(value.trim())
+        } else if (typeof value === 'object') {
+          process(value)
+        }
+      })
+    }
+  }
+
+  args.forEach(process)
+
+  return classes.join(' ')
 }
 
 export const computedStyles = (

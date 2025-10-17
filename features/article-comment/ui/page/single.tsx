@@ -1,5 +1,5 @@
 import { BreadCrumb, BreadCrumbType } from '@/components/breadcrumb'
-import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
+import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   ArticleComment,

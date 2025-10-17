@@ -1,6 +1,6 @@
 'use server'
 import { BreadCrumb, BreadCrumbType } from '@/components/breadcrumb'
-import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
+import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { Article, ArticleTranslationSchema } from '../../interface'
 import Image from 'next/image'
 import { getTranslation, timeAgo } from '@/lib/utils'

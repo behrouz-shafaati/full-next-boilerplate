@@ -5,6 +5,12 @@ export const uiSchema = {
   backgroundColor: {
     'ui:widget': 'TailwindBgColorWidget',
   },
+  textColor: {
+    'ui:widget': 'TailwindTextColorPickerWidget',
+  },
+  iconColor: {
+    'ui:widget': 'TailwindTextColorPickerWidget',
+  },
   isPublished: {
     'ui:widget': 'CheckboxWidget',
   },
@@ -28,6 +34,9 @@ export const uiSchema = {
   },
   'box-shadow': {
     'ui:field': 'ShadowWidget',
+  },
+  icon: {
+    'ui:widget': 'IconPickerWidget',
   },
   className: {
     'ui:widget': 'textarea',

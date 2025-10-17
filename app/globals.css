@@ -4,48 +4,67 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --primary: 142.1 76.2% 36.3%;
-    --primary-foreground: 355.7 100% 97.3%;
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 142.1 76.2% 36.3%;
-    --radius: 0.5rem;
+    /* === Base (Light Mode) === */
+    --background: 0 0% 100%; /* رنگ پس‌زمینه اصلی صفحه */
+    --foreground: 224 71.4% 4.1%; /* رنگ متن اصلی */
+
+    --card: 0 0% 100%; /* پس‌زمینه کارت‌ها */
+    --card-foreground: 224 71.4% 4.1%; /* رنگ نوشته داخل کارت */
+
+    --popover: 0 0% 100%; /* پس‌زمینه پاپ‌آپ‌ها و منوها */
+    --popover-foreground: 224 71.4% 4.1%; /* رنگ متن داخل پاپ‌آپ */
+
+    --primary: 142.1 76.2% 36.3%; /* رنگ اصلی (دکمه‌ها، لینک‌های مهم) */
+    --primary-foreground: 355.7 100% 97.3%; /* رنگ نوشته روی primary */
+
+    --secondary: 240 4.8% 95.9%; /* رنگ پس‌زمینه عناصر ثانویه */
+    --secondary-foreground: 240 5.9% 10%; /* رنگ متن در عناصر ثانویه */
+
+    --muted: 240 4.8% 95.9%; /* پس‌زمینه عناصر غیرفعال */
+    --muted-foreground: 240 3.8% 46.1%; /* رنگ متن غیرفعال */
+
+    --accent: 240 4.8% 95.9%; /* رنگ تأکیدی (hover، highlight) */
+    --accent-foreground: 240 5.9% 10%; /* رنگ نوشته روی accent */
+
+    --destructive: 0 84.2% 60.2%; /* رنگ دکمه‌های خطرناک (حذف، هشدار) */
+    --destructive-foreground: 0 0% 98%; /* رنگ متن روی destructive */
+
+    --border: 240 5.9% 90%; /* رنگ خطوط و حاشیه‌ها */
+    --input: 240 5.9% 90%; /* رنگ پس‌زمینه ورودی‌ها */
+    --ring: 142.1 76.2% 36.3%; /* رنگ حلقه فوکوس (focus ring) */
+
+    --radius: 0.5rem; /* گردی گوشه‌ها */
   }
 
   .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 142.1 70.6% 45.3%;
-    --primary-foreground: 144.9 80.4% 10%;
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 240 5% 64.9%;
-    --accent: 12 6.5% 15.1%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 85.7% 97.3%;
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 142.4 71.8% 29.2%;
+    /* === Dark Mode === */
+    --background: 224 71.4% 4.1%; /* پس‌زمینه اصلی تیره */
+    --foreground: 210 20% 98%; /* رنگ نوشته اصلی روشن */
+
+    --card: 224 71.4% 4.1%; /* پس‌زمینه کارت‌ها در حالت تاریک */
+    --card-foreground: 210 20% 98%; /* متن روی کارت در حالت تاریک */
+
+    --popover: 224 71.4% 4.1%; /* پس‌زمینه پاپ‌آپ‌ها */
+    --popover-foreground: 210 20% 98%; /* متن در پاپ‌آپ‌ها */
+
+    --primary: 142.1 70.6% 45.3%; /* رنگ اصلی روشن‌تر در حالت تاریک */
+    --primary-foreground: 144.9 80.4% 10%; /* متن تیره روی primary */
+
+    --secondary: 240 3.7% 15.9%; /* رنگ پس‌زمینه ثانویه تیره */
+    --secondary-foreground: 0 0% 98%; /* رنگ متن روشن ثانویه */
+
+    --muted: 0 0% 15%; /* پس‌زمینه غیرفعال در حالت تاریک */
+    --muted-foreground: 240 5% 64.9%; /* رنگ نوشته غیرفعال */
+
+    --accent: 12 6.5% 15.1%; /* رنگ تأکیدی برای hover در حالت تاریک */
+    --accent-foreground: 0 0% 98%; /* رنگ نوشته روی accent */
+
+    --destructive: 0 62.8% 30.6%; /* رنگ هشدار تیره‌تر */
+    --destructive-foreground: 0 85.7% 97.3%; /* متن روشن روی destructive */
+
+    --border: 240 3.7% 15.9%; /* رنگ خطوط در حالت تاریک */
+    --input: 240 3.7% 15.9%; /* رنگ پس‌زمینه inputها در حالت تاریک */
+    --ring: 142.4 71.8% 29.2%; /* رنگ حلقه فوکوس در حالت تاریک */
   }
 }
 

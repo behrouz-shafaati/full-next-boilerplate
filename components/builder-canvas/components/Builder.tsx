@@ -230,9 +230,9 @@ export default function Builder({
             >
               افزودن ردیف
             </Button>
-            <div className="p-4 ltr bg-slate-300 mt-2 rounded">
+            <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
               <code>{getJson()}</code>
-            </div>
+            </pre>
           </div>
         </div>
       </DndContext>

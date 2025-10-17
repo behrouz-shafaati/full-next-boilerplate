@@ -37,7 +37,7 @@ interface TiptapEditor {
   defaultContent?: { [key: string]: any }
   onChange?: (content: string) => void
   onChangeFiles?: () => void
-  attachedFilesTo: [{ feature: string; id: string }]
+  attachedFilesTo?: [{ feature: string; id: string }]
   className?: string
 }
 
@@ -46,7 +46,7 @@ export default function TiptapEditor({
   defaultContent = {},
   onChange,
   onChangeFiles,
-  attachedFilesTo,
+  attachedFilesTo = [],
   className = '',
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)

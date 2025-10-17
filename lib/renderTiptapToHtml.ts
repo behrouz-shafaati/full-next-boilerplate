@@ -1,6 +1,11 @@
-// lib/renderTiptapJsonToHtml.ts
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
+// let jsdom: typeof import('jsdom') | null = null
+
+// if (typeof window === 'undefined') {
+//   jsdom = require('jsdom')
+// }
+
 import { getTextFromNode } from '@/components/tiptap-editor/utils'
 import { Schema, DOMSerializer, Node as ProseNode } from 'prosemirror-model'
 import { slugify } from './utils'
@@ -439,7 +444,11 @@ const marks = {
 }
 
 const schema = new Schema({ nodes, marks })
+// if (!jsdom) {
+//   throw new Error('parseHtml must be called on the server only!')
+// }
 
+// const { JSDOM } = jsdom
 // 2. تابع نهایی تبدیل JSON → HTML
 export function renderTiptapJsonToHtml(json: any): string {
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
@@ -455,6 +464,5 @@ export function renderTiptapJsonToHtml(json: any): string {
 
   const container = document.createElement('div')
   container.appendChild(fragment)
-
   return container.innerHTML
 }

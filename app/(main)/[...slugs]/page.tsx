@@ -14,7 +14,7 @@ import {
 } from '@/features/article/utils'
 
 import type { Metadata } from 'next'
-import RenderedHtml from '@/components/tiptap-editor/RenderedHtml'
+import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { generateTableOfContents } from '@/components/tiptap-editor/utils'
 import { TableOfContents } from '@/components/tiptap-editor/component/TableOfContents'
 import ArticleCommentList from '@/features/article-comment/ui/list'

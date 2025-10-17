@@ -16,12 +16,17 @@ const config = {
     },
     {
       pattern:
-        /(bg|text|border)-(red|green|blue|yellow|purple|pink|gray|black|white)-(100|200|300|400|500|600|700|800|900)/,
-      variants: ['dark'], // اینجا میگی همه این کلاس‌ها رو با dark هم بساز
+        /(bg|text|border)-(gray|neutral|zinc|stone|slate|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)/,
+      variants: ['hover'], // hover کلاس‌ها
+    },
+    {
+      pattern:
+        /(bg|text|dark:text)-(gray|neutral|zinc|stone|slate|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)/,
+      variants: ['dark', 'hover'], // اینجا میگی همه این کلاس‌ها رو با dark هم بساز
     },
     {
       pattern: /(bg|text|border)-(black|white|transparent)/,
-      variants: ['dark'],
+      variants: ['dark', 'dark:hover'],
     },
   ],
   prefix: '',

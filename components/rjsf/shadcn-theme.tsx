@@ -10,6 +10,8 @@ import { NumberWidget } from './widgets/NumberWidget'
 import { SliderWidget } from './widgets/SliderWidget'
 import { FourSideBoxWidget } from './widgets/FourSideBoxWidget'
 import { ShadowWidget } from './widgets/ShadowWidget'
+import { IconPickerWidget } from './widgets/IconPickerWidget'
+import { TailwindTextColorPickerWidget } from './widgets/TailwindTextColorPickerWidget'
 
 const CustomFieldTemplate = ({
   id,
@@ -48,10 +50,12 @@ export const CustomTheme = {
     SelectWidget,
     ColorWidget,
     TailwindBgColorWidget,
+    TailwindTextColorPickerWidget,
     CheckboxWidget,
     TextareaWidget,
     NumberWidget,
     SliderWidget,
+    IconPickerWidget,
   },
   fields: {
     PaddingWidget: (props) => (

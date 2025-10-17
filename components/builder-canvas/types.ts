@@ -38,6 +38,7 @@ export type Block = {
     | 'row'
     | 'column'
     | 'text'
+    | 'write'
     | 'image'
     | 'video'
     | 'gallery'
@@ -45,6 +46,7 @@ export type Block = {
     | 'product'
     | 'custom'
     | 'templatePart'
+    | 'button'
   content?: object
   classNames?: // tailwind classess
   {

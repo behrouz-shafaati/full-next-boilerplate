@@ -26,9 +26,6 @@ export const BlockSettingsForm = ({
   const schema = allBlocks[selectedBlock.type]?.settingsSchema
   const ContentEditor = allBlocks[selectedBlock.type]?.ContentEditor
 
-  console.log('#23487 selectedBlock.id:', selectedBlock.id)
-  console.log('#23487 selectedBlock.type:', selectedBlock.type)
-  console.log('#23487 schema:', schema)
   if (!schema && !ContentEditor)
     return <div>تنظیماتی برای این بلاک وجود ندارد.</div>
 

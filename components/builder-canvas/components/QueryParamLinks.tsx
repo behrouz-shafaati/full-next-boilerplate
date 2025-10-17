@@ -67,7 +67,7 @@ export function QueryParamLinks({
           <Badge
             variant="outline"
             className={cn(
-              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer',
+              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
               {
                 'bg-primary text-white':
                   (selectedTagExistInItems && item.slug === selectedTag) ||
