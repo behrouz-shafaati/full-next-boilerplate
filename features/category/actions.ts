@@ -152,13 +152,12 @@ export async function updateCategory(
   redirect('/dashboard/categories')
 }
 
-export async function deleteCategory(id: string) {
+export async function deleteCategorysAction(ids: string[]) {
   try {
-    await categoryCtrl.delete({ filters: [id] })
+    await categoryCtrl.delete({ filters: ids })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود', values }
   }
-  await categoryCtrl.delete({ filters: [id] })
   const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'category',
     slug: '/dashboard/categories',
@@ -170,8 +169,8 @@ export async function deleteCategory(id: string) {
   }
 }
 
-export async function getAllCategories() {
-  return categoryCtrl.findAll({})
+export async function getAllCategories(filters: any = {}) {
+  return categoryCtrl.findAll({ filters })
 }
 
 export async function searchCategories(query: string, locale: string = 'fa') {

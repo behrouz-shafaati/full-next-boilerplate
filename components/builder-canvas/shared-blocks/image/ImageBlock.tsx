@@ -37,28 +37,49 @@ export const ImageBlock = ({
   const imageElement = (
     <div
       data-image-wrapper
-      className={`relative  ${className}`}
+      className={`relative  ${className} `}
+      // className={`relative  ${className} aspect-[3.9/1]`}
       {...restProps}
       style={{
         ...computedStyles({ width, height }),
       }}
     >
-      <Image
-        src={content?.srcSmall || '/assets/general-img-landscape.png'}
-        sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-        alt={content?.alt || 'تصویر'}
-        fill
-        // {...(!width || !height
-        //   ? { fill: true }
-        //   : {
-        //       width: Number(width),
-        //       height: Number(height),
-        //     })}
-        style={{
-          ...computedStyles(restStyle),
-        }}
-        className="object-cover w-full h-full"
-      />
+      {content?.srcSmall ? (
+        <Image
+          src={content?.srcSmall}
+          sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
+          alt={content?.alt || 'تصویر'}
+          fill
+          // {...(!width || !height
+          //   ? { fill: true }
+          //   : {
+          //       width: Number(width),
+          //       height: Number(height),
+          //     })}
+          style={{
+            ...computedStyles(restStyle),
+          }}
+          className="object-cover w-full h-full min-h-4"
+        />
+      ) : (
+        <Image
+          src={'/assets/general-img-landscape.png'}
+          sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
+          alt={content?.alt || 'تصویر'}
+          // {...(!width || !height
+          //   ? { fill: true }
+          //   : {
+          //       width: Number(width),
+          //       height: Number(height),
+          //     })}
+          style={{
+            ...computedStyles(restStyle),
+          }}
+          width={250}
+          height={250}
+          className="object-cover w-full h-full"
+        />
+      )}
     </div>
   )
 

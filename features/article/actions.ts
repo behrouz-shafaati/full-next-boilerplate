@@ -164,13 +164,12 @@ export async function updateArticle(
   }
 }
 
-export async function deleteArticle(id: string) {
+export async function deleteArticlesAction(ids: string[]) {
   try {
-    await articleCtrl.delete({ filters: [id] })
+    await articleCtrl.delete({ filters: ids })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف مقاله ناموفق بود', success: false }
   }
-  await articleCtrl.delete({ filters: [id] })
   // Revalidate the path
   const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'article',

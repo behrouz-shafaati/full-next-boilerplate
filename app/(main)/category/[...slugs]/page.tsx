@@ -9,6 +9,7 @@ import categoryCtrl from '@/features/category/controller'
 import { buildCategoryHref } from '@/features/category/utils'
 import { getTranslation } from '@/lib/utils'
 import { Category } from '@/features/category/interface'
+import { getSettings } from '@/features/settings/controller'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -56,10 +57,15 @@ export default async function Page({ params }: PageProps) {
   const resolvedParams = await params
   const { slugs } = resolvedParams
   const slug = decodeURIComponent(slugs[slugs.length - 1])
-  const [template] = await Promise.all([templateCtrl.getTemplate({ slug })])
+
+  const [template, siteSettings] = await Promise.all([
+    templateCtrl.getTemplate({ slug }),
+    getSettings(),
+  ])
   if (template)
     return (
       <RendererRows
+        siteSettings={siteSettings}
         rows={template?.content.rows}
         editroMode={false}
         content_all={<CategoryArticleList slug={slug} />}

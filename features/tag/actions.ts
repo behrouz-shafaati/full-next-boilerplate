@@ -132,7 +132,7 @@ export async function updateTag(
     const params = await sanitizeArticleData(validatedFields, id)
     await tagCtrl.findOneAndUpdate({
       filters: id,
-      params: validatedFields.data,
+      params: params,
     })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'tag',
@@ -149,9 +149,9 @@ export async function updateTag(
   redirect('/dashboard/tags')
 }
 
-export async function deleteTag(id: string) {
+export async function deleteTagsAction(ids: string[]) {
   try {
-    await tagCtrl.delete({ filters: [id] })
+    await tagCtrl.delete({ filters: ids })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'tag',
       slug: [`/dashboard/tags`],
@@ -164,11 +164,10 @@ export async function deleteTag(id: string) {
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف برچسب ناموفق بود' }
   }
-  await tagCtrl.delete({ filters: [id] })
 }
 
-export async function getAllTags() {
-  return tagCtrl.findAll({})
+export async function getAllTags(filters: any = {}) {
+  return tagCtrl.findAll({ filters })
 }
 export async function getTagAction({ slug }: { slug: string }) {
   const tagResult = await tagCtrl.find({ filters: { slug } })

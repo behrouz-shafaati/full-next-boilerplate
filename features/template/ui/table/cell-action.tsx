@@ -1,5 +1,4 @@
 'use client'
-import { DeleteTemplate } from '../form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,6 +11,7 @@ import { Template } from '@/features/template/interface'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { deleteTemplatesAction } from '../../actions'
 
 interface CellActionProps {
   data: Template
@@ -24,7 +24,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteTemplate(data.id)
+    deleteTemplatesAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

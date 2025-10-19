@@ -1,29 +1,33 @@
-'use client';
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
-import Modal from './modal';
+'use client'
+import { useEffect, useState } from 'react'
+import { Button } from '@/components/ui/button'
+import Modal from './modal'
 
 interface AlertModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  loading: boolean;
+  title?: any
+  description?: any
+  isOpen: boolean
+  onClose: () => void
+  onConfirm: () => void
+  loading: boolean
 }
 
 export const AlertModal: React.FC<AlertModalProps> = ({
+  title,
+  description,
   isOpen,
   onClose,
   onConfirm,
   loading,
 }) => {
-  const [isMounted, setIsMounted] = useState(false);
+  const [isMounted, setIsMounted] = useState(false)
 
   useEffect(() => {
-    setIsMounted(true);
-  }, []);
+    setIsMounted(true)
+  }, [])
 
   if (!isMounted) {
-    return null;
+    return null
   }
 
   const ModalContent = () => (
@@ -35,14 +39,14 @@ export const AlertModal: React.FC<AlertModalProps> = ({
         ادامه
       </Button>
     </div>
-  );
+  )
   return (
     <Modal
-      title="مطمئن هستید؟"
-      description="این عمل غیر قابل بازگشت است"
+      title={title ? title : 'مطمئن هستید؟'}
+      description={description ? description : 'این عمل غیر قابل بازگشت است'}
       isOpen={isOpen}
       onCloseModal={onClose}
       content={<ModalContent />}
     />
-  );
-};
+  )
+}

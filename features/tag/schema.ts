@@ -12,7 +12,7 @@ const TagTranslationSchema = new Schema(
 
 const tagSchema = new Schema<TagSchema>(
   {
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: true },
     translations: [TagTranslationSchema], // 👈 لیست ترجمه‌ها
     image: { type: Schema.Types.ObjectId, ref: 'file' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
@@ -25,6 +25,15 @@ const tagSchema = new Schema<TagSchema>(
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
+)
+
+// Partial Unique Index
+tagSchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { deleted: false },
+  }
 )
 
 tagSchema

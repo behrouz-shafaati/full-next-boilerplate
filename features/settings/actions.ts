@@ -16,9 +16,15 @@ const FormSchema = z.object({
   mail_port: z.string({}).nullable().optional(),
   mail_username: z.string({}).nullable().optional(),
   mail_password: z.string({}).nullable().optional(),
+  farazsms_apiKey: z.string({}).nullable().optional(),
+  farazsms_verifyPatternCode: z.string({}).nullable().optional(),
+  farazsms_from_number: z.string({}).nullable().optional(),
   favicon: z.string({}).nullable().optional(),
   site_title: z.string({}).nullable().optional(),
   site_introduction: z.string({}).nullable().optional(),
+  desktopHeaderHeight: z.string({}).nullable().optional(),
+  tabletHeaderHeight: z.string({}).nullable().optional(),
+  mobileHeaderHeight: z.string({}).nullable().optional(),
   // defaultHeaderId: z.string({}),
 })
 
@@ -94,6 +100,11 @@ async function sanitizeSettingsData(validatedFields: any) {
   // const session = (await getSession()) as Session
   // Create the settings
   const settingsPayload = validatedFields.data
+  const farazsms = {
+    farazsms_apiKey: settingsPayload?.farazsms_apiKey,
+    farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
+    farazsms_from_number: settingsPayload?.farazsms_from_number,
+  }
   const params = {
     ...settingsPayload,
     commentApprovalRequired:
@@ -103,6 +114,9 @@ async function sanitizeSettingsData(validatedFields: any) {
     mobileVerificationRequired:
       settingsPayload?.mobileVerificationRequired == 'on' ? true : false,
     favicon: settingsPayload?.favicon == '' ? null : settingsPayload?.favicon,
+    homePageId:
+      settingsPayload?.homePageId == '' ? null : settingsPayload?.homePageId,
+    farazsms,
   }
 
   return params

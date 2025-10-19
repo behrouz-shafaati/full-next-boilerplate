@@ -4,7 +4,11 @@ import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
-import { createTemplate, deleteTemplate, updateTemplate } from '../actions'
+import {
+  createTemplate,
+  deleteTemplatesAction,
+  updateTemplate,
+} from '../actions'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import BuilderTemplate from '@/components/builder-template'
@@ -70,7 +74,8 @@ export const Form: React.FC<TemplateFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteTemplate(String(Template?.id))
+      deleteTemplatesAction([String(Template?.id)])
+      router.replace('/dashboard/templates')
     } catch (error: any) {}
   }
 
@@ -128,9 +133,4 @@ export const Form: React.FC<TemplateFormProps> = ({
       )}
     </>
   )
-}
-
-export function DeleteTemplate(id: string) {
-  const deleteTemplateWithId = deleteTemplate.bind(null, id)
-  deleteTemplateWithId()
 }

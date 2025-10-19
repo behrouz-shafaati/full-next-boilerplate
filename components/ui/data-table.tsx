@@ -22,7 +22,6 @@ import { QueryResponse } from '@/lib/entity/core/interface'
 import Pagination from './pagination'
 import { Filters } from '../table-filter/filters'
 import { useCustomSWR } from '@/hooks/use-custom-swr'
-import { useSearchParams } from 'next/navigation'
 import { useUpdatedUrl } from '@/hooks/use-updated-url'
 
 interface DataTableProps<TData, TValue> {
@@ -141,7 +140,7 @@ export function DataTable<TData, TValue>({
       </div>
       {isSelected && groupAction && (
         <div className="fixed bottom-0 p-4 bg-white dark:bg-gray-950 w-full border-t">
-          <GroupAction items={selectedItems} />
+          <GroupAction table={table} items={selectedItems} />
         </div>
       )}
     </>

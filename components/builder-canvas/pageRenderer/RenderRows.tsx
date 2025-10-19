@@ -8,15 +8,21 @@ import {
   getVisibilityClass,
 } from '../utils/styleUtils'
 import RenderBlock from './RenderBlock'
-import StickyBox from 'react-sticky-box'
+import { Settings } from '@/features/settings/interface'
 
 type Props = {
+  siteSettings: Settings
   editroMode: boolean
   rows: Row[]
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
-const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
+const RendererRows = ({
+  siteSettings,
+  editroMode = false,
+  rows,
+  ...rest
+}: Props) => {
   // فیلتر کردن propsهایی که content_ شروع میشن
   const contents = Object.entries(rest)
     .filter(([key]) => key.startsWith('content_'))
@@ -34,6 +40,7 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
         const visibility = row.styles?.visibility
         const className = getVisibilityClass(visibility, { display: 'grid' })
         let stickyClass = ''
+        // این نوع چسبان فقط مخصوص ردیف است صله ی آن تا بالای ویو پورت همیشه صفر است. تنها یک ردیف این قابلیت را باید داشته باشد
         if (row?.settings?.sticky || false) stickyClass = 'sticky top-0 z-50'
         return (
           <div
@@ -73,9 +80,18 @@ const RendererRows = ({ editroMode = false, rows, ...rest }: Props) => {
                     //When the row is sticky don't need sticky column
                     {...(row?.settings?.sticky || col.settings?.sticky == false
                       ? {}
-                      : { className: 'sticky top-14' })}
+                      : {
+                          className:
+                            'sticky [--header-top:var(--header-top-mobile)] sm:[--header-top:var(--header-top-tablet)] md:[--header-top:var(--header-top-desktop)]',
+                        })}
                     style={{
-                      ...computedStyles(col.styles),
+                      ...computedStyles({
+                        ...col.styles,
+                        ['--header-top-mobile' as any]: `${siteSettings?.mobileHeaderHeight}px`,
+                        ['--header-top-tablet' as any]: `${siteSettings?.tabletHeaderHeight}px`,
+                        ['--header-top-desktop' as any]: `${siteSettings?.desktopHeaderHeight}px`,
+                        top: 'var(--header-top)',
+                      }),
                       ...computedStyles(col.settings),
                     }}
                   >

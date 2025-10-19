@@ -1,16 +1,17 @@
 'use client'
-import * as z from 'zod'
 import { useActionState, useEffect, useRef, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Braces as CategoryIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../../../components/ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
-import { useFormState } from 'react-dom'
-import { createCategory, deleteCategory, updateCategory } from '../actions'
+import {
+  createCategory,
+  deleteCategorysAction,
+  updateCategory,
+} from '../actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
 import { Option } from '../../../components/form-fields/combobox'
@@ -33,6 +34,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   allCategories,
 }) => {
   const locale = 'fa' //  from formData
+  const router = useRouter()
   const translation: CategoryTranslationSchema =
     category?.translations?.find(
       (t: CategoryTranslationSchema) => t.lang === locale
@@ -81,7 +83,8 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteCategory(category?.id)
+      deleteCategorysAction([category?.id])
+      router.replace('/dashboard/categories')
     } catch (error: any) {}
   }
 
@@ -188,9 +191,4 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
       </form>
     </>
   )
-}
-
-export function DeleteCategory(id: string) {
-  const deleteCategoryWithId = deleteCategory.bind(null, id)
-  deleteCategoryWithId()
 }

@@ -1,7 +1,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import parse, { Element } from 'html-react-parser'
-import { getTranslation } from '@/lib/utils'
+import { getTranslation, slugify } from '@/lib/utils'
 import { AccordionRenderer } from '../tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from '../type'
 import VideoEmbedRenderer from '../tiptap-renderers/VideoEmbedRenderer'

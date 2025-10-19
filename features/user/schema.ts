@@ -87,7 +87,10 @@ userSchema.index(
   { mobile: 1 },
   {
     unique: true,
-    partialFilterExpression: { mobile: { $exists: true, $ne: null } },
+    partialFilterExpression: {
+      mobile: { $exists: true, $ne: null },
+      deleted: false,
+    },
   }
 )
 
@@ -95,7 +98,10 @@ userSchema.index(
   { email: 1 },
   {
     unique: true,
-    partialFilterExpression: { email: { $exists: true, $ne: null } },
+    partialFilterExpression: {
+      email: { $exists: true, $ne: null },
+      deleted: false,
+    },
   }
 )
 

@@ -1,7 +1,7 @@
 // کامپوننت نمایشی بلاک
 'use client'
 import React, { useCallback } from 'react'
-import { PageBlock } from '../../types'
+import { Block } from '../../types'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -26,7 +26,7 @@ type ImageSliderBlockProps = {
     ]
     type: 'imageSlider'
     settings: {}
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const ImageSliderBlock = ({
@@ -62,7 +62,7 @@ export const ImageSliderBlock = ({
         //   fill
         width={0}
         height={0}
-        sizes="100vw"
+        // sizes="100vw"
         style={{
           objectFit: 'contain',
           ...computedStyles(styles),

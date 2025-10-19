@@ -4,11 +4,12 @@ import { Button } from '@/components/ui/button'
 import { Heading as HeadingIcon, Trash } from 'lucide-react'
 import { Heading } from '@/components/ui/heading'
 import { useToast } from '@/components/ui/use-toast'
-import { createMenu, deleteMenu, updateMenu } from '../actions'
+import { createMenu, deleteMenusAction, updateMenu } from '../actions'
 import Text from '@/components/form-fields/text'
 import { SubmitButton } from '@/components/form-fields/submit-button'
 import { AlertModal } from '@/components/modal/alert-modal'
 import MenuBuilder from '@/components/menu-builder'
+import { useRouter } from 'next/navigation'
 
 interface MenuFormProps {
   initialData: any | null
@@ -16,6 +17,7 @@ interface MenuFormProps {
 
 export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   const locale = 'fa'
+  const router = useRouter()
   const translation: any =
     menu?.translations?.find((t: any) => t.lang === locale) ||
     menu?.translations[0] ||
@@ -40,7 +42,8 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteMenu(menu?.id)
+      deleteMenusAction([menu?.id])
+      router.replace('/dashboard/menus')
     } catch (error: any) {}
   }
 
@@ -106,9 +109,4 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       </form>
     </>
   )
-}
-
-export function DeleteMenu(id: string) {
-  const deleteMenuWithId = deleteMenu.bind(null, id)
-  deleteMenuWithId()
 }

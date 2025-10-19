@@ -52,10 +52,10 @@ const MenuBar = ({
   editor: Editor
   fileUploadSettings: any
 }) => {
+  const [openGallery, setOpenGallery] = useState(false)
   if (!editor) {
     return null
   }
-  const [openGallery, setOpenGallery] = useState(false)
   const bold = () => editor.chain().focus().toggleBold().run()
   window.bold = bold
   const italic = () => editor.chain().focus().toggleItalic().run()

@@ -1,18 +1,17 @@
 'use client'
-import { DeleteTag } from '@/features/tag/ui/tag-form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Tag } from '@/features/tag/interface'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { deleteTagsAction } from '../../actions'
 
 interface CellActionProps {
   data: Tag
@@ -25,7 +24,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteTag(data.id)
+    await deleteTagsAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

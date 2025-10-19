@@ -1,5 +1,4 @@
 'use client'
-import { DeleteArticle } from '../article-form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -14,6 +13,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { createArticleHref } from '../../utils'
 import Link from 'next/link'
+import { deleteArticlesAction } from '../../actions'
 
 interface CellActionProps {
   data: Article
@@ -26,7 +26,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteArticle(data.id)
+    await deleteArticlesAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

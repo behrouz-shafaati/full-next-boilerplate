@@ -14,10 +14,9 @@ import { Heading } from '@/components/ui/heading'
 import { useToast } from '../../../components/ui/use-toast'
 import {
   createArticleComment,
-  deleteArticleComment,
+  deleteArticleCommentAction,
   updateArticleComment,
 } from '@/features/article-comment/actions'
-import Text from '../../../components/form-fields/text'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
@@ -102,7 +101,8 @@ export const Form: React.FC<ArticleCommentFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteArticleComment(articleComment?.id)
+      await deleteArticleCommentAction([articleComment?.id])
+      router.replace('/dashboard/article-comments')
     } catch (error: any) {}
   }
 
@@ -248,9 +248,4 @@ export const Form: React.FC<ArticleCommentFormProps> = ({
       </form>
     </>
   )
-}
-
-export async function DeleteArticleComment(id: string) {
-  const deleteArticleCommentWithId = deleteArticleComment.bind(null, id)
-  await deleteArticleCommentWithId()
 }

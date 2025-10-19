@@ -17,7 +17,7 @@ const categorySchema = new Schema<CategorySchema>(
       ref: 'category',
       default: null,
     },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: true },
     translations: [CategoryTranslationSchema], // 👈 لیست ترجمه‌ها
     image: { type: Schema.Types.ObjectId, ref: 'file' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
@@ -30,6 +30,15 @@ const categorySchema = new Schema<CategorySchema>(
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
+)
+
+// Partial Unique Index
+categorySchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { deleted: false },
+  }
 )
 
 categorySchema

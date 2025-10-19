@@ -1,20 +1,45 @@
-'use client';
-import { Button } from '@/components/ui/button';
-import { Trash } from 'lucide-react';
+'use client'
+import { Button } from '@/components/ui/button'
+import { Trash } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useState } from 'react'
+import { deleteArticlesAction } from '../../actions'
+import { AlertModal } from '@/components/modal/alert-modal'
 
 type GroupActionProps = {
-  items: any[];
-};
-export default function GroupAction({ items }: GroupActionProps) {
+  table: any
+  items: any[]
+}
+export default function GroupAction({ table, items }: GroupActionProps) {
+  const router = useRouter()
+  const [open, setOpen] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
+  const onDelete = async () => {
+    try {
+      setLoading(true)
+      await deleteArticlesAction(items.map((i) => i.id))
+      router.refresh()
+      table.resetRowSelection()
+      setOpen(false)
+      setLoading(false)
+    } catch (error: any) {}
+  }
   return (
     <div>
+      <AlertModal
+        description={`از حذف ${items.length}  مورد اطمینان دارید؟ این عمل غیر قابل بازگشت است!`}
+        isOpen={open}
+        onClose={() => setOpen(false)}
+        onConfirm={onDelete}
+        loading={loading}
+      />
       <Button
         variant="outline"
         className="text-xs"
-        onClick={() => console.log('#298 items:', items)}
+        onClick={() => setOpen(true)}
       >
         <Trash className="ml-2 h-4 w-4 " /> حذف گروهی
       </Button>
     </div>
-  );
+  )
 }

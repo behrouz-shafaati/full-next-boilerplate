@@ -61,6 +61,22 @@ type SettingsBase = {
    *
    */
   mail_password: string
+  /**
+   *
+   */
+  farazsms: Farazsms
+  /**
+   *
+   */
+  desktopHeaderHeight: number
+  /**
+   *
+   */
+  tabletHeaderHeight: number
+  /**
+   *
+   */
+  mobileHeaderHeight: number
 
   /**
    *
@@ -87,6 +103,21 @@ type SettingsBase = {
   integrations: {
     googleAnalyticsId: String
   }
+}
+
+type Farazsms = {
+  /**
+   *
+   */
+  farazsms_apiKey: string
+  /**
+   *
+   */
+  farazsms_verifyPatternCode: string
+  /**
+   *
+   */
+  farazsms_from_number: string
 }
 
 /**

@@ -102,9 +102,6 @@ export async function updateTemplate(
       id
     )
     // if is home Template so revalidate home Template
-    const settings = await settingsCtrl.findOne({
-      filters: { type: 'site-settings' },
-    })
     await templateCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
@@ -123,9 +120,9 @@ export async function updateTemplate(
   }
 }
 
-export async function deleteTemplate(id: string) {
+export async function deleteTemplatesAction(ids: string[]) {
   try {
-    await templateCtrl.delete({ filters: [id] })
+    await templateCtrl.delete({ filters: ids })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'template',
       slug: [`/dashboard/templates`],
@@ -138,7 +135,6 @@ export async function deleteTemplate(id: string) {
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
-  await templateCtrl.delete({ filters: [id] })
 }
 
 export async function getAllTemplates() {

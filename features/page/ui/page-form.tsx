@@ -4,7 +4,7 @@ import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useToast } from '@/components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
-import { createPage, deletePage, updatePage } from '../actions'
+import { createPage, deletePagesAction, updatePage } from '../actions'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Category } from '@/features/category/interface'
@@ -64,7 +64,8 @@ export const PageForm: React.FC<PageFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeletePage(String(page?.id))
+      deletePagesAction([String(page?.id)])
+      router.replace('/dashboard/pages')
     } catch (error: any) {}
   }
 
@@ -107,9 +108,4 @@ export const PageForm: React.FC<PageFormProps> = ({
       />
     </>
   )
-}
-
-export function DeletePage(id: string) {
-  const deletePageWithId = deletePage.bind(null, id)
-  deletePageWithId()
 }

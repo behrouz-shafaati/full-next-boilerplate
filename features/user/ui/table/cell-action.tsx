@@ -1,5 +1,4 @@
 'use client'
-import { DeleteUser } from '@/features/user/ui/user-form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +12,7 @@ import { User } from '@/features/user/interface'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { deleteUsersAction } from '../../actions'
 
 interface CellActionProps {
   data: User
@@ -25,7 +25,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteUser(data.id)
+    deleteUsersAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

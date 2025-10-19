@@ -70,15 +70,21 @@ export default function SortableItem({
         </Button>
       </div>
       <div className="block-wrapper [&_a]:pointer-events-none [&_a]:cursor-default [&_a]:text-muted-foreground">
-        <Component
-          widgetName={block.label}
-          blockData={item}
-          onClick={(e: any) => {
-            e.stopPropagation() // جلوگیری از propagate شدن به document
-            selectBlock(item)
-          }}
-          className={`${combineClassNames(item.classNames || {})}`}
-        />
+        {block ? (
+          <Component
+            widgetName={block.label}
+            blockData={item}
+            onClick={(e: any) => {
+              e.stopPropagation() // جلوگیری از propagate شدن به document
+              selectBlock(item)
+            }}
+            className={`${combineClassNames(item.classNames || {})}`}
+          />
+        ) : (
+          <span className="rounded bg-red-600 text-gray-50">
+            این بلاک مشکل دارد
+          </span>
+        )}
       </div>
     </div>
   )

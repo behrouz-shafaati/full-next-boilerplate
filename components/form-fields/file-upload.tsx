@@ -97,7 +97,7 @@ const FileUpload = forwardRef(function FileUpload(
 
   const onDrop = (acceptedFiles: any[]) => {
     if (maxFiles) {
-      if (files.length + acceptedFiles.length > maxFiles) {
+      if ((files?.length ?? 0) + (acceptedFiles?.length ?? 0) > maxFiles) {
         toast({
           variant: 'destructive',
           title: '',

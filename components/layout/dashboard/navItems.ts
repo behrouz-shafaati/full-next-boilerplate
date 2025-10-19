@@ -113,7 +113,7 @@ export const navItems: SidebarNavItem[] = [
   {
     slug: 'logout',
     title: 'خروج',
-    href: '/',
+    href: '/logout',
     icon: 'login',
     label: '',
   },

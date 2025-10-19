@@ -9,8 +9,10 @@ import { ArticleComment } from '../../interface'
 import { getTranslation, timeAgo } from '@/lib/utils'
 import { useArticleCommentStore } from '../store/useArticleCommentStore'
 import { CommentForm } from '../comment-form'
-import { updateStatusArticleComment } from '../../actions'
-import { DeleteArticleComment } from '../form'
+import {
+  deleteArticleCommentAction,
+  updateStatusArticleComment,
+} from '../../actions'
 import { mutate } from 'swr'
 import { useUpdatedUrl } from '@/hooks/use-updated-url'
 import { commentsUrl } from '../../utils'
@@ -124,7 +126,7 @@ export function ArticleCommentItemManage({
               onClick={() =>
                 startTransition(async () => {
                   try {
-                    await DeleteArticleComment(articleComment.id)
+                    await deleteArticleCommentAction([articleComment.id])
                     mutate()
                   } catch (err) {
                     console.log('#776234 Error: ', err)

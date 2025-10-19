@@ -1,3 +1,4 @@
+'use server'
 import { cookies } from 'next/headers'
 import { NextRequest, NextResponse } from 'next/server'
 import { redirect } from 'next/navigation'

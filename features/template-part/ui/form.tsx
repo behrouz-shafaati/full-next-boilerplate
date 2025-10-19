@@ -6,7 +6,7 @@ import { useToast } from '@/components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
 import {
   createTemplatePart,
-  deleteTemplatePart,
+  deleteTemplatePartAction,
   updateTemplatePart,
 } from '../actions'
 import { Option } from '@/components/form-fields/combobox'
@@ -62,7 +62,8 @@ export const Form: React.FC<TemplatePartFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteTemplatePart(String(TemplatePart?.id))
+      deleteTemplatePartAction([String(TemplatePart?.id)])
+      router.replace('/dashboard/tags')
     } catch (error: any) {}
   }
 
@@ -106,9 +107,4 @@ export const Form: React.FC<TemplatePartFormProps> = ({
       />
     </>
   )
-}
-
-export function DeleteTemplatePart(id: string) {
-  const deleteTemplatePartWithId = deleteTemplatePart.bind(null, id)
-  deleteTemplatePartWithId()
 }

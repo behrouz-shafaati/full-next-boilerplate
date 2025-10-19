@@ -294,9 +294,9 @@ export async function updateUser(
   redirect('/dashboard/users')
 }
 
-export async function deleteUser(id: string) {
+export async function deleteUsersAction(ids: string[]) {
   try {
-    await userCtrl.delete({ filters: [id] })
+    await userCtrl.delete({ filters: ids })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
       slug: [`/dashboard/users`],
@@ -309,7 +309,6 @@ export async function deleteUser(id: string) {
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' }
   }
-  await userCtrl.delete({ filters: [id] })
   redirect('/dashboard/users')
 }
 

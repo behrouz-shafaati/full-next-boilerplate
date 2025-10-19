@@ -36,7 +36,7 @@ const articleSchema = new Schema<ArticleSchema>(
       default: null,
       required: false,
     },
-    slug: { type: String, required: true, unique: true },
+    slug: { type: String, required: true },
     translations: [ArticleTranslationSchema], // 👈 لیست ترجمه‌ها
     mainCategory: {
       type: Schema.Types.ObjectId,
@@ -65,6 +65,15 @@ const articleSchema = new Schema<ArticleSchema>(
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
+)
+
+// Partial Unique Index
+articleSchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { deleted: false },
+  }
 )
 
 // تعداد کامنت‌ها (virtual)

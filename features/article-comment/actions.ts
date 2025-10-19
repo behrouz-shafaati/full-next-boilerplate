@@ -222,14 +222,18 @@ export async function updateStatusArticleComment(
   }
 }
 
-export async function deleteArticleComment(id: string) {
+export async function deleteArticleCommentAction(ids: string[]) {
   try {
-    const articleComment = await articleCommentCtrl.findById({ id })
-    await articleCommentCtrl.delete({ filters: [id] }) // Revalidate the path
+    const articleCommentsResult = await articleCommentCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    await articleCommentCtrl.delete({ filters: ids }) // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'articleComment',
       slug: [
-        createArticleHref(articleComment?.article as Article),
+        ...articleCommentsResult.data.map((ac) =>
+          createArticleHref(ac?.article as Article)
+        ),
         `/dashboard/articleComments`,
       ],
     })

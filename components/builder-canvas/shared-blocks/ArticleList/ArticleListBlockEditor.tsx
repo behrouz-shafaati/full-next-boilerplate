@@ -61,7 +61,7 @@ export default function ArticleListBlockEditor({
     }
 
     fetchData()
-  }, [content])
+  }, [content, settings?.countOfArticles, settings?.showNewest])
   if (articles.length == 0)
     return <EmptyBlock widgetName={widgetName} {...props} />
   return <ArticleList articles={articles} blockData={blockData} {...props} />

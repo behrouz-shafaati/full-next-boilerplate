@@ -1,7 +1,7 @@
 'use client'
 import * as z from 'zod'
 import { useActionState, useEffect, useState } from 'react'
-import { useParams, useRouter } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
   User as UserIcon,
@@ -16,7 +16,11 @@ import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../../../components/ui/use-toast'
 import roleCtrl from '@/lib/entity/role/controller'
-import { createUser, deleteUser, updateUser } from '@/features/user/actions'
+import {
+  createUser,
+  deleteUsersAction,
+  updateUser,
+} from '@/features/user/actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
 import MultipleSelector, {
@@ -32,6 +36,7 @@ interface ProductFormProps {
 }
 
 export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
+  const router = useRouter()
   const initialState = { message: null, errors: {} }
   const actionHandler = user
     ? updateUser.bind(null, String(user.id))
@@ -62,7 +67,8 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteUser(user?.id)
+      deleteUsersAction([user?.id])
+      router.replace('/dashboard/users')
     } catch (error: any) {}
   }
 
@@ -173,9 +179,4 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
       </form>
     </>
   )
-}
-
-export function DeleteUser(id: string) {
-  const deleteUserWithId = deleteUser.bind(null, id)
-  deleteUserWithId()
 }

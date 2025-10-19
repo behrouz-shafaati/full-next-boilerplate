@@ -211,7 +211,7 @@ export const getTranslation = ({
   translations: any[]
   locale?: string
 }) => {
-  if (!translations) return {}
+  if (typeof translations === 'undefined') return {}
   const translation =
     translations?.find((t) => t.lang === locale) || translations[0] || {}
   return translation

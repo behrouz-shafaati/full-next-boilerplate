@@ -161,16 +161,19 @@ export async function updatePage(
   }
 }
 
-export async function deletePage(id: string) {
+export async function deletePagesAction(ids: string[]) {
   try {
-    const page = await pageCtrl.findById({ id })
-    await pageCtrl.delete({ filters: [id] })
-    let varRevalidatePath = [`/${page?.slug}`]
+    const pageResults = await pageCtrl.findAll({
+      filters: { id: { $in: ids } },
+    })
+    await pageCtrl.delete({ filters: ids })
+    let varRevalidatePath = pageResults.data.map((p) => `/${p.slug}`)
     // if is home page so revalidate home page
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath, '/']
+    if (ids.includes(settings?.id))
+      varRevalidatePath = [...varRevalidatePath, '/']
 
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'page',

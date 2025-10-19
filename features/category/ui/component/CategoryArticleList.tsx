@@ -1,6 +1,6 @@
 import { getArticles } from '@/features/article/actions'
 import categoryCtrl from '../../controller'
-import ArticleList from '@/components/archive/ArticleList'
+import ArticleHorizontalCard from '@/components/builder-canvas/shared-blocks/ArticleList/designs/ArticalHorizontalCard'
 
 type Prop = {
   slug: string
@@ -17,5 +17,14 @@ export default async function CategoryArticleList({ slug }: Prop) {
 
   if (articlesResult.data.length == 0)
     return <>هیچ مقاله ای با این دسته بندی ثبت نشده است!</>
-  return <ArticleList articles={articlesResult.data} />
+  const articles = articlesResult.data
+  const articleItems = articles.map((article) => {
+    return (
+      <ArticleHorizontalCard
+        key={article.id}
+        article={article}
+        options={{ showExcerpt: true }}
+      />
+    )
+  })
 }

@@ -157,13 +157,12 @@ export async function updateMenu(
   redirect('/dashboard/menus')
 }
 
-export async function deleteMenu(id: string) {
+export async function deleteMenusAction(ids: string[]) {
   try {
-    await menuCtrl.delete({ filters: [id] })
+    await menuCtrl.delete({ filters: ids })
   } catch (error) {
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
-  await menuCtrl.delete({ filters: [id] })
   const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'menu',
     slug: '/dashboard/menus',

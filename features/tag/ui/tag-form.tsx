@@ -6,13 +6,14 @@ import { Braces as TagIcon, Mail as MailIcon, Trash } from 'lucide-react'
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
 import { useToast } from '../../../components/ui/use-toast'
-import { createTag, deleteTag, updateTag } from '../actions'
+import { createTag, deleteTagsAction, updateTag } from '../actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import { Tag } from '../interface'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
+import { useRouter } from 'next/navigation'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -23,6 +24,7 @@ interface TagFormProps {
 
 export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
   const locale = 'fa'
+  const router = useRouter()
   const translation: any =
     tag?.translations?.find((t: any) => t.lang === locale) ||
     tag?.translations[0] ||
@@ -56,7 +58,8 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteTag(tag?.id)
+      await deleteTagsAction([tag?.id])
+      router.replace('/dashboard/tags')
     } catch (error: any) {}
   }
 
@@ -152,9 +155,4 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
       </form>
     </>
   )
-}
-
-export function DeleteTag(id: string) {
-  const deleteTagWithId = deleteTag.bind(null, id)
-  deleteTagWithId()
 }

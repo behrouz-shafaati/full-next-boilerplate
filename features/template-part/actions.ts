@@ -129,14 +129,13 @@ export async function updateTemplatePart(
   }
 }
 
-export async function deleteTemplatePart(id: string) {
+export async function deleteTemplatePartAction(ids: string[]) {
   try {
-    await templatePartCtrl.delete({ filters: [id] })
+    await templatePartCtrl.delete({ filters: ids })
   } catch (error) {
     console.log('#234089 delete error:', error)
     return { message: 'خطای پایگاه داده: حذف قطعه قالب ناموفق بود' }
   }
-  await templatePartCtrl.delete({ filters: [id] })
   const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
     feature: 'templatePart',
     slug: [`/dashboard/template-parts`],

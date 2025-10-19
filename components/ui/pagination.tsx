@@ -27,12 +27,14 @@ function PaginationComponent({ totalPages }: { totalPages: number }) {
     <>
       {/* NOTE: comment in this code when you get to this point in the course */}
 
-      <div className="inline-flex">
-        <PaginationArrow
-          direction="left"
-          href={createPageURL(currentPage - 1)}
-          isDisabled={currentPage <= 1}
-        />
+      <div className="inline-flex gap-1">
+        {currentPage > 1 && (
+          <PaginationArrow
+            direction="left"
+            href={createPageURL(currentPage - 1)}
+            isDisabled={currentPage <= 1}
+          />
+        )}
 
         <div className="flex -space-x-px gap-1">
           {allPages.map((page, index) => {
@@ -55,11 +57,13 @@ function PaginationComponent({ totalPages }: { totalPages: number }) {
           })}
         </div>
 
-        <PaginationArrow
-          direction="right"
-          href={createPageURL(currentPage + 1)}
-          isDisabled={currentPage >= totalPages}
-        />
+        {currentPage < totalPages && (
+          <PaginationArrow
+            direction="right"
+            href={createPageURL(currentPage + 1)}
+            isDisabled={currentPage >= totalPages}
+          />
+        )}
       </div>
     </>
   )

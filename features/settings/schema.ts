@@ -1,11 +1,19 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { SettingsSchema } from './interface'
-import { boolean } from 'zod'
+
+const FarazsmsSchema = new Schema(
+  {
+    farazsms_apiKey: String,
+    farazsms_verifyPatternCode: String,
+    farazsms_from_number: String,
+  },
+  { _id: false }
+)
 
 const settingsSchema = new Schema<SettingsSchema>(
   {
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
-    homePageId: { type: Schema.Types.ObjectId, ref: 'page' },
+    homePageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
     commentApprovalRequired: { type: Boolean, default: true },
     emailVerificationRequired: { type: Boolean, default: false },
     mobileVerificationRequired: { type: Boolean, default: false },
@@ -22,6 +30,10 @@ const settingsSchema = new Schema<SettingsSchema>(
     mail_port: String,
     mail_username: String,
     mail_password: String,
+    desktopHeaderHeight: Number,
+    tabletHeaderHeight: Number,
+    mobileHeaderHeight: Number,
+    farazsms: FarazsmsSchema,
     theme: {
       primaryColor: String,
       backgroundColor: String,

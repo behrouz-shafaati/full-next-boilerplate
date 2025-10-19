@@ -1,5 +1,5 @@
 'use client'
-import { DeleteCategory } from '@/features/category/ui/category-form'
+
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +15,7 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 import { buildCategoryHref } from '../../utils'
+import { deleteCategorysAction } from '../../actions'
 
 interface CellActionProps {
   data: Category
@@ -27,7 +28,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteCategory(data.id)
+    deleteCategorysAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

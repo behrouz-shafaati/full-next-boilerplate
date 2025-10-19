@@ -1,5 +1,4 @@
 'use client'
-import { DeletePage } from '../page-form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -12,6 +11,7 @@ import { Page } from '@/features/page/interface'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { deletePagesAction } from '../../actions'
 
 interface CellActionProps {
   data: Page
@@ -24,7 +24,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeletePage(data.id)
+    deletePagesAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

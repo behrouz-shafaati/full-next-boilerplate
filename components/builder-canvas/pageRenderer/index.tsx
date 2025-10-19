@@ -4,6 +4,7 @@ import React from 'react'
 import { Page } from '@/features/page/interface'
 import RendererRows from './RenderRows'
 import templateCtrl from '@/features/template/controller'
+import { getSettings } from '@/features/settings/controller'
 
 type Props = {
   locale: string
@@ -16,12 +17,16 @@ export const PageRenderer = async ({ page, locale = 'fa' }: Props) => {
     page?.translations[0] ||
     {}
   const { template: templateId } = translation.content
+
+  const [siteSettings] = await Promise.all([getSettings()])
+
   if (templateId && templateId !== 'none') {
     const [template] = await Promise.all([
       templateCtrl.findById({ id: templateId }),
     ])
     return (
       <RendererRows
+        siteSettings={siteSettings}
         rows={template.content.rows}
         editroMode={false}
         content_all={
@@ -33,7 +38,11 @@ export const PageRenderer = async ({ page, locale = 'fa' }: Props) => {
 
   return (
     <>
-      <RendererRows rows={translation?.content.rows} editroMode={false} />
+      <RendererRows
+        siteSettings={siteSettings}
+        rows={translation?.content.rows}
+        editroMode={false}
+      />
     </>
   )
 }

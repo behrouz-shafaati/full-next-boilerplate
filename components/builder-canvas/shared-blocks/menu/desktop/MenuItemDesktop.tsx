@@ -34,7 +34,7 @@ export default function MenuItemDesktop({
       {/* زیرمنو با hidden و group-hover:block */}
       <div
         className={`absolute right-0 top-full hidden group-hover:block  shadow-md min-w-[180px] z-50 transition-all ${extractColorClasses(
-          className
+          className.replace('bg-transparent', '')
         )}`}
       >
         <div className="flex flex-col">

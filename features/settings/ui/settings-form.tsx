@@ -129,6 +129,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               defaultValue={settings?.favicon}
               targetFormat="png"
             />
+
             {/* first page */}
             <Combobox
               title="صفحه نخست"
@@ -139,6 +140,40 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               state={state}
               icon={<HomeIcon className="w-4 h-4" />}
             />
+
+            {/* desktopHeaderHeight */}
+            <Text
+              title="ارتفاع هدر در دسکتاپ"
+              name="desktopHeaderHeight"
+              defaultValue={settings?.desktopHeaderHeight || ''}
+              placeholder="px"
+              state={state}
+              icon={<MessageSquare className="w-4 h-4" />}
+              description=""
+            />
+
+            {/* desktopHeaderHeight */}
+            <Text
+              title="ارتفاع هدر در تبلت"
+              name="tabletHeaderHeight"
+              defaultValue={settings?.tabletHeaderHeight || ''}
+              placeholder="px"
+              state={state}
+              icon={<MessageSquare className="w-4 h-4" />}
+              description=""
+            />
+
+            {/* mobileHeaderHeight */}
+            <Text
+              title="ارتفاع هدر در موبایل"
+              name="mobileHeaderHeight"
+              defaultValue={settings?.mobileHeaderHeight || ''}
+              placeholder="px"
+              state={state}
+              icon={<MessageSquare className="w-4 h-4" />}
+              description=""
+            />
+
             {/* default header */}
             {/* <Combobox
             title="سربرگ پیش فرض"
@@ -209,6 +244,42 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
               state={state}
               icon={<Key className="w-4 h-4" />}
               description="رمز عبور یا App Password همان ایمیل."
+            />
+          </div>
+          <h3 className="text-2xlg">تنظیمات پیامک فراز اس ام اس</h3>
+          <div className="md:grid md:grid-cols-3 gap-8">
+            {/* farazsms_apiKey */}
+            <Text
+              title="کلید دسترسی"
+              name="farazsms_apiKey"
+              defaultValue={settings?.farazsms?.farazsms_apiKey || ''}
+              placeholder=""
+              state={state}
+              icon={<Server className="w-4 h-4" />}
+              description="آدرس سرور SMTP که از هاست یا سرویس ایمیل دریافت می‌کنید."
+            />
+            {/* patternCode */}
+            <Text
+              title="کد پترن وریفای"
+              name="farazsms_verifyPatternCode"
+              defaultValue={
+                settings?.farazsms?.farazsms_verifyPatternCode || ''
+              }
+              placeholder="مثلا:e23c6ytxkg4f5qc"
+              state={state}
+              icon={<Plug className="w-4 h-4" />}
+              description="در متن باید متغییر %code% حتما باشد. پترن نمونه: 
+کد تایید شماره موبایل در زومکشت: %code%"
+            />
+            {/* from_number */}
+            <Text
+              title="خط مورد استفاده"
+              name="farazsms_from_number"
+              defaultValue={settings?.farazsms?.farazsms_from_number || ''}
+              placeholder="مثلاً: +983000505"
+              state={state}
+              icon={<Mail className="w-4 h-4" />}
+              description="ارسال پیامک از این شماره انجام می‌شود"
             />
           </div>
           <SubmitButton />

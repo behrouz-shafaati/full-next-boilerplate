@@ -11,6 +11,7 @@ import {
   generateFAQSchema,
   generateArticleSchema,
   getReadingTime,
+  buildBreadcrumbsArray,
 } from '@/features/article/utils'
 
 import type { Metadata } from 'next'
@@ -130,11 +131,6 @@ export default async function Page({ params }: PageProps) {
 
   const readingDuration = getReadingTime(plainText)
 
-  let pageBreadCrumb = {
-    title: translation?.title,
-    link: href,
-  }
-
   const metadata = {
     author: article?.user,
     createdAt: article.createdAt,
@@ -143,10 +139,10 @@ export default async function Page({ params }: PageProps) {
 
   // ساخت TOC سمت سرور
   const toc = generateTableOfContents(JSON.parse(translation?.contentJson))
-
-  const breadcrumbItems = [{ title: 'بلاگ', link: '/blog' }, pageBreadCrumb]
-  const [template] = await Promise.all([
+  const breadcrumbItems = buildBreadcrumbsArray(article)
+  const [template, siteSettings] = await Promise.all([
     templateCtrl.getTemplate({ slug: 'article' }),
+    getSettings(),
   ])
 
   const articleSchema = generateArticleSchema({ article, locale: 'fa' })
@@ -182,6 +178,7 @@ export default async function Page({ params }: PageProps) {
         {writeJsonLd()}
         <>
           <RendererRows
+            siteSettings={siteSettings}
             rows={template?.content.rows}
             editroMode={false}
             content_all={
@@ -201,6 +198,7 @@ export default async function Page({ params }: PageProps) {
             content_article_title={translation?.title}
             content_article_cover={article?.image ?? null}
             content_article_metadata={metadata}
+            content_article_breadcrumb={breadcrumbItems}
             content_article_content={
               <RenderedHtml contentJson={translation?.contentJson} />
             }

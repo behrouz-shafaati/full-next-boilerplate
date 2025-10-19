@@ -9,7 +9,7 @@ import { Heading } from '@/components/ui/heading'
 import { useToast } from '../../../components/ui/use-toast'
 import {
   createArticle,
-  deleteArticle,
+  deleteArticlesAction,
   updateArticle,
 } from '@/features/article/actions'
 import Text from '../../../components/form-fields/text'
@@ -104,7 +104,8 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      DeleteArticle(article?.id)
+      await deleteArticlesAction(article?.id)
+      router.replace('/dashboard/articles')
     } catch (error: any) {}
   }
 
@@ -310,9 +311,4 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
       </form>
     </>
   )
-}
-
-export function DeleteArticle(id: string) {
-  const deleteArticleWithId = deleteArticle.bind(null, id)
-  deleteArticleWithId()
 }

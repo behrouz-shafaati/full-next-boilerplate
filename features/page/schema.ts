@@ -34,6 +34,15 @@ const pageSchema = new Schema<PageSchema>(
   { timestamps: true }
 )
 
+// Partial Unique Index
+pageSchema.index(
+  { slug: 1 },
+  {
+    unique: true,
+    partialFilterExpression: { deleted: false },
+  }
+)
+
 pageSchema
   .pre('findOne', function (next: any) {
     this.populate('user')

@@ -1,5 +1,5 @@
 'use client'
-import { DeleteArticleComment } from '../form'
+
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -15,6 +15,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { createArticleHref } from '@/features/article/utils'
+import { deleteArticleCommentAction } from '../../actions'
 
 interface CellActionProps {
   data: ArticleComment
@@ -27,7 +28,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteArticleComment(data.id)
+    deleteArticleCommentAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (

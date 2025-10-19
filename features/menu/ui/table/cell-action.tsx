@@ -1,5 +1,4 @@
 'use client'
-import { DeleteMenu } from '../menu-form'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Button } from '@/components/ui/button'
 import {
@@ -13,6 +12,7 @@ import { Menu } from '@/features/menu/interface'
 import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { deleteMenusAction } from '../../actions'
 
 interface CellActionProps {
   data: Menu
@@ -25,7 +25,10 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const onConfirm = async () => {
     setLoading(true)
-    DeleteMenu(data.id)
+    deleteMenusAction([data.id])
+    router.refresh()
+    setOpen(false)
+    setLoading(false)
   }
 
   return (
