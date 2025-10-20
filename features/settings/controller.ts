@@ -7,6 +7,7 @@ import { Settings } from './interface'
 import userCtrl from '../user/controller'
 import articleCtrl from '../article/controller'
 import articleCommentCtrl from '../article-comment/controller'
+import { getTranslation } from '@/lib/utils'
 
 class controller extends baseController {
   /**
@@ -103,8 +104,12 @@ export const getSettings = async (
     return settings
   }
 
-  return Object.prototype.hasOwnProperty.call(settings, key)
-    ? settings[key]
+  const siteInfo = getTranslation({
+    translations: settings?.infoTranslations || [],
+  })
+  const _settings = { ...settings, ...siteInfo }
+  return Object.prototype.hasOwnProperty.call(_settings, key)
+    ? _settings[key]
     : null
 }
 

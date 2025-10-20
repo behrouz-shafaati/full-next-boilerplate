@@ -57,7 +57,15 @@ async function sanitizeArticleData(
  */
 export async function createMenu(prevState: State, formData: FormData) {
   // Validate form fields
-  const values = Object.fromEntries(formData)
+  const rawValues = Object.fromEntries(formData)
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues?.lang,
+      title: rawValues?.title,
+      items: JSON.parse(rawValues?.itemsJson),
+    },
+  }
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
@@ -115,7 +123,7 @@ export async function updateMenu(
     translation: {
       lang: rawValues?.lang,
       title: rawValues?.title,
-      itemsJson: rawValues?.itemsJson,
+      items: rawValues?.itemsJson,
     },
   }
   const validatedFields = FormSchema.safeParse(

@@ -5,6 +5,7 @@ import localFont from 'next/font/local'
 import { Providers } from './providers'
 import { getSettings } from '@/features/settings/controller'
 import { Settings } from '@/features/settings/interface'
+import { getTranslation } from '@/lib/utils'
 
 const iransans = localFont({
   src: [
@@ -30,11 +31,12 @@ const iransans = localFont({
 export async function generateMetadata(): Promise<Metadata> {
   // اطلاعات رو از دیتابیس می‌گیریم
   const settings = (await getSettings()) as Settings
-
+  const info = getTranslation({
+    translations: settings?.infoTranslations || [],
+  })
   return {
-    title:
-      `${settings?.site_title} | ${settings?.site_introduction}` || 'ALBA CMS',
-    description: settings?.site_introduction || 'Default Description',
+    title: `${info?.site_title} | ${info?.site_introduction}` || 'ALBA CMS',
+    description: info?.site_introduction || 'Default Description',
     icons: {
       icon: [
         {

@@ -1,9 +1,13 @@
 import { getSettings } from '@/features/settings/controller'
 import { Settings } from '@/features/settings/interface'
 import nodemailer from 'nodemailer'
+import { getTranslation } from './utils'
 
 export async function sendEmail(to: string, subject: string, html: string) {
   const settings: Settings = (await getSettings()) as Settings
+  const siteInfo = getTranslation({
+    translations: settings?.infoTranslations || [],
+  })
   const transporter = nodemailer.createTransport({
     host: settings?.mail_host,
     port: Number(settings?.mail_port),
@@ -15,7 +19,7 @@ export async function sendEmail(to: string, subject: string, html: string) {
   })
   try {
     const info = await transporter.sendMail({
-      from: `${settings?.site_title} <${settings?.mail_username}>`,
+      from: `${siteInfo?.site_title} <${settings?.mail_username}>`,
       to,
       subject,
       html,

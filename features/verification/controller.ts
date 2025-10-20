@@ -11,7 +11,7 @@ import mongoose from 'mongoose'
 import userCtrl from '../user/controller'
 import { z } from 'zod'
 import { getMailTemplate, sendEmail } from '@/lib/mailer'
-import { toMinutes } from '@/lib/utils'
+import { getTranslation, toMinutes } from '@/lib/utils'
 
 import crypto from 'crypto'
 import { sendSms, sendSmsVerify } from '@/lib/sendSMS/smsSender'
@@ -404,6 +404,9 @@ class controller extends baseController {
       }
     }
     const settings = (await getSettings()) as Settings
+    const siteInfo = getTranslation({
+      translations: settings?.infoTranslations || [],
+    })
     const { doc, plainCode } = await verificationCtrl.createVerificationCode({
       userId,
       channel: 'email',
@@ -415,8 +418,8 @@ class controller extends baseController {
     try {
       await sendEmail(
         email,
-        `${settings?.site_title} - اعتبار سنجی ایمیل`,
-        getMailTemplate(settings?.site_title, plainCode, 'fa')
+        `${siteInfo?.site_title} - اعتبار سنجی ایمیل`,
+        getMailTemplate(siteInfo?.site_title, plainCode, 'fa')
       )
       return {
         message: `ایمیل اعتبار سنجی با موفقیت ارسال شد`,
@@ -500,6 +503,9 @@ class controller extends baseController {
     user: User
   }) {
     const settings = (await getSettings()) as Settings
+    const siteInfo = getTranslation({
+      translations: settings?.infoTranslations || [],
+    })
     const { doc, plainCode } = await verificationCtrl.createVerificationCode({
       userId: user.id,
       channel: 'email',
@@ -511,8 +517,8 @@ class controller extends baseController {
     try {
       await sendEmail(
         user?.email,
-        `${settings?.site_title} - اعتبار سنجی ایمیل`,
-        getMailTemplate(settings?.site_title, plainCode, 'fa')
+        `${siteInfo?.site_title} - اعتبار سنجی ایمیل`,
+        getMailTemplate(siteInfo?.site_title, plainCode, 'fa')
       )
       return {
         message: `ایمیل اعتبار سنجی با موفقیت ارسال شد`,

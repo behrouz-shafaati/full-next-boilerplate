@@ -1,6 +1,15 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { SettingsSchema } from './interface'
 
+const InfoTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    site_title: { type: String, default: '' },
+    site_introduction: { type: String, default: '' },
+  },
+  { _id: false }
+)
+
 const FarazsmsSchema = new Schema(
   {
     farazsms_apiKey: String,
@@ -13,6 +22,7 @@ const FarazsmsSchema = new Schema(
 const settingsSchema = new Schema<SettingsSchema>(
   {
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
+    infoTranslations: [InfoTranslationSchema],
     homePageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
     commentApprovalRequired: { type: Boolean, default: true },
     emailVerificationRequired: { type: Boolean, default: false },
@@ -24,8 +34,6 @@ const settingsSchema = new Schema<SettingsSchema>(
       default: null,
       required: false,
     },
-    site_title: String,
-    site_introduction: String,
     mail_host: String,
     mail_port: String,
     mail_username: String,

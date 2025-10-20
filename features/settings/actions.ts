@@ -1,7 +1,7 @@
 'use server'
 
 import { z } from 'zod'
-import settingsCtrl from '@/features/settings/controller'
+import settingsCtrl, { getSettings } from '@/features/settings/controller'
 import { Session, State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
@@ -70,6 +70,7 @@ export async function updateSettings(prevState: State, formData: FormData) {
 
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی مقاله ناموفق بود.',
       success: false,
@@ -99,12 +100,22 @@ export async function deleteSettings(id: string) {
 async function sanitizeSettingsData(validatedFields: any) {
   // const session = (await getSession()) as Session
   // Create the settings
+  const siteSettings = await getSettings()
+
   const settingsPayload = validatedFields.data
   const farazsms = {
     farazsms_apiKey: settingsPayload?.farazsms_apiKey,
     farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
     farazsms_from_number: settingsPayload?.farazsms_from_number,
   }
+  const infoTranslations = [
+    ...(siteSettings?.infoTranslations || []),
+    {
+      lang: 'fa',
+      site_title: settingsPayload?.site_title || '',
+      site_introduction: settingsPayload?.site_introduction || '',
+    },
+  ]
   const params = {
     ...settingsPayload,
     commentApprovalRequired:
@@ -117,6 +128,7 @@ async function sanitizeSettingsData(validatedFields: any) {
     homePageId:
       settingsPayload?.homePageId == '' ? null : settingsPayload?.homePageId,
     farazsms,
+    infoTranslations,
   }
 
   return params

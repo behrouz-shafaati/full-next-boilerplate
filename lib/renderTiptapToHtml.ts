@@ -165,6 +165,10 @@ const nodes = {
       src: { default: null },
       id: { default: null },
       translations: { default: null },
+      // فقط این سه‌تا در تگ HTML قرار می‌گیرن
+      srcSmall: { default: null },
+      srcMedium: { default: null },
+      srcLarge: { default: null },
     },
     group: 'inline',
     draggable: true,
@@ -172,15 +176,19 @@ const nodes = {
       {
         tag: 'img[src]',
         getAttrs: (dom: any) => ({
-          src: dom.getAttribute('src'),
+          src: '/placeholder-image.webp',
         }),
       },
     ],
     toDOM: (node: any) => {
-      const { src, id, translations } = node.attrs
+      const { id, translations, srcSmall, srcMedium, srcLarge } = node.attrs
+      const src = srcMedium || srcSmall || srcLarge || '/placeholder-image.webp'
       return [
         'img',
         {
+          srcSmall,
+          srcMedium,
+          srcLarge,
           src,
           id: id,
           translations: translations ? JSON.stringify(translations) : null,

@@ -35,9 +35,9 @@ export default function EnhanceHtmlForNext({
     <div className="prose max-w-none">
       {parse(HTML_string, {
         replace(domNode) {
-          // console.log('#324 domNode.name: ', domNode.name)
+          console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            const { src, id: fileId, translations } = domNode.attribs
+            const { src, id: fileId, translations, srclarge } = domNode.attribs
             if (!src) return null
             const translation = getTranslation({
               translations: JSON.parse(translations),
@@ -46,6 +46,7 @@ export default function EnhanceHtmlForNext({
               <figure className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4">
                 <Image
                   src={src}
+                  data-srclarge={srclarge || ''}
                   alt={translation?.alt || translation?.title || ''}
                   title={translation?.title || ''}
                   fill

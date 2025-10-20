@@ -1,15 +1,8 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 import { File } from '@/lib/entity/file/interface'
 
-/**
- * اطلاعات پایه تنظیمات که شامل فیلدهای اصلی تنظیمات می‌باشد
- */
-type SettingsBase = {
-  /**
-   * کلید واژه تک داکیومنت مربوط به تنظیمات
-   */
-  type: 'site-settings'
-
+type InfoTranslation = {
+  lang: string
   /**
    *   عنوان سایت
    */
@@ -19,6 +12,18 @@ type SettingsBase = {
    *   معرفی کوتاه
    */
   site_introduction: string
+}
+
+/**
+ * اطلاعات پایه تنظیمات که شامل فیلدهای اصلی تنظیمات می‌باشد
+ */
+type SettingsBase = {
+  /**
+   * کلید واژه تک داکیومنت مربوط به تنظیمات
+   */
+  type: 'site-settings'
+
+  infoTranslations: InfoTranslation[]
 
   /**
    *   معرفی کوتاه

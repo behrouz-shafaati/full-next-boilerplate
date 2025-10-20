@@ -60,6 +60,10 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
     }
   })
 
+  const siteInfo = getTranslation({
+    translations: settings?.infoTranslations || [],
+  })
+
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -107,7 +111,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
             <Text
               title="عنوان سایت"
               name="site_title"
-              defaultValue={settings?.site_title || ''}
+              defaultValue={siteInfo?.site_title || ''}
               placeholder=""
               state={state}
               icon={<Heading1 className="w-4 h-4" />}
@@ -117,7 +121,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
             <Text
               title="معرفی کوتاه"
               name="site_introduction"
-              defaultValue={settings?.site_introduction || ''}
+              defaultValue={siteInfo?.site_introduction || ''}
               placeholder=""
               state={state}
               icon={<MessageSquare className="w-4 h-4" />}
