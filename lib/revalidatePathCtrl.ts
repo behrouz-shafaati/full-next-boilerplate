@@ -40,6 +40,7 @@ class controller {
 
   async getAllPaths() {
     return [
+      '/',
       ...(await this.getAllPagesPaths()),
       ...(await this.getAllArticlesPaths()),
       ...(await this.getAllCategoriessPaths()),

@@ -249,6 +249,7 @@ class controller extends c_controller {
   }
 
   async handleAfterUpdateFile({ file }: { file: FileDetails }) {
+    if (!!file || file === undefined || file == null) return
     if (file?.attachedTo.length == 0) return
     switch (file.attachedTo[0].feature) {
       case 'article':

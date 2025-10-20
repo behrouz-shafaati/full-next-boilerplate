@@ -55,10 +55,6 @@ export const ArticleListRow = ({
     : 'w-full h-auto max-w-full'
 
   const { onClick, ...restProps } = props
-  const filters = {
-    tags: content?.tags?.map((tag) => tag.slug) || [],
-    categories: content?.categories?.map((category) => category.slug) || [],
-  }
 
   let queryParamLS = content?.tags || []
   if (settings?.showNewest == true)

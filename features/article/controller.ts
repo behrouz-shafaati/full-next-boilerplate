@@ -150,7 +150,7 @@ class controller extends baseController {
     await this.findOneAndUpdate({
       filters: { _id: article.id },
       params: {
-        translations: updatedArticle.translations,
+        translations: updatedArticle?.translations || [],
         locale: fileDetails.locale,
       },
     })

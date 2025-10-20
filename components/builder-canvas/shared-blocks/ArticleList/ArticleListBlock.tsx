@@ -33,7 +33,7 @@ export default async function ArticleListBlock({
   const tagIds = content?.tags?.map((tag: Option) => tag.value)
   const categoryIds = content?.categories?.map((tag: Option) => tag.value) || {}
   let filters
-  if (settings?.showNewest == true) {
+  if (settings?.showNewest == true || tagIds.length == 0) {
     filters = {}
   } else {
     filters = { tags: tagIds[0] }
