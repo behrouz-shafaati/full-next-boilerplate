@@ -1,5 +1,5 @@
 // /app/archive/[[...filters]]/page.tsx
-
+export const dynamic = 'force-dynamic'
 import ArchiveArticle from '@/components/archive'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 import { getSettings } from '@/features/settings/controller'

@@ -71,7 +71,15 @@ export async function createTemplate(prevState: State, formData: FormData) {
       values,
     }
   }
-  if (newTemplate) redirect(`/dashboard/templates/${newTemplate.id}`)
+  if (newTemplate) {
+    // redirect(`/dashboard/templates/${newTemplate.id}`)
+    return {
+      message: '',
+      success: true,
+      isCreatedJustNow: true,
+      values: newTemplate,
+    }
+  }
   redirect('/dashboard/templates')
 }
 

@@ -77,12 +77,12 @@ articleSchema.index(
 )
 
 // تعداد کامنت‌ها (virtual)
-articleSchema.virtual('commentsCount', {
-  ref: 'articleComment', // نام collection
-  localField: '_id', // فیلد محلی (Article._id)
-  foreignField: 'article', // فیلد مرتبط در ArticleComment
-  count: true, // مهم! فقط تعداد را برمی‌گرداند
-})
+// articleSchema.virtual('commentsCount', {
+//   ref: 'articleComment', // نام collection
+//   localField: '_id', // فیلد محلی (Article._id)
+//   foreignField: 'article', // فیلد مرتبط در ArticleComment
+//   count: true, // مهم! فقط تعداد را برمی‌گرداند
+// })
 
 // const autoPopulate = function (next) {
 //   this.populate('image')
@@ -102,7 +102,7 @@ articleSchema
       .populate('tags')
       .populate('mainCategory')
       .populate('categories')
-      .populate('commentsCount')
+    // .populate('commentsCount')
     // this.populate({
     //   path: 'tags',
     //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
@@ -116,7 +116,7 @@ articleSchema
       .populate('tags')
       .populate('mainCategory')
       .populate('categories')
-      .populate('commentsCount')
+    // .populate('commentsCount')
     // this.populate({
     //   path: 'tags',
     //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
@@ -130,7 +130,7 @@ articleSchema
       .populate('tags')
       .populate('mainCategory')
       .populate('categories')
-      .populate('commentsCount')
+    // .populate('commentsCount')
     // this.populate({
     //   path: 'tags',
     //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id

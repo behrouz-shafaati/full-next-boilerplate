@@ -86,7 +86,15 @@ export async function createPage(prevState: State, formData: FormData) {
       values,
     }
   }
-  if (newPage) redirect(`/dashboard/pages/${newPage.id}`)
+  if (newPage) {
+    // redirect(`/dashboard/pages/${newPage.id}`)
+    return {
+      message: '',
+      success: true,
+      isCreatedJustNow: true,
+      values: newPage,
+    }
+  }
   redirect('/dashboard/pages')
 }
 

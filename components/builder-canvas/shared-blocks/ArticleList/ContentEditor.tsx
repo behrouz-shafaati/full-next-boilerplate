@@ -69,7 +69,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
   }, [selectedBlock?.content?.tags])
 
   return (
-    <div key={categoryOptions.length}>
+    <div key={categoryOptions?.length}>
       <Text
         title="عنوان لیست"
         name="title"

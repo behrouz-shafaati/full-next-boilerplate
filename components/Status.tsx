@@ -30,8 +30,6 @@ export const Status = <T,>({ row, accessorKey = 'status' }: StatusProps<T>) => {
     status = row[accessorKey as keyof typeof row] as StatusType
   }
 
-  let isActive
-
   let icon, label
   switch (status) {
     case 'active':
@@ -58,28 +56,26 @@ export const Status = <T,>({ row, accessorKey = 'status' }: StatusProps<T>) => {
     default:
       label = 'نامشخص'
   }
-
+  let bgGradient =
+    'rounded-full border-none bg-yellow-600/15 hover:bg-yellow-600/15 text-amber-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-yellow-400/15 dark:text-amber-400 dark:focus-visible:ring-red-400/40'
   switch (status) {
     case 'active':
     case 'published':
     case 'approved':
-      isActive = true
+      bgGradient =
+        'rounded-full border-none bg-green-600/10 hover:bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40'
       icon = <CheckCircle className="w-4 h-4" />
       break
     case 'deactive':
     case 'draft':
     case 'rejected':
       icon = <XCircle className="w-4 h-4" />
-      isActive = false
+      bgGradient =
+        'rounded-full border-none bg-red-600/15 hover:bg-red-600/15 text-red-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-red-400/15 dark:text-red-400 dark:focus-visible:ring-red-400/40'
       break
     default:
       icon = <Clock1 className="w-4 h-4" />
-      isActive = false
   }
-
-  const bgGradient = isActive
-    ? 'rounded-full border-none bg-green-600/10 hover:bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40'
-    : 'rounded-full border-none bg-red-600/15 hover:bg-red-600/15 text-red-600 focus-visible:ring-red-600/20 focus-visible:outline-none dark:bg-red-400/15 dark:text-red-400 dark:focus-visible:ring-red-400/40'
 
   return (
     <Badge

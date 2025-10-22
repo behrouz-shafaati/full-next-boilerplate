@@ -1,15 +1,11 @@
 'use server'
 
 import { z } from 'zod'
-import verifyCtrl from '@/features/verification/controller'
-import { Session, State } from '@/types'
-import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
-import { revalidatePath } from 'next/cache'
+import { State } from '@/types'
 import { User } from '../user/interface'
 import { Settings } from '../settings/interface'
 import { getSettings } from '../settings/controller'
 import verificationCtrl from './controller'
-import { getMailTemplate, sendEmail } from '@/lib/mailer'
 import { VerificationPurpose } from './interface'
 import { toMinutes } from '@/lib/utils'
 import { redirect } from 'next/navigation'
@@ -112,7 +108,7 @@ export async function sendVerificationCode({
       return {
         message: `برای ارسال مجدد باید ${toMinutes(
           allowSend.remainingSeconds
-        )} دقیقه صبر کنید`,
+        )} صبر کنید`,
         success: false,
       }
     }
@@ -133,7 +129,7 @@ export async function sendVerificationCode({
       return {
         message: `برای ارسال مجدد باید ${toMinutes(
           allowSend.remainingSeconds
-        )} دقیقه صبر کنید`,
+        )} صبر کنید`,
         success: false,
       }
     }

@@ -42,7 +42,7 @@ export async function createArticleComment(
   // Validate form fields
   let newArticleComment = null
   const rawValues = Object.fromEntries(formData.entries())
-  console.log('#234987 rawValues:', rawValues)
+  console.log('#23498xx7 rawValues:', rawValues)
   const values = {
     ...rawValues,
     locale: rawValues?.locale,
@@ -65,13 +65,17 @@ export async function createArticleComment(
   }
 
   try {
-    const cleanedParams = await sanitizeArticleCommentData(validatedFields)
-    newArticleComment = await articleCommentCtrl.create({
-      params: { article: id, ...cleanedParams },
-    })
     const article = await articleCtrl.findById({
       id,
     })
+    const cleanedParams = await sanitizeArticleCommentData(
+      validatedFields,
+      article
+    )
+    newArticleComment = await articleCommentCtrl.create({
+      params: { article: id, ...cleanedParams },
+    })
+
     // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'articleComment',
@@ -84,7 +88,6 @@ export async function createArticleComment(
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.+
       revalidatePath(slug)
     }
-
     return {
       message: 'دیدگاه شما ثبت شد',
       success: true,
@@ -193,13 +196,12 @@ export async function updateStatusArticleComment(
       message: 'بروزرسانی دیدگاه ناموفق بود',
     }
   }
-
+  console.log('#09345798 id v params:', id, 'and: ', parsed.data)
   try {
-    const updatedArticleComment =
-      await articleCommentCtrl.updateArticleCommentStatus({
-        filters: id,
-        params: parsed.data,
-      })
+    const updatedArticleComment = await articleCommentCtrl.findOneAndUpdate({
+      filters: id,
+      params: parsed.data,
+    })
     // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'articleComment',
@@ -215,6 +217,7 @@ export async function updateStatusArticleComment(
     }
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
   } catch (error) {
+    console.log('#Error in update post comment:', error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی دیدگاه ناموفق بود.',
       success: false,
@@ -252,6 +255,7 @@ export async function deleteArticleCommentAction(ids: string[]) {
 
 async function sanitizeArticleCommentData(
   validatedFields: any,
+  article: Article,
   id?: string | undefined
 ) {
   let prevState = { translations: [] }
@@ -264,6 +268,10 @@ async function sanitizeArticleCommentData(
   )
   const createdBy = session?.user.id || null
   const author = session?.user.id || null
+  const articleTitleTranslations = article.translations.map((t: any) => ({
+    lang: t.lang,
+    title: t.title,
+  }))
   const translations = [
     {
       lang: articleCommentPayload.locale,
@@ -280,6 +288,9 @@ async function sanitizeArticleCommentData(
     articleCommentPayload.parent == '' ? null : articleCommentPayload.parent
   const params = {
     ...articleCommentPayload,
+    articleTitleTranslations,
+    articleHref: article.href,
+    articleId: article.id,
     createdBy,
     author,
     translations,

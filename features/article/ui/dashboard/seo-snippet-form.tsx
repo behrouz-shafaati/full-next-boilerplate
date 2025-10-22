@@ -26,6 +26,23 @@ export default function SeoSnippetForm({
     t?.metaDescription || ''
   )
 
+  const handleChangeSlug = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+
+    const slugified = val
+      .toLowerCase()
+      .trim()
+      // ابتدا تمام فاصله‌ها و Tab و … → "-"
+      .replace(/\s+/g, '-')
+      // فقط حروف فارسی، انگلیسی، اعداد، "-" و "ـ" نگه داشته شوند
+      .replace(/[^a-z0-9\u0600-\u06FF\-ـ]/g, '')
+      // چند خط تیره پشت سر هم → "-"
+      .replace(/[-ـ]+/g, '-')
+      // حذف خط تیره از ابتدا و انتها
+      .replace(/^-+|-+$/g, '')
+
+    setSlug(slugified)
+  }
   return (
     <div className={`space-y-6 ${className}`}>
       {/* SEO Title */}
@@ -57,14 +74,7 @@ export default function SeoSnippetForm({
           id="slug"
           name="slug"
           value={slug}
-          onChange={(e) =>
-            setSlug(
-              e.target.value
-                .toLowerCase()
-                .replace(/\s+/g, '-')
-                .replace(/[^a-z0-9-]/g, '')
-            )
-          }
+          onChange={(e) => setSlug(e.target.value)}
           placeholder="مثلاً how-to-learn-math"
         />
         <p className="text-xs text-gray-500">

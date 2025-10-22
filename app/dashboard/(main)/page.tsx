@@ -2,6 +2,7 @@ import HelloUser from '@/components/HelloUser'
 import StatCard from '@/components/stateCard'
 import { Card } from '@/components/ui/card'
 import LastArticleComments from '@/features/article-comment/ui/last-article-comments'
+import { commentsUrl } from '@/features/article-comment/utils'
 import LastArticles from '@/features/article/ui/last-alticles'
 import { getStats } from '@/features/settings/controller'
 import { FileText, MessageSquare, User } from 'lucide-react'
@@ -41,6 +42,7 @@ export default async function page() {
           <Card className="p-4">
             <LastArticleComments
               filters={{ status: 'pending' }}
+              refetchDataUrl={`${commentsUrl}?page=1&status=pending`}
               page={Number(page)}
             />
           </Card>

@@ -91,9 +91,15 @@ export function getEmbedUrl(url: string): string | null {
 }
 
 export function getTextFromNode(node: any): string {
-  if (node.type === 'text') return node.text || ''
+  if (!node) return ''
+
+  // اگر خود نود متن داره
+  if (typeof node.text === 'string') return node.text
+
+  // اگر نود محتوای داخلی داره (حتی mark یا node تو در تو)
   if (Array.isArray(node.content)) {
     return node.content.map(getTextFromNode).join('')
   }
+
   return ''
 }

@@ -5,6 +5,7 @@ import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
 import { renderTiptapAction } from '@/components/tiptap-editor/render/renderTiptapAction'
 import EnhanceHtmlForNext from '@/components/tiptap-editor/render/EnhanceHtmlForNext'
+import { getSettingsAction } from '@/features/settings/actions'
 
 type WriteBlockProps = {
   widgetName: string
@@ -25,10 +26,11 @@ export const WriteBlock = async ({
   const { content, settings } = blockData
   if (!content?.json) return null
 
-  const [HTML_string] = await Promise.all([
+  const [HTML_string, siteSettings] = await Promise.all([
     renderTiptapAction({
       contentJson: content?.json,
     }),
+    getSettingsAction(),
   ])
   return (
     <div
@@ -38,6 +40,7 @@ export const WriteBlock = async ({
       {...props}
     >
       <EnhanceHtmlForNext
+        siteSettings={siteSettings}
         HTML_string={HTML_string}
         contentJson={content?.json}
       />

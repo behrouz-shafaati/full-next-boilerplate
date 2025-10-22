@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+const mongoose = require('mongoose')
+const bcrypt = require('bcryptjs')
 const {
   invoices,
   customers,
@@ -8,14 +8,14 @@ const {
   countries,
   provinces,
   cities,
-} = require('./lib/seed-data.js');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+} = require('./lib/seed-data.js')
+const Schema = mongoose.Schema
+const ObjectId = Schema.ObjectId
 
 const hash = async (input) => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(input, salt);
-};
+  const salt = await bcrypt.genSalt(10)
+  return bcrypt.hash(input, salt)
+}
 
 async function seedUsers() {
   try {
@@ -26,30 +26,36 @@ async function seedUsers() {
         roles: [String],
         email: { type: String, unique: true },
         emailVerified: { type: Boolean, default: true },
+        mobile: {
+          type: String,
+          default: null, // می‌تونه null باشه
+          trim: true,
+        },
+        mobileVerified: { type: Boolean, default: true },
         password: { type: String, required: true },
         active: { type: Boolean, default: true },
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
+    )
 
     userSchema.pre('save', async function (next) {
       if (this.isModified('password')) {
-        this.password = await hash(this.password);
+        this.password = await hash(this.password)
       }
-      next();
-    });
+      next()
+    })
 
-    const UserModel = mongoose.model('user', userSchema);
+    const UserModel = mongoose.model('user', userSchema)
     // Insert data into the "users" table
     const result = await Promise.all(
       users.map(async (user) => {
-        console.log(user);
-        return UserModel.create({ ...user });
+        console.log(user)
+        return UserModel.create({ ...user })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding users:', error);
+    console.error('Error seeding users:', error)
     // throw error;
   }
 }
@@ -68,18 +74,18 @@ async function seedInvoices() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
+    )
 
-    const InvoiceModel = mongoose.model('invoice', invoiceSchema);
+    const InvoiceModel = mongoose.model('invoice', invoiceSchema)
     // Insert data into the "users" table
     const result = await Promise.all(
       invoices.map(async (invoice) => {
-        console.log(invoice);
-        return InvoiceModel.create({ ...invoice });
+        console.log(invoice)
+        return InvoiceModel.create({ ...invoice })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding users:', error);
+    console.error('Error seeding users:', error)
     // throw error;
   }
 }
@@ -95,18 +101,18 @@ async function seedCustomers() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
+    )
 
-    const CustomerModel = mongoose.model('customer', customerSchema);
+    const CustomerModel = mongoose.model('customer', customerSchema)
     // Insert data into the "users" table
     const result = await Promise.all(
       customers.map(async (customer) => {
-        console.log(customer);
-        return CustomerModel.create({ ...customer });
+        console.log(customer)
+        return CustomerModel.create({ ...customer })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding users:', error);
+    console.error('Error seeding users:', error)
     // throw error;
   }
 }
@@ -120,18 +126,18 @@ async function seedRevenue() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
+    )
 
-    const RevenueModel = mongoose.model('revenue', revenueSchema);
+    const RevenueModel = mongoose.model('revenue', revenueSchema)
     // Insert data into the "users" table
     const result = await Promise.all(
       revenues.map(async (revenue) => {
-        console.log(revenue);
-        return RevenueModel.create({ ...revenue });
+        console.log(revenue)
+        return RevenueModel.create({ ...revenue })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding users:', error);
+    console.error('Error seeding users:', error)
     // throw error;
   }
 }
@@ -151,17 +157,17 @@ async function seedCountries() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
-    const model = mongoose.model('country', countrySchema);
+    )
+    const model = mongoose.model('country', countrySchema)
     // Insert data into the "cities" table
     const result = await Promise.all(
       countries.map(async (country) => {
-        console.log(country);
-        return model.create({ _id: country.id, ...country });
+        console.log(country)
+        return model.create({ _id: country.id, ...country })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding countries:', error);
+    console.error('Error seeding countries:', error)
     // throw error;
   }
 }
@@ -180,16 +186,16 @@ async function seedProvinces() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
-    const model = mongoose.model('province', provinceSchema);
+    )
+    const model = mongoose.model('province', provinceSchema)
     // Insert data into the "cities" table
     const result = await Promise.all(
       provinces.map(async (item) => {
-        return model.create({ _id: item.id, ...item });
+        return model.create({ _id: item.id, ...item })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding provinces:', error);
+    console.error('Error seeding provinces:', error)
     // throw error;
   }
 }
@@ -213,16 +219,16 @@ async function seedCities() {
         deleted: { type: Boolean, default: false },
       },
       { timestamps: true }
-    );
-    const model = mongoose.model('city', citySchema);
+    )
+    const model = mongoose.model('city', citySchema)
     // Insert data into the "cities" table
     const result = await Promise.all(
       cities.map(async (item) => {
-        return model.create({ _id: item.id, ...item });
+        return model.create({ _id: item.id, ...item })
       })
-    );
+    )
   } catch (error) {
-    console.error('Error seeding cities:', error);
+    console.error('Error seeding cities:', error)
     // throw error;
   }
 }
@@ -233,28 +239,25 @@ async function seedCities() {
 async function main() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URI);
+    await mongoose.connect(process.env.MONGO_URI)
 
     // Seed users
-    await seedUsers();
+    await seedUsers()
     // await seedCustomers();
     // await seedInvoices();
     // await seedRevenue();
 
     // seed places
-    await seedCountries();
-    await seedProvinces();
-    await seedCities();
+    await seedCountries()
+    await seedProvinces()
+    await seedCities()
 
-    mongoose.disconnect();
+    mongoose.disconnect()
   } catch (err) {
-    console.log(err);
+    console.log(err)
   }
 }
 
 main().catch((err) => {
-  console.error(
-    'An error occurred while attempting to seed the database:',
-    err
-  );
-});
+  console.error('An error occurred while attempting to seed the database:', err)
+})

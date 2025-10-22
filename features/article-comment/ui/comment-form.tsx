@@ -5,8 +5,9 @@ import { createArticleComment } from '@/features/article-comment/actions'
 import CommentEditor, { CommentEditorRef } from './comment-editor'
 import { mutate } from 'swr'
 import { useArticleCommentStore } from './store/useArticleCommentStore'
-import { X } from 'lucide-react'
+import { AlertCircleIcon, X } from 'lucide-react'
 import { Button } from '@/components/custom/button'
+import { Alert, AlertTitle } from '@/components/ui/alert'
 
 interface ArticleCommentFormProps {
   initialData: any | null
@@ -27,7 +28,7 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
   const formRef = useRef<HTMLFormElement>(null)
   const editorRef = useRef<CommentEditorRef>(null)
 
-  const actionHandler = createArticleComment.bind(null, String(article.id))
+  const actionHandler = createArticleComment.bind(null, String(article?.id))
   const [state, dispatch, isPending] = useActionState(
     actionHandler as any,
     initialState
@@ -50,17 +51,23 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
       editorRef.current?.clear()
     }
   }, [state])
+  if (!article || article == undefined)
+    return (
+      <Alert variant="destructive">
+        <AlertCircleIcon />
+        <AlertTitle>مقاله مربوطه پاک شده است.</AlertTitle>
+      </Alert>
+    )
 
   return (
     <>
       <form
         action={dispatch}
         ref={formRef}
-        className="space-y-8 w-full sticky bottom-0"
+        className="space-y-8 w-full sticky bottom-0 p-4"
       >
         <input type="hidden" name="locale" value="fa" readOnly />
         <input type="hidden" name="parent" value={replayTo?.id ?? ''} />
-
         {replayTo && (
           <div className="flex justify-between items-center border md:rounded-2xl py-1 px-3 bg-white dark:bg-neutral-900 md:shadow-sm ">
             <div>پاسخ به {replayTo?.author?.name || 'ناشناس'}</div>
@@ -76,6 +83,7 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
           </div>
         )}
         <CommentEditor
+          placeholder="نظر خود را بنویسید..."
           ref={editorRef}
           name="contentJson"
           isPending={isPending}

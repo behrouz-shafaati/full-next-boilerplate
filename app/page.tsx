@@ -1,4 +1,4 @@
-export const dynamic = 'force-static'
+export const dynamic = 'force-static' // must be force-dynamic or cuse crash
 
 import AlbaFallback from '@/components/AlbaFallback'
 import { PageRenderer } from '@/components/builder-canvas/pageRenderer'

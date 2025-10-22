@@ -65,7 +65,7 @@ export async function SendVerifyCodeResetPassAction(
         return {
           message: `برای ارسال مجدد باید ${toMinutes(
             allowSend.remainingSeconds
-          )} دقیقه صبر کنید`,
+          )} صبر کنید`,
           success: false,
         }
       }
@@ -85,7 +85,7 @@ export async function SendVerifyCodeResetPassAction(
         return {
           message: `برای ارسال مجدد باید ${toMinutes(
             allowSend.remainingSeconds
-          )} دقیقه صبر کنید`,
+          )} صبر کنید`,
           success: false,
         }
       }

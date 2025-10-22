@@ -21,6 +21,7 @@ const fileSchema = new Schema<SchemaFile>(
     srcMedium: String,
     srcLarge: String,
     href: String,
+    target: String,
     previewPath: String,
     mimeType: String,
     size: Number,

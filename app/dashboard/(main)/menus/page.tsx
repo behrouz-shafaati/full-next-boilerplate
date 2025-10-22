@@ -1,4 +1,5 @@
 import { BreadCrumb } from '@/components/breadcrumb'
+
 import MenuTable from '@/features/menu/ui/table'
 const breadcrumbItems = [{ title: 'فهرست ها', link: '/dashboard/menus' }]
 

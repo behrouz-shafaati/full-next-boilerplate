@@ -1,20 +1,5 @@
 'use client'
-import { Button } from '@/components/ui/button'
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn } from 'next-auth/react'
-import { useSearchParams } from 'next/navigation'
 import { Suspense, useActionState, useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import * as z from 'zod'
 import { signUpAction } from '@/features/user/actions'
 import Link from 'next/link'
 import { toast } from '@/components/ui/use-toast'

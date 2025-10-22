@@ -92,7 +92,7 @@ export const BlogArticleSliderSimple = ({
         <div className="rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-900">
           <div className="relative w-full h-52">
             <Image
-              src={article?.image.srcSmall || '/placeholder.png'}
+              src={article?.image?.srcSmall || '/placeholder.png'}
               sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
               alt={translationImage?.alt || translationImage?.title}
               layout="fill"
@@ -109,9 +109,11 @@ export const BlogArticleSliderSimple = ({
               </p>
             )}
             <div className="flex mt-3 text-xs text-gray-400 gap-4">
-              <div className="flex flex-row gap-1 items-center">
-                <MessageCircleMore width={16} /> {article.commentsCount}
-              </div>
+              {article?.commentsCount && (
+                <div className="flex flex-row gap-1 items-center">
+                  <MessageCircleMore width={16} /> {article?.commentsCount}
+                </div>
+              )}
               <div className="flex flex-row gap-1 items-center">
                 <CalendarPlus width={16} /> حدود {timeAgo(article?.createdAt)}
               </div>

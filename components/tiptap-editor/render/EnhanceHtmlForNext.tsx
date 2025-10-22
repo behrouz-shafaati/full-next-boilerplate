@@ -1,10 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
-import parse, { Element } from 'html-react-parser'
+import parse, { domToReact, Element } from 'html-react-parser'
 import { getTranslation, slugify } from '@/lib/utils'
 import { AccordionRenderer } from '../tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from '../type'
 import VideoEmbedRenderer from '../tiptap-renderers/VideoEmbedRenderer'
+import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+import { Settings } from '@/features/settings/interface'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -17,10 +19,12 @@ function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
 }
 
 type Props = {
+  siteSettings: Settings
   contentJson: string
   HTML_string: string
 }
 export default function EnhanceHtmlForNext({
+  siteSettings,
   contentJson,
   HTML_string,
 }: Props) {
@@ -121,7 +125,12 @@ export default function EnhanceHtmlForNext({
             domNode instanceof Element &&
             ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)
           ) {
-            const text = domNode.children?.[0]?.data
+            console.log(
+              '#99277 in H tag domNode.children?.[0]:',
+              domNode.attribs
+            )
+            const text = getTextFromDom(domNode) // این بی‌خطا متن را از داخل strong/mark هم می‌آورد
+            // const text = domNode.children?.[0]?.data
             const id = slugify(text)
             const Tag = `${domNode.name}` as keyof JSX.IntrinsicElements
 
@@ -130,12 +139,25 @@ export default function EnhanceHtmlForNext({
                 key={id}
                 id={id}
                 dir={domNode.attribs.dir}
+                className="[--header-top:var(--header-top-mobile)] sm:[--header-top:var(--header-top-tablet)] md:[--header-top:var(--header-top-desktop)]"
                 style={{
-                  textAlign: domNode.attribs.textAlign,
-                  scrollMarginTop: '80px',
+                  ...computedStyles({
+                    ['--header-top-mobile' as any]: `${
+                      siteSettings?.mobileHeaderHeight + 8
+                    }px`,
+                    ['--header-top-tablet' as any]: `${
+                      siteSettings?.tabletHeaderHeight + 8
+                    }px`,
+                    ['--header-top-desktop' as any]: `${
+                      siteSettings?.desktopHeaderHeight + 8
+                    }px`,
+                    scrollMarginTop: 'var(--header-top)',
+                  }),
+                  ...parseStyleString(domNode.attribs.style),
                 }}
               >
-                {text}
+                {domToReact(domNode.children)}{' '}
+                {/* این تگ‌های داخلی مثل <strong> را به React تبدیل می‌کند */}
               </Tag>
             )
           }
@@ -143,4 +165,33 @@ export default function EnhanceHtmlForNext({
       })}
     </div>
   )
+}
+
+// helper: متن را از یک node HTML (htmlparser2-like) به صورت بازگشتی می‌گیرد
+const visited = new WeakSet()
+
+function getTextFromDom(node: any): string {
+  if (!node || typeof node !== 'object') return ''
+  if (visited.has(node)) return '' // جلوگیری از حلقه‌ی بازگشتی
+  visited.add(node)
+
+  if (node.type === 'text') return node.data || ''
+  if (Array.isArray(node.children)) {
+    return node.children.map(getTextFromDom).join('')
+  }
+  return ''
+}
+
+// helper برای تبدیل استایل رشته‌ای به object
+function parseStyleString(styleString?: string): Record<string, string> {
+  if (!styleString) return {}
+  return styleString.split(';').reduce((acc, item) => {
+    const [key, value] = item.split(':').map((x) => x?.trim())
+    if (key && value) {
+      // تبدیل مثلاً "text-align" → "textAlign"
+      const camelKey = key.replace(/-([a-z])/g, (_, char) => char.toUpperCase())
+      acc[camelKey] = value
+    }
+    return acc
+  }, {} as Record<string, string>)
 }

@@ -8,6 +8,7 @@ import { commentsUrl } from '../utils'
 import { LinkButton } from '@/components/ui/link-button'
 
 interface ArticleCommentTableProps {
+  refetchDataUrl?: string
   filters: {
     status?: 'pending' | 'approved' | 'rejected'
     query?: string
@@ -17,6 +18,7 @@ interface ArticleCommentTableProps {
 }
 
 export default async function LastArticleComments({
+  refetchDataUrl = commentsUrl,
   filters,
   page = 1,
 }: ArticleCommentTableProps) {
@@ -40,7 +42,7 @@ export default async function LastArticleComments({
             searchTitle="جستجو ..."
             columns={columns}
             response={findResult}
-            refetchDataUrl={commentsUrl}
+            refetchDataUrl={refetchDataUrl}
             showSearch={false}
             showFilters={false}
             showPagination={false}

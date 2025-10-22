@@ -76,6 +76,7 @@ class controller extends c_controller {
     let alt: string = formData.get('alt') as string
     let description: string = formData.get('description') as string
     let href: string = formData.get('href') as string
+    let target: string = formData.get('target') as string
     let main: string = formData.get('main') as string
     let targetFormat: string = formData.get('targetFormat') as string
     let lang: string | null = (formData.get('lang') as string) || 'fa'
@@ -194,6 +195,7 @@ class controller extends c_controller {
       alt,
       description,
       href,
+      target,
       previewPath,
       main,
       lang,
@@ -225,6 +227,7 @@ class controller extends c_controller {
         alt: fileDetails.alt,
         description: fileDetails.description,
         href: fileDetails.href,
+        target: fileDetails.target,
         main: fileDetails.main,
         lang: fileDetails.lang,
         attachedTo: fileDetails.attachedTo,

@@ -63,17 +63,20 @@ export const Form: React.FC<TemplatePartFormProps> = ({
     try {
       setLoading(true)
       deleteTemplatePartAction([String(TemplatePart?.id)])
-      router.replace('/dashboard/tags')
+      router.replace('/dashboard/template-parts')
     } catch (error: any) {}
   }
 
   useEffect(() => {
     if (state?.message && state.message !== null)
       toast({
-        variant: 'destructive',
+        variant: state?.success ? 'default' : 'destructive',
         title: '',
         description: state.message,
       })
+    if (state?.success && state?.isCreatedJustNow) {
+      router.replace(`/dashboard/template-parts/${state?.values?.id}`)
+    }
   }, [state])
 
   return (

@@ -32,6 +32,7 @@ export const EmblaCarouselParallax = ({
       Autoplay({
         playOnInit: true,
         delay: 5000,
+        stopOnInteraction: false,
       }),
       ...plugins,
     ]

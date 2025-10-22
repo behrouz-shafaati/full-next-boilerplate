@@ -54,7 +54,7 @@ const SinglePageBlog = async ({
           />
         </div>
       )}
-      <h1>{translation?.title}</h1>
+      <h1 className="text-base">{translation?.title}</h1>
       <div className="text-sm text-gray-500 mb-4">
         {article?.user && (
           <>

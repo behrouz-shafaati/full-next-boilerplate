@@ -69,11 +69,12 @@ class controller extends baseController {
   }
 
   makeCleanDataBeforeSave(data: any) {
-    console.log('#8723465 data:', data)
-    const translation = getTranslation({
-      translations: data?.translations ?? {},
-      locale: data?.locale,
-    })
+    const translation = data?.translations
+      ? getTranslation({
+          translations: data?.translations ?? {},
+          locale: data?.locale,
+        })
+      : []
     const json = JSON.parse(translation.contentJson)
     const plainText =
       json.content
@@ -128,12 +129,14 @@ class controller extends baseController {
 
   async create(payload: Create) {
     payload.params = this.makeCleanDataBeforeSave(payload.params)
-    console.log('#389 payload:', payload)
+    console.log('#389dsf payload:', payload)
     return super.create(payload)
   }
 
   async findOneAndUpdate(payload: Update) {
-    payload.params = this.makeCleanDataBeforeSave(payload.params)
+    // payload.params = this.makeCleanDataBeforeSave(payload.params)
+
+    console.log(payload)
     return super.findOneAndUpdate(payload)
   }
 

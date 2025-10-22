@@ -56,6 +56,7 @@ export type FileDetailsPayload = {
   id: Id
   translations: [FileTranslationSchema]
   href: string
+  target: string
   main: boolean
 }
 

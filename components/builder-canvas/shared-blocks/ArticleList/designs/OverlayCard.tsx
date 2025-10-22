@@ -56,9 +56,11 @@ const ArticleOverlayCard = ({ article, options }: Props) => {
             )}
 
             <div className="flex items-center gap-4 text-[11px] text-gray-300">
-              <div className="flex items-center gap-1">
-                <MessageCircleMore width={14} /> {article.commentsCount}
-              </div>
+              {article?.commentsCount && (
+                <div className="flex items-center gap-1">
+                  <MessageCircleMore width={14} /> {article?.commentsCount}
+                </div>
+              )}
               <div className="flex items-center gap-1">
                 <CalendarPlus width={14} /> حدود {timeAgo(article?.createdAt)}
               </div>

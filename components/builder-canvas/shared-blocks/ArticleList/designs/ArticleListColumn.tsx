@@ -1,21 +1,11 @@
 'use client'
 // کامپوننت نمایشی بلاک
-import React from 'react'
-import Image from 'next/image'
+import React, { Suspense } from 'react'
 import Link from 'next/link'
-import { Article, ArticleTranslationSchema } from '@/features/article/interface'
+import { Article } from '@/features/article/interface'
 import { Option } from '@/types'
-import { Badge } from '@/components/ui/badge'
-import {
-  CalendarPlus,
-  ChevronLeft,
-  MessageCircleMore,
-  MoveLeft,
-} from 'lucide-react'
-import { buildUrlFromFilters, timeAgo } from '@/lib/utils'
-import { FileTranslationSchema } from '@/lib/entity/file/interface'
+import { MoveLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
-import { Separator } from '@/components/ui/separator'
 import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'
 
 type ArticleListProps = {
@@ -73,7 +63,9 @@ export const ArticleListColumn = ({
         </div>
       </div>
       <div className="px-2">
-        <QueryParamLinks items={queryParamLS} paramKey="tag" />
+        <Suspense fallback={<div>در حال بارگذاری...</div>}>
+          <QueryParamLinks items={queryParamLS} paramKey="tag" />
+        </Suspense>
         <div className={`mt-2 `}>
           <div className="grid grid-cols-1 gap-2">{articleItems}</div>
           <Link

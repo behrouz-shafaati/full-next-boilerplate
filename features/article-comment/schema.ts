@@ -13,6 +13,7 @@ const ArticleCommentTranslationSchema = new Schema(
 
 const articleCommentSchema = new Schema<ArticleCommentSchema>(
   {
+    // =================> populate with article field make unfiniti loop
     article: {
       type: Schema.Types.ObjectId,
       ref: 'article',
@@ -54,17 +55,62 @@ const articleCommentSchema = new Schema<ArticleCommentSchema>(
 articleCommentSchema
   .pre('findOne', function (next: any) {
     this.populate('author')
-    this.populate('article')
+    this.populate({
+      path: 'article',
+      select: 'id href translations', // فقط translations رو بیار
+      transform: (doc: any) => {
+        if (!doc) return doc
+        doc = doc.toObject()
+
+        // 🔻 محدود کردن محتوای translations
+        doc.translations = (doc?.translations || []).map((t: any) => ({
+          lang: t.lang,
+          title: t.title,
+        }))
+
+        return doc
+      },
+    })
     next()
   })
   .pre('find', function (next: any) {
     this.populate('author')
-    this.populate('article')
+    this.populate({
+      path: 'article',
+      select: 'id href translations', // فقط translations رو بیار
+      transform: (doc: any) => {
+        if (!doc) return doc
+        doc = doc.toObject()
+
+        // 🔻 محدود کردن محتوای translations
+        doc.translations = (doc?.translations || []).map((t: any) => ({
+          lang: t.lang,
+          title: t.title,
+        }))
+
+        return doc
+      },
+    })
     next()
   })
   .pre('findOneAndUpdate', function (next: any) {
     this.populate('author')
-    this.populate('article')
+    this.populate({
+      path: 'article',
+      select: 'id href', // فقط translations رو بیار
+      transform: (doc: any) => {
+        if (!doc) return doc
+        doc = doc.toObject()
+
+        // 🔻 محدود کردن محتوای translations
+        doc.translations = (doc?.translations || []).map((t: any) => ({
+          lang: t.lang,
+          title: t.title,
+        }))
+
+        return doc
+      },
+    })
     next()
   })
 

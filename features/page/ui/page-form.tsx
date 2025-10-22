@@ -73,10 +73,13 @@ export const PageForm: React.FC<PageFormProps> = ({
     console.log('#299 page state:', state)
     if (state?.message && state.message !== null)
       toast({
-        variant: state.success ? 'default' : 'destructive',
+        variant: state?.success ? 'default' : 'destructive',
         title: '',
         description: state.message,
       })
+    if (state?.success && state?.isCreatedJustNow) {
+      router.replace(`/dashboard/pages/${state?.values?.id}`)
+    }
   }, [state])
 
   return (

@@ -82,10 +82,13 @@ export const Form: React.FC<TemplateFormProps> = ({
   useEffect(() => {
     if (state?.message && state.message !== null)
       toast({
-        variant: 'destructive',
+        variant: state?.success ? 'default' : 'destructive',
         title: '',
         description: state.message,
       })
+    if (state?.success && state?.isCreatedJustNow) {
+      router.replace(`/dashboard/templates/${state?.values?.id}`)
+    }
   }, [state])
 
   return (

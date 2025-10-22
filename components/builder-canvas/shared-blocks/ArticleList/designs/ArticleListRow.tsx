@@ -1,6 +1,6 @@
 'use client'
 // کامپوننت نمایشی بلاک
-import React from 'react'
+import React, { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Article, ArticleTranslationSchema } from '@/features/article/interface'
@@ -79,7 +79,13 @@ export const ArticleListRow = ({
         </Link>
       </div>
       <div>
-        <QueryParamLinks items={queryParamLS} paramKey="tag" className="p-2" />
+        <Suspense fallback={<div>در حال بارگذاری...</div>}>
+          <QueryParamLinks
+            items={queryParamLS}
+            paramKey="tag"
+            className="p-2"
+          />
+        </Suspense>
         <div className={`mt-2 `}>
           <ScrollArea className="">
             <div className="flex flex-row w-screen gap-4 pb-4">

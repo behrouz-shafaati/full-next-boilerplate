@@ -86,7 +86,7 @@ class controller extends baseController {
     purpose?: VerificationPurpose
     channel?: VerificationChannel
     codeLength?: number
-    ttlSeconds?: number // مثلا 5*60 برای 5 دقیقه
+    ttlSeconds?: number // مثلا 15*60 برای 15 دقیقه
     maxAttempts?: number
     ip?: string
     userAgent?: string
@@ -354,9 +354,9 @@ class controller extends baseController {
     const now = Date.now()
     const createdAt = new Date(recentCode.data[0].createdAt).getTime()
     const diffMs = now - createdAt
-    const totalWaitMs = 5 * 60 * 1000
+    const totalWaitMs = interruption_min * 60 * 1000
     const remainingMs = Math.max(totalWaitMs - diffMs, 0)
-
+    console.log('#2340923874 remainingMs:', remainingMs)
     return {
       canSend: remainingMs <= 0,
       remainingSeconds: Math.ceil(remainingMs / 1000),
@@ -399,7 +399,7 @@ class controller extends baseController {
         path: ['email'],
         message: `برای ارسال مجدد باید ${toMinutes(
           allowSend.remainingSeconds
-        )} دقیقه صبر کنید`,
+        )} صبر کنید`,
         success: false,
       }
     }
@@ -468,7 +468,7 @@ class controller extends baseController {
         path: ['mobile'],
         message: `برای ارسال مجدد باید ${toMinutes(
           allowSend.remainingSeconds
-        )} دقیقه صبر کنید`,
+        )} صبر کنید`,
         success: false,
       }
     }

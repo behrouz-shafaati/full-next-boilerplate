@@ -45,7 +45,7 @@ export default function ArticleListBlockEditor({
         filters = { tags: tagIds[0] }
       }
 
-      if (categoryIds.length > 0)
+      if (categoryIds?.length > 0)
         filters = { categories: categoryIds, ...filters }
 
       const [result] = await Promise.all([
@@ -62,7 +62,7 @@ export default function ArticleListBlockEditor({
 
     fetchData()
   }, [content, settings?.countOfArticles, settings?.showNewest])
-  if (articles.length == 0)
+  if (articles?.length == 0)
     return <EmptyBlock widgetName={widgetName} {...props} />
   return <ArticleList articles={articles} blockData={blockData} {...props} />
 }

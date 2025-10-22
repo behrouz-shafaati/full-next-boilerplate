@@ -97,7 +97,12 @@ export async function deleteSettings(id: string) {
   }
 }
 
+export async function getSettingsAction(key: string = '') {
+  return getSettings(key)
+}
+
 async function sanitizeSettingsData(validatedFields: any) {
+  const locale = 'fa'
   // const session = (await getSession()) as Session
   // Create the settings
   const siteSettings = await getSettings()
@@ -109,9 +114,11 @@ async function sanitizeSettingsData(validatedFields: any) {
     farazsms_from_number: settingsPayload?.farazsms_from_number,
   }
   const infoTranslations = [
-    ...(siteSettings?.infoTranslations || []),
+    ...((siteSettings?.infoTranslations || []).filter(
+      (t) => t?.lang !== locale
+    ) || []),
     {
-      lang: 'fa',
+      lang: locale,
       site_title: settingsPayload?.site_title || '',
       site_introduction: settingsPayload?.site_introduction || '',
     },

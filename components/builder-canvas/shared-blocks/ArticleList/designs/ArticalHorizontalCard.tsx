@@ -46,7 +46,7 @@ const ArticleHorizontalCard = ({ article, options }: Props) => {
         {/* تصویر */}
         <div className="relative w-full h-full min-h-28 aspect-square md:aspect-[4/3] md:row-span-2 overflow-hidden rounded-sm">
           <Image
-            src={article?.image.srcSmall || '/placeholder.png'}
+            src={article?.image?.srcSmall || '/placeholder.png'}
             alt={translationImage?.alt || translationImage?.title}
             fill
             className="object-cover"
@@ -56,11 +56,15 @@ const ArticleHorizontalCard = ({ article, options }: Props) => {
 
         {/* اطلاعات پایین (تاریخ و دیدگاه) */}
         <div className="flex text-xs h-full text-gray-400 gap-4 md:col-start-1 md:self-end px-2">
-          <div className="flex items-center gap-1">
-            {/* <MessageCircleMore width={14} /> {article.commentsCount} */}
-            {article.commentsCount} دیدگاه
-          </div>
-          <Separator orientation="vertical" />
+          {article?.commentsCount && (
+            <>
+              <div className="flex items-center gap-1">
+                {/* <MessageCircleMore width={14} /> {article.commentsCount} */}
+                {article?.commentsCount} دیدگاه
+              </div>
+              <Separator orientation="vertical" />
+            </>
+          )}
           <div className="flex items-center gap-1">
             {/* <CalendarPlus width={14} /> حدود {timeAgo(article?.createdAt)} */}
             حدود {timeAgo(article?.createdAt)}

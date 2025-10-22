@@ -52,7 +52,7 @@ const CommentEditor = forwardRef<CommentEditorRef, CommentEditorProps>(
   (
     {
       name,
-      placeholder = 'نظر خود را بنویسید…',
+      placeholder = '',
       initialContent,
       onSubmit,
       className = '',
@@ -98,7 +98,7 @@ const CommentEditor = forwardRef<CommentEditorRef, CommentEditorProps>(
     }, [editor])
 
     const submit = useCallback(async () => {
-      if (!editor) return
+      if (!editor || !onSubmit) return
       const json = editor.getJSON()
       const text = editor.state.doc.textContent.trim()
       if (!text) return
@@ -113,7 +113,7 @@ const CommentEditor = forwardRef<CommentEditorRef, CommentEditorProps>(
 
     // Ctrl/Cmd + Enter → ارسال
     useEffect(() => {
-      if (!editor) return
+      if (!editor || !onSubmit) return
 
       const handler = (e: KeyboardEvent) => {
         if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {

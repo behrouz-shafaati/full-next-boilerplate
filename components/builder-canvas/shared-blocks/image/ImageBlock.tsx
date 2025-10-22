@@ -84,7 +84,11 @@ export const ImageBlock = ({
   )
 
   return content?.href ? (
-    <Link href={content.href} target="_blank" rel="noopener noreferrer">
+    <Link
+      href={content.href}
+      target={content.target ?? '_blank'}
+      rel="noopener noreferrer"
+    >
       {imageElement}
     </Link>
   ) : (

@@ -52,9 +52,11 @@ const ArticleImageCard = ({ article, options }: Props) => {
             </p>
           )}
           <div className="flex mt-3 text-xs text-gray-400 gap-4">
-            <div className="flex flex-row gap-1 items-center">
-              <MessageCircleMore width={16} /> {article.commentsCount}
-            </div>
+            {article?.commentsCount && (
+              <div className="flex flex-row gap-1 items-center">
+                <MessageCircleMore width={16} /> {article?.commentsCount}
+              </div>
+            )}
             <div className="flex flex-row gap-1 items-center">
               <CalendarPlus width={16} /> حدود {timeAgo(article?.createdAt)}
             </div>

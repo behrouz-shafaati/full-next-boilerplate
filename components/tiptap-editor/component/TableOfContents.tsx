@@ -114,7 +114,7 @@ export function TableOfContents({ toc }: Props) {
         className="flex justify-between w-full items-center font-semibold text-lg text-gray-900 dark:text-gray-100 p-4 focus:outline-none"
         onClick={() => setOpen(!open)}
       >
-        <span>فهرست مقالات</span>
+        <span>فهرست مطالب</span>
 
         {/* آیکون شیک chevron */}
         <svg

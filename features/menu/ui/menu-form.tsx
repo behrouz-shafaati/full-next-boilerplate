@@ -82,22 +82,26 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       {/* <Separator /> */}
       <form action={dispatch} className="w-full space-y-8">
         <div className="gap-8 md:grid md:grid-cols-3">
-          <input
-            type="text"
-            name="lang"
-            className="hidden"
-            value="fa"
-            readOnly
-          />
-          {/* Title */}
-          <Text
-            title="عنوان"
-            name="title"
-            defaultValue={state?.values?.translation?.title || ''}
-            placeholder="عنوان"
-            state={state}
-            icon={<HeadingIcon className="h-4 w-4" />}
-          />
+          <div>
+            <input
+              type="text"
+              name="lang"
+              className="hidden"
+              value="fa"
+              readOnly
+            />
+            {/* Title */}
+            <Text
+              title="عنوان"
+              name="title"
+              defaultValue={state?.values?.translation?.title || ''}
+              placeholder="عنوان"
+              state={state}
+              icon={<HeadingIcon className="h-4 w-4" />}
+            />
+            <SubmitButton />
+          </div>
+
           <MenuBuilder
             name="itemsJson"
             initialMenu={state?.values?.translation?.items || []}
@@ -105,7 +109,6 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
             className="col-span-2"
           />
         </div>
-        <SubmitButton />
       </form>
     </>
   )

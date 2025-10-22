@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { Metadata } from 'next'
 import userCtrl from '@/features/user/controller'
 import { Settings } from '@/features/settings/interface'

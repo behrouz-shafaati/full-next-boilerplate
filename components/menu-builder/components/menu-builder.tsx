@@ -102,9 +102,9 @@ export default function MenuBuilder({
           ) : null}
         </DragOverlay>
       </DndContext>
-      <pre className=" ltr bg-slate-200 dark:bg-slate-800 p-4 mt-4">
+      {/* <pre className=" ltr bg-slate-200 dark:bg-slate-800 p-4 mt-4">
         <code>{getJson()}</code>
-      </pre>
+      </pre> */}
     </div>
   )
 }

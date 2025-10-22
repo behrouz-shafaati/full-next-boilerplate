@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { Metadata } from 'next'
 import VerificationForm from '@/features/verification/ui/verification-form'
 import userCtrl from '@/features/user/controller'

@@ -16,7 +16,7 @@ export type ArticleCommentTranslationSchema = {
  */
 type ArticleCommentBase = {
   /**
-   *  مقالهی که کامنت براش ثبت میشه
+   *   مقاله ای که کامنت براش ثبت میشه
    */
   article: Id
 

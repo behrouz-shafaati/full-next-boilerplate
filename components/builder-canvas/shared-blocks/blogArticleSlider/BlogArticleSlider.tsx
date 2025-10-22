@@ -45,6 +45,7 @@ export const BlogArticleSlider = ({
     Autoplay({
       playOnInit: settings?.autoplay == false ? false : true,
       delay: settings?.delay * 1000 || 5000,
+      stopOnInteraction: false,
     }),
   ]
   switch (settings?.design) {

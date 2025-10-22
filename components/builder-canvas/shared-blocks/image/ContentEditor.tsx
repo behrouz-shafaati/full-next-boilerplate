@@ -31,6 +31,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
             description: '',
             src: null,
             href: null,
+            target: '_blank',
           })
           requestAnimationFrame(() => {
             savePage?.()

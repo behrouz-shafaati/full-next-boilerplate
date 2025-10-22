@@ -63,7 +63,7 @@ export const ArticleList = ({
       )
 
       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
-      if (categoryIds.length > 0)
+      if (categoryIds?.length > 0)
         filters = { categories: categoryIds, ...filters }
 
       // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود

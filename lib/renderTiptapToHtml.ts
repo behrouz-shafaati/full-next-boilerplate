@@ -251,7 +251,7 @@ const nodes = {
       const textContent = getTextFromNode(node)
 
       // اضافه کردن id
-      attrs.id = slugify(textContent)
+      if (textContent) attrs.id = slugify(textContent)
 
       return ['h' + node.attrs.level, attrs, 0]
     },

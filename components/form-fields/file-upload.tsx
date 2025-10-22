@@ -30,6 +30,7 @@ import {
 } from '@/lib/entity/file/interface'
 import { useToast } from '../ui/use-toast'
 import { getTranslation } from '@/lib/utils'
+import Select from './select'
 const ObjectId = require('bson-objectid')
 
 // Type تعریف برای رفرنس
@@ -145,6 +146,7 @@ const FileUpload = forwardRef(function FileUpload(
     formData.append('title', file?.title)
     formData.append('alt', file?.alt)
     formData.append('href', file?.href)
+    formData.append('target', file?.target)
     formData.append('description', file?.description)
     formData.append('main', file?.main)
     formData.append('lang', file?.lang)
@@ -187,6 +189,7 @@ const FileUpload = forwardRef(function FileUpload(
           title: translation.title,
           alt: translation.alt,
           href: file.href,
+          target: file.target,
           description: translation.description,
           main: file.main,
           lang: locale,
@@ -445,6 +448,13 @@ const ModalContent = ({
           onChange={(e) => handleUpdate('alt', e.target.value)}
         />
         <Text
+          title="توضیحات رسانه"
+          name="description"
+          defaultValue={translation?.description}
+          onChange={(e) => handleUpdate('description', e.target.value)}
+        />
+
+        <Text
           title="لینک"
           name="href"
           defaultValue={newFile.href}
@@ -452,11 +462,18 @@ const ModalContent = ({
             setNewFile((s: any) => ({ ...s, href: e.target.value }))
           }
         />
-        <Text
-          title="توضیحات رسانه"
-          name="description"
-          defaultValue={translation?.description}
-          onChange={(e) => handleUpdate('description', e.target.value)}
+        <Select
+          title="باز شدن در"
+          placeholder="انتخاب کنید..."
+          name="target"
+          options={[
+            { value: '_self', label: 'پنجره فعلی' },
+            { value: '_blank', label: 'پنجره جدید' },
+          ]}
+          defaultValue={newFile?.target}
+          onChange={(value) =>
+            setNewFile((s: any) => ({ ...s, target: value }))
+          }
         />
         <Checkbox
           name="main"

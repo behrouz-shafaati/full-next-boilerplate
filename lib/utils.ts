@@ -301,7 +301,7 @@ export const addIfExists = (key: string, value: any) =>
 export function toMinutes(seconds: number): string {
   const m = Math.floor(seconds / 60) // دقیقه
   const s = seconds % 60 // باقی‌مانده ثانیه
-  return `${m}:${s.toString().padStart(2, '0')}`
+  return ` ${m} دقیقه و  ${s} ثانیه `
 }
 
 /**

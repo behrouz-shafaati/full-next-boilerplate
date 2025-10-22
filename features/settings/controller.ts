@@ -1,6 +1,5 @@
 import { Create, Id, QueryFind, Update } from '@/lib/entity/core/interface'
 import baseController from '@/lib/entity/core/controller'
-import fileCtrl from '@/lib/entity/file/controller'
 import settingsSchema from './schema'
 import settingsService from './service'
 import { Settings } from './interface'
@@ -8,6 +7,7 @@ import userCtrl from '../user/controller'
 import articleCtrl from '../article/controller'
 import articleCommentCtrl from '../article-comment/controller'
 import { getTranslation } from '@/lib/utils'
+import SiteSettingsSingleton from './settingsSingleton'
 
 class controller extends baseController {
   /**
@@ -72,7 +72,8 @@ class controller extends baseController {
   }
 
   async findOneAndUpdate(payload: Update) {
-    return super.findOneAndUpdate(payload)
+    const r = await super.findOneAndUpdate(payload)
+    SiteSettingsSingleton.updateInstance()
   }
 }
 
@@ -94,11 +95,8 @@ type Key = 'site_title' | ''
 export const getSettings = async (
   key: Key = ''
 ): Promise<Record<string, unknown> | unknown | null | Settings> => {
-  const result = await settingsCtrl.find({
-    filters: { type: 'site-settings' },
-  })
-
-  const settings: Record<string, unknown> = result?.data?.[0] ?? {}
+  const settings: Record<string, unknown> =
+    await SiteSettingsSingleton.getInstance()
 
   if (!key) {
     return settings

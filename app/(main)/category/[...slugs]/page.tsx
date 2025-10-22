@@ -1,3 +1,5 @@
+// export const dynamic = 'force-dynamic'
+// export const dynamic = 'auto'
 export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
@@ -15,9 +17,9 @@ interface PageProps {
   params: Promise<{ slugs: string[] }>
 }
 
-export async function generateStaticParams() {
-  return categoryCtrl.generateStaticParams()
-}
+// export async function generateStaticParams() {
+//   return categoryCtrl.generateStaticParams()
+// }
 
 export async function generateMetadata({
   params,

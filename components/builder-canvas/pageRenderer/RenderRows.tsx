@@ -82,15 +82,15 @@ const RendererRows = ({
                       ? {}
                       : {
                           className:
-                            'sticky [--header-top:var(--header-top-mobile)] sm:[--header-top:var(--header-top-tablet)] md:[--header-top:var(--header-top-desktop)]',
+                            'w-full sticky [--header-top:var(--header-top-mobile)] sm:[--header-top:var(--header-top-tablet)] md:[--header-top:var(--header-top-desktop)]',
                         })}
                     style={{
                       ...computedStyles({
                         ...col.styles,
+                        top: 'var(--header-top)',
                         ['--header-top-mobile' as any]: `${siteSettings?.mobileHeaderHeight}px`,
                         ['--header-top-tablet' as any]: `${siteSettings?.tabletHeaderHeight}px`,
                         ['--header-top-desktop' as any]: `${siteSettings?.desktopHeaderHeight}px`,
-                        top: 'var(--header-top)',
                       }),
                       ...computedStyles(col.settings),
                     }}

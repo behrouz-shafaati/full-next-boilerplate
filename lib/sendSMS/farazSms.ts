@@ -45,7 +45,7 @@ export async function sendSmsVerifyFarazSms(to: string, code: string) {
         recipients: [to], // شماره گیرنده
         // مقادیر جایگزینی در الگو
         params: {
-          'verification-mobile-code': code,
+          code: code,
         },
       },
       {

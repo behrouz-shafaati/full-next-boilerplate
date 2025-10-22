@@ -76,8 +76,15 @@ export async function createTemplatePart(prevState: State, formData: FormData) {
       values,
     }
   }
-  if (newTemplatePart)
-    redirect(`/dashboard/template-parts/${newTemplatePart.id}`)
+  if (newTemplatePart) {
+    // redirect(`/dashboard/template-parts/${newTemplatePart.id}`)
+    return {
+      message: '',
+      success: true,
+      isCreatedJustNow: true,
+      values: newTemplatePart,
+    }
+  }
   redirect('/dashboard/template-parts')
 }
 
