@@ -9,6 +9,8 @@ import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -16,7 +18,7 @@ const FormSchema = z.object({
   lang: z.string({}),
   slug: z.string({}),
   description: z.string({}),
-  status: z.string({}),
+  status: z.string({}).min(1, { message: 'لطفا وضعیت را تعیین کنید.' }),
   image: z.string({}).nullable(),
 })
 
@@ -64,24 +66,24 @@ export async function createCategory(prevState: State, formData: FormData) {
   const values = {
     ...rawValues,
     translation: {
-      lang: rawValues?.lang,
-      title: rawValues?.title,
-      description: rawValues?.description,
+      lang: rawValues.lang,
+      title: rawValues.title,
+      description: rawValues.description,
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      values,
-    }
-  }
-
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'category.create')
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        values,
+      }
+    }
+
     const params = await sanitizeArticleData(validatedFields)
     // Create the category
     await categoryCtrl.create({
@@ -97,13 +99,23 @@ export async function createCategory(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
         errors: error.flatten().fieldErrors,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: ` خطای پایگاه داده: ${error}`,
       values,
@@ -117,10 +129,17 @@ export async function updateCategory(
   prevState: State,
   formData: FormData
 ) {
-  const values = Object.fromEntries(formData)
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
+  const user = (await getSession())?.user as User
+  const rawValues = Object.fromEntries(formData)
+  const values = {
+    ...rawValues,
+    translation: {
+      lang: rawValues.lang,
+      title: rawValues.title,
+      description: rawValues.description,
+    },
+  }
+  const validatedFields = FormSchema.safeParse(rawValues)
 
   // If form validation fails, return errors early. Otherwise, continue.
   if (!validatedFields.success) {
@@ -131,6 +150,11 @@ export async function updateCategory(
     }
   }
   try {
+    const prevCategory = await categoryCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevCategory.user !== user.id ? 'category.edit.any' : 'category.edit.own'
+    )
     const params = await sanitizeArticleData(validatedFields, id)
     await categoryCtrl.findOneAndUpdate({
       filters: id,
@@ -145,27 +169,60 @@ export async function updateCategory(
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.', values }
   }
-
   redirect('/dashboard/categories')
 }
 
 export async function deleteCategorysAction(ids: string[]) {
   try {
+    const user = (await getSession())?.user as User
+    const prevCategoryResult = await categoryCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevCategory of prevCategoryResult.data) {
+      await can(
+        user.roles,
+        prevCategory.user !== user.id
+          ? 'category.delete.any'
+          : 'category.delete.own'
+      )
+    }
     await categoryCtrl.delete({ filters: ids })
-  } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود', values }
-  }
-  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
-    feature: 'category',
-    slug: '/dashboard/categories',
-  })
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+      feature: 'category',
+      slug: '/dashboard/categories',
+    })
 
-  for (const slug of pathes) {
-    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
-    revalidatePath(slug)
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
+    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود', success: false }
   }
 }
 

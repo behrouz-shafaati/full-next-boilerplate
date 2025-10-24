@@ -16,6 +16,8 @@ import {
 import { mutate } from 'swr'
 import { useUpdatedUrl } from '@/hooks/use-updated-url'
 import { commentsUrl } from '../../utils'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 interface CommentItemProps {
   articleComment: ArticleComment
@@ -25,6 +27,9 @@ export function ArticleCommentItemManage({
   articleComment,
   depth = 0,
 }: CommentItemProps) {
+  const { user } = useSession()
+
+  const canModerate = can(user?.roles || [], 'articleComment.moderate.any')
   const { buildUrlWithParams } = useUpdatedUrl()
   const [showReplayForm, setShowReplayForm] = useState(false)
   const [showReplies, setShowReplies] = useState(true)
@@ -71,72 +76,74 @@ export function ArticleCommentItemManage({
             dangerouslySetInnerHTML={{ __html: content.contentJson }}
           />
 
-          <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
-            {/* <Button size="sm" variant="ghost" className="flex gap-1">
+          {canModerate && (
+            <div className="mt-2 flex items-center gap-4 text-sm text-gray-500">
+              {/* <Button size="sm" variant="ghost" className="flex gap-1">
               <ThumbsUp size={16} /> 23
             </Button>
             <Button size="sm" variant="ghost" className="flex gap-1">
               <ThumbsDown size={16} /> 5
             </Button> */}
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex gap-1"
-              onClick={() => setReplayTo(articleComment)}
-            >
-              <Reply size={16} /> پاسخ
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex gap-1"
-              onClick={() =>
-                startTransition(async () => {
-                  try {
-                    dispatch({ status: 'approved' })
-                  } catch (err) {
-                    console.log('#776234 Error: ', err)
-                  }
-                })
-              }
-            >
-              <CheckCircle size={16} /> پذیرفتن
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex gap-1"
-              onClick={() =>
-                startTransition(async () => {
-                  try {
-                    await dispatch({ status: 'rejected' })
-                    mutate()
-                  } catch (err) {
-                    console.log('#776234 Error: ', err)
-                  }
-                })
-              }
-            >
-              <XCircle size={16} /> نپذیرفتن
-            </Button>
-            <Button
-              size="sm"
-              variant="ghost"
-              className="flex gap-1"
-              onClick={() =>
-                startTransition(async () => {
-                  try {
-                    await deleteArticleCommentAction([articleComment.id])
-                    mutate()
-                  } catch (err) {
-                    console.log('#776234 Error: ', err)
-                  }
-                })
-              }
-            >
-              <Trash size={16} /> حذف
-            </Button>
-          </div>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex gap-1"
+                onClick={() => setReplayTo(articleComment)}
+              >
+                <Reply size={16} /> پاسخ
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex gap-1"
+                onClick={() =>
+                  startTransition(async () => {
+                    try {
+                      dispatch({ status: 'approved' })
+                    } catch (err) {
+                      console.log('#776234 Error: ', err)
+                    }
+                  })
+                }
+              >
+                <CheckCircle size={16} /> پذیرفتن
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex gap-1"
+                onClick={() =>
+                  startTransition(async () => {
+                    try {
+                      await dispatch({ status: 'rejected' })
+                      mutate()
+                    } catch (err) {
+                      console.log('#776234 Error: ', err)
+                    }
+                  })
+                }
+              >
+                <XCircle size={16} /> نپذیرفتن
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                className="flex gap-1"
+                onClick={() =>
+                  startTransition(async () => {
+                    try {
+                      await deleteArticleCommentAction([articleComment.id])
+                      mutate()
+                    } catch (err) {
+                      console.log('#776234 Error: ', err)
+                    }
+                  })
+                }
+              >
+                <Trash size={16} /> حذف
+              </Button>
+            </div>
+          )}
         </div>
       </div>
 

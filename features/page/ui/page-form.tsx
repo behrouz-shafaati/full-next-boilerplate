@@ -2,35 +2,39 @@
 import * as z from 'zod'
 import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
+import { useToast } from '@/hooks/use-toast'
+import roleCtrl from '@/features/role/controller'
 import { createPage, deletePagesAction, updatePage } from '../actions'
 import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import { Category } from '@/features/category/interface'
 import { Page, PageContent, PageTranslationSchema } from '../interface'
 import BuilderPage from '@/components/builder-page'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 export const IMG_MAX_LIMIT = 3
-const formSchema = z.object({
-  title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
-})
-
-type PageFormValues = z.infer<typeof formSchema>
 
 interface PageFormProps {
   initialData: Page | null
   allTemplates: PageContent[]
   allCategories: Category[]
-  allHeaders: Header[]
 }
 
 export const PageForm: React.FC<PageFormProps> = ({
   initialData: page,
   allTemplates,
   allCategories,
-  allHeaders,
 }) => {
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'page.create')
+  const canEdit = can(
+    userRoles,
+    page?.user !== user?.id ? 'page.edit.any' : 'page.edit.own'
+  )
   const locale = 'fa' //  from formData
   const translation: PageTranslationSchema =
     page?.translations?.find((t: PageTranslationSchema) => t.lang === locale) ||
@@ -81,7 +85,7 @@ export const PageForm: React.FC<PageFormProps> = ({
       router.replace(`/dashboard/pages/${state?.values?.id}`)
     }
   }, [state])
-
+  if (!canCreate && !canEdit) return <AccessDenied />
   return (
     <>
       <AlertModal

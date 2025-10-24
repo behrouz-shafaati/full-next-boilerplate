@@ -1,7 +1,7 @@
 'use client'
 import { Suspense, useActionState, useEffect } from 'react'
 import Link from 'next/link'
-import { toast } from '@/components/ui/use-toast'
+import { toast } from '@/hooks/use-toast'
 import Text from '@/components/form-fields/text'
 import { UserIcon } from 'lucide-react'
 import { SubmitButton } from '@/components/form-fields/submit-button'

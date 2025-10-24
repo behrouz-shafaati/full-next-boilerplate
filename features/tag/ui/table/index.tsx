@@ -7,6 +7,9 @@ import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface TagsTableProps {
   query: string
@@ -14,8 +17,16 @@ interface TagsTableProps {
 }
 
 export default async function TagTable({ query, page }: TagsTableProps) {
+  const user = (await getSession())?.user as User
+  let filters = { query }
+  if (!(await can(user.roles, 'tag.view.any', false))) {
+    filters = { ...filters, user: user.id }
+  }
+
+  const canCreate = await can(user.roles, 'article.create', false)
+
   const findResult: QueryResponse<Tag> = await TagCtrl.find({
-    filters: { query },
+    filters,
     pagination: { page, perPage: 6 },
   })
   return (
@@ -25,12 +36,14 @@ export default async function TagTable({ query, page }: TagsTableProps) {
           title={`برچسب ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت برچسب ها"
         />
-        <LinkButton
-          className="text-xs md:text-sm"
-          href="/dashboard/tags/create"
-        >
-          <Plus className="ml-2 h-4 w-4" /> افزودن برچسب
-        </LinkButton>
+        {canCreate && (
+          <LinkButton
+            className="text-xs md:text-sm"
+            href="/dashboard/tags/create"
+          >
+            <Plus className="ml-2 h-4 w-4" /> افزودن برچسب
+          </LinkButton>
+        )}
       </div>
       <DataTable
         searchTitle="جستجو ..."

@@ -9,9 +9,10 @@ import { Option, Session, State } from '@/types'
 import tagCtrl from '../tag/controller'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { Article, ArticleTranslationSchema } from './interface'
-import categoryCtrl from '../category/controller'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { User } from '../user/interface'
+import { can } from '../../lib/utils/can.server'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -38,7 +39,6 @@ const FormSchema = z.object({
  * @returns An object with errors and a message if there are any, or redirects to the article dashboard.
  */
 export async function createArticle(prevState: State, formData: FormData) {
-  // Validate form fields
   let newArticle = null
   const rawValues = Object.fromEntries(formData.entries())
   const values = {
@@ -49,25 +49,34 @@ export async function createArticle(prevState: State, formData: FormData) {
       contentJson: rawValues.contentJson || '',
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
-
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'article.create')
+    // Validate form fields
+
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
     const params = await sanitizeArticleData(validatedFields)
+    if (params.status === 'published') {
+      await can(
+        user.roles,
+        params.author !== user.id
+          ? 'article.publish.any'
+          : 'article.publish.own'
+      )
+    }
     const cleanedParams = await articleCtrl.generateUniqueArticleSlug(params)
-    const mainCategory = await categoryCtrl.findById({
-      id: cleanedParams.mainCategory,
-    })
+    // const mainCategory = await categoryCtrl.findById({
+    //   id: cleanedParams.mainCategory,
+    // })
     newArticle = await articleCtrl.create({
       params: cleanedParams,
     })
@@ -82,8 +91,15 @@ export async function createArticle(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
-    console.log('#error in create article:', error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -91,6 +107,8 @@ export async function createArticle(prevState: State, formData: FormData) {
         values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in create article:', error)
     return {
       message: 'خطای پایگاه داده: ایجاد مقاله ناموفق بود.',
       success: false,
@@ -116,27 +134,40 @@ export async function updateArticle(
       contentJson: rawValues.contentJson || '',
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
   try {
+    const user = (await getSession())?.user as User
+    const prevArticle = await articleCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevArticle.author.id !== user.id
+        ? 'article.edit.any'
+        : 'article.edit.own'
+    )
+
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
     const params = await sanitizeArticleData(validatedFields, id)
+    if (params.status === 'published') {
+      await can(
+        user.roles,
+        prevArticle.author.id !== user.id
+          ? 'article.publish.any'
+          : 'article.publish.own'
+      )
+    }
     const cleanedParams = await articleCtrl.generateUniqueArticleSlug(
       params,
       id
     )
-    const mainCategory = await categoryCtrl.findById({
-      id: cleanedParams.mainCategory,
-    })
+
     updatedArticle = await articleCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
@@ -155,7 +186,17 @@ export async function updateArticle(
       revalidatePath(slug)
     }
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true, values }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in update article:', error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی مقاله ناموفق بود.',
       success: false,
@@ -166,19 +207,48 @@ export async function updateArticle(
 
 export async function deleteArticlesAction(ids: string[]) {
   try {
-    await articleCtrl.delete({ filters: ids })
-  } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف مقاله ناموفق بود', success: false }
-  }
-  // Revalidate the path
-  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
-    feature: 'article',
-    slug: [`/dashboard/articles`],
-  })
+    const user = (await getSession())?.user as User
+    const prevArticleResult = await articleCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevArticle of prevArticleResult.data) {
+      await can(
+        user.roles,
+        prevArticle.author.id !== user.id
+          ? 'article.delete.any'
+          : 'article.delete.own'
+      )
+    }
 
-  for (const slug of pathes) {
-    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
-    revalidatePath(slug)
+    await articleCtrl.delete({ filters: ids })
+    // revalidate pathes
+    let constRticlesPathes = []
+    for (const prevArticle of prevArticleResult.data) {
+      constRticlesPathes.push(createArticleHref(prevArticle as Article))
+    }
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+      feature: 'article',
+      slug: [...constRticlesPathes, `/dashboard/articles`],
+    })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in delete article:', error)
+    return { message: 'خطای پایگاه داده: حذف مقاله ناموفق بود', success: false }
   }
 }
 

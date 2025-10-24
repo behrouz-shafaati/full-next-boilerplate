@@ -6,7 +6,7 @@ import { Braces as CategoryIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../../../components/ui/use-toast'
+import { useToast } from '../../../hooks/use-toast'
 import {
   createCategory,
   deleteCategorysAction,
@@ -21,6 +21,9 @@ import { Category, CategoryTranslationSchema } from '../interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -35,6 +38,20 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
 }) => {
   const locale = 'fa' //  from formData
   const router = useRouter()
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'category.create')
+  const canEdit = can(
+    userRoles,
+    category?.user.id !== user?.id ? 'category.edit.any' : 'category.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    category?.user.id !== user?.id
+      ? 'category.delete.any'
+      : 'category.delete.own'
+  )
   const translation: CategoryTranslationSchema =
     category?.translations?.find(
       (t: CategoryTranslationSchema) => t.lang === locale
@@ -83,12 +100,21 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      deleteCategorysAction([category?.id])
-      router.replace('/dashboard/categories')
+      const deleteResult = await deleteCategorysAction([category?.id])
+      if (deleteResult?.success) router.replace('/dashboard/categories')
+      else {
+        setOpen(false)
+        setLoading(false)
+        toast({
+          variant: deleteResult?.success ? 'default' : 'destructive',
+          description: deleteResult?.message,
+        })
+      }
     } catch (error: any) {}
   }
 
   useEffect(() => {
+    console.log('#234kuiyh state:', state)
     if (state.message && state.message !== null)
       toast({
         variant: 'destructive',
@@ -96,26 +122,29 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         description: state.message,
       })
   }, [state])
-
+  if ((category && !canEdit) || !canCreate) return <AccessDenied />
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {category && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
+        {category && canDelete && (
+          <>
+            <AlertModal
+              isOpen={open}
+              onClose={() => setOpen(false)}
+              onConfirm={onDelete}
+              loading={loading}
+            />
+
+            <Button
+              disabled={loading}
+              variant="destructive"
+              size="sm"
+              onClick={() => setOpen(true)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </>
         )}
       </div>
       {/* <Separator /> */}

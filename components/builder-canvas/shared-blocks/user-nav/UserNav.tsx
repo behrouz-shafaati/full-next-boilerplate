@@ -1,4 +1,3 @@
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,6 +15,7 @@ import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
+import { can } from '@/lib/utils/can.client'
 type props = {
   widgetName: string
   user: User
@@ -29,6 +29,8 @@ type props = {
 export function UserNav({ widgetName, blockData, user, ...props }: props) {
   const { className, ...res } = props
   const router = useRouter()
+  const userRoles = user?.roles || []
+  const canCreateArticle = can(userRoles, 'article.create')
   const defaultAvatar = '/assets/default-profile.png'
   const { content, settings, styles } = blockData || {}
   if (user) {
@@ -66,6 +68,13 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
+              {canCreateArticle && (
+                <DropdownMenuItem
+                  onClick={() => router.push('/dashboard/articles/create')}
+                >
+                  افزودن مقاله
+                </DropdownMenuItem>
+              )}
               <DropdownMenuItem onClick={() => router.push('/dashboard')}>
                 داشبورد
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>

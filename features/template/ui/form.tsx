@@ -2,8 +2,8 @@
 import * as z from 'zod'
 import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
+import { useToast } from '@/hooks/use-toast'
+import roleCtrl from '@/features/role/controller'
 import {
   createTemplate,
   deleteTemplatesAction,
@@ -15,13 +15,11 @@ import BuilderTemplate from '@/components/builder-template'
 import { Template } from '../interface'
 import { Category } from '@/features/category/interface'
 import CreateTemplateModal from './modal'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
-export const IMG_MAX_LIMIT = 3
-const formSchema = z.object({
-  title: z.string().min(3, { message: 'عنوان معتبر وارد کنید' }),
-})
-
-type TemplateFormValues = z.infer<typeof formSchema>
+export const IMG_MAX_LIMIT = 3 //MB
 
 interface TemplateFormProps {
   allCategories: Category[]
@@ -39,6 +37,15 @@ export const Form: React.FC<TemplateFormProps> = ({
   allCategories,
   initialData: Template,
 }) => {
+  const locale = 'fa'
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'template.create')
+  const canEdit = can(
+    userRoles,
+    Template?.user !== user?.id ? 'template.edit.any' : 'template.edit.own'
+  )
   const [defaultValue, setDefaultValue] = useState(defaultInitialValue)
   const [templateFor, setTemplateFor] = useState<string | null>(null)
   const [showTemplateBuilder, setShowTemplateBuilder] = useState(!!Template)
@@ -90,7 +97,7 @@ export const Form: React.FC<TemplateFormProps> = ({
       router.replace(`/dashboard/templates/${state?.values?.id}`)
     }
   }, [state])
-
+  if (!canCreate && !canEdit) return <AccessDenied />
   return (
     <>
       <AlertModal

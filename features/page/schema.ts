@@ -43,15 +43,15 @@ pageSchema.index(
   }
 )
 
-pageSchema
-  .pre('findOne', function (next: any) {
-    this.populate('user')
-    next()
-  })
-  .pre('find', function (next: any) {
-    this.populate('user')
-    next()
-  })
+// pageSchema
+//   .pre('findOne', function (next: any) {
+//     this.populate('user')
+//     next()
+//   })
+//   .pre('find', function (next: any) {
+//     this.populate('user')
+//     next()
+//   })
 
 const transform = (doc: any, ret: any, options: any) => {
   ret.id = ret._id?.toHexString()

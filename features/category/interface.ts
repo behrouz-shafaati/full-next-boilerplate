@@ -38,7 +38,7 @@ type CategoryBase = {
   /**
    * شناسه تصویر دسته‌بندی
    */
-  image: Id
+  image: File
 
   /**
    * وضعیت فعال بودن دسته‌بندی (در صورت فعال بودن true)
@@ -60,7 +60,7 @@ export type Category = Model & CategoryBase
  * مدل اسکیمای دسته‌بندی برای پایگاه داده که شامل اطلاعات پایه دسته‌بندی و ویژگی‌های اضافی اسکیمای پایگاه داده می‌باشد
  */
 export type CategorySchema = SchemaModel &
-  Omit<CategoryBase, 'parent'> & { parent: Id }
+  Omit<CategoryBase, 'parent' | 'file'> & { parent: Id; file: Id }
 
 /**
  * ساختار درخواست ارسال داده‌های دسته‌بندی که شامل اطلاعات پایه دسته‌بندی می‌باشد

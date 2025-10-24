@@ -13,6 +13,8 @@ import { Edit, MoreHorizontal, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { deleteMenusAction } from '../../actions'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 interface CellActionProps {
   data: Menu
@@ -23,6 +25,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [open, setOpen] = useState(false)
   const router = useRouter()
 
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canEdit = can(
+    userRoles,
+    data?.user !== user?.id ? 'menu.edit.any' : 'menu.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    data?.user !== user?.id ? 'menu.delete.any' : 'menu.delete.own'
+  )
+  if (!canDelete && !canEdit) return null
   const onConfirm = async () => {
     setLoading(true)
     deleteMenusAction([data.id])
@@ -33,12 +47,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-      />
+      {canDelete && (
+        <AlertModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          onConfirm={onConfirm}
+          loading={loading}
+        />
+      )}
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -49,14 +65,18 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="start">
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
 
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/menus/${data.id}`)}
-          >
-            <Edit className="ml-2 h-4 w-4" /> بروزرسانی
-          </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="ml-2 h-4 w-4" /> حذف
-          </DropdownMenuItem>
+          {canEdit && (
+            <DropdownMenuItem
+              onClick={() => router.push(`/dashboard/menus/${data.id}`)}
+            >
+              <Edit className="ml-2 h-4 w-4" /> بروزرسانی
+            </DropdownMenuItem>
+          )}
+          {canDelete && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <Trash className="ml-2 h-4 w-4" /> حذف
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

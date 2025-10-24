@@ -2,10 +2,12 @@
 
 import { z } from 'zod'
 import settingsCtrl, { getSettings } from '@/features/settings/controller'
-import { Session, State } from '@/types'
+import { State } from '@/types'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
-import { Settings } from './interface'
+import { getSession } from '@/lib/auth'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   homePageId: z.string({}),
@@ -41,15 +43,17 @@ export async function updateSettings(prevState: State, formData: FormData) {
     Object.fromEntries(formData.entries())
   )
 
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-    }
-  }
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'settings.moderate.any')
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+      }
+    }
     const params = await sanitizeSettingsData(validatedFields)
     console.log('#2887 params: ', params)
     await settingsCtrl.findOneAndUpdate({
@@ -69,8 +73,16 @@ export async function updateSettings(prevState: State, formData: FormData) {
     }
 
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
-  } catch (error) {
-    console.log(error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in update settings:', error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی مقاله ناموفق بود.',
       success: false,

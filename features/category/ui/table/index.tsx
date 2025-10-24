@@ -7,6 +7,9 @@ import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface CategoriesTableProps {
   query: string
@@ -17,8 +20,16 @@ export default async function CategoryTable({
   query,
   page,
 }: CategoriesTableProps) {
+  let filters = { query }
+  const user = (await getSession())?.user as User
+  if (!(await can(user.roles, 'category.view.any', false))) {
+    filters = { ...filters, user: user.id }
+  }
+
+  const canCreate = await can(user.roles, 'category.create', false)
+
   const findResult: QueryResponse<Category> = await CategoryCtrl.find({
-    filters: { query },
+    filters,
     pagination: { page, perPage: 6 },
   })
   return (
@@ -28,12 +39,14 @@ export default async function CategoryTable({
           title={`دسته بندی ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت دسته بندی ها"
         />
-        <LinkButton
-          className="text-xs md:text-sm"
-          href="/dashboard/categories/create"
-        >
-          <Plus className="ml-2 h-4 w-4" /> افزودن دسته بندی
-        </LinkButton>
+        {canCreate && (
+          <LinkButton
+            className="text-xs md:text-sm"
+            href="/dashboard/categories/create"
+          >
+            <Plus className="ml-2 h-4 w-4" /> افزودن دسته بندی
+          </LinkButton>
+        )}
       </div>
       <DataTable
         searchTitle="جستجو ..."

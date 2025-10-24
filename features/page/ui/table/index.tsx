@@ -7,6 +7,9 @@ import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface CategoriesTableProps {
   query: string
@@ -14,8 +17,15 @@ interface CategoriesTableProps {
 }
 
 export default async function PageTable({ query, page }: CategoriesTableProps) {
+  let filters = { query }
+  const user = (await getSession())?.user as User
+  if (!(await can(user.roles, 'page.view.any', false))) {
+    filters = { ...filters, user: user.id }
+  }
+
+  const canCreate = await can(user.roles, 'page.create', false)
   const findResult: QueryResponse<Page> = await PageCtrl.find({
-    filters: { query },
+    filters,
     pagination: { page, perPage: 6 },
   })
 
@@ -26,12 +36,14 @@ export default async function PageTable({ query, page }: CategoriesTableProps) {
           title={`برگه ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت برگه ها"
         />
-        <LinkButton
-          className="text-xs md:text-sm"
-          href="/dashboard/pages/create"
-        >
-          <Plus className="ml-2 h-4 w-4" /> افزودن برگه
-        </LinkButton>
+        {canCreate && (
+          <LinkButton
+            className="text-xs md:text-sm"
+            href="/dashboard/pages/create"
+          >
+            <Plus className="ml-2 h-4 w-4" /> افزودن برگه
+          </LinkButton>
+        )}
       </div>
       <DataTable
         searchTitle="جستجو ..."

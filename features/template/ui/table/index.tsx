@@ -7,6 +7,9 @@ import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface CategoriesTableProps {
   query: string
@@ -17,8 +20,15 @@ export default async function TemplateTable({
   query,
   page,
 }: CategoriesTableProps) {
+  let filters = { query }
+  const user = (await getSession())?.user as User
+  if (!(await can(user.roles, 'template.view.any', false))) {
+    filters = { ...filters, user: user.id }
+  }
+
+  const canCreate = await can(user.roles, 'template.create', false)
   const findResult: QueryResponse<Template> = await templateCtrl.find({
-    filters: { query },
+    filters,
     pagination: { page, perPage: 6 },
   })
 
@@ -29,12 +39,14 @@ export default async function TemplateTable({
           title={`قالب ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت قالب ها"
         />
-        <LinkButton
-          className="text-xs md:text-sm"
-          href="/dashboard/templates/create"
-        >
-          <Plus className="ml-2 h-4 w-4" /> افزودن قالب
-        </LinkButton>
+        {canCreate && (
+          <LinkButton
+            className="text-xs md:text-sm"
+            href="/dashboard/templates/create"
+          >
+            <Plus className="ml-2 h-4 w-4" /> افزودن قالب
+          </LinkButton>
+        )}
       </div>
       <DataTable
         searchTitle="جستجو ..."

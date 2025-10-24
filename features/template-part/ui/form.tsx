@@ -2,8 +2,8 @@
 import * as z from 'zod'
 import { useActionState, useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { useToast } from '@/components/ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
+import { useToast } from '@/hooks/use-toast'
+import roleCtrl from '@/features/role/controller'
 import {
   createTemplatePart,
   deleteTemplatePartAction,
@@ -13,6 +13,9 @@ import { Option } from '@/components/form-fields/combobox'
 import { AlertModal } from '@/components/modal/alert-modal'
 import BuilderTemplatePart from '@/components/builder-template-part'
 import { TemplatePart } from '../interface'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 export const IMG_MAX_LIMIT = 3
 const formSchema = z.object({
@@ -28,6 +31,15 @@ interface TemplatePartFormProps {
 export const Form: React.FC<TemplatePartFormProps> = ({
   initialData: TemplatePart,
 }) => {
+  const locale = 'fa'
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'template.create')
+  const canEdit = can(
+    userRoles,
+    TemplatePart?.user !== user?.id ? 'template.edit.any' : 'template.edit.own'
+  )
   const initialState = { message: null, errors: {} }
   const actionHandler = TemplatePart
     ? updateTemplatePart.bind(null, String(TemplatePart.id))
@@ -78,7 +90,7 @@ export const Form: React.FC<TemplatePartFormProps> = ({
       router.replace(`/dashboard/template-parts/${state?.values?.id}`)
     }
   }, [state])
-
+  if (!canCreate && !canEdit) return <AccessDenied />
   return (
     <>
       <AlertModal

@@ -28,7 +28,7 @@ import {
   FileDetailsPayload,
   FileTranslationSchema,
 } from '@/lib/entity/file/interface'
-import { useToast } from '../ui/use-toast'
+import { useToast } from '../../hooks/use-toast'
 import { getTranslation } from '@/lib/utils'
 import Select from './select'
 const ObjectId = require('bson-objectid')

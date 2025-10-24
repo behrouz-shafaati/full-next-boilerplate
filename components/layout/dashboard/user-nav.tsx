@@ -11,7 +11,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { getSession, logout } from '@/lib/auth'
+import { can } from '@/lib/utils/can.server'
 import { Session } from '@/types'
+import Link from 'next/link'
 import React from 'react'
 
 const AvatarButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -20,8 +22,10 @@ const AvatarButton = React.forwardRef<HTMLButtonElement, ButtonProps>(
 AvatarButton.displayName = 'AvatarButton'
 
 export async function UserNav() {
-  const session = (await getSession()) as Session
-  if (session) {
+  const { user } = (await getSession()) as Session
+  const userRoles = user?.roles || []
+  const canCreateArticle = await can(userRoles, 'article.create', false)
+  if (user) {
     return (
       <DropdownMenu dir="rtl">
         <DropdownMenuTrigger asChild>
@@ -31,38 +35,55 @@ export async function UserNav() {
           >
             <Avatar className="h-8 w-8">
               <AvatarImage
-                src={session.user?.image?.srcSmall ?? ''}
-                alt={session.user?.name ?? ''}
+                src={user?.image?.srcSmall ?? ''}
+                alt={user?.name ?? ''}
               />
-              <AvatarFallback>{session.user?.name?.[0]}</AvatarFallback>
+              <AvatarFallback>{user?.name?.[0]}</AvatarFallback>
             </Avatar>
           </AvatarButton>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-56" align="end" forceMount>
           <DropdownMenuLabel className="font-normal">
             <div className="flex flex-col space-y-1">
-              <p className="text-sm font-medium leading-none">
-                {session.user?.name}
-              </p>
+              <p className="text-sm font-medium leading-none">{user?.name}</p>
               <p className="text-xs leading-none text-muted-foreground">
-                {session.user?.email}
+                {user?.email}
               </p>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
-              پروفایل
-              <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+            {canCreateArticle && (
+              <DropdownMenuItem className="p-0">
+                <Link
+                  href="/dashboard/articles/create"
+                  className="w-full flex justify-between py-1.5 px-2"
+                >
+                  <span>افزودن مقاله</span>
+                </Link>
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem className="p-0">
+              <Link
+                href="/dashboard"
+                className="w-full flex justify-between py-1.5 px-2"
+              >
+                <span>داشبورد</span>
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              صورتحساب
-              <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              تنظیمات
-              <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            {/* <DropdownMenuItem>
+                پروفایل
+                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                صورتحساب
+                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                تنظیمات
+                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
+              </DropdownMenuItem> */}
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
 

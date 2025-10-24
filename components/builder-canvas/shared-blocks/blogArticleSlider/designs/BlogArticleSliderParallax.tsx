@@ -64,7 +64,7 @@ export const BlogArticleSliderParallax = ({
             <Link href={article.href} className="">
               <Image
                 className="embla__slide__img embla__parallax__img "
-                src={article?.image.srcSmall || '/placeholder.png'}
+                src={article?.image?.srcSmall || '/placeholder.png'}
                 sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
                 alt={translationImage?.alt || translationImage?.title}
                 layout="fill"

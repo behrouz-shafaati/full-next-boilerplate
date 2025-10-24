@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { deleteArticlesAction } from '../../actions'
 import { AlertModal } from '@/components/modal/alert-modal'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 type GroupActionProps = {
   table: any
@@ -14,6 +16,20 @@ export default function GroupAction({ table, items }: GroupActionProps) {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+  let canDelete = true
+  for (const item of items) {
+    const canDeleteItem = can(
+      userRoles,
+      item?.author.id !== user?.id ? 'article.delete.any' : 'article.delete.own'
+    )
+    if (!canDeleteItem) {
+      canDelete = false
+      break
+    }
+  }
+
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -26,20 +42,24 @@ export default function GroupAction({ table, items }: GroupActionProps) {
   }
   return (
     <div>
-      <AlertModal
-        description={`از حذف ${items.length}  مورد اطمینان دارید؟ این عمل غیر قابل بازگشت است!`}
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
-      <Button
-        variant="outline"
-        className="text-xs"
-        onClick={() => setOpen(true)}
-      >
-        <Trash className="ml-2 h-4 w-4 " /> حذف گروهی
-      </Button>
+      {canDelete && (
+        <>
+          <AlertModal
+            description={`از حذف ${items.length}  مورد اطمینان دارید؟ این عمل غیر قابل بازگشت است!`}
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            onConfirm={onDelete}
+            loading={loading}
+          />
+          <Button
+            variant="outline"
+            className="text-xs"
+            onClick={() => setOpen(true)}
+          >
+            <Trash className="ml-2 h-4 w-4 " /> حذف گروهی
+          </Button>
+        </>
+      )}
     </div>
   )
 }

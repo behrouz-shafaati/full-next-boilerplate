@@ -1,4 +1,5 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
+import { User } from '../user/interface'
 
 export type TagTranslationSchema = {
   /**
@@ -34,7 +35,7 @@ type TagBase = {
   /**
    * شناسه تصویر برچسب
    */
-  image: Id
+  image: File
 
   /**
    * وضعیت فعال بودن برچسب (در صورت فعال بودن true)
@@ -44,7 +45,7 @@ type TagBase = {
   /**
    * کاربر سازنده
    */
-  user: Id
+  user: User
 }
 
 /**
@@ -55,9 +56,10 @@ export type Tag = Model & TagBase
 /**
  * مدل اسکیمای برچسب برای پایگاه داده که شامل اطلاعات پایه برچسب و ویژگی‌های اضافی اسکیمای پایگاه داده می‌باشد
  */
-export type TagSchema = SchemaModel & TagBase
+export type TagSchema = SchemaModel &
+  Omit<TagBase, 'user' | 'image'> & { image: Id; user: Id }
 
 /**
  * ساختار درخواست ارسال داده‌های برچسب که شامل اطلاعات پایه برچسب می‌باشد
  */
-export type TagInput = TagBase
+export type TagInput = SchemaModel

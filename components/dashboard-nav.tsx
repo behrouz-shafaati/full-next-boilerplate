@@ -1,11 +1,11 @@
-'use client';
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+'use client'
+import Link from 'next/link'
+import { usePathname } from 'next/navigation'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from './ui/collapsible';
+} from './ui/collapsible'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,28 +13,29 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from './ui/dropdown-menu';
+} from './ui/dropdown-menu'
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from './ui/tooltip';
-import renderIcon, { Icons } from '@/components/icons';
-import { cn, haveAccess } from '@/lib/utils';
-import { NavItem, SidebarNavItem } from '@/types';
-import { Dispatch, SetStateAction } from 'react';
-import { useSession } from '@/components/context/SessionContext';
-import useCheckActiveNav from '@/hooks/use-check-active-nav';
-import { Button } from './ui/button';
-import { ChevronDown } from 'lucide-react';
-import { buttonVariants } from './custom/button';
+} from './ui/tooltip'
+import renderIcon, { Icons } from '@/components/icons'
+import { cn, haveAccess } from '@/lib/utils'
+import { NavItem, SidebarNavItem } from '@/types'
+import { Dispatch, SetStateAction } from 'react'
+import { useSession } from '@/components/context/SessionContext'
+import useCheckActiveNav from '@/hooks/use-check-active-nav'
+import { Button } from './ui/button'
+import { ChevronDown } from 'lucide-react'
+import { buttonVariants } from './custom/button'
+import { can } from '@/lib/utils/can.client'
 
 interface DashboardNavProps {
-  items: NavItem[];
-  setOpen?: Dispatch<SetStateAction<boolean>>;
-  isCollapsed?: boolean;
-  closeNav?: () => void;
+  items: NavItem[]
+  setOpen?: Dispatch<SetStateAction<boolean>>
+  isCollapsed?: boolean
+  closeNav?: () => void
 }
 
 export function DashboardNav({
@@ -42,17 +43,26 @@ export function DashboardNav({
   setOpen,
   isCollapsed = false,
   closeNav = () => {
-    console.log('#0027 closeNav');
+    console.log('#0027 closeNav')
   },
 }: DashboardNavProps) {
-  const path = usePathname();
-  const { session } = useSession();
+  const path = usePathname()
+  const { user } = useSession()
+
   if (!items?.length) {
-    return null;
+    return null
   }
 
-  const renderLink = ({ sub, ...rest }: SidebarNavItem) => {
-    const key = `${rest.title}-${rest.href}`;
+  const renderLink = ({ sub, authorized, ...rest }: SidebarNavItem) => {
+    // check permisions
+    let canViewLink = false
+    for (const permission of authorized || []) {
+      if (can(user?.roles || [], permission)) canViewLink = true
+    }
+    if (authorized === undefined || authorized?.length == 0) canViewLink = true
+    if (!canViewLink) return null
+
+    const key = `${rest.title}-${rest.href}`
     if (isCollapsed && sub)
       return (
         <NavLinkIconDropdown
@@ -61,18 +71,18 @@ export function DashboardNav({
           key={key}
           closeNav={closeNav}
         />
-      );
+      )
 
     if (isCollapsed)
-      return <NavLinkIcon {...rest} key={key} closeNav={closeNav} />;
+      return <NavLinkIcon {...rest} key={key} closeNav={closeNav} />
 
     if (sub)
       return (
         <NavLinkDropdown {...rest} sub={sub} key={key} closeNav={closeNav} />
-      );
+      )
 
-    return <NavLink {...rest} key={key} closeNav={closeNav} />;
-  };
+    return <NavLink {...rest} key={key} closeNav={closeNav} />
+  }
 
   return (
     // haveAccess(session?.user?.roles || [], item?.authorized)
@@ -98,12 +108,12 @@ export function DashboardNav({
     //   <Icon className="mx-2 h-4 w-4" />
     //   <span>{item.title}</span>
     // </span>
-  );
+  )
 }
 
 interface NavLinkProps extends SidebarNavItem {
-  subLink?: boolean;
-  closeNav: () => void;
+  subLink?: boolean
+  closeNav: () => void
 }
 
 function NavLink({
@@ -114,7 +124,7 @@ function NavLink({
   closeNav,
   subLink = false,
 }: NavLinkProps) {
-  const { checkActiveNav } = useCheckActiveNav();
+  const { checkActiveNav } = useCheckActiveNav()
   return (
     <Link
       href={href}
@@ -137,15 +147,15 @@ function NavLink({
         </div>
       )}
     </Link>
-  );
+  )
 }
 
 function NavLinkDropdown({ title, icon, label, sub, closeNav }: NavLinkProps) {
-  const { checkActiveNav } = useCheckActiveNav();
+  const { checkActiveNav } = useCheckActiveNav()
 
   /* Open collapsible by default
    * if one of child element is active */
-  const isChildActive = !!sub?.find((s) => checkActiveNav(s.href));
+  const isChildActive = !!sub?.find((s) => checkActiveNav(s.href))
 
   return (
     <Collapsible defaultOpen={isChildActive}>
@@ -180,11 +190,11 @@ function NavLinkDropdown({ title, icon, label, sub, closeNav }: NavLinkProps) {
         </ul>
       </CollapsibleContent>
     </Collapsible>
-  );
+  )
 }
 
 function NavLinkIcon({ title, icon, label, href }: NavLinkProps) {
-  const { checkActiveNav } = useCheckActiveNav();
+  const { checkActiveNav } = useCheckActiveNav()
   return (
     <Tooltip delayDuration={0}>
       <TooltipTrigger asChild>
@@ -209,15 +219,15 @@ function NavLinkIcon({ title, icon, label, href }: NavLinkProps) {
         )}
       </TooltipContent>
     </Tooltip>
-  );
+  )
 }
 
 function NavLinkIconDropdown({ title, icon, label, sub }: NavLinkProps) {
-  const { checkActiveNav } = useCheckActiveNav();
+  const { checkActiveNav } = useCheckActiveNav()
 
   /* Open collapsible by default
    * if one of child element is active */
-  const isChildActive = !!sub?.find((s) => checkActiveNav(s.href));
+  const isChildActive = !!sub?.find((s) => checkActiveNav(s.href))
 
   return (
     <DropdownMenu>
@@ -260,5 +270,5 @@ function NavLinkIconDropdown({ title, icon, label, sub }: NavLinkProps) {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

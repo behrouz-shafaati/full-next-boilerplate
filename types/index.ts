@@ -1,6 +1,6 @@
 import { Icons } from '@/components/icons'
+import { Permission } from '@/features/permissions/interface'
 export type LanguageSlugs = 'fa' | 'en'
-export type RoleSlugs = 'admin' | 'user'
 export type guildSlug = 'laundry' | 'super_market'
 export type Option = {
   value: string
@@ -30,7 +30,7 @@ export interface NavItem {
   icon?: keyof typeof Icons
   label?: string
   description?: string
-  authorized?: RoleSlugs[]
+  authorized?: Permission[]
 }
 
 export interface SidebarNavItem extends NavItem {
@@ -52,6 +52,7 @@ export type State = {
   }
   message?: string | null
   success: boolean
+  values: any
 }
 
 export type ActionsState = {

@@ -16,6 +16,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { buildCategoryHref } from '../../utils'
 import { deleteCategorysAction } from '../../actions'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 interface CellActionProps {
   data: Category
@@ -25,6 +27,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const router = useRouter()
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canEdit = can(
+    userRoles,
+    data.user.id !== user?.id ? 'category.edit.any' : 'category.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    data.user.id !== user?.id ? 'category.delete.any' : 'category.delete.own'
+  )
 
   const onConfirm = async () => {
     setLoading(true)
@@ -36,12 +49,14 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onConfirm}
-        loading={loading}
-      />
+      {canDelete && (
+        <AlertModal
+          isOpen={open}
+          onClose={() => setOpen(false)}
+          onConfirm={onConfirm}
+          loading={loading}
+        />
+      )}
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-8 w-8 p-0">
@@ -52,11 +67,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         <DropdownMenuContent align="start">
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
 
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/categories/${data.id}`)}
-          >
-            <Edit className="ml-2 h-4 w-4" /> بروزرسانی
-          </DropdownMenuItem>
+          {canEdit && (
+            <DropdownMenuItem
+              onClick={() => router.push(`/dashboard/categories/${data.id}`)}
+            >
+              <Edit className="ml-2 h-4 w-4" /> بروزرسانی
+            </DropdownMenuItem>
+          )}
 
           <DropdownMenuItem asChild>
             <Link
@@ -67,9 +84,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Eye className="ml-2 h-4 w-4" /> مشاهده
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="ml-2 h-4 w-4" /> حذف
-          </DropdownMenuItem>
+          {canDelete && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <Trash className="ml-2 h-4 w-4" /> حذف
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

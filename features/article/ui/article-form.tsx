@@ -6,7 +6,7 @@ import { Braces as ArticleIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../../../components/ui/use-toast'
+import { useToast } from '../../../hooks/use-toast'
 import {
   createArticle,
   deleteArticlesAction,
@@ -30,7 +30,6 @@ import { searchTags } from '@/features/tag/actions'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
 import Link from 'next/link'
-import MultipleSelector from '@/components/form-fields/multiple-selector'
 import { createArticleHref } from '../utils'
 import { SubmitButton } from '@/components/form-fields/submit-button'
 import StickyBox from 'react-sticky-box'
@@ -38,6 +37,9 @@ import RelatedArticlesDashboard from './dashboard/related-article'
 import SeoSnippetForm from './dashboard/seo-snippet-form'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 interface ArticleFormProps {
   initialData: any | null
@@ -49,6 +51,27 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   allCategories,
 }) => {
   const locale = 'fa'
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'article.create')
+  const canEdit = can(
+    userRoles,
+    article?.author.id !== user?.id ? 'article.edit.any' : 'article.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    article?.author.id !== user?.id
+      ? 'article.delete.any'
+      : 'article.delete.own'
+  )
+  const canPublish = can(
+    userRoles,
+    article?.author.id !== user?.id
+      ? 'article.publish.any'
+      : 'article.publish.own'
+  )
+
   const translation: any =
     article?.translations?.find((t: any) => t.lang === locale) ||
     article?.translations[0] ||
@@ -71,6 +94,17 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
+  useEffect(() => {
+    if (state.message && state.message !== null) {
+      toast({
+        variant: state.success ? 'default' : 'destructive',
+        description: state.message,
+      })
+    }
+  }, [state])
+
+  if ((article && !canEdit) || !canCreate) return <AccessDenied />
+
   const title = article ? 'ویرایش  مقاله' : 'افزودن مقاله'
   const description = article ? (
     <Link target="_blank" href={createArticleHref(article)}>
@@ -92,10 +126,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   })
 
   const statusOptions = [
-    {
-      label: 'منتشر شود',
-      value: 'published',
-    },
+    ...(canPublish ? [{ label: 'منتشر شود', value: 'published' }] : []),
     {
       label: 'پیش نویس',
       value: 'draft',
@@ -104,19 +135,18 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   const onDelete = async () => {
     try {
       setLoading(true)
-      await deleteArticlesAction(article?.id)
-      router.replace('/dashboard/articles')
+      const deleteResult = await deleteArticlesAction(article?.id)
+      if (deleteResult?.success) router.replace('/dashboard/articles')
+      else {
+        setOpen(false)
+        setLoading(false)
+        toast({
+          variant: deleteResult?.success ? 'default' : 'destructive',
+          description: deleteResult?.message,
+        })
+      }
     } catch (error: any) {}
   }
-
-  useEffect(() => {
-    console.log('#sdf article state:', state)
-    if (state.message && state.message !== null)
-      toast({
-        variant: state.success ? 'default' : 'destructive',
-        description: state.message,
-      })
-  }, [state])
 
   const submitManually = () => {
     if (formRef.current) {
@@ -128,32 +158,27 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
     : []
   const tagsArray = Array.isArray(state.values?.tags) ? state.values?.tags : []
 
-  console.log(
-    '#00000 state?.values?.translation?.contentJson:',
-    state?.values?.translation?.contentJson
-  )
-  console.log('#00000 state?.values?.translation:', state?.values?.translation)
-  console.log('#00000 state?.values:', state?.values)
-  console.log('#00000 state:', state)
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {article && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
+        {article && canDelete && (
+          <>
+            <AlertModal
+              isOpen={open}
+              onClose={() => setOpen(false)}
+              onConfirm={onDelete}
+              loading={loading}
+            />
+            <Button
+              disabled={loading}
+              variant="destructive"
+              size="sm"
+              onClick={() => setOpen(true)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </>
         )}
       </div>
       {/* <Separator /> */}
@@ -223,7 +248,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
               <Select
                 title="وضعیت"
                 name="status"
-                defaultValue={state?.values?.status || 'published'}
+                defaultValue={state?.values?.status || 'draft'}
                 options={statusOptions}
                 placeholder="وضعیت"
                 state={state}

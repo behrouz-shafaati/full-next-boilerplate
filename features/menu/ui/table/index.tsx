@@ -7,6 +7,9 @@ import { Plus } from 'lucide-react'
 import { columns } from './columns'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface CategoriesTableProps {
   query: string
@@ -14,8 +17,16 @@ interface CategoriesTableProps {
 }
 
 export default async function MenuTable({ query, page }: CategoriesTableProps) {
+  let filters = { query }
+  const user = (await getSession())?.user as User
+  if (!(await can(user.roles, 'menu.view.any', false))) {
+    filters = { ...filters, user: user.id }
+  }
+
+  const canCreate = await can(user.roles, 'menu.create', false)
+
   const findResult: QueryResponse<Menu> = await MenuCtrl.find({
-    filters: { query },
+    filters,
     pagination: { page, perPage: 6 },
   })
 
@@ -26,12 +37,14 @@ export default async function MenuTable({ query, page }: CategoriesTableProps) {
           title={`فهرست ها (${findResult?.totalDocuments || 0})`}
           description="مدیریت فهرست ها"
         />
-        <LinkButton
-          className="text-xs md:text-sm"
-          href="/dashboard/menus/create"
-        >
-          <Plus className="ml-2 h-4 w-4" /> افزودن فهرست
-        </LinkButton>
+        {canCreate && (
+          <LinkButton
+            className="text-xs md:text-sm"
+            href="/dashboard/menus/create"
+          >
+            <Plus className="ml-2 h-4 w-4" /> افزودن فهرست
+          </LinkButton>
+        )}
       </div>
       <DataTable
         searchTitle="جستجو ..."

@@ -16,6 +16,8 @@ import { revalidatePath } from 'next/cache'
 import articleCtrl from '../article/controller'
 import { Article } from '../article/interface'
 import { getSettings } from '../settings/controller'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -65,13 +67,12 @@ export async function createArticleComment(
   }
 
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'articleComment.create')
     const article = await articleCtrl.findById({
       id,
     })
-    const cleanedParams = await sanitizeArticleCommentData(
-      validatedFields,
-      article
-    )
+    const cleanedParams = await sanitizeArticleCommentData(validatedFields, id)
     newArticleComment = await articleCommentCtrl.create({
       params: { article: id, ...cleanedParams },
     })
@@ -93,8 +94,15 @@ export async function createArticleComment(
       success: true,
       values: newArticleComment,
     }
-  } catch (error) {
-    console.log('#error in create articleComment:', error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -102,6 +110,8 @@ export async function createArticleComment(
         values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: ثبت دیدگاه ناموفق بود.',
       success: false,
@@ -118,6 +128,7 @@ export async function updateArticleComment(
   prevState: State,
   formData: FormData
 ) {
+  const user = (await getSession())?.user as User
   let updatedArticleComment = {}
   const rawValues = Object.fromEntries(formData.entries())
   const values = {
@@ -141,23 +152,36 @@ export async function updateArticleComment(
     }
   }
   try {
+    const prevArticleComment: ArticleComment =
+      await articleCommentCtrl.findById({ id })
+
+    // if user loged in and send comment
+    if (prevArticleComment?.author)
+      await can(
+        user.roles,
+        prevArticleComment?.author?.id !== user.id
+          ? 'article.edit.any'
+          : 'article.edit.own'
+      )
+    // user send comment as guest
+    else await can(user.roles, 'article.edit.any')
     const params = await sanitizeArticleCommentData(validatedFields, id)
-    const cleanedParams = await articleCommentCtrl.generateUniqueArticleSlug(
+    const cleanedParams = await articleCtrl.generateUniqueArticleSlug(
       params,
       id
     )
-    const mainCategory = await categoryCtrl.findById({
-      id: cleanedParams.mainCategory,
-    })
     updatedArticleComment = await articleCommentCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,
+    })
+    const article = await articleCtrl.findById({
+      id,
     })
     // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'articleComment',
       slug: [
-        createArticleHref(updatedArticleComment?.article as Article),
+        createArticleHref(article as Article),
         `/dashboard/articleComments`,
       ],
     })
@@ -167,7 +191,17 @@ export async function updateArticleComment(
       revalidatePath(slug)
     }
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true, values }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی دیدگاه ناموفق بود.',
       success: false,
@@ -181,6 +215,7 @@ export async function updateStatusArticleComment(
   prevState: State,
   formData: FormData | Record<string, any> | null | undefined
 ) {
+  const user = (await getSession())?.user as User
   let raw: Record<string, any> = {}
   if (formData && typeof (formData as any).entries === 'function') {
     raw = Object.fromEntries((formData as FormData).entries())
@@ -198,6 +233,7 @@ export async function updateStatusArticleComment(
   }
   console.log('#09345798 id v params:', id, 'and: ', parsed.data)
   try {
+    await can(user.roles, 'articleComment.moderate.any')
     const updatedArticleComment = await articleCommentCtrl.findOneAndUpdate({
       filters: id,
       params: parsed.data,
@@ -216,8 +252,16 @@ export async function updateStatusArticleComment(
       revalidatePath(slug)
     }
     return { message: 'فایل با موفقیت بروز رسانی شد', success: true }
-  } catch (error) {
-    console.log('#Error in update post comment:', error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: بروزرسانی دیدگاه ناموفق بود.',
       success: false,
@@ -227,9 +271,20 @@ export async function updateStatusArticleComment(
 
 export async function deleteArticleCommentAction(ids: string[]) {
   try {
+    const user = (await getSession())?.user as User
     const articleCommentsResult = await articleCommentCtrl.findAll({
       filters: { _id: { $in: ids } },
     })
+    for (const prevArticle of articleCommentsResult.data) {
+      if (prevArticle.author)
+        await can(
+          user.roles,
+          prevArticle.author.id !== user.id
+            ? 'articleComment.delete.any'
+            : 'articleComment.delete.own'
+        )
+      else await can(user.roles, 'articleComment.delete.any')
+    }
     await articleCommentCtrl.delete({ filters: ids }) // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'articleComment',
@@ -245,7 +300,19 @@ export async function deleteArticleCommentAction(ids: string[]) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+    return {
+      seccess: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: حذف دیدگاه ناموفق بود',
       success: false,
@@ -255,7 +322,6 @@ export async function deleteArticleCommentAction(ids: string[]) {
 
 async function sanitizeArticleCommentData(
   validatedFields: any,
-  article: Article,
   id?: string | undefined
 ) {
   let prevState = { translations: [] }
@@ -268,10 +334,7 @@ async function sanitizeArticleCommentData(
   )
   const createdBy = session?.user.id || null
   const author = session?.user.id || null
-  const articleTitleTranslations = article.translations.map((t: any) => ({
-    lang: t.lang,
-    title: t.title,
-  }))
+
   const translations = [
     {
       lang: articleCommentPayload.locale,
@@ -288,9 +351,7 @@ async function sanitizeArticleCommentData(
     articleCommentPayload.parent == '' ? null : articleCommentPayload.parent
   const params = {
     ...articleCommentPayload,
-    articleTitleTranslations,
-    articleHref: article.href,
-    articleId: article.id,
+    articleId: id,
     createdBy,
     author,
     translations,

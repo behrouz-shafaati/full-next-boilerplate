@@ -18,10 +18,12 @@ export default function RelatedArticlesDashboard({
   const [articles, setArticles] = useState([])
   useEffect(() => {
     const fetchData = async () => {
-      const r = await getArticles({
-        filters: { categories: { $in: article.categories } },
-      })
-      setArticles(r?.data)
+      if (article) {
+        const r = await getArticles({
+          filters: { categories: { $in: article.categories } },
+        })
+        setArticles(r?.data)
+      }
     }
     fetchData()
   }, [])

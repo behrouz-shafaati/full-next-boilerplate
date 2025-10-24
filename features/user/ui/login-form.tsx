@@ -2,7 +2,7 @@
 import { Suspense, useActionState, useEffect, useState } from 'react'
 import { loginAction } from '@/features/user/actions'
 import Link from 'next/link'
-import { toast } from '@/components/ui/use-toast'
+import { toast } from '@/hooks/use-toast'
 import Text from '@/components/form-fields/text'
 import { KeyRound, UserIcon } from 'lucide-react'
 import Password from '@/components/form-fields/password'

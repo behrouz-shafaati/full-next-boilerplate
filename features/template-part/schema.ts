@@ -24,15 +24,15 @@ const templatePartSchema = new Schema<TemplatePartSchema>(
   { timestamps: true }
 )
 
-templatePartSchema
-  .pre('findOne', function (next: any) {
-    this.populate('user')
-    next()
-  })
-  .pre('find', function (next: any) {
-    this.populate('user')
-    next()
-  })
+// templatePartSchema
+//   .pre('findOne', function (next: any) {
+//     this.populate('user')
+//     next()
+//   })
+//   .pre('find', function (next: any) {
+//     this.populate('user')
+//     next()
+//   })
 
 const transform = (doc: any, ret: any, options: any) => {
   ret.id = ret._id?.toHexString()

@@ -18,7 +18,7 @@ type props = {
   widgetName: string
   blockData: {
     content: {}
-    type: 'userNav'
+    type: 'themeModeSwitch'
     settings: {}
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...

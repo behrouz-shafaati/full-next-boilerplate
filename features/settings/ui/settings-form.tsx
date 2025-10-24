@@ -11,7 +11,7 @@ import {
   Heading1,
   MessageSquare,
 } from 'lucide-react'
-import { useToast } from '../../../components/ui/use-toast'
+import { useToast } from '../../../hooks/use-toast'
 import { updateSettings } from '@/features/settings/actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
@@ -24,6 +24,9 @@ import { HomeIcon } from 'lucide-react'
 import { getTranslation } from '@/lib/utils'
 import Switch from '@/components/form-fields/switch'
 import ProfileUpload from '@/components/form-fields/profile-upload'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 interface SettingsFormProps {
   settings: Settings
@@ -35,6 +38,10 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   allPages,
 }) => {
   const locale = 'fa'
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canModerate = can(userRoles, 'settings.moderate.any')
   const formRef = useRef<HTMLFormElement>(null)
   const initialState: State = { message: null, errors: {}, success: true }
   const [state, dispatch] = useActionState(updateSettings as any, initialState)
@@ -89,7 +96,7 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   // )
 
   // console.log('@33 settings contentJson: ', settings?.contentJson)
-
+  if (!canModerate) return <AccessDenied />
   return (
     <>
       <AlertModal

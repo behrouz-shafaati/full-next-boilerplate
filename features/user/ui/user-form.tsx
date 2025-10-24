@@ -14,8 +14,8 @@ import {
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../../../components/ui/use-toast'
-import roleCtrl from '@/lib/entity/role/controller'
+import { useToast } from '../../../hooks/use-toast'
+import roleCtrl from '@/features/role/controller'
 import {
   createUser,
   deleteUsersAction,
@@ -28,7 +28,10 @@ import MultipleSelector, {
 } from '../../../components/form-fields/multiple-selector'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import ProfileUpload from '../../../components/form-fields/profile-upload'
-import { Role } from '@/lib/entity/role/interface'
+import { Role } from '@/features/role/interface'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 // import FileUpload from "../file-upload";
 
 interface ProductFormProps {
@@ -36,42 +39,34 @@ interface ProductFormProps {
 }
 
 export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
+  const locale = 'fa'
   const router = useRouter()
-  const initialState = { message: null, errors: {} }
+  const { user: lodinedUser } = useSession()
+  const lodinedUserRoles = lodinedUser?.roles || []
+
+  const canCreate = can(lodinedUserRoles, 'user.create')
+  const canEdit = can(
+    lodinedUserRoles,
+    lodinedUser?.id !== user?.id ? 'user.edit.any' : 'user.edit.own'
+  )
+  const canDelete = can(
+    lodinedUserRoles,
+    lodinedUser?.id !== user?.id ? 'user.delete.any' : 'user.delete.own'
+  )
+
+  const initialState = {
+    message: null,
+    errors: {},
+    values: { roles: [], ...user },
+  }
   const actionHandler = user
     ? updateUser.bind(null, String(user.id))
     : createUser
   const [state, dispatch] = useActionState(actionHandler as any, initialState)
-
-  const allRoles: Role[] = roleCtrl.getRoles()
-  const roleOptions: Option[] = allRoles.map((role) => ({
-    label: role.title,
-    value: role.slug,
-  }))
-  const userRoles: Option[] = user?.roles?.map((slug: string) => {
-    const findedRole: Role | undefined = allRoles.find(
-      (role: Role) => role.slug == slug
-    )
-    return { label: findedRole?.title, value: slug }
-  })
-
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
-  const title = user ? 'ویرایش کاربر' : 'افزودن کاربر'
-  const description = user ? 'ویرایش یک کاربر' : 'افزودن یک کاربر'
-  const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد'
-  const action = user ? 'ذخیره تغییرات' : 'ذخیره'
-
-  const onDelete = async () => {
-    try {
-      setLoading(true)
-      deleteUsersAction([user?.id])
-      router.replace('/dashboard/users')
-    } catch (error: any) {}
-  }
-
   useEffect(() => {
     if (state.message && state.message !== null)
       toast({
@@ -80,26 +75,73 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
         description: state.message,
       })
   }, [state, toast])
+  if ((user && !canEdit) || !canCreate) return <AccessDenied />
+  const allRoles: Role[] = roleCtrl.getRoles()
+  const roleOptions: Option[] = allRoles.map((role) => ({
+    label: role.title,
+    value: role.slug,
+  }))
+  const userRoles: Option[] = Array.isArray(state.values?.roles)
+    ? state.values?.roles.map((slug: string) => {
+        const findedRole: Role | undefined = allRoles.find(
+          (role: Role) => role.slug == slug
+        )
+        return { label: findedRole?.title, value: slug }
+      })
+    : []
+
+  const title = user ? 'ویرایش کاربر' : 'افزودن کاربر'
+  const description = user ? 'ویرایش یک کاربر' : 'افزودن یک کاربر'
+  const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد'
+  const action = user ? 'ذخیره تغییرات' : 'ذخیره'
+
+  const onDelete = async () => {
+    try {
+      setLoading(true)
+      const deleteResult = await deleteUsersAction([user?.id])
+      if (deleteResult?.success) router.replace('/dashboard/users')
+      else {
+        setOpen(false)
+        setLoading(false)
+        toast({
+          variant: deleteResult?.success ? 'default' : 'destructive',
+          description: deleteResult?.message,
+        })
+      }
+    } catch (error: any) {}
+  }
 
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
+      {' '}
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {user && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
+        {canDelete && (
+          <AlertModal
+            isOpen={open}
+            onClose={() => setOpen(false)}
+            onConfirm={onDelete}
+            loading={loading}
+          />
+        )}
+
+        {user && canDelete && (
+          <>
+            <AlertModal
+              isOpen={open}
+              onClose={() => setOpen(false)}
+              onConfirm={onDelete}
+              loading={loading}
+            />
+            <Button
+              disabled={loading}
+              variant="destructive"
+              size="sm"
+              onClick={() => setOpen(true)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </>
         )}
       </div>
       {/* <Separator /> */}
@@ -110,7 +152,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <Text
             title="نام"
             name="firstName"
-            defaultValue={user?.firstName || ''}
+            defaultValue={state.values?.firstName || ''}
             placeholder="نام"
             state={state}
             icon={<UserIcon className="w-4 h-4" />}
@@ -119,7 +161,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <Text
             title="نام خانوادگی"
             name="lastName"
-            defaultValue={user?.lastName}
+            defaultValue={state.values?.lastName}
             placeholder="نام خانوادگی"
             state={state}
             icon={<UserIcon className="w-4 h-4" />}
@@ -128,7 +170,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <Text
             title="ایمیل"
             name="email"
-            defaultValue={user?.email}
+            defaultValue={state.values?.email}
             placeholder="ایمیل"
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
@@ -137,7 +179,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <Text
             title="نام کاربری"
             name="userName"
-            defaultValue={user?.userName}
+            defaultValue={state.values?.userName}
             placeholder="نام کاربری"
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
@@ -146,7 +188,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
           <Text
             title="موبایل"
             name="mobile"
-            defaultValue={user?.mobile}
+            defaultValue={state.values?.mobile}
             placeholder="موبایل"
             state={state}
             icon={<PhoneIcon className="w-4 h-4" />}

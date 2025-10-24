@@ -1,6 +1,6 @@
-import { Role, RolePayload } from '@/lib/entity/role/interface'
+import { Role, RolePayload } from '@/features/role/interface'
 import userCtrl from '@/features/user/controller'
-import roleCtrl from '@/lib/entity/role/controller'
+import roleCtrl from '@/features/role/controller'
 import requestCtrl from '@/lib/entity/request/controller'
 import { Request } from '@/lib/entity/request/interface'
 import accessCtrl from '@/lib/entity/access/controller'

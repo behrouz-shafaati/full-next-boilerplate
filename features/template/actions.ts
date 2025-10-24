@@ -4,12 +4,13 @@ import { z } from 'zod'
 import templateCtrl from '@/features/template/controller'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
-import settingsCtrl from '../settings/controller'
 import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
 import { Template } from './interface'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -29,17 +30,19 @@ export async function createTemplate(prevState: State, formData: FormData) {
   const validatedFields = FormSchema.safeParse(
     Object.fromEntries(formData.entries())
   )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
-
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'template.create')
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
+
     const params = await sanitizeTemplateData(validatedFields)
     const cleanedParams = await templateCtrl.generateUniqueTemplateSlug(params)
     console.log('#23487s6 cleanedParams:', cleanedParams)
@@ -56,7 +59,15 @@ export async function createTemplate(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -65,6 +76,8 @@ export async function createTemplate(prevState: State, formData: FormData) {
         values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in create template:', error)
     return {
       message: 'خطای پایگاه داده: ایجاد دسته ناموفق بود.',
       success: false,
@@ -93,16 +106,22 @@ export async function updateTemplate(
     Object.fromEntries(formData.entries())
   )
 
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
   try {
+    const user = (await getSession())?.user as User
+    const prevTemplate = await templateCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevTemplate.user !== user.id ? 'template.edit.any' : 'template.edit.own'
+    )
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
     const params = await sanitizeTemplateData(validatedFields)
 
     const cleanedParams = await templateCtrl.generateUniqueTemplateSlug(
@@ -118,18 +137,40 @@ export async function updateTemplate(
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
-    console.log('#pathe need revalidate:', pathes)
     for (const slug of pathes) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in update template:', error)
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.' }
   }
 }
 
 export async function deleteTemplatesAction(ids: string[]) {
   try {
+    const user = (await getSession())?.user as User
+    const prevTemplateResult = await templateCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevTemplate of prevTemplateResult.data) {
+      await can(
+        user.roles,
+        prevTemplate.user !== user.id
+          ? 'template.delete.any'
+          : 'template.delete.own'
+      )
+    }
+
     await templateCtrl.delete({ filters: ids })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'template',
@@ -140,7 +181,16 @@ export async function deleteTemplatesAction(ids: string[]) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in delete template:', error)
     return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
 }
@@ -153,7 +203,7 @@ async function sanitizeTemplateData(validatedFields: any) {
   const session = (await getSession()) as Session
 
   const user = session.user.id
-  // Create the article
+  // Create the template
   const content = JSON.parse(validatedFields.data.contentJson)
   const params = {
     content,

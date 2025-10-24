@@ -9,6 +9,8 @@ import { getSession } from '@/lib/auth'
 import { MenuTranslationSchema } from './interface'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -66,20 +68,20 @@ export async function createMenu(prevState: State, formData: FormData) {
       items: JSON.parse(rawValues?.itemsJson),
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      ok: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      values,
-    }
-  }
-
+  const validatedFields = FormSchema.safeParse(rawValues)
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'menu.create')
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        ok: false,
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        values,
+      }
+    }
+
     const params = await sanitizeArticleData(validatedFields)
     // Create the menu
     await menuCtrl.create({ params })
@@ -93,7 +95,15 @@ export async function createMenu(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -102,6 +112,8 @@ export async function createMenu(prevState: State, formData: FormData) {
         values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error increate menu:', error)
     return {
       ok: false,
       message: 'خطای پایگاه داده: ایجاد منو ناموفق بود.',
@@ -126,20 +138,24 @@ export async function updateMenu(
       items: rawValues?.itemsJson,
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
+  const validatedFields = FormSchema.safeParse(rawValues)
 
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      ok: false,
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      values,
-    }
-  }
   try {
+    const user = (await getSession())?.user as User
+    const prevMenu = await menuCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevMenu?.user !== user.id ? 'menu.edit.any' : 'menu.edit.own'
+    )
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        ok: false,
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        values,
+      }
+    }
     const params = await sanitizeArticleData(validatedFields, id)
     await menuCtrl.findOneAndUpdate({
       filters: id,
@@ -155,7 +171,17 @@ export async function updateMenu(
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in update menu:', error)
     return {
       ok: false,
       values,
@@ -167,18 +193,40 @@ export async function updateMenu(
 
 export async function deleteMenusAction(ids: string[]) {
   try {
+    const user = (await getSession())?.user as User
+    const prevMenuResult = await menuCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevMenu of prevMenuResult.data) {
+      await can(
+        user.roles,
+        prevMenu.user !== user.id ? 'menu.delete.any' : 'menu.delete.own'
+      )
+    }
     await menuCtrl.delete({ filters: ids })
-  } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
-  }
-  const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
-    feature: 'menu',
-    slug: '/dashboard/menus',
-  })
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+      feature: 'menu',
+      slug: '/dashboard/menus',
+    })
 
-  for (const slug of pathes) {
-    // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
-    revalidatePath(slug)
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in delete manu:', error)
+    return { message: 'خطای پایگاه داده: حذف دسته ناموفق بود' }
   }
 }
 

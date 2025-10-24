@@ -5,6 +5,8 @@ import { Trash } from 'lucide-react'
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { deleteArticleCommentAction } from '../../actions'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 type GroupActionProps = {
   table: any
@@ -14,6 +16,12 @@ export default function GroupAction({ table, items }: GroupActionProps) {
   const router = useRouter()
   const [open, setOpen] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+  if (!can(userRoles, 'articleComment.moderate.any')) {
+    return <></>
+  }
+
   const onDelete = async () => {
     try {
       setLoading(true)

@@ -29,7 +29,7 @@ type TemplatePartBase = {
    */
   content: TemplatePartContent
 
-  status: 'draft' | 'published'
+  status: 'deactive' | 'active'
 }
 
 /**

@@ -5,7 +5,7 @@ import { Braces as TagIcon, Mail as MailIcon, Trash } from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../../../components/ui/use-toast'
+import { useToast } from '../../../hooks/use-toast'
 import { createTag, deleteTagsAction, updateTag } from '../actions'
 import Text from '../../../components/form-fields/text'
 import { SubmitButton } from '../../../components/form-fields/submit-button'
@@ -14,6 +14,9 @@ import { Tag } from '../interface'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
 import { useRouter } from 'next/navigation'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
+import AccessDenied from '@/components/access-denied'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -25,6 +28,18 @@ interface TagFormProps {
 export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
   const locale = 'fa'
   const router = useRouter()
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canCreate = can(userRoles, 'tag.create')
+  const canEdit = can(
+    userRoles,
+    tag?.user.id !== user?.id ? 'tag.edit.any' : 'tag.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    tag?.user.id !== user?.id ? 'tag.delete.any' : 'tag.delete.own'
+  )
   const translation: any =
     tag?.translations?.find((t: any) => t.lang === locale) ||
     tag?.translations[0] ||
@@ -41,6 +56,15 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  useEffect(() => {
+    if (state.message && state.message !== null)
+      toast({
+        variant: 'destructive',
+        title: '',
+        description: state.message,
+      })
+  }, [state])
+  if ((tag && !canEdit) || !canCreate) return <AccessDenied />
   const title = tag ? 'ویرایش برچسب' : 'افزودن برچسب'
   const description = tag ? 'ویرایش برچسب' : 'افزودن برچسب'
 
@@ -58,39 +82,40 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
   const onDelete = async () => {
     try {
       setLoading(true)
-      await deleteTagsAction([tag?.id])
-      router.replace('/dashboard/tags')
+      const deleteResult = await deleteTagsAction([tag?.id])
+      if (deleteResult?.success) router.replace('/dashboard/tags')
+      else {
+        setOpen(false)
+        setLoading(false)
+        toast({
+          variant: deleteResult?.success ? 'default' : 'destructive',
+          description: deleteResult?.message,
+        })
+      }
     } catch (error: any) {}
   }
 
-  useEffect(() => {
-    if (state.message && state.message !== null)
-      toast({
-        variant: 'destructive',
-        title: '',
-        description: state.message,
-      })
-  }, [state])
-
   return (
     <>
-      <AlertModal
-        isOpen={open}
-        onClose={() => setOpen(false)}
-        onConfirm={onDelete}
-        loading={loading}
-      />
       <div className="flex items-center justify-between">
         <Heading title={title} description={description} />
-        {tag && (
-          <Button
-            disabled={loading}
-            variant="destructive"
-            size="sm"
-            onClick={() => setOpen(true)}
-          >
-            <Trash className="h-4 w-4" />
-          </Button>
+        {tag && canDelete && (
+          <>
+            <AlertModal
+              isOpen={open}
+              onClose={() => setOpen(false)}
+              onConfirm={onDelete}
+              loading={loading}
+            />
+            <Button
+              disabled={loading}
+              variant="destructive"
+              size="sm"
+              onClick={() => setOpen(true)}
+            >
+              <Trash className="h-4 w-4" />
+            </Button>
+          </>
         )}
       </div>
       {/* <Separator /> */}

@@ -1,6 +1,6 @@
 'use client'
 import { useActionState, useEffect, useRef } from 'react'
-import { useToast } from '@/components/ui/use-toast'
+import { useToast } from '@/hooks/use-toast'
 import { createArticleComment } from '@/features/article-comment/actions'
 import CommentEditor, { CommentEditorRef } from './comment-editor'
 import { mutate } from 'swr'
@@ -8,14 +8,20 @@ import { useArticleCommentStore } from './store/useArticleCommentStore'
 import { AlertCircleIcon, X } from 'lucide-react'
 import { Button } from '@/components/custom/button'
 import { Alert, AlertTitle } from '@/components/ui/alert'
+import { useSession } from '@/components/context/SessionContext'
+import { can } from '@/lib/utils/can.client'
 
 interface ArticleCommentFormProps {
+  needLogin?: boolean
   initialData: any | null
 }
 
 export const CommentForm: React.FC<ArticleCommentFormProps> = ({
+  needLogin = false,
   initialData: article,
 }) => {
+  const { user } = useSession()
+  const userRoles = user?.roles || []
   const { replayTo, setReplayTo } = useArticleCommentStore()
   const { toast } = useToast()
   const initialState = {
@@ -51,6 +57,7 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
       editorRef.current?.clear()
     }
   }, [state])
+
   if (!article || article == undefined)
     return (
       <Alert variant="destructive">
@@ -59,6 +66,12 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
       </Alert>
     )
 
+  if (needLogin) {
+    if (!user)
+      return <p className="py-2 text-center">برای ارسال نظر لطفا وارد شوید</p>
+    const canCreate = can(userRoles, 'articleComment.create')
+    if (!canCreate) return <></>
+  }
   return (
     <>
       <form

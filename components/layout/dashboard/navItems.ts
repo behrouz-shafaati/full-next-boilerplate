@@ -1,5 +1,4 @@
-import { Icons } from '@/components/icons'
-import { NavItem, SidebarNavItem } from '@/types'
+import { SidebarNavItem } from '@/types'
 
 export const navItems: SidebarNavItem[] = [
   {
@@ -8,7 +7,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard',
     icon: 'dashboard',
     label: '',
-    authorized: ['admin'],
+    authorized: [],
   },
   {
     slug: 'article',
@@ -16,7 +15,11 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/articles',
     icon: 'stickyNote',
     label: '',
-    authorized: ['admin'],
+    authorized: [
+      'article.view.any',
+      'article.view.own',
+      'articleComment.view.own',
+    ],
   },
   {
     slug: 'article-comment',
@@ -24,7 +27,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/article-comments',
     icon: 'stickyNote',
     label: '',
-    authorized: ['admin'],
+    authorized: ['articleComment.moderate.any', 'articleComment.view.any'],
   },
   {
     slug: 'user',
@@ -32,7 +35,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/users',
     icon: 'user',
     label: '',
-    authorized: ['admin'],
+    authorized: ['user.view.any', 'user.view.own'],
     // sub: [
     //   {
     //     slug: 'employee',
@@ -40,7 +43,7 @@ export const navItems: SidebarNavItem[] = [
     //     href: '/dashboard/users/employees',
     //     icon: 'employee',
     //     label: '',
-    //     authorized: ['admin'],
+    //     authorized: ['.view.any', '.view.own'],,
     //   },
     //   {
     //     slug: 'employee',
@@ -48,7 +51,7 @@ export const navItems: SidebarNavItem[] = [
     //     href: '/dashboard/users/employees',
     //     icon: 'employee',
     //     label: '',
-    //     authorized: ['admin'],
+    //     authorized: ['.view.any', '.view.own'],,
     //   },
     // ],
   },
@@ -58,7 +61,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/categories',
     icon: 'category',
     label: '',
-    authorized: ['admin'],
+    authorized: ['category.view.any', 'category.view.own'],
   },
   {
     slug: 'tag',
@@ -66,7 +69,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/tags',
     icon: 'tag',
     label: '',
-    authorized: ['admin'],
+    authorized: ['tag.view.any', 'tag.view.own'],
   },
   {
     slug: 'menu',
@@ -74,7 +77,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/menus',
     icon: 'squareMenu',
     label: '',
-    authorized: ['admin'],
+    authorized: ['menu.view.any', 'menu.view.own'],
   },
   {
     slug: 'page',
@@ -82,7 +85,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/pages',
     icon: 'layoutTemplate',
     label: '',
-    authorized: ['admin'],
+    authorized: ['page.view.any', 'page.view.own'],
   },
 
   {
@@ -91,7 +94,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/templates',
     icon: 'layoutTemplate',
     label: '',
-    authorized: ['admin'],
+    authorized: ['template.view.any', 'template.view.own'],
   },
   {
     slug: 'template-part',
@@ -99,7 +102,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/template-parts',
     icon: 'layoutTemplate',
     label: '',
-    authorized: ['admin'],
+    authorized: ['template.view.any', 'template.view.own'],
   },
   {
     slug: 'settings',
@@ -107,7 +110,11 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard/settings',
     icon: 'slidersVertical',
     label: '',
-    authorized: ['admin'],
+    authorized: [
+      'settings.view.any',
+      'settings.view.own',
+      'settings.moderate.any',
+    ],
   },
 
   {
@@ -116,5 +123,6 @@ export const navItems: SidebarNavItem[] = [
     href: '/logout',
     icon: 'login',
     label: '',
+    authorized: [],
   },
 ]

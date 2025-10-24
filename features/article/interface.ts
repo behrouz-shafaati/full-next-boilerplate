@@ -1,4 +1,7 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
+import { User } from '../user/interface'
+import { Category } from '../category/interface'
+import { Tag } from '../tag/interface'
 
 export type ArticleTranslationSchema = {
   /**
@@ -41,21 +44,6 @@ export type ArticleTranslationSchema = {
  */
 type ArticleBase = {
   /**
-   * ایجاد کننده مقاله
-   */
-  user?: string
-
-  /**
-   * نویسنده مقاله
-   */
-  author?: string
-
-  /**
-   * تصویر مقاله
-   */
-  image?: string
-
-  /**
    * آدرس یکتای مقاله
    */
   slug: string
@@ -64,21 +52,6 @@ type ArticleBase = {
    * زیان های مختلف مقاله
    */
   translations: [ArticleTranslationSchema]
-
-  /**
-   * دسته‌بندی اصلی مقاله
-   */
-  mainCategory?: string
-
-  /**
-   * دسته‌بندی مقاله
-   */
-  categories?: string[]
-
-  /**
-   * برچسب های مقاله
-   */
-  tags?: string[]
 
   /**
    * وضعیت فعال بودن مقاله (در صورت فعال بودن true)
@@ -93,18 +66,78 @@ type ArticleBase = {
    */
   publishedAt: Date
 }
+type Article_FK_Schema = {
+  /**
+   * ایجاد کننده مقاله
+   */
+  user?: Id
+
+  /**
+   * نویسنده مقاله
+   */
+  author?: Id
+
+  /**
+   * تصویر مقاله
+   */
+  image?: Id
+  /**
+   * دسته‌بندی اصلی مقاله
+   */
+  mainCategory?: Id
+
+  /**
+   * دسته‌بندی مقاله
+   */
+  categories?: Id[]
+
+  /**
+   * برچسب های مقاله
+   */
+  tags?: Id[]
+}
+type Article_FK_Populate = {
+  /**
+   * ایجاد کننده مقاله
+   */
+  user: User
+
+  /**
+   * نویسنده مقاله
+   */
+  author: User
+
+  /**
+   * تصویر مقاله
+   */
+  image?: File
+  /**
+   * دسته‌بندی اصلی مقاله
+   */
+  mainCategory?: Category
+
+  /**
+   * دسته‌بندی مقاله
+   */
+  categories?: Category[]
+
+  /**
+   * برچسب های مقاله
+   */
+  tags?: Tag[]
+}
 
 /**
- * مدل مقاله که شامل اطلاعات پایه مقاله و ویژگی‌های اضافی مدل می‌باشد
+ *
  */
-export type Article = Model & ArticleBase
+export type Article = Model & ArticleBase & Article_FK_Populate
 
 /**
  * مدل اسکیمای مقاله برای پایگاه داده که شامل اطلاعات پایه مقاله و ویژگی‌های اضافی اسکیمای پایگاه داده می‌باشد
  */
-export type ArticleSchema = SchemaModel & ArticleBase
+export type ArticleSchema = SchemaModel & ArticleBase & Article_FK_Schema
 
 /**
  * ساختار درخواست ارسال داده‌های مقاله که شامل اطلاعات پایه مقاله می‌باشد
  */
-export type ArticleInput = ArticleBase
+export type ArticleInput = ArticleBase & Article_FK_Schema

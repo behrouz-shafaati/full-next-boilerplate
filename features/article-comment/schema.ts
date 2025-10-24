@@ -97,7 +97,7 @@ articleCommentSchema
     this.populate('author')
     this.populate({
       path: 'article',
-      select: 'id href', // فقط translations رو بیار
+      select: 'id href translations', // فقط translations رو بیار
       transform: (doc: any) => {
         if (!doc) return doc
         doc = doc.toObject()

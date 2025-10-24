@@ -8,6 +8,9 @@ import { QueryResponse } from '@/lib/entity/core/interface'
 import GroupAction from './group-action'
 import { ArticleComment } from '../../interface'
 import { commentsUrl } from '../../utils'
+import { getSession } from '@/lib/auth'
+import { User } from '@/features/user/interface'
+import { can } from '@/lib/utils/can.server'
 
 interface ArticleCommentTableProps {
   filters: {
@@ -21,6 +24,11 @@ export default async function ArticleCommentTable({
   filters,
   page = 1,
 }: ArticleCommentTableProps) {
+  const user = (await getSession())?.user as User
+  if (!(await can(user.roles, 'articleComment.view.any', false))) {
+    filters = { ...filters, author: user.id }
+  }
+
   const findResult: QueryResponse<ArticleComment> =
     await ArticleCommentCtrl.find(
       {

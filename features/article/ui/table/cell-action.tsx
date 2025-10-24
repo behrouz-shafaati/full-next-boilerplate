@@ -14,6 +14,8 @@ import { useState } from 'react'
 import { createArticleHref } from '../../utils'
 import Link from 'next/link'
 import { deleteArticlesAction } from '../../actions'
+import { can } from '@/lib/utils/can.client'
+import { useSession } from '@/components/context/SessionContext'
 
 interface CellActionProps {
   data: Article
@@ -23,6 +25,17 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const router = useRouter()
+  const { user } = useSession()
+  const userRoles = user?.roles || []
+
+  const canEdit = can(
+    userRoles,
+    data?.author.id !== user?.id ? 'article.edit.any' : 'article.edit.own'
+  )
+  const canDelete = can(
+    userRoles,
+    data?.author.id !== user?.id ? 'article.delete.any' : 'article.delete.own'
+  )
 
   const onConfirm = async () => {
     setLoading(true)
@@ -49,11 +62,13 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           {/* <DropdownMenuLabel dir="rtl">عملیات</DropdownMenuLabel> */}
-          <DropdownMenuItem
-            onClick={() => router.push(`/dashboard/articles/${data.id}`)}
-          >
-            <Edit className="ml-2 h-4 w-4" /> بروزرسانی
-          </DropdownMenuItem>
+          {canEdit && (
+            <DropdownMenuItem
+              onClick={() => router.push(`/dashboard/articles/${data.id}`)}
+            >
+              <Edit className="ml-2 h-4 w-4" /> بروزرسانی
+            </DropdownMenuItem>
+          )}
           <DropdownMenuItem asChild>
             <Link
               href={`${createArticleHref(data)}`}
@@ -63,9 +78,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
               <Eye className="ml-2 h-4 w-4" /> مشاهده
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={() => setOpen(true)}>
-            <Trash className="ml-2 h-4 w-4" /> حذف
-          </DropdownMenuItem>
+          {canDelete && (
+            <DropdownMenuItem onClick={() => setOpen(true)}>
+              <Trash className="ml-2 h-4 w-4" /> حذف
+            </DropdownMenuItem>
+          )}
         </DropdownMenuContent>
       </DropdownMenu>
     </>

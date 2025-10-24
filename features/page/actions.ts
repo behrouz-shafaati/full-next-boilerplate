@@ -9,6 +9,8 @@ import { generateUniquePageSlug } from './utils'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
+import { User } from '../user/interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -40,20 +42,20 @@ export async function createPage(prevState: State, formData: FormData) {
       content,
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
-
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'page.create')
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
+
     const params = await sanitizePageData(validatedFields)
     console.log('#234876 params:', params)
     const cleanedParams = await generateUniquePageSlug(params)
@@ -70,8 +72,15 @@ export async function createPage(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
-    console.log('%error:', error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
@@ -80,6 +89,8 @@ export async function createPage(prevState: State, formData: FormData) {
         values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in create page:', error)
     return {
       message: 'خطای پایگاه داده: ایجاد برگه ناموفق بود.',
       success: false,
@@ -121,19 +132,23 @@ export async function updatePage(
       content,
     },
   }
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-      success: false,
-      values,
-    }
-  }
   try {
+    const user = (await getSession())?.user as User
+    const prevPage = await pageCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevPage.user !== user.id ? 'page.edit.any' : 'page.edit.own'
+    )
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
     const params = await sanitizePageData(validatedFields, id)
 
     cleanedParams = await generateUniquePageSlug(params, id)
@@ -158,8 +173,17 @@ export async function updatePage(
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
-    console.log('#234234 error:', error)
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in update page:', error)
     return { message: 'خطای پایگاه داده: بروزرسانی برگه ناموفق بود.' }
   }
   return {
@@ -171,6 +195,16 @@ export async function updatePage(
 
 export async function deletePagesAction(ids: string[]) {
   try {
+    const user = (await getSession())?.user as User
+    const prevPageResult = await pageCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevPage of prevPageResult.data) {
+      await can(
+        user.roles,
+        prevPage.user !== user.id ? 'page.delete.any' : 'page.delete.own'
+      )
+    }
     const pageResults = await pageCtrl.findAll({
       filters: { id: { $in: ids } },
     })
@@ -192,7 +226,19 @@ export async function deletePagesAction(ids: string[]) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('Error in delete Page:', error)
     return { message: 'خطای پایگاه داده: حذف برگه ناموفق بود' }
   }
 }
@@ -210,7 +256,7 @@ async function sanitizePageData(validatedFields: any, id?: string | undefined) {
   const session = (await getSession()) as Session
 
   const user = session.user.id
-  // Create the article
+  // Create the page
   const content = JSON.parse(validatedFields.data.contentJson)
   console.log('#45897 content in sandigo:', content)
   const translations = [

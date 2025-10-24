@@ -11,7 +11,7 @@ import {
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
-import { useToast } from '../../../components/ui/use-toast'
+import { useToast } from '../../../hooks/use-toast'
 import {
   createArticleComment,
   deleteArticleCommentAction,

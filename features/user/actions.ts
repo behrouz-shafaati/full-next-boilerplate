@@ -12,6 +12,9 @@ import { Settings } from '../settings/interface'
 import { comparePassword, encrypt } from '@/lib/utils'
 import verificationCtrl from '../verification/controller'
 import { cookies } from 'next/headers'
+import { getSession } from '@/lib/auth'
+import { User } from './interface'
+import { can } from '@/lib/utils/can.server'
 
 const FormSchema = z.object({
   firstName: z
@@ -190,19 +193,22 @@ export async function loginAction(
  * @returns An object with errors and a message if there are any, or redirects to the user dashboard.
  */
 export async function createUser(prevState: State, formData: FormData) {
-  // Validate form fields
-  const validatedFields = FormSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-    }
-  }
-
+  const rawValues = Object.fromEntries(formData.entries())
+  const values = rawValues
   try {
+    const user = (await getSession())?.user as User
+    await can(user.roles, 'user.create')
+    // Validate form fields
+    const validatedFields = FormSchema.safeParse(rawValues)
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        values,
+      }
+    }
+
     // Parse the roles field from a string to an array
     validatedFields.data = {
       ...validatedFields.data,
@@ -226,15 +232,27 @@ export async function createUser(prevState: State, formData: FormData) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
     // Handle database error
     if (error instanceof z.ZodError) {
       return {
         errors: error.flatten().fieldErrors,
+        values,
       }
     }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log(error)
     return {
       message: 'خطای پایگاه داده: ایجاد کاربر ناموفق بود.',
+      values,
     }
   }
   redirect('/dashboard/users')
@@ -247,18 +265,27 @@ export async function updateUser(
   prevState: State,
   formData: FormData
 ) {
-  const validatedFields = UpdateUserSchema.safeParse(
-    Object.fromEntries(formData.entries())
-  )
-
-  // If form validation fails, return errors early. Otherwise, continue.
-  if (!validatedFields.success) {
-    return {
-      errors: validatedFields.error.flatten().fieldErrors,
-      message: 'لطفا فیلدهای لازم را پر کنید.',
-    }
-  }
+  const user = (await getSession())?.user as User
+  const rawValues = Object.fromEntries(formData.entries())
+  const values = rawValues
   try {
+    const prevUser = await userCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevUser.id !== user.id ? 'user.edit.any' : 'user.edit.own'
+    )
+
+    const validatedFields = UpdateUserSchema.safeParse(rawValues)
+
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
     // Parse the roles field from a string to an array
     validatedFields.data = {
       ...validatedFields.data,
@@ -287,15 +314,34 @@ export async function updateUser(
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
-    console.log('#2776 error: ', error)
-    return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.' }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('!77234:', error)
+    return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.', values }
   }
   redirect('/dashboard/users')
 }
 
 export async function deleteUsersAction(ids: string[]) {
+  const user = (await getSession())?.user as User
   try {
+    const prevUserResult = await userCtrl.findAll({
+      filters: { _id: { $in: ids } },
+    })
+    for (const prevUser of prevUserResult.data) {
+      await can(
+        user.roles,
+        prevUser.id !== user.id ? 'user.delete.any' : 'user.delete.own'
+      )
+    }
     await userCtrl.delete({ filters: ids })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
@@ -306,12 +352,26 @@ export async function deleteUsersAction(ids: string[]) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
     }
-  } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف کاربر ناموفق بود' }
+    return {
+      success: true,
+    }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    return {
+      message: 'خطای پایگاه داده: حذف کاربر ناموفق بود',
+      success: false,
+    }
   }
-  redirect('/dashboard/users')
 }
 
+// used in custom mention
 export async function searchUser(query: string) {
   try {
     return userCtrl.find({ filters: { query } })
