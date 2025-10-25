@@ -8,9 +8,10 @@ import { revalidatePath } from 'next/cache'
 import { getSession } from '@/lib/auth'
 import { User } from '../user/interface'
 import { can } from '@/lib/utils/can.server'
+import { Settings } from './interface'
 
 const FormSchema = z.object({
-  homePageId: z.string({}),
+  homePageId: z.string({}).nullable().optional(),
   commentApprovalRequired: z.string({}).nullable().optional(),
   emailVerificationRequired: z.string({}).nullable().optional(),
   mobileVerificationRequired: z.string({}).nullable().optional(),
@@ -54,8 +55,13 @@ export async function updateSettings(prevState: State, formData: FormData) {
         success: false,
       }
     }
-    const params = await sanitizeSettingsData(validatedFields)
-    console.log('#2887 params: ', params)
+    const prevSettings = (await getSettings()) as Settings
+    const params = await sanitizeSettingsData({
+      ...prevSettings,
+      ...prevSettings?.infoTranslations,
+      ...prevSettings?.farazsms,
+      ...validatedFields.data,
+    })
     await settingsCtrl.findOneAndUpdate({
       filters: { type: 'site-settings' },
       params,
@@ -119,7 +125,7 @@ async function sanitizeSettingsData(validatedFields: any) {
   // Create the settings
   const siteSettings = await getSettings()
 
-  const settingsPayload = validatedFields.data
+  const settingsPayload = validatedFields
   const farazsms = {
     farazsms_apiKey: settingsPayload?.farazsms_apiKey,
     farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
@@ -138,11 +144,20 @@ async function sanitizeSettingsData(validatedFields: any) {
   const params = {
     ...settingsPayload,
     commentApprovalRequired:
-      settingsPayload?.commentApprovalRequired == 'on' ? true : false,
+      settingsPayload?.commentApprovalRequired == 'on' ||
+      settingsPayload?.commentApprovalRequired == true
+        ? true
+        : false,
     emailVerificationRequired:
-      settingsPayload?.emailVerificationRequired == 'on' ? true : false,
+      settingsPayload?.emailVerificationRequired == 'on' ||
+      settingsPayload?.emailVerificationRequired == true
+        ? true
+        : false,
     mobileVerificationRequired:
-      settingsPayload?.mobileVerificationRequired == 'on' ? true : false,
+      settingsPayload?.mobileVerificationRequired == 'on' ||
+      settingsPayload?.mobileVerificationRequired == true
+        ? true
+        : false,
     favicon: settingsPayload?.favicon == '' ? null : settingsPayload?.favicon,
     homePageId:
       settingsPayload?.homePageId == '' ? null : settingsPayload?.homePageId,

@@ -6,6 +6,7 @@ import { UserNav } from './UserNav'
 import Link from 'next/link'
 import { Button } from '@/components/custom/button'
 import { CircleUserRound } from 'lucide-react'
+import { Skeleton } from '@/components/ui/skeleton'
 
 type props = {
   blockData: {
@@ -32,9 +33,7 @@ export const UserNavBlock = ({ blockData, ...props }: props) => {
   if (loading) {
     return (
       <div {...props}>
-        <Button variant={'ghost'} className="p-0">
-          <CircleUserRound />
-        </Button>
+        <Skeleton className="h-6 w-6 rounded-full" />
       </div>
     )
   }

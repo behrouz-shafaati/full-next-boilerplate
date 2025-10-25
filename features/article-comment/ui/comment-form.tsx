@@ -8,8 +8,6 @@ import { useArticleCommentStore } from './store/useArticleCommentStore'
 import { AlertCircleIcon, X } from 'lucide-react'
 import { Button } from '@/components/custom/button'
 import { Alert, AlertTitle } from '@/components/ui/alert'
-import { useSession } from '@/components/context/SessionContext'
-import { can } from '@/lib/utils/can.client'
 
 interface ArticleCommentFormProps {
   needLogin?: boolean
@@ -20,8 +18,6 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
   needLogin = false,
   initialData: article,
 }) => {
-  const { user } = useSession()
-  const userRoles = user?.roles || []
   const { replayTo, setReplayTo } = useArticleCommentStore()
   const { toast } = useToast()
   const initialState = {
@@ -66,12 +62,12 @@ export const CommentForm: React.FC<ArticleCommentFormProps> = ({
       </Alert>
     )
 
-  if (needLogin) {
-    if (!user)
-      return <p className="py-2 text-center">برای ارسال نظر لطفا وارد شوید</p>
-    const canCreate = can(userRoles, 'articleComment.create')
-    if (!canCreate) return <></>
-  }
+  // if (needLogin) {
+  //   if (!user)
+  //     return <p className="py-2 text-center">برای ارسال نظر لطفا وارد شوید</p>
+  //   const canCreate = can(userRoles, 'articleComment.create')
+  //   if (!canCreate) return <></>
+  // }
   return (
     <>
       <form

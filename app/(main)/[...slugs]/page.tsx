@@ -176,7 +176,12 @@ export default async function Page({ params }: PageProps) {
       )}
     </>
   )
-
+  if (article.status !== 'published')
+    return (
+      <div className="h-screen w-full flex justify-center items-center align-middle">
+        مقاله هنوز منتشر نشده است!
+      </div>
+    )
   if (template)
     return (
       <>

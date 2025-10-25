@@ -107,7 +107,7 @@ export const navItems: SidebarNavItem[] = [
   {
     slug: 'settings',
     title: 'تنظیمات',
-    href: '/dashboard/settings',
+    href: '/dashboard/settings/general',
     icon: 'slidersVertical',
     label: '',
     authorized: [

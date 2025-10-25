@@ -306,19 +306,22 @@ async function sanitizeArticleData(
   const categoriesId = categories.map((cat: Option) => cat.value)
   if (!categoriesId.includes(articlePayload.mainCategory))
     categoriesId.push(articlePayload.mainCategory)
-  const params = {
+  let params = {
     ...articlePayload,
     translations,
     tags,
     categories: categoriesId,
     image,
-    user,
-    author: user,
+
     ...(articlePayload.status == 'published'
       ? { publishedAt: new Date() }
       : {}),
   }
 
+  // اگر مقاله در حال بروز رسانی نیست نام کاربر و نویسنده ثبت شود
+  if (!id || id === undefined) {
+    params = { ...params, user, author: user }
+  }
   return params
 }
 
@@ -335,6 +338,6 @@ export async function getArticles(payload: QueryFind): Promise<QueryResult> {
 
   return articleCtrl.find({
     ...payload,
-    filters,
+    filters: { ...filters, status: 'published' },
   })
 }
