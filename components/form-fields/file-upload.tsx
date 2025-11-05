@@ -56,6 +56,7 @@ interface FileUploadProps {
   updateFileDetailsHnadler?: (FileDetails: FileDetails[]) => void
   deleteFileHnadler?: (fileId: string) => void
   onChange?: () => void
+  onLoading?: (loading: boolean) => void
   attachedTo?: [{ feature: string; id: string }]
 }
 
@@ -75,6 +76,7 @@ const FileUpload = forwardRef(function FileUpload(
     deleteFileHnadler,
     onChange,
     attachedTo,
+    onLoading,
   }: FileUploadProps,
   ref: Ref<FileUploadRef>
 ) {
@@ -139,6 +141,7 @@ const FileUpload = forwardRef(function FileUpload(
   }
 
   const submitFile = async (file: any) => {
+    onLoading?.(true)
     const formData = new FormData()
 
     formData.append('file', file)
@@ -158,6 +161,7 @@ const FileUpload = forwardRef(function FileUpload(
     requestAnimationFrame(() => {
       onChange?.()
     })
+    onLoading?.(false)
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -168,9 +172,11 @@ const FileUpload = forwardRef(function FileUpload(
   })
   useEffect(() => {
     const handelUpdateFileDetails = async (filesDetails: any) => {
+      onLoading?.(true)
       const updatedFilesArray = await updateFileDetails(filesDetails)
 
       if (updateFileDetailsHnadler) updateFileDetailsHnadler(updatedFilesArray)
+      onLoading?.(false)
     }
     // Revoke the data uris to avoid memory leaks
     // return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
@@ -213,18 +219,20 @@ const FileUpload = forwardRef(function FileUpload(
     return
   }
 
-  const removeFile = (index: number) => {
+  const removeFile = async (index: number) => {
+    onLoading?.(true)
     const items = [...files]
     const [deletedItem] = items.splice(index, 1)
     if (deletedItem.main && items.length) {
       items[0].main = true
     }
     setFiles(items)
-    deleteFile(deletedItem.id)
+    await deleteFile(deletedItem.id)
     requestAnimationFrame(() => {
       onChange?.()
       deleteFileHnadler?.(deletedItem.id)
     })
+    onLoading?.(false)
   }
 
   const removeAll = () => {

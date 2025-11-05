@@ -27,7 +27,6 @@ export const ImageBlock = ({
   ...props
 }: TextBlockProps) => {
   const { content, settings, styles } = blockData
-  console.log('33987 ------------- styles image:', styles)
   props.className = props?.className
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'

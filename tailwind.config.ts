@@ -28,17 +28,36 @@ const config = {
       pattern: /(bg|text|border)-(black|white|transparent)/,
       variants: ['dark', 'dark:hover'],
     },
+    ,
+    // تمام breakpointها برای displayهای مهم
+    'sm:!block',
+    'md:!block',
+    'lg:!block',
+    'xl:!block',
+    '2xl:!block',
+    'sm:!flex',
+    'md:!flex',
+    'lg:!flex',
+    'xl:!flex',
+    '2xl:!flex',
+    'sm:!grid',
+    'md:!grid',
+    'lg:!grid',
+    'xl:!grid',
+    '2xl:!grid',
   ],
   prefix: '',
   theme: {
     container: {
       center: true,
       padding: '2rem',
-      screens: {
-        '2xl': '1400px',
-      },
     },
     extend: {
+      container: {
+        screens: {
+          '2xl': '1400px',
+        },
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
@@ -95,9 +114,12 @@ const config = {
       },
     },
   },
+  // corePlugins: {
+  //   aspectRatio: false,
+  // },
   plugins: [
     require('tailwindcss-animate'),
-    require('@tailwindcss/aspect-ratio'),
+    // require('@tailwindcss/aspect-ratio'),
   ],
 } satisfies Config
 

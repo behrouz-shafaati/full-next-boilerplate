@@ -18,9 +18,7 @@ export function getTemplateForOptions({
       {}
     return {
       value: `category-${String(category.id)}`,
-      label:
-        'خانه‌ی دسته‌ی ' +
-        createCatrgoryBreadcrumb(category, translation?.title),
+      label: 'دسته‌ی ' + createCatrgoryBreadcrumb(category, translation?.title),
     }
   })
   const patternTypeOptions = [

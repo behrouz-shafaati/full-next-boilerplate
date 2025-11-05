@@ -18,6 +18,7 @@ export type RevalidatePathProp = {
     | 'province'
     | 'shippingAddress'
     | 'user'
+    | 'campaign'
   slug?: string | string[]
 }
 
@@ -77,6 +78,7 @@ class controller {
       }
       case 'articleComment':
         return [...pathes]
+      case 'campaign':
       case 'tag':
       case 'city':
       case 'country':

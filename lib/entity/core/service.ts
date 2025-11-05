@@ -165,12 +165,18 @@ export default class service {
     filters = { ...filters, deleted: false }
     // Find and update the document, and return the updated document
     console.log('#777 filters in update:', filters)
+
+    //  اگر data خودش شامل عملگرهای MongoDB بود ($set, $inc, $push, ...)
+    const hasOperator = Object.keys(data).some((key) => key.startsWith('$'))
+
+    const updatePayload = hasOperator ? data : { $set: data }
+
     const updatedValue = await this.model.findOneAndUpdate(
       filters,
-      { $set: data },
+      updatePayload,
       {
         new: true,
-        ...options,
+        ...options, //  projection همینجا عبور می‌کند
       }
     )
 

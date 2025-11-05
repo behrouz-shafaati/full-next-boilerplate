@@ -70,7 +70,6 @@ export type Permission =
   // ===== PAGE =====
   | 'page.view.any'
   | 'page.view.own'
-  | 'page.view.own'
   | 'page.create'
   | 'page.edit.any'
   | 'page.edit.own'
@@ -81,10 +80,19 @@ export type Permission =
   // ===== TEMPLATE & TEMPLATE_PART =====
   | 'template.view.any'
   | 'template.view.own'
-  | 'template.view.own'
   | 'template.create'
   | 'template.edit.any'
   | 'template.edit.own'
   | 'template.publish.any'
   | 'template.delete.any'
   | 'template.delete.own'
+
+  // ===== Campaign =====
+  | 'campaign.view.any'
+  | 'campaign.view.own'
+  | 'campaign.create'
+  | 'campaign.edit.any'
+  | 'campaign.edit.own'
+  | 'campaign.publish.any'
+  | 'campaign.delete.any'
+  | 'campaign.delete.own'

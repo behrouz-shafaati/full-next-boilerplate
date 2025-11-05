@@ -12,7 +12,7 @@ import TableHeader from '@tiptap/extension-table-header'
 import { Underline } from '@tiptap/extension-underline'
 import { Heading } from '@tiptap/extension-heading'
 import TextAlign from '@tiptap/extension-text-align'
-import FileUpload, { FileUploadRef } from '../form-fields/file-upload'
+import { FileUploadRef } from '../form-fields/file-upload'
 import { FileDetails } from '@/lib/entity/file/interface'
 import DeleteImageWithKey from './extensions/image-delete'
 import { useEffect, useRef, useState } from 'react'
@@ -29,7 +29,6 @@ import {
   AccordionItemTitle,
 } from './extensions/Accordion'
 import { Faq } from './extensions/Faq'
-import { SubmitButton } from '../form-fields/submit-button'
 import { getFiles } from '@/lib/entity/file/actions'
 
 interface TiptapEditor {
@@ -195,7 +194,9 @@ export default function TiptapEditor({
           className={`prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent 
             focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900 ${className}`}
         />
-        {/* <div className="p-2 ltr">{content}</div> */}
+        <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
+          <code>{content}</code>
+        </pre>
       </div>
       {/* <div className="col-span-12  md:col-span-2">
         <div className="sticky top-0 z-10">

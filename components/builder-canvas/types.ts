@@ -30,6 +30,7 @@ export type Column = {
 }
 
 export type Block = {
+  widgetName: string
   id: string // UUID
   title?: string // Optional title for the block
   slug?: string // Optional slug for the block, useful for custom blocks

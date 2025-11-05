@@ -209,6 +209,11 @@ const nodes = {
     atom: true,
     attrs: {
       slotId: { default: null },
+      linkedCampaign: { default: null },
+      countOfBanners: { default: null },
+      direction: { default: null },
+      aspect: { default: null },
+      fallbackBehavior: { default: null },
     },
     parseDOM: [
       {
@@ -218,10 +223,31 @@ const nodes = {
         }),
       },
     ],
-    toDOM: (node) => [
-      'ad-slot',
-      node.attrs.slotId ? { 'data-slot-id': node.attrs.slotId } : {},
-    ],
+    toDOM: (node: any) => {
+      const {
+        slotId,
+        linkedCampaign,
+        countOfBanners,
+        direction,
+        aspect,
+        fallbackBehavior,
+      } = node.attrs
+      return [
+        'ad-slot',
+        {
+          slotId,
+          linkedCampaign,
+          countOfBanners,
+          direction,
+          aspect,
+          fallbackBehavior,
+        },
+      ]
+    },
+    // toDOM: (node) => [
+    //   'ad-slot',
+    //   node.attrs.slotId ? { 'data-slot-id': node.attrs.slotId } : {},
+    // ],
   },
   heading: {
     content: 'inline*',

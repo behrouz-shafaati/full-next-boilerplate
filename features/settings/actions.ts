@@ -28,6 +28,19 @@ const FormSchema = z.object({
   desktopHeaderHeight: z.string({}).nullable().optional(),
   tabletHeaderHeight: z.string({}).nullable().optional(),
   mobileHeaderHeight: z.string({}).nullable().optional(),
+  //ad
+  fallbackBehavior: z.string().nullable().optional(),
+  targetUrl: z.string().nullable().optional(),
+  // banners آرایه‌ای از آبجکت‌هاست
+  banners: z
+    .array(
+      z.object({
+        aspect: z.string(),
+        file: z.string().nullable(), // یا z.string().uuid() یا z.string().regex(...) اگه نیاز داری
+      })
+    )
+    .nullable()
+    .optional(),
   // defaultHeaderId: z.string({}),
 })
 
@@ -55,11 +68,33 @@ export async function updateSettings(prevState: State, formData: FormData) {
         success: false,
       }
     }
+
+    // ad
+    const banners: any[] = []
+    const aspects = formData.getAll('banners[][aspect]')
+    const files = formData.getAll('banners[][file]')
+    // ساخت آرایه banners با aspect و فایل متناظر
+    for (let i = 0; i < aspects.length; i++) {
+      const aspect = aspects[i]
+      const fileId = files[i] || null
+      banners.push({ aspect, file: fileId })
+    }
+
     const prevSettings = (await getSettings()) as Settings
     const params = await sanitizeSettingsData({
       ...prevSettings,
       ...prevSettings?.infoTranslations,
       ...prevSettings?.farazsms,
+      ...prevSettings?.ad,
+      ...prevSettings?.ad?.translations.map((t) => ({
+        locale: t.lang,
+        banners: t.banners.map((b) => ({
+          aspect: b?.aspect,
+          file: b.file?.id || b.file,
+        })),
+      })),
+      favicon: prevSettings?.favicon?.id,
+      banners,
       ...validatedFields.data,
     })
     await settingsCtrl.findOneAndUpdate({
@@ -125,12 +160,15 @@ async function sanitizeSettingsData(validatedFields: any) {
   // Create the settings
   const siteSettings = await getSettings()
 
+  // sms
   const settingsPayload = validatedFields
   const farazsms = {
     farazsms_apiKey: settingsPayload?.farazsms_apiKey,
     farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
     farazsms_from_number: settingsPayload?.farazsms_from_number,
   }
+
+  // public
   const infoTranslations = [
     ...((siteSettings?.infoTranslations || []).filter(
       (t) => t?.lang !== locale
@@ -141,6 +179,23 @@ async function sanitizeSettingsData(validatedFields: any) {
       site_introduction: settingsPayload?.site_introduction || '',
     },
   ]
+
+  const bannersTranslations = [
+    ...((siteSettings?.ad?.translations || []).filter(
+      (t) => t?.lang !== locale
+    ) || []),
+    {
+      lang: locale,
+      banners: settingsPayload.banners,
+    },
+  ]
+
+  const ad = {
+    fallbackBehavior: settingsPayload?.fallbackBehavior || 'random',
+    targetUrl: settingsPayload?.targetUrl || '',
+    translations: bannersTranslations,
+  }
+
   const params = {
     ...settingsPayload,
     commentApprovalRequired:
@@ -163,6 +218,7 @@ async function sanitizeSettingsData(validatedFields: any) {
       settingsPayload?.homePageId == '' ? null : settingsPayload?.homePageId,
     farazsms,
     infoTranslations,
+    ad,
   }
 
   return params

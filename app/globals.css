@@ -278,3 +278,10 @@ p {
   height: 100%;
   object-fit: cover;
 }
+
+/*======= Date picker ============*/
+.rmdp-container {
+  display: inline-block;
+  height: max-content;
+  width: 100%;
+}

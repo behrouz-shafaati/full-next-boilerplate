@@ -1,5 +1,9 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 import { File } from '@/lib/entity/file/interface'
+import {
+  CampaignTranslation,
+  FallbackBehaviorType,
+} from '../campaign/interface'
 
 type InfoTranslation = {
   lang: string
@@ -86,7 +90,11 @@ type SettingsBase = {
   /**
    *
    */
-  defaultHeaderId: Id
+  ad: {
+    fallbackBehavior: FallbackBehaviorType
+    targetUrl: string
+    translations: [CampaignTranslation]
+  }
 
   /**
    * شناسه فوتر اصلی

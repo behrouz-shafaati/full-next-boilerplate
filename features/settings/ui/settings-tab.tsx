@@ -9,11 +9,13 @@ import {
   CheckSquare,
   MessageCircle,
   Mail,
+  Megaphone,
 } from 'lucide-react'
 
 const tabs = [
   { href: '/dashboard/settings/general', label: 'عمومی', icon: Settings },
   { href: '/dashboard/settings/appearance', label: 'ظاهر', icon: Monitor },
+  { href: '/dashboard/settings/ad', label: 'تبلیغات', icon: Megaphone },
   {
     href: '/dashboard/settings/validation',
     label: 'اعتبارسنجی',

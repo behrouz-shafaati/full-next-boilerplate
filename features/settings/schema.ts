@@ -19,6 +19,31 @@ const FarazsmsSchema = new Schema(
   { _id: false }
 )
 
+const ADTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    banners: [
+      {
+        aspect: String,
+        file: { type: Schema.Types.ObjectId, ref: 'file' },
+      },
+    ],
+  },
+  { _id: false }
+)
+
+const ADSchema = new Schema(
+  {
+    fallbackBehavior: {
+      type: String,
+      enum: ['inherit', 'random', 'default_banner', 'hide'],
+    },
+    targetUrl: String,
+    translations: [ADTranslationSchema],
+  },
+  { _id: false }
+)
+
 const settingsSchema = new Schema<SettingsSchema>(
   {
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
@@ -27,7 +52,6 @@ const settingsSchema = new Schema<SettingsSchema>(
     commentApprovalRequired: { type: Boolean, default: true },
     emailVerificationRequired: { type: Boolean, default: false },
     mobileVerificationRequired: { type: Boolean, default: false },
-    defaultHeaderId: { type: Schema.Types.ObjectId, ref: 'header' },
     favicon: {
       type: Schema.Types.ObjectId,
       ref: 'file',
@@ -42,6 +66,7 @@ const settingsSchema = new Schema<SettingsSchema>(
     tabletHeaderHeight: Number,
     mobileHeaderHeight: Number,
     farazsms: FarazsmsSchema,
+    ad: ADSchema,
     theme: {
       primaryColor: String,
       backgroundColor: String,
@@ -70,18 +95,14 @@ settingsSchema.set('toJSON', {
   transform,
 })
 
-settingsSchema
-  .pre('findOne', function (next: any) {
+settingsSchema.pre(
+  ['find', 'findOne', 'findOneAndUpdate'],
+  function (next: any) {
     this.populate('favicon')
+    this.populate('ad.translations.banners.file')
     next()
-  })
-  .pre('find', function (next: any) {
-    this.populate('favicon')
-    next()
-  })
-  .pre('findOneAndUpdate', function (next: any) {
-    this.populate('favicon')
-    next()
-  })
+  }
+)
+
 export default mongoose.models.settings ||
   model<SettingsSchema>('settings', settingsSchema)

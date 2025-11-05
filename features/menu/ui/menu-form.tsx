@@ -101,7 +101,7 @@ export const MenuForm: React.FC<MenuFormProps> = ({ initialData: menu }) => {
       {/* <Separator /> */}
       <form action={dispatch} className="w-full space-y-8">
         <div className="gap-8 md:grid md:grid-cols-3">
-          <div>
+          <div className="flex flex-row items-center gap-2  col-span-3">
             <input
               type="text"
               name="lang"

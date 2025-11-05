@@ -1,21 +1,27 @@
-'use client';
+'use client'
 
-import { useFormStatus } from 'react-dom';
-import { LoadingButton } from '../ui/loading-button';
+import { useFormStatus } from 'react-dom'
+import { LoadingButton } from '../ui/loading-button'
 
 type SubmitButtonProps = {
-  text?: string;
-  className?: string;
-};
+  text?: string
+  className?: string
+  loading?: boolean
+}
 export function SubmitButton({
   text = 'ذخیره',
   className = '',
+  loading = false,
 }: SubmitButtonProps) {
-  const { pending } = useFormStatus();
+  const { pending } = useFormStatus()
 
   return (
-    <LoadingButton type="submit" loading={pending} className={className}>
+    <LoadingButton
+      type="submit"
+      loading={pending || loading}
+      className={className}
+    >
       {text}
     </LoadingButton>
-  );
+  )
 }

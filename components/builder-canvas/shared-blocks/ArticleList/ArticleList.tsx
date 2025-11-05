@@ -16,6 +16,7 @@ import { ArticleListRow } from './designs/ArticleListRow'
 import ArticleImageCard from './designs/ImageCard'
 import ArticleOverlayCard from './designs/OverlayCard'
 import ArticleHorizontalCard from './designs/ArticalHorizontalCard'
+import { Banner } from '../AdSlot/Banner'
 
 type ArticleListProps = {
   articles: Article[]
@@ -42,7 +43,7 @@ export const ArticleList = ({
   ...props
 }: ArticleListProps) => {
   const locale = 'fa'
-  const { content, settings } = blockData
+  const { id, content, settings } = blockData
   const [_articles, setArticles] = useState(articles)
   const searchParams = useSearchParams()
 
@@ -106,40 +107,70 @@ export const ArticleList = ({
 
   let articleItems = []
 
-  switch (settings?.cardDesign) {
-    case 'overly-card':
-      articleItems = _articles.map((article) => {
+  const advertisingAfter = settings?.advertisingAfter
+    ? settings?.advertisingAfter
+    : 0
+  let adIndex = 0
+  articleItems = _articles.map((article, index) => {
+    adIndex = adIndex + 1
+    let flgShowBanner = false
+    if (advertisingAfter == adIndex) {
+      flgShowBanner = true
+      adIndex = 0
+    }
+    switch (settings?.cardDesign) {
+      case 'overly-card':
         return (
-          <ArticleOverlayCard
-            key={article.id}
-            article={article}
-            options={settings}
-          />
+          <>
+            <ArticleOverlayCard
+              key={article.id}
+              article={article}
+              options={settings}
+            />
+            {flgShowBanner && (
+              <Banner
+                blockData={{ settings: { aspect: '4/1' } }}
+                banerSlotId={`${id}${index}`}
+              />
+            )}
+          </>
         )
-      })
-      break
-    case 'horizontal-card':
-      articleItems = _articles.map((article) => {
+        break
+      case 'horizontal-card':
         return (
-          <ArticleHorizontalCard
-            key={article.id}
-            article={article}
-            options={settings}
-          />
+          <>
+            <ArticleHorizontalCard
+              key={article.id}
+              article={article}
+              options={settings}
+            />
+            {flgShowBanner && (
+              <Banner
+                blockData={{ settings: { aspect: '4/1' } }}
+                banerSlotId={`${id}${index}`}
+              />
+            )}
+          </>
         )
-      })
-      break
-    default:
-      articleItems = _articles.map((article) => {
+        break
+      default:
         return (
-          <ArticleImageCard
-            key={article.id}
-            article={article}
-            options={settings}
-          />
+          <>
+            <ArticleImageCard
+              key={article.id}
+              article={article}
+              options={settings}
+            />
+            {flgShowBanner && (
+              <Banner
+                blockData={{ settings: { aspect: '4/1' } }}
+                banerSlotId={`${id}${index}`}
+              />
+            )}
+          </>
         )
-      })
-  }
+    }
+  })
   switch (settings?.listDesign) {
     case 'row':
       return (

@@ -87,6 +87,14 @@ export const navItems: SidebarNavItem[] = [
     label: '',
     authorized: ['page.view.any', 'page.view.own'],
   },
+  {
+    slug: 'campaign',
+    title: 'کمپین ها',
+    href: '/dashboard/campaigns',
+    icon: 'megaphone',
+    label: '',
+    authorized: ['campaign.view.any', 'campaign.view.own'],
+  },
 
   {
     slug: 'template',

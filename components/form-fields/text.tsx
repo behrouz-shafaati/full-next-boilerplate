@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import { Input } from '../ui/input'
 import { Label } from '../ui/label'
 
@@ -35,6 +34,7 @@ export default function Text({
   readOnly = false,
   className = '',
   onChange,
+  ...restProps
 }: Text) {
   if (!display) return null
   const defaultType = 'text'
@@ -58,6 +58,7 @@ export default function Text({
           readOnly={readOnly}
           disabled={disabled}
           className="peer"
+          {...restProps}
         />
         {icon && (
           <span className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500">

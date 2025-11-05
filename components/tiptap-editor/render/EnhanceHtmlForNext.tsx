@@ -7,6 +7,7 @@ import { AccordionNode, TNode } from '../type'
 import VideoEmbedRenderer from '../tiptap-renderers/VideoEmbedRenderer'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 import { Settings } from '@/features/settings/interface'
+import AdSlotBlock from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlock'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -39,7 +40,7 @@ export default function EnhanceHtmlForNext({
     <div className="prose max-w-none">
       {parse(HTML_string, {
         replace(domNode) {
-          console.log('#324 domNode.name: ', domNode.name)
+          // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
             const { src, id: fileId, translations, srclarge } = domNode.attribs
             if (!src) return null
@@ -91,10 +92,27 @@ export default function EnhanceHtmlForNext({
             )
           }
 
-          if (domNode instanceof Element && domNode.name === 'adSlot') {
-            // const href = domNode.attribs?.href
-
-            return <div></div>
+          if (domNode instanceof Element && domNode.name === 'ad-slot') {
+            const {
+              slotid: slotId,
+              linkedcampaign: linkedCampaign,
+              countofbanners: countOfBanners,
+              direction,
+              aspect,
+              fallbackbehavior: fallbackBehavior,
+            } = domNode.attribs
+            const blockData = {
+              id: slotId,
+              content: { linkedCampaign },
+              settings: {
+                direction,
+                countOfBanners,
+                placement: 'content',
+                aspect,
+                fallbackBehavior,
+              },
+            }
+            return <AdSlotBlock widgetName="adSlot" blockData={blockData} />
           }
           // اگر توی renderTiptapJsonToHtml از div با data-type="accordion" استفاده کردی:
           if (

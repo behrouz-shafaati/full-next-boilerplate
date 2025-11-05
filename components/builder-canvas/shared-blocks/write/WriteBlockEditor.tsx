@@ -25,6 +25,7 @@ export const WriteEditorBlock = ({
 }: WriteBlockProps) => {
   const { content, settings } = blockData
   const [HTML_string, setHTML_string] = useState('')
+  const [siteSettings, setSiteSettings] = useState({})
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,6 +36,7 @@ export const WriteEditorBlock = ({
         getSettingsAction(),
       ])
       setHTML_string(HTML_string)
+      setSiteSettings(siteSettings)
     }
 
     fetchData()

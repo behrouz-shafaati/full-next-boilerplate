@@ -38,6 +38,7 @@ import {
   SlidersVertical,
   StickyNote,
   Tag,
+  Megaphone,
 } from 'lucide-react'
 
 export type Icon = LucideIcon
@@ -79,6 +80,7 @@ export const Icons = {
   layoutTemplate: LayoutTemplate,
   slidersVertical: SlidersVertical,
   stickyNote: StickyNote,
+  megaphone: Megaphone,
   gitHub: ({ ...props }: LucideProps) => (
     <svg
       aria-hidden="true"
@@ -118,6 +120,8 @@ export default function renderIcon(icon: string | undefined) {
       return <Icons.slidersVertical className="mr-2 h-4 w-4" />
     case 'stickyNote':
       return <Icons.stickyNote className="mr-2 h-4 w-4" />
+    case 'megaphone':
+      return <Icons.megaphone className="mr-2 h-4 w-4" />
     default:
       return <Icons.user className="mr-2 h-4 w-4" />
   }

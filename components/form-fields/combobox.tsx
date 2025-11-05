@@ -21,7 +21,7 @@ type ComboboxProps = {
   state?: any
   disabled?: boolean
   onChange?: ({ target }: { target: Option }) => void
-  showClean: boolean
+  showClean?: boolean
 }
 export default function Combobox({
   title,

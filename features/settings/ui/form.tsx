@@ -6,9 +6,10 @@ import { FormAppearance } from './form-appearance'
 import { FormValidation } from './form-validation'
 import { FormSMS } from './form-sms'
 import { FormEmail } from './form-email'
+import { FormAD } from './form-ad'
 
 type FormProps = {
-  tab: 'general' | 'appearance' | 'email' | 'validation' | 'sms'
+  tab: 'general' | 'appearance' | 'email' | 'validation' | 'sms' | 'ad'
 }
 
 export default async function Form({ tab }: FormProps) {
@@ -24,6 +25,7 @@ export default async function Form({ tab }: FormProps) {
         <FormGeneral settings={settings} allPages={allPages.data} />
       )}
       {tab === 'appearance' && <FormAppearance settings={settings} />}
+      {tab === 'ad' && <FormAD settings={settings} />}
       {tab === 'validation' && <FormValidation settings={settings} />}
       {tab === 'sms' && <FormSMS settings={settings} />}
       {tab === 'email' && <FormEmail settings={settings} />}

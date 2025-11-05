@@ -12,6 +12,7 @@ import { MenuBlockDef } from '../shared-blocks/menu'
 import { ArticleListBlockDef } from '../shared-blocks/ArticleList'
 import { ButtonBlockDef } from '../shared-blocks/button'
 import { WriteBlockDef } from '../shared-blocks/write'
+import { AdSlotBlockDef } from '../shared-blocks/AdSlot'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
@@ -25,6 +26,7 @@ export const blockRegistry = {
   alticleList: ArticleListBlockDef,
   button: ButtonBlockDef,
   write: WriteBlockDef,
+  adSlot: AdSlotBlockDef,
 }
 
 registerBlock(blockRegistry)

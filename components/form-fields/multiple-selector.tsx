@@ -34,7 +34,6 @@ export default function MultiSelect({
   onChange,
   onSearch,
 }: MultiSelect) {
-  const InputIcon = icon
   const [values, setValues] = useState<Option[]>(defaultValues || [])
   const [defaultOptions, setDefaultOptions] = useState<Option[]>(
     defaultSuggestions || []
@@ -42,9 +41,15 @@ export default function MultiSelect({
 
   const errorMessages = state?.errors?.[name] ?? []
   const hasError = state?.errors?.[name]?.length > 0
-
+  const InputIcon = typeof icon === 'object' ? () => icon : icon
   return (
     <div className="mb-4">
+      <input
+        type="hidden"
+        readOnly
+        name={name}
+        value={JSON.stringify(values)}
+      />
       <label htmlFor={name} className="mb-2 block text-sm font-medium">
         {title}
       </label>
@@ -60,7 +65,6 @@ export default function MultiSelect({
               const selectedOptions = defaultOptions.filter((o) =>
                 options.some((opt) => opt.value === o.value)
               )
-              console.log('#8888888888888 selectedOptions:', selectedOptions)
               setValues(selectedOptions)
               onChange?.(selectedOptions)
             }}
@@ -74,7 +78,9 @@ export default function MultiSelect({
           />
         </div>
         {icon && (
-          <InputIcon className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500" />
+          <span className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500">
+            <InputIcon />
+          </span>
         )}
       </div>
       {hasError && (
