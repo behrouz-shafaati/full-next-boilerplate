@@ -1,12 +1,22 @@
-export default function VideoEmbedRenderer({ node }) {
+type VideoEmbedRendererProps = {
+  attribs: {
+    src: string
+    title: string
+  }
+}
+export default function VideoEmbedRenderer({
+  attribs,
+  ...resProps
+}: VideoEmbedRendererProps) {
+  const { className } = resProps
   return (
     <div
       style={{ position: 'relative', paddingTop: '56.25%' /* 16:9 */ }}
-      className="rounded-xl shadow-md overflow-hidden my-4"
+      className={`rounded-xl shadow-md overflow-hidden my-4 ${className}`}
     >
       <iframe
-        src={node.attribs.src}
-        title={node.attribs.title || 'Embedded Video'}
+        src={attribs.src}
+        title={attribs.title || 'Embedded Video'}
         style={{
           position: 'absolute',
           top: 0,

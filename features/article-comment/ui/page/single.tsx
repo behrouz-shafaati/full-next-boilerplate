@@ -1,13 +1,12 @@
 import { BreadCrumb, BreadCrumbType } from '@/components/breadcrumb'
 import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
-import { ScrollArea } from '@/components/ui/scroll-area'
 import {
   ArticleComment,
   ArticleCommentTranslationSchema,
 } from '../../interface'
-import Image from 'next/image'
 import { formatToJalali, getReadingTime } from '@/features/article/utils'
 import { getTranslation, timeAgo } from '@/lib/utils'
+import { ImageAlba } from '@/components/image-alba'
 
 type props = {
   locale?: string
@@ -48,16 +47,7 @@ const SinglePageBlog = ({
       </div>
 
       {articleComment?.image && (
-        <div className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4">
-          <Image
-            src={articleComment?.image?.srcSmall}
-            sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-            alt={imageCoverTranslation?.alt}
-            title={imageCoverTranslation?.title}
-            fill
-            className="object-contain"
-          />
-        </div>
+        <ImageAlba file={articleComment?.image} showCaption={false} />
       )}
       <h2>{translation?.title}</h2>
       <div className="text-sm text-gray-500 mb-4">

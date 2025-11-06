@@ -169,6 +169,8 @@ const nodes = {
       srcSmall: { default: null },
       srcMedium: { default: null },
       srcLarge: { default: null },
+      width: { default: null },
+      height: { default: null },
     },
     group: 'inline',
     draggable: true,
@@ -181,7 +183,8 @@ const nodes = {
       },
     ],
     toDOM: (node: any) => {
-      const { id, translations, srcSmall, srcMedium, srcLarge } = node.attrs
+      const { id, translations, srcSmall, srcMedium, srcLarge, width, height } =
+        node.attrs
       const src = srcMedium || srcSmall || srcLarge || '/placeholder-image.webp'
       return [
         'img',
@@ -192,6 +195,8 @@ const nodes = {
           src,
           id: id,
           translations: translations ? JSON.stringify(translations) : null,
+          width,
+          height,
         },
       ]
     },

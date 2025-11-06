@@ -2,7 +2,13 @@
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Braces as ArticleIcon, Mail as MailIcon, Trash } from 'lucide-react'
+import {
+  Braces as ArticleIcon,
+  Mail as MailIcon,
+  Target,
+  Trash,
+  Video as VideoIcon,
+} from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
@@ -40,6 +46,8 @@ import { Textarea } from '@/components/ui/textarea'
 import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
+import { getEmbedUrl } from '@/components/tiptap-editor/utils'
+import VideoEmbedRenderer from '@/components/tiptap-editor/tiptap-renderers/VideoEmbedRenderer'
 
 interface ArticleFormProps {
   initialData: any | null
@@ -94,6 +102,9 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
+  const [primaryVideoEmbedUrl, setPrimaryVideoEmbedUrl] = useState(
+    state.values?.primaryVideoEmbedUrl || ''
+  )
   useEffect(() => {
     if (state.message && state.message !== null) {
       toast({
@@ -146,6 +157,15 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
         })
       }
     } catch (error: any) {}
+  }
+
+  const handleChangePrimaryVideo = (url: string) => {
+    const embedUrl = getEmbedUrl(url)
+    if (!embedUrl) {
+      alert('لینک معتبر نیست.')
+      return
+    }
+    setPrimaryVideoEmbedUrl(embedUrl)
   }
 
   const submitManually = () => {
@@ -241,7 +261,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
               />
             </div>
           </div>
-          <div className="relative col-span-12 md:col-span-3">
+          <div className="relative col-span-12 md:col-span-3 gap-2">
             <StickyBox offsetBottom={0}>
               <SubmitButton text="ذخیره مقاله" className="my-4 w-full" />
               {/* status */}
@@ -309,29 +329,36 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({
                 defaultValues={state.values?.image || null}
                 onChange={submitManually}
               />
+              <Text
+                name="primaryVideo"
+                title="فیلم اصلی مقاله"
+                description="لینک صفحه ی آپارات یا یوتیوب"
+                defaultValue={state.values?.primaryVideo || ''}
+                icon={<VideoIcon className="w-4 h-4" />}
+                className="mt-8"
+                onChange={(e) => {
+                  handleChangePrimaryVideo(e.target.value)
+                }}
+              />
+              <input
+                name="primaryVideoEmbedUrl"
+                type="hidden"
+                value={primaryVideoEmbedUrl}
+              />
+              {primaryVideoEmbedUrl && primaryVideoEmbedUrl != '' && (
+                <VideoEmbedRenderer
+                  attribs={{
+                    src: primaryVideoEmbedUrl,
+                    title: state?.values?.translation?.title || '',
+                  }}
+                />
+              )}
               <RelatedArticlesDashboard article={article} className="my-4" />
               <div className="h-2"></div>
             </StickyBox>
           </div>
           <div className="col-span-12 md:col-span-9"></div>
           <div className="col-span-12 md:col-span-3"></div>
-          {/* <div>
-            <MultipleSelector
-                    title="مقالات مرتبط"
-                    name="relatedArticles"
-                    defaultValues={selectedBlock?.content?.tags ?? []}
-                    placeholder=""
-                    defaultSuggestions={tagOptions}
-                    onChange={(values) => {
-                      update(selectedBlock?.id as string, 'content', {
-                        ...selectedBlock?.content,
-                        tags: values,
-                      })
-                    }}
-                    onSearch={searchTags}
-                    // icon={ShieldQuestionIcon}
-                  />
-          </div> */}
         </div>
       </form>
     </>

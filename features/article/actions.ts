@@ -24,6 +24,8 @@ const FormSchema = z.object({
   mainCategory: z
     .string({})
     .min(1, { message: 'لطفا دسته‌ی اصلی را مشخص کنید.' }),
+  primaryVideo: z.string({}).nullable(),
+  primaryVideoEmbedUrl: z.string({}).nullable(),
   categories: z.string({}),
   slug: z.string({}),
   tags: z.string({}),

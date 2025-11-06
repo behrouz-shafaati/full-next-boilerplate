@@ -89,6 +89,7 @@ class controller extends c_controller {
     let fullSrc: string = ''
     let patch: string = ''
     let tmpPath: string = `./uploads/tmp`
+    let width, height
 
     const { name: defualtFileName, type: mimeType, size: fileSize } = file
     const fileName = createFileName(
@@ -132,6 +133,10 @@ class controller extends c_controller {
     try {
       if (mimeType.startsWith('image/')) {
         const tmpFilePath = path.resolve(tmpPath, fileName)
+        // گرفتن ابعاد
+        const image = await sharp(tmpFilePath).metadata()
+        width = image.width
+        height = image.height
 
         // اسم فایل پایه (بدون پسوند)
         const baseName = fileName.substring(0, fileName.lastIndexOf('.'))
@@ -199,6 +204,8 @@ class controller extends c_controller {
       previewPath,
       main,
       lang,
+      width,
+      height,
     }
 
     const cleanParams = await this.sanitizeArticleData(params, _id)

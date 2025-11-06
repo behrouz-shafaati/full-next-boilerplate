@@ -8,6 +8,7 @@ import {
 } from '@/components/builder-canvas/utils/styleUtils'
 import Image from 'next/image'
 import { getTranslation } from '@/lib/utils'
+import { ImageAlba } from '@/components/image-alba'
 
 type ContentBlockProps = {
   content: React.ReactNode
@@ -26,32 +27,16 @@ export const ContentBlock = ({
   ...props
 }: ContentBlockProps) => {
   const locale = 'fa'
-  let imageCoverTranslation = {}
-  if (image)
-    imageCoverTranslation = getTranslation({
-      translations: image?.translations,
-    })
   const { settings } = blockData
   return image ? (
-    <div
+    <ImageAlba
+      file={image}
+      showCaption={false}
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
-      className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4"
-    >
-      <Image
-        src={image.srcSmall}
-        sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-        alt={imageCoverTranslation?.alt}
-        title={imageCoverTranslation?.title}
-        fill
-        // className="object-contain"
-        className="object-cover"
-        priority
-        quality={70}
-      />
-    </div>
+    />
   ) : (
     <></>
   )

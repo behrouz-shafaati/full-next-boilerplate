@@ -1,13 +1,13 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import parse, { domToReact, Element } from 'html-react-parser'
-import { getTranslation, slugify } from '@/lib/utils'
+import { slugify } from '@/lib/utils'
 import { AccordionRenderer } from '../tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from '../type'
 import VideoEmbedRenderer from '../tiptap-renderers/VideoEmbedRenderer'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 import { Settings } from '@/features/settings/interface'
 import AdSlotBlock from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlock'
+import { ImageAlba } from '@/components/image-alba'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -42,35 +42,28 @@ export default function EnhanceHtmlForNext({
         replace(domNode) {
           // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            const { src, id: fileId, translations, srclarge } = domNode.attribs
-            if (!src) return null
-            const translation = getTranslation({
-              translations: JSON.parse(translations),
-            })
+            const {
+              src,
+              id,
+              translations,
+              srclarge,
+              srcsmall,
+              srcmedium,
+              width,
+              height,
+            } = domNode.attribs
             return (
-              <figure className="relative w-full aspect-[2/1] rounded-3xl overflow-hidden my-4">
-                <Image
-                  src={src}
-                  data-srclarge={srclarge || ''}
-                  alt={translation?.alt || translation?.title || ''}
-                  title={translation?.title || ''}
-                  fill
-                  className="object-cover "
-                  quality={70}
-                  sizes="(max-width: 640px) 100vw, 
-           (max-width: 1024px) 80vw, 
-           (max-width: 1536px) 1080px, 
-           1920px"
-                />
-                {/* Caption */}
-                {translation?.description && (
-                  <div className=" flex flex-row justify-center absolute bottom-2 w-full  text-center text-white dark:text-gray-900 text-sm md:text-base font-medium ">
-                    <figcaption className="bg-black/20 dark:bg-white/20 backdrop-blur-md w-fit px-4 py-3 rounded-xl">
-                      {translation.description}
-                    </figcaption>
-                  </div>
-                )}
-              </figure>
+              <ImageAlba
+                file={{
+                  id,
+                  translations: JSON.parse(translations),
+                  srcSmall: srcsmall,
+                  srcMedium: srcmedium,
+                  srcLarge: srclarge,
+                  width: Number(width),
+                  height: Number(height),
+                }}
+              />
             )
           }
 
@@ -136,17 +129,20 @@ export default function EnhanceHtmlForNext({
               domNode.name === 'videoEmbed')
           ) {
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
-            return <VideoEmbedRenderer node={domNode} />
+            return (
+              <VideoEmbedRenderer
+                attribs={{
+                  src: domNode.attribs.src,
+                  title: domNode.attribs.title,
+                }}
+              />
+            )
           }
           // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مقالات بهشون دسترسی داشت
           if (
             domNode instanceof Element &&
             ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)
           ) {
-            console.log(
-              '#99277 in H tag domNode.children?.[0]:',
-              domNode.attribs
-            )
             const text = getTextFromDom(domNode) // این بی‌خطا متن را از داخل strong/mark هم می‌آورد
             // const text = domNode.children?.[0]?.data
             const id = slugify(text)

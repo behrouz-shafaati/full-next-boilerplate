@@ -6,6 +6,7 @@ import { BannerData, BannerManager } from '@/lib/bannerManager'
 import { Skeleton } from '@/components/ui/skeleton'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ImageAlba } from '@/components/image-alba'
 
 type BannerProps = {
   banerSlotId: string

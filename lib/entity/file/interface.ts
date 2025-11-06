@@ -42,9 +42,15 @@ export type File = Model & {
   href: string
   mimeType: string
   size: number
+  width: number
+  height: number
   previewPath: string
   main: boolean
   attachedTo: [{ feature: string; id: string }]
+  /**
+   * لینکی که با کلیک به روی عکس به آن می رویم
+   */
+  target: string
   /**
    * کاربر سازنده
    */

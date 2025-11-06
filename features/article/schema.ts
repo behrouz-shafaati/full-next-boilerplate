@@ -56,6 +56,12 @@ const articleSchema = new Schema<ArticleSchema>(
         default: [],
       },
     ],
+    primaryVideo: {
+      type: String,
+    },
+    primaryVideoEmbedUrl: {
+      type: String,
+    },
     status: {
       type: String,
       enum: ['draft', 'published'],

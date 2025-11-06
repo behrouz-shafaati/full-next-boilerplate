@@ -65,6 +65,9 @@ type ArticleBase = {
    * تاریخ انتشار
    */
   publishedAt: Date
+
+  primaryVideo: string
+  primaryVideoEmbedUrl: string
 }
 type Article_FK_Schema = {
   /**
