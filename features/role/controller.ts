@@ -24,7 +24,7 @@ class controller {
           'مدیریت بخش فنی و ظاهر سایت شامل صفحات، قالب‌ها، منوها و تنظیمات سایت.',
         permissions: [
           'user.edit.own',
-          'articleComment.create',
+          'postComment.create',
           'page.view.any',
           'page.create',
           'page.edit.any',
@@ -51,15 +51,15 @@ class controller {
         title: 'ویرایشگر محتوا',
         slug: 'content_editor',
         description:
-          'مدیریت کامل محتوای سایت شامل مقالات، دسته‌بندی‌ها، تگ‌ها و کامنت‌ها.',
+          'مدیریت کامل محتوای سایت شامل مطالب، دسته‌بندی‌ها، تگ‌ها و کامنت‌ها.',
         permissions: [
           'user.edit.own',
-          'articleComment.create',
-          'article.view.any',
-          'article.create',
-          'article.edit.any',
-          'article.publish.any',
-          'article.delete.any',
+          'postComment.create',
+          'post.view.any',
+          'post.create',
+          'post.edit.any',
+          'post.publish.any',
+          'post.delete.any',
 
           'category.view.any',
           'category.create',
@@ -72,34 +72,34 @@ class controller {
           'tag.edit.any',
           'tag.publish.any',
 
-          'articleComment.moderate.any',
+          'postComment.moderate.any',
         ],
       },
       {
         title: 'نویسنده',
         slug: 'author',
         description:
-          'می‌تواند مقالات خود را ایجاد، ویرایش و منتشر کند. به مقالات دیگران دسترسی ندارد.',
+          'می‌تواند مطالب خود را ایجاد، ویرایش و منتشر کند. به مطالب دیگران دسترسی ندارد.',
         permissions: [
           'user.edit.own',
-          'articleComment.create',
-          'article.view.own',
-          'article.create',
-          'article.edit.own',
-          'article.publish.own',
+          'postComment.create',
+          'post.view.own',
+          'post.create',
+          'post.edit.own',
+          'post.publish.own',
         ],
       },
       {
         title: 'مشارکت‌کننده',
         slug: 'contributor',
         description:
-          'می‌تواند مقالات خود را ایجاد و ویرایش کند، اما نمی‌تواند آنها را منتشر یا حذف کند.',
+          'می‌تواند مطالب خود را ایجاد و ویرایش کند، اما نمی‌تواند آنها را منتشر یا حذف کند.',
         permissions: [
           'user.edit.own',
-          'articleComment.create',
-          'article.view.own',
-          'article.create',
-          'article.edit.own',
+          'postComment.create',
+          'post.view.own',
+          'post.create',
+          'post.edit.own',
         ],
       },
       {
@@ -107,7 +107,7 @@ class controller {
         slug: 'subscriber',
         description:
           'می‌تواند وارد سایت شود و پروفایل خود را مشاهده و بروزرسانی کند، اما دسترسی مدیریتی ندارد.',
-        permissions: ['user.edit.own', 'articleComment.create'],
+        permissions: ['user.edit.own', 'postComment.create'],
       },
       {
         title: 'مشاهده‌کننده',
@@ -116,10 +116,10 @@ class controller {
           'این نقش فقط امکان مشاهده پنل و محتوا را دارد و هیچ دسترسی مدیریتی ندارد.',
         permissions: [
           'user.edit.own',
-          'articleComment.create',
-          'articleComment.view.any',
+          'postComment.create',
+          'postComment.view.any',
           'settings.view.any',
-          'article.view.any',
+          'post.view.any',
           'user.view.any',
           'category.view.any',
           'tag.view.any',

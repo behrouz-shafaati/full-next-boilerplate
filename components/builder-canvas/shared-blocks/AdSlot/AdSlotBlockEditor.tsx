@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Block } from '../../types'
 import { AdSlotWidgetProps } from './type'
 
-type ArticleListBlockProps = AdSlotWidgetProps &
+type PostListBlockProps = AdSlotWidgetProps &
   Block &
   React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
@@ -12,7 +12,7 @@ export default function AdSlotBlockEditor({
   widgetName,
   blockData,
   ...props
-}: ArticleListBlockProps) {
+}: PostListBlockProps) {
   const [campaigns, setCampaigns] = useState([])
   const { content, settings } = blockData
 

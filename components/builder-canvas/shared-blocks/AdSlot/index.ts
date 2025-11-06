@@ -1,7 +1,7 @@
 import AdSlotBlock from './AdSlotBlock'
 import AdSlotBlockEditor from './AdSlotBlockEditor'
-import { ArticleListBlockSchema } from './schema'
-import { blogArticleSliderBlockDefaults } from './defaultSettings'
+import { PostListBlockSchema } from './schema'
+import { blogPostSliderBlockDefaults } from './defaultSettings'
 import { ContentEditor } from './ContentEditor'
 
 export const AdSlotBlockDef = {
@@ -10,7 +10,7 @@ export const AdSlotBlockDef = {
   showInBlocksList: true,
   Renderer: AdSlotBlock,
   RendererInEditor: AdSlotBlockEditor,
-  settingsSchema: ArticleListBlockSchema,
-  defaultSettings: blogArticleSliderBlockDefaults,
+  settingsSchema: PostListBlockSchema,
+  defaultSettings: blogPostSliderBlockDefaults,
   ContentEditor: ContentEditor,
 }

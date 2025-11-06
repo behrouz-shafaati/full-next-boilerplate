@@ -10,7 +10,7 @@ import {
 } from './interface'
 import { getSession } from '@/lib/auth'
 import { Session } from '@/types'
-import articleCtrl from '@/features/article/controller'
+import postCtrl from '@/features/post/controller'
 // import imgurClient from "./imgur";
 // const multer = require('multer');
 const sharp = require('sharp')
@@ -208,7 +208,7 @@ class controller extends c_controller {
       height,
     }
 
-    const cleanParams = await this.sanitizeArticleData(params, _id)
+    const cleanParams = await this.sanitizePostData(params, _id)
     let fileInfo: FileDetails = await this.create({
       params: cleanParams,
     })
@@ -241,7 +241,7 @@ class controller extends c_controller {
         locale: fileDetails.locale,
       }
 
-      const cleanParams = await this.sanitizeArticleData(
+      const cleanParams = await this.sanitizePostData(
         params,
         String(fileDetails.id)
       )
@@ -262,8 +262,8 @@ class controller extends c_controller {
     if (!!file || file === undefined || file == null) return
     if (file?.attachedTo.length == 0) return
     switch (file.attachedTo[0].feature) {
-      case 'article':
-        articleCtrl.updateContentJsonFileDetails({ fileDetails: file })
+      case 'post':
+        postCtrl.updateContentJsonFileDetails({ fileDetails: file })
         break
     }
   }
@@ -276,7 +276,7 @@ class controller extends c_controller {
     return this.delete({ filters: [id] })
   }
 
-  async sanitizeArticleData(params: any, id?: string | undefined) {
+  async sanitizePostData(params: any, id?: string | undefined) {
     let prevState = { translations: [] }
     if (id) {
       const prevFile = await this.findById({ id })

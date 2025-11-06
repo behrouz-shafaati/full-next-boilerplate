@@ -1,6 +1,6 @@
 // /app/archive/[[...filters]]/page.tsx
 export const dynamic = 'force-dynamic'
-import ArchiveArticle from '@/components/archive'
+import ArchivePost from '@/components/archive'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 import { getSettings } from '@/features/settings/controller'
 import templateCtrl from '@/features/template/controller'
@@ -26,7 +26,7 @@ export default async function ArchivePage({
           rows={template.content.rows}
           editroMode={false}
           content_all={
-            <ArchiveArticle
+            <ArchivePost
               categorySlugs={filters.categories}
               tagSlugs={filters.tags}
             />
@@ -36,9 +36,6 @@ export default async function ArchivePage({
     )
   }
   return (
-    <ArchiveArticle
-      categorySlugs={filters.categories}
-      tagSlugs={filters.tags}
-    />
+    <ArchivePost categorySlugs={filters.categories} tagSlugs={filters.tags} />
   )
 }

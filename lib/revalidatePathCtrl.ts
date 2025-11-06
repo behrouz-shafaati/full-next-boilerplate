@@ -1,12 +1,12 @@
 import categoryCtrl from '@/features/category/controller'
 import pageCtrl from '@/features/page/controller'
-import articleCtrl from '@/features/article/controller'
+import postCtrl from '@/features/post/controller'
 
 export type RevalidatePathProp = {
   feature:
     | 'category'
-    | 'article'
-    | 'articleComment'
+    | 'post'
+    | 'postComment'
     | 'page'
     | 'template'
     | 'templatePart'
@@ -27,8 +27,8 @@ class controller {
     return (await pageCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
-  async getAllArticlesPaths() {
-    return (await articleCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
+  async getAllPostsPaths() {
+    return (await postCtrl.getAllSlugs()).map(({ slug }) => encodeURI(slug))
   }
 
   async getBlogPath() {
@@ -43,7 +43,7 @@ class controller {
     return [
       '/',
       ...(await this.getAllPagesPaths()),
-      ...(await this.getAllArticlesPaths()),
+      ...(await this.getAllPostsPaths()),
       ...(await this.getAllCategoriessPaths()),
       ...(await this.getBlogPath()),
     ]
@@ -67,7 +67,7 @@ class controller {
     }
 
     switch (feature) {
-      case 'article':
+      case 'post':
       case 'menu':
       case 'category':
       case 'page':
@@ -76,7 +76,7 @@ class controller {
       case 'settings': {
         return [...(await this.getAllPaths()), ...pathes]
       }
-      case 'articleComment':
+      case 'postComment':
         return [...pathes]
       case 'campaign':
       case 'tag':

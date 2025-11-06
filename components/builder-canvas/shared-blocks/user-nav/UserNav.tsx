@@ -30,7 +30,7 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
   const { className, ...res } = props
   const router = useRouter()
   const userRoles = user?.roles || []
-  const canCreateArticle = can(userRoles, 'article.create')
+  const canCreatePost = can(userRoles, 'post.create')
   const defaultAvatar = '/assets/default-profile.png'
   const { content, settings, styles } = blockData || {}
   if (user) {
@@ -68,11 +68,11 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              {canCreateArticle && (
+              {canCreatePost && (
                 <DropdownMenuItem
-                  onClick={() => router.push('/dashboard/articles/create')}
+                  onClick={() => router.push('/dashboard/posts/create')}
                 >
-                  افزودن مقاله
+                  افزودن مطلب
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem onClick={() => router.push('/dashboard')}>

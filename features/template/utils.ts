@@ -31,19 +31,19 @@ export function getTemplateForOptions({
     //   value: 'firstPage',
     // },
     {
-      label: 'خانه‌ی مقالات',
+      label: 'خانه‌ی مطالب',
       value: 'blog',
     },
     {
-      label: 'مقاله‌ی تکی',
-      value: 'article',
+      label: 'مطلب‌ی تکی',
+      value: 'post',
     },
     {
-      label: 'آرشیو مقالات',
+      label: 'آرشیو مطالب',
       value: 'archive',
     },
     {
-      label: 'خانه‌ی دسته بندی مقالات',
+      label: 'خانه‌ی دسته بندی مطالب',
       value: 'categories',
     },
     ...categoryOptions,

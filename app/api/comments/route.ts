@@ -1,18 +1,15 @@
 // import { cookies } from 'next/headers'
 // import { decrypt } from '@/lib/auth'
 import { NextResponse } from 'next/server'
-import { getArticleComments } from '@/features/article-comment/actions'
+import { getPostComments } from '@/features/post-comment/actions'
 
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
-    const articleId = searchParams.get('article')
+    const postId = searchParams.get('post')
 
-    if (!articleId) {
-      return NextResponse.json(
-        { error: 'articleId is required' },
-        { status: 400 }
-      )
+    if (!postId) {
+      return NextResponse.json({ error: 'postId is required' }, { status: 400 })
     }
 
     //   const cookieStore = await cookies()
@@ -22,8 +19,8 @@ export async function GET(req: Request) {
     // }
     // return Response.json(await decrypt(session))
 
-    const commentsResult = await getArticleComments({
-      filters: { article: articleId },
+    const commentsResult = await getPostComments({
+      filters: { post: postId },
     })
     return NextResponse.json(commentsResult)
   } catch (err) {

@@ -17,7 +17,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
       <FileUpload
         key={`image-block-${selectedBlock.id}`} //  باعث میشه فرم کاملاً ری‌ست و رندر بشه
         name="image"
-        title="پوستر مقاله"
+        title="پوستر مطلب"
         maxFiles={1}
         defaultValues={defaultValu}
         updateFileDetailsHnadler={(files) => {

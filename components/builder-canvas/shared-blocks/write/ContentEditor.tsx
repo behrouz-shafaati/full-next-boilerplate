@@ -39,7 +39,7 @@ export const ContentEditor = ({ initialData }: Props) => {
           {/* contentJson */}
           <TiptapEditor
             // attachedFilesTo={[
-            //   { feature: 'article', id: article?.id || null },
+            //   { feature: 'post', id: post?.id || null },
             // ]}
             name="contentJson"
             defaultContent={

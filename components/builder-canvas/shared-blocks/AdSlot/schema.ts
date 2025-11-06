@@ -1,4 +1,4 @@
-export const ArticleListBlockSchema = {
+export const PostListBlockSchema = {
   title: '',
   type: 'object',
   properties: {

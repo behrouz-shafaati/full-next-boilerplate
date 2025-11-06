@@ -3,7 +3,7 @@ import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
 export type Banner = { aspect: string; file: File }
 export type CampaignTranslationSchema = {
   /**
-   * زبان مقاله
+   * زبان مطلب
    */
   lang: string // "fa", "en", "de", ...
   /**
@@ -13,7 +13,7 @@ export type CampaignTranslationSchema = {
 }
 export type CampaignTranslation = {
   /**
-   * زبان مقاله
+   * زبان مطلب
    */
   lang: string // "fa", "en", "de", ...
   /**

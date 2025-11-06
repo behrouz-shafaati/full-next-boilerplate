@@ -2,13 +2,13 @@ export type Permission =
   | 'all'
 
   // ===== ARTICLE_COMMENT =====
-  | 'articleComment.view.any'
-  | 'articleComment.view.own'
-  | 'articleComment.create'
-  | 'articleComment.delete.any'
-  | 'articleComment.delete.own'
-  | 'articleComment.moderate.any'
-  | 'articleComment.moderate.own'
+  | 'postComment.view.any'
+  | 'postComment.view.own'
+  | 'postComment.create'
+  | 'postComment.delete.any'
+  | 'postComment.delete.own'
+  | 'postComment.moderate.any'
+  | 'postComment.moderate.own'
 
   // ===== SETTINS =====
   | 'settings.view.any'
@@ -17,15 +17,15 @@ export type Permission =
   | 'settings.moderate.own'
 
   // ===== ARTICLE =====
-  | 'article.view.any'
-  | 'article.view.own'
-  | 'article.create'
-  | 'article.edit.any'
-  | 'article.edit.own'
-  | 'article.publish.any'
-  | 'article.publish.own'
-  | 'article.delete.any'
-  | 'article.delete.own'
+  | 'post.view.any'
+  | 'post.view.own'
+  | 'post.create'
+  | 'post.edit.any'
+  | 'post.edit.own'
+  | 'post.publish.any'
+  | 'post.publish.own'
+  | 'post.delete.any'
+  | 'post.delete.own'
 
   // ===== USER =====
   | 'user.view.any'

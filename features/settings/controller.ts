@@ -4,8 +4,8 @@ import settingsSchema from './schema'
 import settingsService from './service'
 import { Settings } from './interface'
 import userCtrl from '../user/controller'
-import articleCtrl from '../article/controller'
-import articleCommentCtrl from '../article-comment/controller'
+import postCtrl from '../post/controller'
+import postCommentCtrl from '../post-comment/controller'
 import { getTranslation } from '@/lib/utils'
 import SiteSettingsSingleton from './settingsSingleton'
 
@@ -113,14 +113,14 @@ export const getSettings = async (
 
 export const getStats = async () => {
   const totalUsers = await userCtrl.countAll()
-  const totalArticles = await articleCtrl.countAll()
-  const pendingComments = await articleCommentCtrl.countAll({
+  const totalPosts = await postCtrl.countAll()
+  const pendingComments = await postCommentCtrl.countAll({
     status: 'pending',
   })
-  const publishedWeek = await articleCtrl.countThisWeek()
+  const publishedWeek = await postCtrl.countThisWeek()
   return {
     totalUsers,
-    totalArticles,
+    totalPosts,
     pendingComments,
     publishedWeek,
   }

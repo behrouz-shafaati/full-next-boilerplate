@@ -9,10 +9,10 @@ import {
   FallbackBehaviorType,
   getBannerProps,
 } from './interface'
-import articleCtrl from '../article/controller'
+import postCtrl from '../post/controller'
 import { File } from '@/lib/entity/file/interface'
 import { getTranslation } from '@/lib/utils'
-import { Article } from '../article/interface'
+import { Post } from '../post/interface'
 import campaignMetricCtrl from '../campaign-metric/controller'
 import { getSettings } from '../settings/controller'
 
@@ -303,13 +303,13 @@ class controller extends baseController {
   /**
    * دریافت بنرهای متناسب با جایگاه‌های تبلیغاتی مشخص‌شده برای یک پست
    *
-   * این تابع با توجه به دسته‌بندی مقاله (mainCategory)، کمپین‌های فعال مرتبط را جستجو می‌کند
+   * این تابع با توجه به دسته‌بندی مطلب (mainCategory)، کمپین‌های فعال مرتبط را جستجو می‌کند
    * و برای هر جایگاه تبلیغاتی (adSlot) اولین کمپین دارای بنر مناسب را برمی‌گرداند.
    *
    * @async
    * @function getBanners
    * @param {Object} params - پارامترهای ورودی تابع
-   * @param {string} params.originPostSlug - اسلاگ پست برای یافتن مقاله مبدا
+   * @param {string} params.originPostSlug - اسلاگ پست برای یافتن مطلب مبدا
    * @param {string[]} [params.sendedAlready=[]] - شناسه کمپین‌هایی که قبلاً ارسال شده‌اند تا تکراری نباشند
    * @param {Array<{id: string, placement: string, aspect: string}>} params.adSlots - لیست جایگاه‌های تبلیغاتی (slotها)
    * @param {string} [params.locale='fa'] - زبان ترجمه‌ی مورد نظر
@@ -322,7 +322,7 @@ class controller extends baseController {
     adSlots,
     locale = 'fa',
   }: getBannerProps) {
-    const article: Article | null = await articleCtrl.findOne({
+    const post: Post | null = await postCtrl.findOne({
       filters: { originPostSlug },
     })
 
@@ -343,7 +343,7 @@ adSlots = {
       const fallbackBehavior = slotData?.fallbackBehavior || 'random'
       const campaigns = await this.detectCampaigns({
         sendedAlready,
-        goalSection: article ? article.mainCategory.id : 'allPages',
+        goalSection: post ? post.mainCategory.id : 'allPages',
         placement: slotData.placement || 'all',
         linkedCampaign: slotData?.linkedCampaign || null,
       })

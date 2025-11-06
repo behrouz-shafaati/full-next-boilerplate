@@ -3,7 +3,7 @@ import { User } from '../user/interface'
 
 export type TagTranslationSchema = {
   /**
-   * زبان مقاله
+   * زبان مطلب
    */
   lang: string // "fa", "en", "de", ...
 

@@ -324,8 +324,8 @@ const MenuBar = ({
     json: editor.getJSON(),
   }
 
-  if (window.ReactNativeWebView && window.ReactNativeWebView.articleMessage) {
-    window.ReactNativeWebView.articleMessage(
+  if (window.ReactNativeWebView && window.ReactNativeWebView.postMessage) {
+    window.ReactNativeWebView.postMessage(
       JSON.stringify({
         data,
         activeStates,
@@ -571,7 +571,7 @@ const MenuBar = ({
       >
         <DialogContent className="mb-8 h-[calc(100vh-2rem)] min-w-[calc(100vw-2rem)] grid-cols-1 auto-rows-max">
           <DialogHeader className="contents py-4 ">
-            <DialogTitle className="block px-6 h-fit">تصاویر مقاله</DialogTitle>
+            <DialogTitle className="block px-6 h-fit">تصاویر مطلب</DialogTitle>
             {/* <DialogDescription className="text-sm text-slate-500">
               برای درج، عکس را انتخاب و "درج" را بزن
             </DialogDescription> */}
@@ -584,7 +584,7 @@ const MenuBar = ({
               } // 👈 تغییر باعث remount میشه
               attachedTo={fileUploadSettings.attachedFilesTo}
               name={fileUploadSettings.name}
-              title="رسانه های مقاله"
+              title="رسانه های مطلب"
               responseHnadler={fileUploadSettings.responseFileUploadHandler}
               ref={fileUploadSettings.fileUploadRef}
               showDeleteButton={false}

@@ -2,7 +2,7 @@
 // import { decrypt } from '@/lib/auth'
 import { NextResponse } from 'next/server'
 import { parseQuery } from '@/lib/utils'
-import articleCommentCtrl from '@/features/article-comment/controller'
+import postCommentCtrl from '@/features/post-comment/controller'
 
 export async function GET(req: Request) {
   try {
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     // }
     // return Response.json(await decrypt(session))
 
-    const commentsResult = await articleCommentCtrl.find(query, false)
+    const commentsResult = await postCommentCtrl.find(query, false)
     return NextResponse.json(commentsResult)
   } catch (err) {
     console.error('Error fetching comments:', err)

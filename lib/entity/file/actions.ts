@@ -27,7 +27,7 @@ import fileCtrl from './controller'
 
 // const uploadFile = upload.fields([{ name: "file", maxCount: 1 }]);
 
-// router.article(
+// router.post(
 //   "/upload",
 //   uploadFile,
 //   (req: Request, res: Response, next: NextFunction) => {

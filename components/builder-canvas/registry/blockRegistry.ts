@@ -7,9 +7,9 @@ import { ThemeModeSwitchBlockDef } from '../shared-blocks/theme-mode-switch'
 import { UserNavBlockDef } from '../shared-blocks/user-nav'
 import { registerBlock } from '../singletonBlockRegistry'
 import { ImageSliderBlockDef } from '../shared-blocks/imageSlider'
-import { BlogArticleSliderBlockDef } from '../shared-blocks/blogArticleSlider'
+import { BlogPostSliderBlockDef } from '../shared-blocks/blogPostSlider'
 import { MenuBlockDef } from '../shared-blocks/menu'
-import { ArticleListBlockDef } from '../shared-blocks/ArticleList'
+import { PostListBlockDef } from '../shared-blocks/PostList'
 import { ButtonBlockDef } from '../shared-blocks/button'
 import { WriteBlockDef } from '../shared-blocks/write'
 import { AdSlotBlockDef } from '../shared-blocks/AdSlot'
@@ -21,9 +21,9 @@ export const blockRegistry = {
   themeModdeSwitch: ThemeModeSwitchBlockDef,
   userNav: UserNavBlockDef,
   imageSlider: ImageSliderBlockDef,
-  blogArticleSlider: BlogArticleSliderBlockDef,
+  blogPostSlider: BlogPostSliderBlockDef,
   menu: MenuBlockDef,
-  alticleList: ArticleListBlockDef,
+  alticleList: PostListBlockDef,
   button: ButtonBlockDef,
   write: WriteBlockDef,
   adSlot: AdSlotBlockDef,

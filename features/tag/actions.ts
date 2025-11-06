@@ -20,10 +20,7 @@ const FormSchema = z.object({
   image: z.string({}).nullable(),
 })
 
-async function sanitizeArticleData(
-  validatedFields: any,
-  id?: string | undefined
-) {
+async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   let prevState = { translations: [] }
   if (id) {
     prevState = await tagCtrl.findById({ id })
@@ -84,7 +81,7 @@ export async function createTag(prevState: State, formData: FormData) {
       }
     }
 
-    const params = await sanitizeArticleData(validatedFields)
+    const params = await sanitizePostData(validatedFields)
     // Create the tag
     await tagCtrl.create({ params })
     // Revalidate the path
@@ -155,7 +152,7 @@ export async function updateTag(
         values,
       }
     }
-    const params = await sanitizeArticleData(validatedFields, id)
+    const params = await sanitizePostData(validatedFields, id)
     await tagCtrl.findOneAndUpdate({
       filters: id,
       params: params,

@@ -138,7 +138,7 @@ export default function EnhanceHtmlForNext({
               />
             )
           }
-          // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مقالات بهشون دسترسی داشت
+          // برای اینک عنوان های ایدی بگیرن و بشه از فهرست مطالب بهشون دسترسی داشت
           if (
             domNode instanceof Element &&
             ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'].includes(domNode.name)

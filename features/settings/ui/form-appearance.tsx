@@ -34,7 +34,7 @@ export const FormAppearance: React.FC<FormProps> = ({ settings }) => {
   const [imgLoading, setImgLoading] = useState(false)
   const title = 'تنظیمات'
   const description = ''
-  const toastMessage = settings ? ' مقاله بروزرسانی شد' : 'دسته بندی اضافه شد'
+  const toastMessage = settings ? ' مطلب بروزرسانی شد' : 'دسته بندی اضافه شد'
 
   useEffect(() => {
     if (state.message && state.message !== null)

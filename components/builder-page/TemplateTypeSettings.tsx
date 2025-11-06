@@ -31,15 +31,15 @@ const TemplateTypeSettings = ({
     //   value: 'firstPage',
     // },
     {
-      label: 'خانه‌ی مقالات',
+      label: 'خانه‌ی مطالب',
       value: 'blogs',
     },
     {
-      label: 'مقاله‌ی تکی',
+      label: 'مطلب‌ی تکی',
       value: 'blog',
     },
     {
-      label: 'خانه‌ی دسته بندی مقالات',
+      label: 'خانه‌ی دسته بندی مطالب',
       value: 'categories',
     },
     ...categoryOptions,

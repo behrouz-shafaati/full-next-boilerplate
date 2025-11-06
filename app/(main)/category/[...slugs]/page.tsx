@@ -6,7 +6,7 @@ import templateCtrl from '@/features/template/controller'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 
 import type { Metadata } from 'next'
-import CategoryArticleList from '@/features/category/ui/component/CategoryArticleList'
+import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
 import categoryCtrl from '@/features/category/controller'
 import { buildCategoryHref } from '@/features/category/utils'
 import { getTranslation } from '@/lib/utils'
@@ -70,9 +70,9 @@ export default async function Page({ params }: PageProps) {
         siteSettings={siteSettings}
         rows={template?.content.rows}
         editroMode={false}
-        content_all={<CategoryArticleList slug={slug} />}
+        content_all={<CategoryPostList slug={slug} />}
       />
     )
 
-  return <CategoryArticleList slug={slug} />
+  return <CategoryPostList slug={slug} />
 }

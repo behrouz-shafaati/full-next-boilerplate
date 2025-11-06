@@ -1,6 +1,6 @@
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
-import ArticleList from '@/features/article/ui/list'
-import DefaultPageBlog from '@/features/article/ui/page'
+import PostList from '@/features/post/ui/list'
+import DefaultPageBlog from '@/features/post/ui/page'
 import { getSettings } from '@/features/settings/controller'
 import templateCtrl from '@/features/template/controller'
 
@@ -26,7 +26,7 @@ export default async function Page({ searchParams }: PageProps) {
           siteSettings={siteSettings}
           rows={template.content.rows}
           editroMode={false}
-          content_all={<ArticleList page={Number(page)} query={query} />}
+          content_all={<PostList page={Number(page)} query={query} />}
         />
       </>
     )

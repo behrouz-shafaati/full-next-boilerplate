@@ -1,9 +1,9 @@
 import HelloUser from '@/components/HelloUser'
 import StatCard from '@/components/stateCard'
 import { Card } from '@/components/ui/card'
-import LastArticleComments from '@/features/article-comment/ui/last-article-comments'
-import { commentsUrl } from '@/features/article-comment/utils'
-import LastArticles from '@/features/article/ui/last-alticles'
+import LastPostComments from '@/features/post-comment/ui/last-post-comments'
+import { commentsUrl } from '@/features/post-comment/utils'
+import LastPosts from '@/features/post/ui/last-alticles'
 import { getStats } from '@/features/settings/controller'
 import { can } from '@/lib/utils/can.client'
 import { FileText, MessageSquare, User } from 'lucide-react'
@@ -14,24 +14,24 @@ export default async function page() {
   const { user } = await getSession()
   const stats = await getStats()
   const userRoles = user?.roles || []
-  const canViewArticle = can(userRoles, 'article.view.any')
+  const canViewPost = can(userRoles, 'post.view.any')
   const canViewUser = can(userRoles, 'user.view.any')
-  const canViewArticleComment = can(userRoles, 'articleComment.view.any')
+  const canViewPostComment = can(userRoles, 'postComment.view.any')
   return (
     <>
       <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
         <HelloUser />
         <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-4 gap-4">
-          {canViewArticle && (
+          {canViewPost && (
             <StatCard
-              title="تعداد مقالات"
-              value={stats.totalArticles}
+              title="تعداد مطالب"
+              value={stats.totalPosts}
               icon={<FileText />}
             />
           )}
-          {canViewArticle && (
+          {canViewPost && (
             <StatCard
-              title="مقالات منتشر شده این هفته"
+              title="مطالب منتشر شده این هفته"
               value={stats.publishedWeek}
               icon={<FileText />}
             />
@@ -50,14 +50,14 @@ export default async function page() {
           />
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1  lg:grid-cols-2 gap-4">
-          {canViewArticle && (
+          {canViewPost && (
             <Card className="p-4">
-              <LastArticles query={''} page={Number(page)} />
+              <LastPosts query={''} page={Number(page)} />
             </Card>
           )}
-          {canViewArticleComment && (
+          {canViewPostComment && (
             <Card className="p-4">
-              <LastArticleComments
+              <LastPostComments
                 filters={{ status: 'pending' }}
                 refetchDataUrl={`${commentsUrl}?page=1&status=pending`}
                 page={Number(page)}

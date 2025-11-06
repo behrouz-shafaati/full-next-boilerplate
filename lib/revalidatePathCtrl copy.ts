@@ -1,12 +1,12 @@
 import categoryCtrl from '@/features/category/controller'
 import pageCtrl from '@/features/page/controller'
-import articleCtrl from '@/features/article/controller'
+import postCtrl from '@/features/post/controller'
 import { revalidatePath } from 'next/cache'
 
 export type RevalidatePathProp = {
   feature:
     | 'category'
-    | 'article'
+    | 'post'
     | 'page'
     | 'template'
     | 'templatePart'
@@ -29,9 +29,9 @@ class controller {
     }
   }
 
-  async revalidateAllArticlesPaths() {
-    const articleSlugs = await articleCtrl.getAllSlugs()
-    for (const { slug } of articleSlugs) {
+  async revalidateAllPostsPaths() {
+    const postSlugs = await postCtrl.getAllSlugs()
+    for (const { slug } of postSlugs) {
       revalidatePath(slug)
     }
   }
@@ -49,7 +49,7 @@ class controller {
 
   async revalidateAllPaths() {
     await this.revalidateAllPagesPaths()
-    await this.revalidateAllArticlesPaths()
+    await this.revalidateAllPostsPaths()
     await this.revalidateAllCategoriessPaths()
   }
 
@@ -68,7 +68,7 @@ class controller {
     }
 
     switch (feature) {
-      case 'article': {
+      case 'post': {
         this.revalidateBlogPath()
         break
       }

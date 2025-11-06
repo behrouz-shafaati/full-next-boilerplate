@@ -41,7 +41,7 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
   const [imgLoading, setImgLoading] = useState(false)
   const title = 'تنظیمات'
   const description = ''
-  const toastMessage = settings ? ' مقاله بروزرسانی شد' : 'دسته بندی اضافه شد'
+  const toastMessage = settings ? ' مطلب بروزرسانی شد' : 'دسته بندی اضافه شد'
   const action = settings ? 'ذخیره تغییرات' : 'ذخیره'
 
   const pagesOptions: Option[] = allPages.map((p: PageContent) => {

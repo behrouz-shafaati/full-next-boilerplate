@@ -24,7 +24,7 @@ AvatarButton.displayName = 'AvatarButton'
 export async function UserNav() {
   const { user } = (await getSession()) as Session
   const userRoles = user?.roles || []
-  const canCreateArticle = await can(userRoles, 'article.create', false)
+  const canCreatePost = await can(userRoles, 'post.create', false)
   if (user) {
     return (
       <DropdownMenu dir="rtl">
@@ -53,13 +53,13 @@ export async function UserNav() {
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            {canCreateArticle && (
+            {canCreatePost && (
               <DropdownMenuItem className="p-0">
                 <Link
-                  href="/dashboard/articles/create"
+                  href="/dashboard/posts/create"
                   className="w-full flex justify-between py-1.5 px-2"
                 >
-                  <span>افزودن مقاله</span>
+                  <span>افزودن مطلب</span>
                 </Link>
               </DropdownMenuItem>
             )}

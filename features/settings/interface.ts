@@ -102,7 +102,7 @@ type SettingsBase = {
   footerMenuId: string
 
   /**
-   * تنظیمات مربوط به مقاله
+   * تنظیمات مربوط به مطلب
    */
   theme: {
     primaryColor: String

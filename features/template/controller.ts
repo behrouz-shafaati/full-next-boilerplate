@@ -100,7 +100,7 @@ class controller extends baseController {
     let categoriesTemplateResult
     if (slug == '') return null
     switch (slug) {
-      case 'archive': // آرشیو مقالات
+      case 'archive': // آرشیو مطالب
         const [archiveTemplateResult] = await Promise.all([
           this.find({ filters: { templateFor: 'archive', status: 'active' } }),
         ])
@@ -123,12 +123,12 @@ class controller extends baseController {
         if (blogTemplateResult.data[0] != undefined)
           return blogTemplateResult.data[0]
         break
-      case 'article': // مقاله تکی
-        const [articleTemplateResult] = await Promise.all([
-          this.find({ filters: { templateFor: 'article', status: 'active' } }),
+      case 'post': // مطلب تکی
+        const [postTemplateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'post', status: 'active' } }),
         ])
-        if (articleTemplateResult.data[0] != undefined)
-          return articleTemplateResult.data[0]
+        if (postTemplateResult.data[0] != undefined)
+          return postTemplateResult.data[0]
         break
       default:
         // بررسی کند که یک دسته بندی خاص یا والدهای آن اگر هست قالب آن را برگرداند
@@ -227,7 +227,7 @@ class controller extends baseController {
 }
 
 type getTemplateProp = {
-  slug: 'allPages' | 'blog' | 'categories' | 'archive' | 'article' | 'category'
+  slug: 'allPages' | 'blog' | 'categories' | 'archive' | 'post' | 'category'
 }
 
 const templateCtrl = new controller(new templateService(templateSchema))

@@ -1,15 +1,15 @@
-import { getArticles } from '@/features/article/actions'
+import { getPosts } from '@/features/post/actions'
 import { getAllCategories } from '@/features/category/actions'
 import { DesktopFilters } from './DesktopFilters'
 import { getAllTags } from '@/features/tag/actions'
 import { Option } from '@/types'
 import { getTranslation } from '@/lib/utils'
-import ArticleHorizontalCard from '../builder-canvas/shared-blocks/ArticleList/designs/ArticalHorizontalCard'
+import PostHorizontalCard from '../builder-canvas/shared-blocks/PostList/designs/ArticalHorizontalCard'
 import { MobileFilters } from './MobileFilters'
 import Pagination from '../ui/pagination'
 import { getSettings } from '@/features/settings/controller'
 
-export default async function ArchiveArticle({
+export default async function ArchivePost({
   categoryIds = [],
   tagIds = [],
   categorySlugs = [],
@@ -43,18 +43,18 @@ export default async function ArchiveArticle({
   }
   const [siteSettings, result, allCategories, allTags] = await Promise.all([
     getSettings(),
-    getArticles({
+    getPosts({
       filters: { categories: categoryIds, tags: tagIds },
     }),
     getAllCategories(),
     getAllTags(),
   ])
-  const articles = result.data
-  const articleItems = articles.map((article) => {
+  const posts = result.data
+  const postItems = posts.map((post) => {
     return (
-      <ArticleHorizontalCard
-        key={article.id}
-        article={article}
+      <PostHorizontalCard
+        key={post.id}
+        post={post}
         options={{ showExcerpt: true }}
       />
     )
@@ -83,7 +83,7 @@ export default async function ArchiveArticle({
         />
       </div>
       <div className="p-2 col-span-4 md:col-span-3 ">
-        <div>{articleItems}</div>
+        <div>{postItems}</div>
         <div className="p-4 flex justify-center items-center">
           <Pagination totalPages={result.totalPages} />
         </div>

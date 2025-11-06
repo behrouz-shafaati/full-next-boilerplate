@@ -204,7 +204,7 @@ export default function TiptapEditor({
             key={defaultFiles?.map((f) => f.id).join(',') || 'empty'} // 👈 تغییر باعث remount میشه
             attachedTo={attachedFilesTo}
             name={`${name}Files`}
-            title="رسانه های مقاله"
+            title="رسانه های مطلب"
             responseHnadler={responseFileUploadHandler}
             ref={fileUploadRef}
             showDeleteButton={false}

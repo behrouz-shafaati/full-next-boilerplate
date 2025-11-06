@@ -45,7 +45,7 @@
 //       dir="rtl"
 //     >
 //       <h2 className="font-semibold mb-3 text-lg text-gray-900 dark:text-gray-100">
-//         فهرست مقالات
+//         فهرست مطالب
 //       </h2>
 //       {renderTree(toc)}
 //     </nav>

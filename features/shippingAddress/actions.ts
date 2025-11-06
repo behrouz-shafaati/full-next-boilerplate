@@ -13,7 +13,7 @@ const FormSchema = z.object({
   provinceId: z.string({}).min(1, { message: 'لطفا استان را تعیین کنید.' }),
   cityId: z.string({}).min(1, { message: 'لطفا شهر را تعیین کنید.' }),
   address: z.string({}).min(1, { message: 'لطفا جزییات آدرس را وارد کنید.' }),
-  postalCode: z.string({}).min(1, { message: 'لطفا کد مقالهی را وارد کنید.' }),
+  postalCode: z.string({}).min(1, { message: 'لطفا کد مطلبی را وارد کنید.' }),
   mobile: z.string({}).min(1, { message: 'لطفا موبایل را وارد کنید.' }),
   companyName: z.string({}).nullable(),
   email: z.string({}).nullable(),

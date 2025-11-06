@@ -125,7 +125,7 @@ export async function updateSettings(prevState: State, formData: FormData) {
     if (process.env.NODE_ENV === 'development') throw error
     console.log('Error in update settings:', error)
     return {
-      message: 'خطای پایگاه داده: بروزرسانی مقاله ناموفق بود.',
+      message: 'خطای پایگاه داده: بروزرسانی مطلب ناموفق بود.',
       success: false,
     }
   }
@@ -135,7 +135,7 @@ export async function deleteSettings(id: string) {
   try {
     await settingsCtrl.delete({ filters: [id] })
   } catch (error) {
-    return { message: 'خطای پایگاه داده: حذف مقاله ناموفق بود', success: false }
+    return { message: 'خطای پایگاه داده: حذف مطلب ناموفق بود', success: false }
   }
   await settingsCtrl.delete({ filters: [id] })
   // Revalidate the path

@@ -1,5 +1,5 @@
 // /app/api/banners/route.ts
-import articleCtrl from '@/features/article/controller'
+import postCtrl from '@/features/post/controller'
 import campaignCtrl from '@/features/campaign/controller'
 import { headers } from 'next/headers'
 import { NextResponse } from 'next/server'

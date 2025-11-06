@@ -91,8 +91,8 @@ import { FileText, Eye, MessageSquare, User, Clock } from 'lucide-react'
 export default function DashboardOverview({ stats }) {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <DashboardStatCard title="کل مقالات" value={stats.totalArticles} icon={<FileText />} delta={5} />
-      <DashboardStatCard title="مقالات منتشر شده امروز" value={stats.publishedToday} icon={<FileText />} />
+      <DashboardStatCard title="کل مطالب" value={stats.totalPosts} icon={<FileText />} delta={5} />
+      <DashboardStatCard title="مطالب منتشر شده امروز" value={stats.publishedToday} icon={<FileText />} />
       <DashboardStatCard title="بازدید امروز" value={stats.viewsToday} icon={<Eye />} delta={-2} />
       <DashboardStatCard title="نظرات در انتظار" value={stats.pendingComments} icon={<MessageSquare />} />
     </div>
