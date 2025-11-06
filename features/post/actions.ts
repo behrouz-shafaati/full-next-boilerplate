@@ -265,14 +265,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   const tags = await tagCtrl.ensureTagsExist(tagsArray)
   const categories = JSON.parse(postPayload?.categories)
 
-  // for multi categories select
-  // const categories: string[] = await categoryCtrl.ensureCategoryExist(
-  //   categoriesArray
-  // )
-  console.log(
-    '#29386457832 JSON.parse(postPayload?.categories):',
-    JSON.parse(postPayload?.categories)
-  )
+  const postType = postPayload.primaryVideoEmbedUrl != '' ? 'video' : 'article'
   const translations = [
     {
       lang: postPayload.lang,
@@ -292,6 +285,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   if (!categoriesId.includes(postPayload.mainCategory))
     categoriesId.push(postPayload.mainCategory)
   let params = {
+    type: postType,
     ...postPayload,
     translations,
     tags,

@@ -3,11 +3,11 @@ import parse, { domToReact, Element } from 'html-react-parser'
 import { slugify } from '@/lib/utils'
 import { AccordionRenderer } from '../tiptap-renderers/AccordionRenderer'
 import { AccordionNode, TNode } from '../type'
-import VideoEmbedRenderer from '../tiptap-renderers/VideoEmbedRenderer'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 import { Settings } from '@/features/settings/interface'
 import AdSlotBlock from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlock'
 import { ImageAlba } from '@/components/image-alba'
+import VideoEmbed from '@/components/video-embed/VideoEmbed'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -130,11 +130,9 @@ export default function EnhanceHtmlForNext({
           ) {
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
             return (
-              <VideoEmbedRenderer
-                attribs={{
-                  src: domNode.attribs.src,
-                  title: domNode.attribs.title,
-                }}
+              <VideoEmbed
+                src={domNode.attribs.src}
+                title={domNode.attribs.title}
               />
             )
           }

@@ -154,7 +154,7 @@ export function generatePostSchema({
 
   const schemaData = {
     '@context': 'https://schema.org',
-    '@type': 'Post',
+    '@type': 'Article',
 
     ...addIfExists('headline', translation?.title),
     ...addIfExists('description', translation?.excerpt),

@@ -70,7 +70,8 @@ export default class controller {
       result = await this.service.find(
         payload.filters,
         payload.pagination,
-        payload.sort
+        payload.sort,
+        { projection: payload.projection ?? {} }
       )
       // if (payload.saveLog) {
       //   if (result) {
@@ -105,7 +106,8 @@ export default class controller {
       result = await this.service.findAll(
         payload.filters,
         payload.sort,
-        payload.populate
+        payload.populate,
+        { projection: payload.projection ?? {} }
       )
       // if (payload.saveLog) {
       //   if (result) {
@@ -140,7 +142,9 @@ export default class controller {
     //   log.setTarget(payload.id);
     // }
     try {
-      result = await this.service.findById(payload.id)
+      result = await this.service.findById(payload.id, {
+        projection: payload.projection ?? {},
+      })
       // if (payload.saveLog) {
       //   if (result) log.setResultStatus(true);
       //   else log.setResultStatus(false);

@@ -75,9 +75,11 @@ type QueryFind = {
   saveLog?: boolean
   sort?: any
   populate?: string
+  projection?: Record<string, 0 | 1>
 }
 type QueryFindById = {
   id: any
+  projection?: Record<string, 0 | 1>
   saveLog?: boolean
 }
 type QueryFindOne = {
@@ -89,7 +91,12 @@ type Update = {
   filters: any
   params: any
   saveLog?: boolean
-  options?: any
+  options?: {
+    projection?: Record<string, 0 | 1>
+    upsert?: boolean
+    new?: boolean
+    [key: string]: any
+  }
 }
 type Delete = {
   filters: Id[] | string[]

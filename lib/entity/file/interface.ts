@@ -39,6 +39,9 @@ export type File = Model & {
    * آدرس تصویر با اندازه اصلی
    */
   srcLarge: string
+  /**
+   * لینکی که با کلیک به روی عکس به آن می رویم
+   */
   href: string
   mimeType: string
   size: number
@@ -48,7 +51,7 @@ export type File = Model & {
   main: boolean
   attachedTo: [{ feature: string; id: string }]
   /**
-   * لینکی که با کلیک به روی عکس به آن می رویم
+   * نحوه ی باز شدن لینک
    */
   target: string
   /**

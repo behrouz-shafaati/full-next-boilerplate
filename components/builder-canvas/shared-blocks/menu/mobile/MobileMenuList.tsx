@@ -6,8 +6,8 @@ import { useState } from 'react'
 export default function MobileMenuList({ items }: { items: MenuItem[] }) {
   return (
     <div className="flex flex-col gap-4">
-      {(items || []).map((item) => (
-        <MobileMenuItem key={item.id} item={item} />
+      {(items || []).map((item, index) => (
+        <MobileMenuItem key={index} item={item} />
       ))}
     </div>
   )

@@ -54,6 +54,10 @@ type PostBase = {
   translations: [PostTranslationSchema]
 
   /**
+   * نوع مطلب
+   */
+  type: 'article' | 'video'
+  /**
    * وضعیت فعال بودن مطلب (در صورت فعال بودن true)
    */
   status: 'published' | 'draft'

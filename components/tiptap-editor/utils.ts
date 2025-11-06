@@ -87,7 +87,7 @@ export function getEmbedUrl(url: string): string | null {
     return `https://www.aparat.com/video/video/embed/videohash/${id}/vt/frame`
   }
 
-  return url
+  return null
 }
 
 export function getTextFromNode(node: any): string {

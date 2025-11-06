@@ -38,6 +38,7 @@ interface TiptapEditor {
   onChangeFiles?: () => void
   attachedFilesTo?: [{ feature: string; id: string }]
   className?: string
+  onLoading?: (loading: boolean) => void
 }
 
 export default function TiptapEditor({
@@ -47,6 +48,7 @@ export default function TiptapEditor({
   onChangeFiles,
   attachedFilesTo = [],
   className = '',
+  onLoading,
 }: TiptapEditor) {
   const fileUploadRef = useRef<FileUploadRef>(null)
   const [content, SetContent] = useState(JSON.stringify(defaultContent))
@@ -162,6 +164,7 @@ export default function TiptapEditor({
     fileUploadRef,
     showDeleteButton: false,
     onChangeFiles,
+    onLoading,
   }
   return (
     <div
@@ -198,21 +201,6 @@ export default function TiptapEditor({
           <code>{content}</code>
         </pre>
       </div>
-      {/* <div className="col-span-12  md:col-span-2">
-        <div className="sticky top-0 z-10">
-          <FileUpload
-            key={defaultFiles?.map((f) => f.id).join(',') || 'empty'} // 👈 تغییر باعث remount میشه
-            attachedTo={attachedFilesTo}
-            name={`${name}Files`}
-            title="رسانه های مطلب"
-            responseHnadler={responseFileUploadHandler}
-            ref={fileUploadRef}
-            showDeleteButton={false}
-            defaultValues={defaultFiles}
-            {...(onChangeFiles ? { onChange: onChangeFiles } : {})}
-          />
-        </div>
-      </div> */}
     </div>
   )
 }

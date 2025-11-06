@@ -45,7 +45,8 @@ export default class service {
   async find(
     filters = {},
     pagination: Pagination = defaultPagination,
-    sort = { createdAt: -1 }
+    sort = { createdAt: -1 },
+    options: { projection?: Record<string, 0 | 1> } = {}
   ): Promise<QueryResponse<any>> {
     // Connect to the MongoDB database
     await dbConnect()
@@ -60,8 +61,13 @@ export default class service {
     filters = { ...filters, deleted: false }
     // Find documents in the collection based on filters, sort order, and pagination
     // Get the total count of documents that match the filters
+    const projection = options.projection ?? {}
     const [result, totalDocuments] = await Promise.all([
-      this.model.find(filters).sort(sort).skip(skip).limit(pagination.perPage),
+      this.model
+        .find(filters, projection)
+        .sort(sort)
+        .skip(skip)
+        .limit(pagination.perPage),
       this.model.countDocuments(filters),
     ])
     // Disconnect from the MongoDB database
@@ -88,15 +94,20 @@ export default class service {
   async findAll(
     filters = {},
     sort = { createdAt: -1 },
-    populate?: string
+    populate?: string,
+    options: { projection?: Record<string, 0 | 1> } = {}
   ): Promise<QueryResponse<any>> {
     // Connect to the MongoDB database
     await dbConnect()
+    const projection = options.projection ?? {}
     filters = { ...filters, deleted: false }
     let result: any
     if (populate)
-      result = await this.model.find(filters).populate(populate).sort(sort)
-    else result = await this.model.find(filters).sort(sort)
+      result = await this.model
+        .find(filters, projection)
+        .populate(populate)
+        .sort(sort)
+    else result = await this.model.find(filters, projection).sort(sort)
 
     const totalDocuments: number = await this.model.countDocuments(filters)
     // Disconnect from the MongoDB database
@@ -111,11 +122,17 @@ export default class service {
     })
   }
 
-  async findById(_id: string) {
+  async findById(
+    _id: string,
+    options: { projection?: Record<string, 0 | 1> } = {}
+  ) {
     if (!_id || _id == '') return null
     // Connect to the MongoDB database
     await dbConnect()
-    return toObject(await this.model.findById({ _id, deleted: false }))
+    const projection = options.projection ?? {}
+    return toObject(
+      await this.model.findById({ _id, deleted: false }, projection)
+    )
   }
   async findOne(filters: object = {}, populate?: string) {
     // Connect to the MongoDB database
@@ -150,7 +167,16 @@ export default class service {
    * @param data - The data to update the document with.
    * @returns The updated document.
    */
-  async findOneAndUpdate(filters: any, data: object, options: object) {
+  async findOneAndUpdate(
+    filters: any,
+    data: object,
+    options: {
+      projection?: Record<string, 0 | 1>
+      upsert?: boolean
+      new?: boolean
+      [key: string]: any
+    } = {}
+  ) {
     // Connect to the MongoDB database
     await dbConnect()
     // Convert string or ObjectId filters to an object if necessary

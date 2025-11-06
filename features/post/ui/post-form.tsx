@@ -47,7 +47,7 @@ import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
 import { getEmbedUrl } from '@/components/tiptap-editor/utils'
-import VideoEmbedRenderer from '@/components/tiptap-editor/tiptap-renderers/VideoEmbedRenderer'
+import VideoEmbed from '@/components/video-embed/VideoEmbed'
 
 interface PostFormProps {
   initialData: any | null
@@ -97,7 +97,7 @@ export const PostForm: React.FC<PostFormProps> = ({
   const { toast } = useToast()
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [imgLoading, setImgLoading] = useState(false)
+  const [showPrimaryVideoError, setShowPrimaryVideoError] = useState(false)
   const [primaryVideoEmbedUrl, setPrimaryVideoEmbedUrl] = useState(
     state.values?.primaryVideoEmbedUrl || ''
   )
@@ -158,7 +158,8 @@ export const PostForm: React.FC<PostFormProps> = ({
   const handleChangePrimaryVideo = (url: string) => {
     const embedUrl = getEmbedUrl(url)
     if (!embedUrl) {
-      alert('لینک معتبر نیست.')
+      setPrimaryVideoEmbedUrl('')
+      setShowPrimaryVideoError(true)
       return
     }
     setPrimaryVideoEmbedUrl(embedUrl)
@@ -228,6 +229,7 @@ export const PostForm: React.FC<PostFormProps> = ({
               }
               onChangeFiles={submitManually}
               className="h-full"
+              onLoading={setLoading}
             />
             <SeoSnippetForm
               defaultValues={state?.values || {}}
@@ -243,7 +245,7 @@ export const PostForm: React.FC<PostFormProps> = ({
                 rows={10}
                 placeholder={`{
   "@context": "https://schema.org",
-  "@type": "Post",
+  "@type": "Article",
   "headline": "عنوان مطلب",
   "author": {
     "@type": "Person",
@@ -255,7 +257,11 @@ export const PostForm: React.FC<PostFormProps> = ({
           </div>
           <div className="relative col-span-12 md:col-span-3 gap-2">
             <StickyBox offsetBottom={0}>
-              <SubmitButton text="ذخیره مطلب" className="my-4 w-full" />
+              <SubmitButton
+                loading={loading}
+                text="ذخیره مطلب"
+                className="my-4 w-full"
+              />
               {/* status */}
               <Select
                 title="وضعیت"
@@ -320,6 +326,7 @@ export const PostForm: React.FC<PostFormProps> = ({
                 maxFiles={1}
                 defaultValues={state.values?.image || null}
                 onChange={submitManually}
+                onLoading={setLoading}
               />
               <Text
                 name="primaryVideo"
@@ -338,11 +345,9 @@ export const PostForm: React.FC<PostFormProps> = ({
                 value={primaryVideoEmbedUrl}
               />
               {primaryVideoEmbedUrl && primaryVideoEmbedUrl != '' && (
-                <VideoEmbedRenderer
-                  attribs={{
-                    src: primaryVideoEmbedUrl,
-                    title: state?.values?.translation?.title || '',
-                  }}
+                <VideoEmbed
+                  src={primaryVideoEmbedUrl}
+                  title={state?.values?.translation?.title || ''}
                 />
               )}
               <RelatedPostsDashboard post={post} className="my-4" />

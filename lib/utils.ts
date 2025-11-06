@@ -4,7 +4,33 @@ import { twMerge } from 'tailwind-merge'
 import { QueryFind } from './entity/core/interface'
 import { jwtVerify, SignJWT } from 'jose'
 
-export function cn(...inputs: ClassValue[]) {
+/**
+ * Utility function for conditionally combining and merging Tailwind CSS class names.
+ *
+ * This function first combines class names using `clsx`, which supports
+ * conditional and array/object-based class definitions, and then merges
+ * any conflicting Tailwind CSS classes using `tailwind-merge` (`twMerge`).
+ *
+ * @example
+ * ```tsx
+ * <button className={cn(
+ *   "text-sm font-medium",
+ *   isActive && "text-blue-500",
+ *   "hover:text-blue-700"
+ * )}>
+ *   Click me
+ * </button>
+ * ```
+ *
+ * // Output:
+ * // "text-sm font-medium text-blue-500 hover:text-blue-700"
+ *
+ * @param {...ClassValue[]} inputs - A list of class name values that can include
+ * strings, arrays, or objects (as supported by `clsx`).
+ *
+ * @returns {string} The merged string of class names with Tailwind conflicts resolved.
+ */
+export function cn(...inputs: ClassValue[]): string {
   return twMerge(clsx(inputs))
 }
 

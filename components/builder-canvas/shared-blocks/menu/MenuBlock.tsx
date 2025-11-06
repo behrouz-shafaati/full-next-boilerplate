@@ -29,5 +29,12 @@ export default async function MenuBlock({
   const menu = result.data?.[0] ?? null
 
   // فقط داده‌ی ساده به Menu پاس بده
-  return menu ? <Menu menu={menu} {...props} blockData={blockData} /> : null
+  return menu ? (
+    <Menu
+      menu={menu}
+      {...props}
+      blockData={blockData}
+      widgetName={widgetName}
+    />
+  ) : null
 }

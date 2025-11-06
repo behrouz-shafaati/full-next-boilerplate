@@ -10,7 +10,11 @@ type BannerGroupProps = AdSlotWidgetProps &
   Block &
   React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export default function BannerGroup({ blockData, ...props }: BannerGroupProps) {
+export default function BannerGroup({
+  blockData,
+  widgetName,
+  ...props
+}: BannerGroupProps) {
   const locale = 'fa'
   const { id, content, settings } = blockData
   const visibility = blockData?.styles?.visibility || {

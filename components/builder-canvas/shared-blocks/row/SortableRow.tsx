@@ -37,7 +37,6 @@ export default function SortableRow({
   let stickyClass = ''
   if (row?.settings?.sticky || false) stickyClass = 'sticky top-0 z-50'
 
-  console.log('#row settings:', row)
   return (
     <div className={`${stickyClass} ${activeClass}`}>
       <div

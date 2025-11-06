@@ -1,3 +1,4 @@
+'use client'
 // کامپوننت نمایشی بلاک
 import React from 'react'
 import { Block } from '../../types'
@@ -9,8 +10,9 @@ type BannerGroupProps = AdSlotWidgetProps &
   React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 const defaultAspect = '4/1'
-export const BannerGroupFallback = async ({
+export const BannerGroupFallback = ({
   blockData,
+  widgetName,
   ...props
 }: BannerGroupProps) => {
   const locale = 'fa'

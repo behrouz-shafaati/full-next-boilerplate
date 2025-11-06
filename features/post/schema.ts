@@ -62,6 +62,11 @@ const postSchema = new Schema<PostSchema>(
     primaryVideoEmbedUrl: {
       type: String,
     },
+    type: {
+      type: String,
+      enum: ['article', 'video'],
+      default: 'article',
+    },
     status: {
       type: String,
       enum: ['draft', 'published'],
@@ -100,49 +105,24 @@ postSchema.index(
 //   next()
 // }
 
-postSchema
-  .pre('findOne', function (next: any) {
-    this.populate('image')
-      .populate('user')
-      .populate('author')
-      .populate('tags')
-      .populate('mainCategory')
-      .populate('categories')
-    // .populate('commentsCount')
-    // this.populate({
-    //   path: 'tags',
-    //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
-    // })
-    next()
+postSchema.pre(['find', 'findOne', 'findOneAndUpdate'], function (next: any) {
+  this.populate({
+    path: 'image',
+    select:
+      '_id srcSmall srcMedium srcLarge translations href target width height previewPath main mimeType', // ✅ فقط همین فیلد از image بیاد
   })
-  .pre('find', function (next: any) {
-    this.populate('image')
-      .populate('user')
-      .populate('author')
-      .populate('tags')
-      .populate('mainCategory')
-      .populate('categories')
-    // .populate('commentsCount')
-    // this.populate({
-    //   path: 'tags',
-    //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
-    // })
-    next()
-  })
-  .pre('findOneAndUpdate', function (next: any) {
-    this.populate('image')
-      .populate('user')
-      .populate('author')
-      .populate('tags')
-      .populate('mainCategory')
-      .populate('categories')
-    // .populate('commentsCount')
-    // this.populate({
-    //   path: 'tags',
-    //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
-    // })
-    next()
-  })
+    .populate('user')
+    .populate('author')
+    .populate('tags')
+    .populate('mainCategory')
+    .populate('categories')
+  // .populate('commentsCount')
+  // this.populate({
+  //   path: 'tags',
+  //   select: 'title slug -_id', // فقط name و slug رو بیار بدون _id
+  // })
+  next()
+})
 
 const transform = (doc: any, ret: any, options: any) => {
   const category = ret?.categories[0] || { slug: '' }

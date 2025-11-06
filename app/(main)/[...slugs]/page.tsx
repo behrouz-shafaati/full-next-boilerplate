@@ -71,7 +71,7 @@ export async function generateMetadata({
     },
     openGraph: {
       locale: 'fa_IR', // 👈 زبان/منطقه
-      type: 'post',
+      type: 'article',
       title: translation?.seoTitle || translation.title,
       description: translation?.metaDescription || translation?.excerpt,
       url: href,
