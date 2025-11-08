@@ -13,4 +13,5 @@ export const WriteBlockDef = {
   settingsSchema: writeBlockSchema,
   defaultSettings: writeBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

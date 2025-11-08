@@ -11,4 +11,5 @@ export const TextBlockDef = {
   settingsSchema: textBlockSchema,
   defaultSettings: textBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

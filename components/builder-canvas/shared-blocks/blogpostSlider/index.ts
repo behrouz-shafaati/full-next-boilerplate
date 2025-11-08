@@ -13,4 +13,5 @@ export const BlogPostSliderBlockDef = {
   settingsSchema: BlogPostSliderBlockSchema,
   defaultSettings: blogPostSliderBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

@@ -13,4 +13,5 @@ export const PostListBlockDef = {
   settingsSchema: PostListBlockSchema,
   defaultSettings: blogPostSliderBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

@@ -109,7 +109,9 @@ export const PageForm: React.FC<PageFormProps> = ({
                 slug: state?.values?.slug,
               },
             }
-          : { initialContent: { type: 'page', rows: [] } })}
+          : {
+              initialContent: { type: 'page', templateFor: ['page'], rows: [] },
+            })}
         allTemplates={allTemplates}
         allCategories={allCategories}
       />

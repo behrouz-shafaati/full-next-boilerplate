@@ -13,4 +13,5 @@ export const VideoPlaylistBlockDef = {
   settingsSchema: BlockSchema,
   defaultSettings: BlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

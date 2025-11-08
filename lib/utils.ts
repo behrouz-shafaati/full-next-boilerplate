@@ -365,3 +365,9 @@ export function toUtcMidnight(date: Date | number = Date.now()): Date {
   // get UTC Y/M/D and construct new Date at 00:00:00Z
   return new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()))
 }
+
+export function truncateWords(text: string, limit = 15) {
+  if (!text) return ''
+  const words = text.split(' ')
+  return words.length > limit ? words.slice(0, limit).join(' ') + '…' : text
+}

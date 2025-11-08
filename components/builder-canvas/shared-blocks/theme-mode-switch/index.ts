@@ -11,4 +11,5 @@ export const ThemeModeSwitchBlockDef = {
   settingsSchema: themeModdeSwitchSchema,
   defaultSettings: themeModeSwitchDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

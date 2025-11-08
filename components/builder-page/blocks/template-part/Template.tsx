@@ -1,5 +1,5 @@
 // کامپوننت نمایشی بلاک
-import { PageBlock } from '../../../builder-canvas/types'
+import { Block } from '../../../builder-canvas/types'
 import { Template as TemplateType } from '@/features/template/interface'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 
@@ -13,7 +13,7 @@ type TemplateProps = {
       templateId: string
     }
     settings: {}
-  } & PageBlock
+  } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const TemplatePart = ({

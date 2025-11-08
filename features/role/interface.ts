@@ -5,4 +5,5 @@ export type Role = {
   slug: string
   description: string
   permissions: Permission[]
+  shwoInSetUserRolesList?: boolean
 }

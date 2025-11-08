@@ -13,4 +13,5 @@ export const TemplatePartBlockDef = {
   settingsSchema: TemplateBlockSchema,
   defaultSettings: templateBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

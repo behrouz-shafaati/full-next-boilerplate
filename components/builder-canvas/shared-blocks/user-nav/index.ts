@@ -12,4 +12,5 @@ export const UserNavBlockDef = {
   settingsSchema: userNavSchema,
   defaultSettings: userNavDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

@@ -5,9 +5,10 @@ import { blockRegistry as templateRegisterlock } from '@/components/builder-temp
 export const templatePartblockRegistry = {
   // ...
 }
-export const blockRegistry = {
-  ...templatePartblockRegistry,
-  ...templateRegisterlock,
-  // ...
-}
+// export const blockRegistry = {
+//   ...templatePartblockRegistry,
+//   ...templateRegisterlock,
+//   // ...
+// }
+
 registerBlock(templatePartblockRegistry)

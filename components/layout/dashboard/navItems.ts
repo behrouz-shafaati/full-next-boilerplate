@@ -93,6 +93,14 @@ export const navItems: SidebarNavItem[] = [
   },
 
   {
+    slug: 'form',
+    title: 'فرم ها',
+    href: '/dashboard/forms',
+    icon: 'layoutTemplate',
+    label: '',
+    authorized: ['form.view.any', 'form.view.own'],
+  },
+  {
     slug: 'template',
     title: 'قالب ها',
     href: '/dashboard/templates',

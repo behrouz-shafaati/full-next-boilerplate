@@ -13,6 +13,8 @@ type StatusType =
   | 'pending'
   | 'approved'
   | 'rejected'
+  | 'read'
+  | 'unread'
 
 interface StatusProps<T> {
   row: Row<T>
@@ -53,6 +55,12 @@ export const Status = <T,>({ row, accessorKey = 'status' }: StatusProps<T>) => {
     case 'rejected':
       label = 'رد شده'
       break
+    case 'read':
+      label = 'خوانده شده'
+      break
+    case 'unread':
+      label = 'خوانده نشده'
+      break
     default:
       label = 'نامشخص'
   }
@@ -62,12 +70,13 @@ export const Status = <T,>({ row, accessorKey = 'status' }: StatusProps<T>) => {
     case 'active':
     case 'published':
     case 'approved':
+    case 'read':
       bgGradient =
         'rounded-full border-none bg-green-600/10 hover:bg-green-600/10 text-green-600 focus-visible:ring-green-600/20 focus-visible:outline-none dark:bg-green-400/10 dark:text-green-400 dark:focus-visible:ring-green-400/40'
       icon = <CheckCircle className="w-4 h-4" />
       break
     case 'deactive':
-    case 'draft':
+    // case 'draft':
     case 'rejected':
       icon = <XCircle className="w-4 h-4" />
       bgGradient =

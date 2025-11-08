@@ -78,7 +78,7 @@ export const BlockInEditor = ({
       locale,
     })
     return {
-      id: video._id,
+      id: video.id,
       title: translation.title,
       thumbnail: video?.image?.srcMedium || null,
       src: video.primaryVideoEmbedUrl,

@@ -11,6 +11,7 @@ import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
 import { User } from '../user/interface'
 import { can } from '@/lib/utils/can.server'
+import { PageTranslationSchema } from './interface'
 
 const FormSchema = z.object({
   contentJson: z.string({}),
@@ -265,9 +266,9 @@ async function sanitizePageData(validatedFields: any, id?: string | undefined) {
       title: content.title || '',
       content,
     },
-    // ...prevState.translations.filter(
-    //   (t: PageTranslationSchema) => t.lang != content.lang
-    // ),
+    ...prevState.translations.filter(
+      (t: PageTranslationSchema) => t.lang != content.lang
+    ),
   ]
   const params = {
     type: content.type,

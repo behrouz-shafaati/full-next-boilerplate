@@ -1,7 +1,6 @@
 import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
 import { Block } from '../types'
 import { combineClassNames, getVisibilityClass } from '../utils/styleUtils'
-import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 
 type RestProps = Record<string, unknown>
 
@@ -20,8 +19,11 @@ const RenderBlock = ({
   const className = getVisibilityClass(visibility)
 
   const block = blocks[item.type]
+  console.log('item.type:', item.type)
+  console.log(block)
   const Component = block?.Renderer
   const EditorComponent = block?.RendererInEditor
+
   if (editroMode && EditorComponent) {
     {
       return (

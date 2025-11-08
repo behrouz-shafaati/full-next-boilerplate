@@ -19,6 +19,8 @@ export type RevalidatePathProp = {
     | 'shippingAddress'
     | 'user'
     | 'campaign'
+    | 'form'
+    | 'formSubmission'
   slug?: string | string[]
 }
 
@@ -73,10 +75,12 @@ class controller {
       case 'page':
       case 'template':
       case 'templatePart':
+      case 'form':
       case 'settings': {
         return [...(await this.getAllPaths()), ...pathes]
       }
       case 'postComment':
+      case 'formSubmission':
         return [...pathes]
       case 'campaign':
       case 'tag':

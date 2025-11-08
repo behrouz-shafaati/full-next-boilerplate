@@ -14,6 +14,10 @@ import { ButtonBlockDef } from '../shared-blocks/button'
 import { WriteBlockDef } from '../shared-blocks/write'
 import { AdSlotBlockDef } from '../shared-blocks/AdSlot'
 import { VideoPlaylistBlockDef } from '../shared-blocks/video-playlist'
+import { TextInputBlockDef } from '../shared-blocks/text-input'
+import { TextareaInputBlockDef } from '../shared-blocks/textarea-input'
+import { SubmitButtonBlockDef } from '../shared-blocks/submitButton'
+import { FormBlockDef } from '../shared-blocks/form'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
@@ -29,6 +33,10 @@ export const blockRegistry = {
   write: WriteBlockDef,
   adSlot: AdSlotBlockDef,
   videoPlaylist: VideoPlaylistBlockDef,
+  textInput: TextInputBlockDef, // input [type=text]
+  textareaInput: TextareaInputBlockDef,
+  submitButton: SubmitButtonBlockDef,
+  form: FormBlockDef,
 }
 
 registerBlock(blockRegistry)

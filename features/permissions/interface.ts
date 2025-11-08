@@ -96,3 +96,23 @@ export type Permission =
   | 'campaign.publish.any'
   | 'campaign.delete.any'
   | 'campaign.delete.own'
+
+  // ===== Form =====
+  | 'form.view.any'
+  | 'form.view.own'
+  | 'form.create'
+  | 'form.edit.any'
+  | 'form.edit.own'
+  | 'form.publish.any'
+  | 'form.delete.any'
+  | 'form.delete.own'
+
+  // ===== Form Submission =====
+  | 'formSubmission.view.any'
+  | 'formSubmission.view.own'
+  | 'formSubmission.create'
+  | 'formSubmission.edit.any'
+  | 'formSubmission.edit.own'
+  | 'formSubmission.publish.any'
+  | 'formSubmission.delete.any'
+  | 'formSubmission.delete.own'

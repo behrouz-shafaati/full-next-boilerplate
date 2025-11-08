@@ -13,4 +13,5 @@ export const MenuBlockDef = {
   settingsSchema: MenuBlockSchema,
   defaultSettings: menuBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

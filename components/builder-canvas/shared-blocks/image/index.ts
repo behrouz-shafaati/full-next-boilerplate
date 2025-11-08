@@ -11,4 +11,5 @@ export const ImageBlockDef = {
   settingsSchema: ImageBlockSchema,
   defaultSettings: imageBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

@@ -11,4 +11,5 @@ export const ButtonBlockDef = {
   settingsSchema: buttonBlockSchema,
   defaultSettings: buttonBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

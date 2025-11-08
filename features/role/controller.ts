@@ -129,6 +129,13 @@ class controller {
         ],
       },
       {
+        title: 'میهمان',
+        slug: 'guest',
+        description: 'کاربری که لاگین نکرده',
+        permissions: ['formSubmission.create'],
+        shwoInSetUserRolesList: false,
+      },
+      {
         title: 'مدیر فروشگاه',
         slug: 'shop_manager',
         description:

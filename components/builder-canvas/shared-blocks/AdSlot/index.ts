@@ -13,4 +13,5 @@ export const AdSlotBlockDef = {
   settingsSchema: PostListBlockSchema,
   defaultSettings: blogPostSliderBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }

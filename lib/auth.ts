@@ -17,11 +17,11 @@ export async function getSession() {
   try {
     const cookieStore = await cookies()
     const session = cookieStore.get('session')?.value
-    if (!session) return null
+    if (!session) return { roles: ['guest'] }
     return await decrypt(session)
   } catch (err) {
     console.error('❌ cookies() called outside request context', err)
-    return null
+    return { roles: ['guest'] }
   }
 }
 

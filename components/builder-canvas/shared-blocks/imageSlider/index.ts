@@ -11,4 +11,5 @@ export const ImageSliderBlockDef = {
   settingsSchema: ImageSliderBlockSchema,
   defaultSettings: imageSliderBlockDefaults,
   ContentEditor: ContentEditor,
+  notTemplateFor: ['form'],
 }
