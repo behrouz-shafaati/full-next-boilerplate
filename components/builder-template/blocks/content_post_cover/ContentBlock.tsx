@@ -1,17 +1,17 @@
 // کامپوننت نمایشی بلاک
 
-import React, { ElementType } from 'react'
+import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
-import Image from 'next/image'
-import { getTranslation } from '@/lib/utils'
-import { ImageAlba } from '@/components/image-alba'
+import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+import { PostCover } from '@/components/post/cover'
+import { File } from '@/lib/entity/file/interface'
 
 type ContentBlockProps = {
-  content: React.ReactNode
+  content: {
+    postType: 'article' | 'video'
+    primaryVideoEmbedUrl: string | null
+    image: File
+  }
   blockData: {
     content: {
       content: string
@@ -23,21 +23,20 @@ type ContentBlockProps = {
 
 export const ContentBlock = ({
   blockData,
-  content: image,
+  content,
   ...props
 }: ContentBlockProps) => {
   const locale = 'fa'
   const { settings } = blockData
-  return image ? (
-    <ImageAlba
-      file={image}
-      showCaption={false}
+  return (
+    <PostCover
+      postType={content?.postType ?? 'article'}
+      primaryVideoEmbedUrl={content?.primaryVideoEmbedUrl ?? null}
+      file={content?.image}
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
     />
-  ) : (
-    <></>
   )
 }

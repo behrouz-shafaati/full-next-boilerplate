@@ -45,7 +45,7 @@ export const ImageBlock = ({
     >
       {content?.srcSmall ? (
         <Image
-          src={content?.srcSmall}
+          src={content?.srcMedium}
           sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
           alt={content?.alt || 'تصویر'}
           fill
@@ -59,6 +59,8 @@ export const ImageBlock = ({
             ...computedStyles(restStyle),
           }}
           className="object-cover w-full h-full min-h-4"
+          placeholder="blur"
+          blurDataURL={content?.srcSmall}
         />
       ) : (
         <Image

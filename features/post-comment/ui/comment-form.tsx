@@ -11,12 +11,12 @@ import { Alert, AlertTitle } from '@/components/ui/alert'
 
 interface PostCommentFormProps {
   needLogin?: boolean
-  initialData: any | null
+  post: any | null
 }
 
-export const CommentForm: React.FC<PostCommentFormProps> = ({
+const CommentForm: React.FC<PostCommentFormProps> = ({
   needLogin = false,
-  initialData: post,
+  post,
 }) => {
   const { replayTo, setReplayTo } = usePostCommentStore()
   const { toast } = useToast()
@@ -101,3 +101,5 @@ export const CommentForm: React.FC<PostCommentFormProps> = ({
     </>
   )
 }
+
+export default CommentForm

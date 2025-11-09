@@ -2,13 +2,12 @@
 
 import React, { ElementType } from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
+import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+import { PostCommentForm } from '@/components/post/comment-form'
+import { Post } from '@/features/post/interface'
 
 type ContentBlockProps = {
-  content: React.ReactNode
+  post: Post
   blockData: {
     content: {
       content: string
@@ -20,18 +19,16 @@ type ContentBlockProps = {
 
 export const ContentBlock = ({
   blockData,
-  content,
+  post,
   ...props
 }: ContentBlockProps) => {
   const { settings } = blockData
   return (
-    <div
+    <PostCommentForm
       style={{
         ...computedStyles(blockData.styles),
       }}
-      {...props}
-    >
-      {content}
-    </div>
+      post={props.content?.post}
+    />
   )
 }

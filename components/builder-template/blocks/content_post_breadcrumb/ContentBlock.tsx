@@ -3,9 +3,8 @@
 import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
-import { timeAgo } from '@/lib/utils'
 import { User } from '@/features/user/interface'
-import { BreadCrumb } from '@/components/breadcrumb'
+import { PostBreadcrumb } from '@/components/post/breadcrumb'
 
 type ContentBlockProps = {
   content: { author: User; createdAt: string; readingDuration: number }
@@ -26,19 +25,13 @@ export const ContentBlock = ({
   const locale = 'fa'
   content
   const { settings } = blockData
-  return content ? (
-    <div
+  return (
+    <PostBreadcrumb
+      content={content}
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
-      className="text-sm text-gray-500 mb-4"
-    >
-      <div className="flex-1 space-y-4 p-5">
-        <BreadCrumb items={content} />
-      </div>
-    </div>
-  ) : (
-    <></>
+    />
   )
 }

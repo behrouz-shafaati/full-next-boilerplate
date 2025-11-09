@@ -56,7 +56,7 @@ export const ImageSliderBlock = ({
   const images = content.map((img: FileDetails, i: number) => {
     const imageElement = (
       <Image
-        src={img.srcSmall || '/assets/general-img-landscape.png'}
+        src={img.srcMedium || '/assets/general-img-landscape.png'}
         sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
         alt={img.alt || 'تصویر'}
         //   fill
@@ -69,6 +69,8 @@ export const ImageSliderBlock = ({
         }}
         priority={i === 0}
         className="block w-full h-auto"
+        placeholder="blur"
+        blurDataURL={img?.srcSmall}
         {...props}
       />
     )

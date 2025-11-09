@@ -1,11 +1,9 @@
 // کامپوننت نمایشی بلاک
 
-import React, { ElementType } from 'react'
+import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
+import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+import { PostContent } from '@/components/post/content'
 
 type ContentBlockProps = {
   content: React.ReactNode
@@ -25,13 +23,12 @@ export const ContentBlock = ({
 }: ContentBlockProps) => {
   const { settings } = blockData
   return (
-    <post
+    <PostContent
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
-    >
-      {content}
-    </post>
+      content={content}
+    />
   )
 }

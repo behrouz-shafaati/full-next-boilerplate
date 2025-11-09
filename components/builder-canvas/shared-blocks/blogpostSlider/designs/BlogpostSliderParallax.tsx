@@ -64,11 +64,13 @@ export const BlogPostSliderParallax = ({
             <Link href={post.href} className="">
               <Image
                 className="embla__slide__img embla__parallax__img "
-                src={post?.image?.srcSmall || '/placeholder.png'}
+                src={post?.image?.srcMedium || '/placeholder.png'}
                 sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
                 alt={translationImage?.alt || translationImage?.title}
                 layout="fill"
                 objectFit="cover"
+                placeholder="blur" //  فعال کردن حالت بلور
+                blurDataURL={post?.image?.srcSmall} //  مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
               />
               {/* overlay گرادینت تاریک از پایین */}
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent pointer-events-none " />

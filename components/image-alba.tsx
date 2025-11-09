@@ -1,58 +1,3 @@
-// import { File } from '@/lib/entity/file/interface'
-// import { getTranslation } from '@/lib/utils'
-// import Image from 'next/image'
-
-// type ImageAlbaProps = {
-//   src?: string
-//   file: File
-//   showCaption?: boolean
-//   zoomable?: boolean
-// }
-// export function ImageAlba({
-//   src = '',
-//   file,
-//   showCaption = true,
-//   zoomable = true,
-//   ...restProps
-// }: ImageAlbaProps) {
-//   const { id, translations, srcLarge, srcMedium, srcSmall, width, height } =
-//     file
-//   const aspectRatio = width && height ? width / height : 16 / 9
-//   src = src != '' ? src : srcMedium
-//   if (!src) return null
-//   const translation = getTranslation({
-//     translations: translations,
-//   })
-//   return (
-//     <figure
-//       style={{ aspectRatio }}
-//       className="relative rounded-xl overflow-hidden my-4"
-//     >
-//       <Image
-//         src={src}
-//         data-srclarge={srcLarge || ''}
-//         alt={translation?.alt || translation?.title || ''}
-//         title={translation?.title || ''}
-//         fill
-//         className="object-cover "
-//         quality={70}
-//         sizes="(max-width: 640px) 100vw,
-//            (max-width: 1024px) 80vw,
-//            (max-width: 1536px) 1080px,
-//            1920px"
-//       />
-//       {/* Caption */}
-//       {showCaption && translation?.description && (
-//         <div className=" flex flex-row justify-center absolute bottom-2 w-full  text-center text-white dark:text-gray-900 text-sm md:text-base font-medium ">
-//           <figcaption className="bg-black/20 dark:bg-white/20 backdrop-blur-md w-fit px-4 py-3 rounded-xl">
-//             {translation.description}
-//           </figcaption>
-//         </div>
-//       )}
-//     </figure>
-//   )
-// }
-
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
@@ -284,13 +229,30 @@ export function ImageAlba({
     }
   }
 
-  if (!mounted)
-    return (
-      <Skeleton
-        style={{ aspectRatio }}
-        className="relative rounded-xl overflow-hidden my-4"
-      />
-    )
+  // if (!mounted)
+  //   return (
+  //     <div
+  //       style={{ aspectRatio }}
+  //       className="relative rounded-xl overflow-hidden my-4"
+  //     >
+  //       <Image
+  //         src={srcSmall}
+  //         alt={translation?.alt || translation?.title || ''}
+  //         title={translation?.title || ''}
+  //         fill
+  //         className={`object-cover transition-transform duration-200 blur-md scale-105`}
+  //         quality={70}
+  //         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 1080px, 1920px"
+  //       />
+  //     </div>
+  //   )
+  // if (!mounted)
+  //   return (
+  //     <Skeleton
+  //       style={{ aspectRatio }}
+  //       className="relative rounded-xl overflow-hidden my-4"
+  //     />
+  //   )
 
   // Portal modal content
   const modal = (
@@ -339,6 +301,8 @@ export function ImageAlba({
                 height={height || 720}
                 className="object-contain select-none rounded-lg shadow-2xl"
                 draggable={false}
+                placeholder="blur" // فعال‌سازی حالت بلور
+                blurDataURL={srcMedium} // عکس خیلی کم‌کیفیت (base64 یا کوچک)
               />
             </div>
           </motion.div>
@@ -415,8 +379,9 @@ export function ImageAlba({
           quality={70}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, (max-width: 1536px) 1080px, 1920px"
           onClick={openZoom}
+          placeholder="blur" // ✅ فعال کردن حالت بلور
+          blurDataURL={srcSmall} // ✅ مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
         />
-
         {/* top-right small controls in inline view */}
         <div className="absolute top-2 right-2 flex gap-2 opacity-0 hover:opacity-100 transition-opacity duration-200">
           {zoomable && (
@@ -451,7 +416,31 @@ export function ImageAlba({
       </figure>
 
       {/* portal mount */}
-      {ReactDOM.createPortal(modal, document.body)}
+      {mounted && ReactDOM.createPortal(modal, document.body)}
+
+      {/* styled-jsx to customize placeholder blur intensity and transition.
+          This targets next/image's attributes and is SSR-safe. */}
+      <style jsx>{`
+        /* increase blur intensity on placeholder image and slightly scale up to avoid white edges */
+        [data-placeholder='blur'] img {
+          filter: blur(36px) !important;
+          transform: scale(1.08) !important;
+          transition: filter 350ms ease, transform 350ms ease,
+            opacity 220ms ease;
+        }
+
+        /* when the inner img reports loaded, remove blur (smooth transition) */
+        [data-placeholder='blur'] img[data-loaded='true'] {
+          filter: none !important;
+          transform: none !important;
+        }
+
+        /* fallbacks: sometimes next/image sets data-loaded on wrapper or different order;
+           broaden selector just in case */
+        img[data-loaded='true'] {
+          /* keep this small so it doesn't fight other images on page */
+        }
+      `}</style>
     </>
   )
 }

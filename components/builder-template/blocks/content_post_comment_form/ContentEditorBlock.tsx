@@ -1,11 +1,8 @@
 // کامپوننت نمایشی بلاک
 
-import React, { ElementType } from 'react'
+import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
+import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 
 type ContentBlockProps = {
   widgetName: string

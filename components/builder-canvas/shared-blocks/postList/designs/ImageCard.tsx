@@ -33,11 +33,13 @@ const PostImageCard = ({ post, options }: Props) => {
       <div className="rounded overflow-hidden shadow-lg bg-white dark:bg-gray-900">
         <div className="relative w-full h-52">
           <Image
-            src={post?.image.srcSmall || '/placeholder.png'}
+            src={post?.image?.srcMedium || '/placeholder.png'}
             sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
             alt={translationImage?.alt || translationImage?.title}
             layout="fill"
             objectFit="cover"
+            placeholder="blur"
+            blurDataURL={post?.image?.srcSmall}
           />
         </div>
         <div className="p-4">

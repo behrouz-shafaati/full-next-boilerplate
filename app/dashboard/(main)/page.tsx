@@ -3,11 +3,13 @@ import StatCard from '@/components/stateCard'
 import { Card } from '@/components/ui/card'
 import LastPostComments from '@/features/post-comment/ui/last-post-comments'
 import { commentsUrl } from '@/features/post-comment/utils'
+import { lastSubmissionFormUrl } from '@/features/form/utils'
 import LastPosts from '@/features/post/ui/last-alticles'
 import { getStats } from '@/features/settings/controller'
 import { can } from '@/lib/utils/can.client'
 import { FileText, MessageSquare, User } from 'lucide-react'
 import { getSession } from '@/lib/auth'
+import LastForms from '@/features/form/ui/last-forms'
 
 export default async function page() {
   const locale = 'fa'
@@ -62,6 +64,11 @@ export default async function page() {
                 refetchDataUrl={`${commentsUrl}?page=1&status=pending`}
                 page={Number(page)}
               />
+            </Card>
+          )}
+          {canViewPostComment && (
+            <Card className="p-4">
+              <LastForms filters={{ status: 'unread' }} page={Number(page)} />
             </Card>
           )}
         </div>

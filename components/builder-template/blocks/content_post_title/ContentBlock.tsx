@@ -6,6 +6,7 @@ import {
   combineClassNames,
   computedStyles,
 } from '@/components/builder-canvas/utils/styleUtils'
+import { PostTitle } from '@/components/post/title'
 
 type ContentBlockProps = {
   content: React.ReactNode
@@ -25,13 +26,12 @@ export const ContentBlock = ({
 }: ContentBlockProps) => {
   const { settings } = blockData
   return (
-    <h1
+    <PostTitle
+      title={content}
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
-    >
-      {content}
-    </h1>
+    />
   )
 }

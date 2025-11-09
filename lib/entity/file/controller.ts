@@ -146,8 +146,8 @@ class controller extends c_controller {
         const webpFileName = `${baseName}.${extension}`
         title = webpFileName
         const sizes = [
-          { name: 'Small', width: 640, quality: 70 },
-          { name: 'Medium', width: 768, quality: 80 },
+          { name: 'Small', width: 100, quality: 80 },
+          { name: 'Medium', width: 640, quality: 80 },
           { name: 'Large', width: 1280, quality: 90 },
         ]
         if (mimeType == 'image/gif') {

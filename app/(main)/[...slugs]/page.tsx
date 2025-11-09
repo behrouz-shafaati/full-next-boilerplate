@@ -22,7 +22,7 @@ import {
 import type { Metadata } from 'next'
 import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { generateTableOfContents } from '@/components/tiptap-editor/utils'
-import { TableOfContents } from '@/components/tiptap-editor/component/TableOfContents'
+import { TableOfContents } from '@/components/post/table-of-contents'
 import PostCommentList from '@/features/post-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '@/features/post-comment/interface'
@@ -78,7 +78,7 @@ export async function generateMetadata({
       siteName: siteTitle,
       images: [
         {
-          url: post?.image?.srcSmall,
+          url: post?.image?.srcMedium,
           width: 600,
           height: 315,
           alt: translation?.seoTitle || translation.title,
@@ -89,7 +89,7 @@ export async function generateMetadata({
       card: 'summary_large_image',
       title: translation?.seoTitle || translation.title,
       description: translation?.metaDescription || translation?.excerpt,
-      images: [post?.image?.srcSmall],
+      images: [post?.image?.srcMedium],
     },
   }
 }
@@ -202,7 +202,11 @@ export default async function Page({ params }: PageProps) {
               />
             }
             content_post_title={translation?.title}
-            content_post_cover={post?.image ?? null}
+            content_post_cover={{
+              image: post?.image ?? null,
+              postType: post?.type ?? 'article',
+              primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
+            }}
             content_post_metadata={metadata}
             content_post_breadcrumb={breadcrumbItems}
             content_post_content={
@@ -215,7 +219,7 @@ export default async function Page({ params }: PageProps) {
                 postCommentsResult={postCommentsResult}
               />
             }
-            content_post_comment_form={<CommentForm initialData={post} />}
+            content_post_comment_form={{ post }}
           />
         </>
       </>

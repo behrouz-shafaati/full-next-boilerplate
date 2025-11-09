@@ -26,13 +26,13 @@ export const ContentBlock = ({
   const { settings } = blockData
   console.log('#234098 props:', props)
   return (
-    <post
+    <article
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
     >
       {content}
-    </post>
+    </article>
   )
 }

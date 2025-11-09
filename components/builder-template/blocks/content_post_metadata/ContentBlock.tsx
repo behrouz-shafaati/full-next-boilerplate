@@ -3,8 +3,8 @@
 import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
-import { timeAgo } from '@/lib/utils'
 import { User } from '@/features/user/interface'
+import { PostMetaData } from '@/components/post/meta-data'
 
 type ContentBlockProps = {
   content: { author: User; createdAt: string; readingDuration: number }
@@ -26,23 +26,15 @@ export const ContentBlock = ({
   const { author, createdAt, readingDuration } = content
   const { settings } = blockData
   return content ? (
-    <div
+    <PostMetaData
+      author={author}
+      createdAt={createdAt}
+      readingDuration={readingDuration}
       style={{
         ...computedStyles(blockData.styles),
       }}
       {...props}
-      className="text-sm text-gray-500 mb-4"
-    >
-      {author && (
-        <>
-          <span>نویسنده: {author.name}</span>
-          <span className="mx-2">|</span>
-        </>
-      )}
-      <span>{timeAgo(createdAt)}</span>
-      <span className="mx-2">|</span>
-      <span>زمان مطالعه: {readingDuration}</span>
-    </div>
+    />
   ) : (
     <></>
   )

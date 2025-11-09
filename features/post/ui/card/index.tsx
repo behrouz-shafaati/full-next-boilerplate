@@ -15,7 +15,7 @@ const PostCard = ({ post, variant = 'Vertical', locale = 'fa' }: Props) => {
     post?.translations[0] ||
     {}
   const cardProps = {
-    imageUrl: post?.image?.srcSmall,
+    imageUrl: post?.image?.srcMedium,
     title: translation?.title,
     excerpt: translation?.excerpt,
     slug: post.slug,
