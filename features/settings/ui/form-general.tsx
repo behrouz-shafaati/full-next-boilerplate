@@ -1,7 +1,7 @@
 'use client'
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
-import { Heading1, MessageSquare } from 'lucide-react'
+import { Heading1, Link, MessageSquare } from 'lucide-react'
 import { useToast } from '../../../hooks/use-toast'
 import { updateSettings } from '@/features/settings/actions'
 import Text from '../../../components/form-fields/text'
@@ -34,8 +34,6 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
   const formRef = useRef<HTMLFormElement>(null)
   const initialState: State = { message: null, errors: {}, success: true }
   const [state, dispatch] = useActionState(updateSettings as any, initialState)
-  const params = useParams()
-  const router = useRouter()
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
@@ -57,6 +55,9 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
 
   const siteInfo = getTranslation({
     translations: settings?.infoTranslations || [],
+  })
+  const pages = getTranslation({
+    translations: settings?.pageTranslations || [],
   })
 
   useEffect(() => {
@@ -96,22 +97,53 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
               icon={<MessageSquare className="w-4 h-4" />}
               description=""
             />
-            <ProfileUpload
-              title="نمادک سایت"
-              name="favicon"
-              defaultValue={settings?.favicon}
-              targetFormat="png"
+            {/* site introduction */}
+            <Text
+              title="آدرس سایت"
+              name="site_url"
+              defaultValue={settings?.site_url || ''}
+              placeholder=""
+              state={state}
+              icon={<Link className="w-4 h-4" />}
+              description=""
             />
 
             {/* first page */}
             <Combobox
               title="صفحه نخست"
               name="homePageId"
-              defaultValue={String(settings?.homePageId)}
+              defaultValue={String(pages?.homePageId?.id)}
               options={pagesOptions}
               placeholder=""
               state={state}
               icon={<HomeIcon className="w-4 h-4" />}
+            />
+            {/* terms page */}
+            <Combobox
+              title="صفحه قوانین"
+              name="termsPageId"
+              defaultValue={String(pages?.termsPageId?.id)}
+              options={pagesOptions}
+              placeholder=""
+              state={state}
+              icon={<HomeIcon className="w-4 h-4" />}
+            />
+            {/* privacy page */}
+            <Combobox
+              title="صفحه حریم خصوصی"
+              name="privacyPageId"
+              defaultValue={String(pages?.privacyPageId?.id)}
+              options={pagesOptions}
+              placeholder=""
+              state={state}
+              icon={<HomeIcon className="w-4 h-4" />}
+            />
+
+            <ProfileUpload
+              title="نمادک سایت"
+              name="favicon"
+              defaultValue={settings?.favicon}
+              targetFormat="png"
             />
             {/* default header */}
             {/* <Combobox
@@ -124,7 +156,7 @@ export const FormGeneral: React.FC<FormGeneralProps> = ({
             icon={<HomeIcon className="w-4 h-4" />}
           /> */}
           </div>
-          <SubmitButton />
+          <SubmitButton loading={imgLoading} />
         </form>
       </div>
     </>

@@ -4,6 +4,7 @@ import { Block } from '../../types'
 import { BlogPostSlider } from './BlogPostSlider'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
+import { getCategoryAction } from '@/features/category/actions'
 
 type BlogPostSliderBlockProps = {
   widgetName: string
@@ -22,21 +23,38 @@ type BlogPostSliderBlockProps = {
       autoplayDelay: number
     }
   } & Block
+  pageSlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function BlogPostSliderBlock({
   widgetName,
   blockData,
+  pageSlug,
   ...props
 }: BlogPostSliderBlockProps) {
+  let filters
   const { content } = blockData
   const tagIds = content?.tags?.map((tag: Option) => tag.value)
   const categoryIds = content?.categories?.map((tag: Option) => tag.value)
+
+  if (tagIds?.length > 0) {
+    filters = { tags: tagIds }
+  }
+
+  if (content?.usePageCategory && pageSlug) {
+    // logic to handle usePageCategory and pageSlug
+    const category = await getCategoryAction({ slug: pageSlug })
+    if (category) filters = { categories: [category.id], ...filters }
+  } else {
+    if (categoryIds?.length > 0)
+      filters = { categories: categoryIds, ...filters }
+  }
   const [result] = await Promise.all([
     getPosts({
-      filters: { categories: categoryIds, tags: tagIds },
+      filters,
     }),
   ])
   const posts = result.data
+  if (posts.length == 0) return null
   return <BlogPostSlider posts={posts} blockData={blockData} {...props} />
 }

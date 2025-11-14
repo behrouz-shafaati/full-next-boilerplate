@@ -14,6 +14,7 @@ type ImageAlbaProps = {
   file: FileType
   showCaption?: boolean
   zoomable?: boolean
+  aspectRatio?: any | null
 }
 
 /**
@@ -29,6 +30,7 @@ export function ImageAlba({
   file,
   showCaption = true,
   zoomable = true,
+  aspectRatio: inputAspectRatio = null,
 }: ImageAlbaProps) {
   // --- file props (expected)
   const { srcLarge, srcMedium, srcSmall, width, height, translations } = file
@@ -55,7 +57,11 @@ export function ImageAlba({
   const imgWrapperRef = useRef<HTMLDivElement | null>(null)
 
   // aspect
-  const aspectRatio = width && height ? width / height : 16 / 9
+  const aspectRatio = inputAspectRatio
+    ? inputAspectRatio
+    : width && height
+    ? width / height
+    : 16 / 9
 
   // constants
   const MIN_ZOOM = 1

@@ -1,6 +1,11 @@
 import { Id, Model, SchemaModel } from '@/lib/entity/core/interface'
-import { File } from '../file/interface'
 import { ShippingAddress } from '../shippingAddress/interface'
+import { File } from '@/lib/entity/file/interface'
+
+type TranslationsUser = {
+  lang: 'fa'
+  about: string
+}
 // import { Role } from "@entity/role/interface";
 /**
  * اطلاعات پایه کاربر که شامل فیلدهای اصلی و مشترک می‌باشد
@@ -110,6 +115,7 @@ type UserBase = {
    * وضعیت فعال بودن حساب کاربر (در صورت فعال بودن true)
    */
   active: boolean
+  translations: [TranslationsUser]
 }
 
 /**

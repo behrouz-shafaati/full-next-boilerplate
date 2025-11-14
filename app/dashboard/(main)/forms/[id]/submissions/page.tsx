@@ -19,7 +19,7 @@ export default async function Page({ searchParams, params }: Props) {
   const [form] = await Promise.all([formCtrl.findById({ id })])
 
   const breadcrumbItems = [
-    { title: 'داشبورد', link: '/dashboard/forms' },
+    { title: 'داشبورد', link: '/dashboard' },
     { title: 'فرم‌ها', link: '/dashboard/forms' },
     { title: form.title, link: `/dashboard/forms/${form.id}` },
     {

@@ -7,28 +7,22 @@ import Checkbox from '@/components/form-fields/checkbox'
 
 const columnOptions = [
   {
-    label: '3-3-3-3',
-    value: '3-3-3-3',
+    label: '12',
+    value: '12',
   },
-  {
-    label: '4-4-4',
-    value: '4-4-4',
-  },
+
   {
     label: '6-6',
     value: '6-6',
   },
+
   {
-    label: '12',
-    value: '12',
+    label: '4-8',
+    value: '4-8',
   },
   {
     label: '3-9',
     value: '3-9',
-  },
-  {
-    label: '4-8',
-    value: '4-8',
   },
   {
     label: '9-3',
@@ -38,6 +32,23 @@ const columnOptions = [
     label: '8-4',
     value: '8-4',
   },
+
+  {
+    label: '2-2-8',
+    value: '2-2-8',
+  },
+  {
+    label: '8-2-2',
+    value: '8-2-2',
+  },
+  {
+    label: '4-4-4',
+    value: '4-4-4',
+  },
+  {
+    label: '3-6-3',
+    value: '3-6-3',
+  },
   {
     label: '3-6-3',
     value: '3-6-3',
@@ -45,6 +56,14 @@ const columnOptions = [
   {
     label: '2-8-2',
     value: '2-8-2',
+  },
+  {
+    label: '1-10-1',
+    value: '1-10-1',
+  },
+  {
+    label: '3-3-3-3',
+    value: '3-3-3-3',
   },
 ]
 const ContentEditor = () => {

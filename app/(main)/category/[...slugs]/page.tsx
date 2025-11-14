@@ -3,7 +3,6 @@
 export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
-import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 
 import type { Metadata } from 'next'
 import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
@@ -12,9 +11,15 @@ import { buildCategoryHref } from '@/features/category/utils'
 import { getTranslation } from '@/lib/utils'
 import { Category } from '@/features/category/interface'
 import { getSettings } from '@/features/settings/controller'
+import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
+import CategoryDescription from '@/features/category/ui/component/Description'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
+  searchParams: Promise<{
+    query?: string
+    page?: string
+  }>
 }
 
 // export async function generateStaticParams() {
@@ -27,6 +32,7 @@ export async function generateMetadata({
   const locale = 'fa'
   const resolvedParams = await params
   const { slugs } = resolvedParams
+
   const slug = decodeURIComponent(slugs[slugs.length - 1])
   let findResult = null
 
@@ -54,25 +60,36 @@ export async function generateMetadata({
   }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const locale = 'fa'
   const resolvedParams = await params
   const { slugs } = resolvedParams
-  const slug = decodeURIComponent(slugs[slugs.length - 1])
+  // const resolvedSearchParams = await searchParams
+  // const { query = '', page = '1' } = resolvedSearchParams
+  const categorySlug = decodeURIComponent(slugs[slugs.length - 1])
 
-  const [template, siteSettings] = await Promise.all([
-    templateCtrl.getTemplate({ slug }),
+  const [categoryResult, template, siteSettings] = await Promise.all([
+    categoryCtrl.find({ filters: { slug: categorySlug } }),
+    templateCtrl.getTemplate({ slug: categorySlug }),
     getSettings(),
   ])
+  const category = categoryResult.data?.[0] || null
+  const translation = getTranslation({ translations: category?.translations })
   if (template)
     return (
-      <RendererRows
+      <RendererTemplate
+        template={template}
         siteSettings={siteSettings}
-        rows={template?.content.rows}
+        pageSlug={categorySlug}
         editroMode={false}
-        content_all={<CategoryPostList slug={slug} />}
+        content_all={
+          <CategoryPostList category={category} slug={categorySlug} page={1} />
+        }
+        content_category_description={
+          <CategoryDescription contentJson={translation?.description} />
+        }
       />
     )
 
-  return <CategoryPostList slug={slug} />
+  return <CategoryPostList category={category} slug={categorySlug} page={1} />
 }

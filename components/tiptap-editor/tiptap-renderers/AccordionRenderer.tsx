@@ -74,7 +74,7 @@ export function AccordionRenderer({ node }: { node: AccordionNode }) {
               {renderNodes(titleNode?.content)}
             </AccordionTrigger>
 
-            <AccordionContent className="flex flex-col gap-4 text-balance">
+            <AccordionContent className="flex flex-col gap-4">
               {renderNodes(contentNode?.content)}
             </AccordionContent>
           </AccordionItem>

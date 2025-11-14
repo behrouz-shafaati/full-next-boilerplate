@@ -17,6 +17,10 @@ import { useRouter } from 'next/navigation'
 import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
+import TiptapEditor from '@/components/tiptap-editor'
+import { Label } from '@/components/ui/label'
+import StickyBox from 'react-sticky-box'
+import { IconPicker } from '@/components/form-fields/IconPicker'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -95,6 +99,12 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
     } catch (error: any) {}
   }
 
+  const submitManually = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit() // بهترین راه
+    }
+  }
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -119,19 +129,12 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full" ref={formRef}>
-        {/* Product Media image */}
-        <section className="mt-2 rounded-md  p-4 md:mt-0 md:p-6">
-          <FileUpload
-            title="تصویر شاخص برچسب"
-            name="image"
-            state={state}
-            maxFiles={1}
-            allowedFileTypes={{ 'image/*': [] }}
-            defaultValues={tag?.image}
-          />
-        </section>
-        <div className="md:grid md:grid-cols-3 gap-8">
+      <form
+        action={dispatch}
+        className="md:grid md:grid-cols-12 gap-8"
+        ref={formRef}
+      >
+        <div className="col-span-12 md:col-span-9">
           <input
             type="text"
             name="lang"
@@ -156,27 +159,54 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
             state={state}
             icon={<TagIcon className="w-4 h-4" />}
           />
-          {/* description */}
-          <Text
-            title="توضیحات"
+          {/* description contentJson*/}
+
+          <Label
+            htmlFor="description"
+            className="mb-2 block text-sm font-medium"
+          >
+            توضیحات
+          </Label>
+          <TiptapEditor
+            attachedFilesTo={[{ feature: 'tag', id: tag?.id || null }]}
             name="description"
-            defaultValue={state?.values?.translation?.description}
-            placeholder="توضیحات"
-            state={state}
-            icon={<MailIcon className="w-4 h-4" />}
-          />
-          {/* status */}
-          <Select
-            title="وضعیت"
-            name="status"
-            defaultValue={state?.values?.translation?.status || 'active'}
-            options={statusOptions}
-            placeholder="وضعیت"
-            state={state}
-            icon={<MailIcon className="w-4 h-4" />}
+            defaultContent={
+              tag ? JSON.parse(state?.values?.translation?.description) : {}
+            }
+            onChangeFiles={submitManually}
+            className="h-full"
+            onLoading={setLoading}
           />
         </div>
-        <SubmitButton />
+        <div className="relative col-span-12 md:col-span-3 gap-2">
+          <StickyBox offsetBottom={0}>
+            <SubmitButton loading={loading} className="my-4 w-full" />
+            {/* status */}
+            <Select
+              title="وضعیت"
+              name="status"
+              defaultValue={state?.values?.translation?.status || 'active'}
+              options={statusOptions}
+              placeholder="وضعیت"
+              state={state}
+              icon={<MailIcon className="w-4 h-4" />}
+            />
+            <IconPicker
+              title="آیکون"
+              name="icon"
+              defaultValue={state?.values?.icon}
+            />
+            <FileUpload
+              title="تصویر شاخص برچسب"
+              name="image"
+              state={state}
+              maxFiles={1}
+              allowedFileTypes={{ 'image/*': [] }}
+              defaultValues={tag?.image}
+              onLoading={setLoading}
+            />
+          </StickyBox>
+        </div>
       </form>
     </>
   )

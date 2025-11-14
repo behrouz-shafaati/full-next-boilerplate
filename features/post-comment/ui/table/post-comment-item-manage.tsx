@@ -8,7 +8,7 @@ import { useActionState, useEffect, useState, useTransition } from 'react'
 import { PostComment } from '../../interface'
 import { getTranslation, timeAgo } from '@/lib/utils'
 import { usePostCommentStore } from '../store/usePostCommentStore'
-import { CommentForm } from '../comment-form'
+import CommentForm from '../comment-form'
 import { deletePostCommentAction, updateStatusPostComment } from '../../actions'
 import { mutate } from 'swr'
 import { useUpdatedUrl } from '@/hooks/use-updated-url'
@@ -54,7 +54,7 @@ export function PostCommentItemManage({
     <div className={`mt-4 ${depth > 0 ? 'ml-10 border-r pr-4' : ''}`}>
       <div className="flex gap-3">
         <Avatar>
-          <AvatarImage src={postComment.author?.image?.src || ''} />
+          <AvatarImage src={postComment.author?.image?.srcSmall || ''} />
           <AvatarFallback>{postComment.author?.name[0] || '?'}</AvatarFallback>
         </Avatar>
         <div className="flex-1">
@@ -155,7 +155,7 @@ export function PostCommentItemManage({
       )} */}
       {replayTo?.id == postComment.id && (
         <div className="mt-2">
-          <CommentForm initialData={postComment.post} />
+          <CommentForm post={postComment.post} />
         </div>
       )}
     </div>

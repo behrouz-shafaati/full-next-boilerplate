@@ -23,6 +23,7 @@ export const IMG_MAX_LIMIT = 3 //MB
 
 interface TemplateFormProps {
   allCategories: Category[]
+  allTemplates: Template[]
   initialData: Template | null
 }
 
@@ -34,6 +35,7 @@ const defaultInitialValue = {
 }
 
 export const Form: React.FC<TemplateFormProps> = ({
+  allTemplates,
   allCategories,
   initialData: Template,
 }) => {
@@ -130,6 +132,7 @@ export const Form: React.FC<TemplateFormProps> = ({
         <BuilderTemplate
           name="contentJson"
           submitFormHandler={dispatch}
+          allTemplates={allTemplates}
           allCategories={allCategories}
           {...(Template
             ? {

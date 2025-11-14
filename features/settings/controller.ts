@@ -59,15 +59,12 @@ class controller extends baseController {
   }
 
   async find(payload: QueryFind) {
-    console.log('#3033 payload:', payload)
     payload.filters = this.standardizationFilters(payload.filters)
-    console.log('#3034 payload:', payload)
     const result = await super.find(payload)
     return result
   }
 
   async create(payload: Create) {
-    console.log('#389 payload:', payload)
     return super.create(payload)
   }
 

@@ -14,6 +14,7 @@ import { buildUrlFromFilters, timeAgo } from '@/lib/utils'
 import { FileTranslationSchema } from '@/lib/entity/file/interface'
 import { EmblaOptionsType, EmblaPluginType } from 'embla-carousel'
 import { Block } from '@/components/builder-canvas/types'
+import VerticalPostCard from '@/components/post/vertical-card'
 
 type BlogPostSliderProps = {
   options?: EmblaOptionsType
@@ -70,62 +71,8 @@ export const BlogPostSliderSimple = ({
 
   const { onClick, ...restProps } = props
   const postSlids = posts.map((post) => {
-    const translationPost: PostTranslationSchema =
-      post?.translations?.find(
-        (t: PostTranslationSchema) => t.lang === locale
-      ) ||
-      post?.translations[0] ||
-      {}
-
-    const translationImage: FileTranslationSchema =
-      post.image?.translations?.find(
-        (t: FileTranslationSchema) => t.lang === locale
-      ) ||
-      post.image?.translations[0] ||
-      {}
-
     return (
-      <div
-        key={post.id}
-        className="embla__slide flex-shrink-0 w-full grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/5 px-2"
-      >
-        <div className="rounded-xl overflow-hidden shadow-lg bg-white dark:bg-gray-900">
-          <div className="relative w-full h-52">
-            <Image
-              src={post?.image?.srcMedium || '/placeholder.png'}
-              sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-              alt={translationImage?.alt || translationImage?.title}
-              layout="fill"
-              objectFit="cover"
-              placeholder="blur" //  فعال کردن حالت بلور
-              blurDataURL={post?.image?.srcSmall} //  مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
-            />
-          </div>
-          <div className="p-4">
-            <h3 className="text-sm font-semibold mb-2 leading-5 min-h-[2.5rem] line-clamp-2">
-              <Link href={post.href}>{translationPost?.title}</Link>
-            </h3>
-            {settings?.showExcerpt != false && (
-              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3">
-                {translationPost?.excerpt}
-              </p>
-            )}
-            <div className="flex mt-3 text-xs text-gray-400 gap-4">
-              {post?.commentsCount && (
-                <div className="flex flex-row gap-1 items-center">
-                  <MessageCircleMore width={16} /> {post?.commentsCount}
-                </div>
-              )}
-              <div className="flex flex-row gap-1 items-center">
-                <CalendarPlus width={16} /> حدود {timeAgo(post?.createdAt)}
-              </div>
-            </div>
-            {/* <div className="mt-3 text-xs text-gray-400">
-              توسط {post.author?.name}
-            </div> */}
-          </div>
-        </div>
-      </div>
+      <VerticalPostCard post={post} options={settings} className={'shadow'} />
     )
   })
   const filters = {
@@ -144,7 +91,7 @@ export const BlogPostSliderSimple = ({
         </div>
         {settings?.showMoreLink != false && (
           <Link
-            href={`archive/${archiveUrl}`}
+            href={`archive/${archiveUrl}?page=1&perPage=${posts.length || 6}`}
             className="text-xs text-gray-600 font-normal flex flex-row items-center gap-2"
           >
             <span>مشاهده همه</span>

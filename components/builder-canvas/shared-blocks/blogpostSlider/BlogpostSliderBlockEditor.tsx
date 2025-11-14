@@ -6,6 +6,7 @@ import { BlogPostSlider } from './BlogPostSlider'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
 import EmptyBlock from '../../components/EmptyBlock'
+import { getCategoryAction } from '@/features/category/actions'
 
 type BlogPostSliderBlockProps = {
   widgetName: string
@@ -23,11 +24,13 @@ type BlogPostSliderBlockProps = {
       autoplayDelay: number
     }
   } & Block
+  pageSlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function BlogPostSliderBlockEditor({
   widgetName,
   blockData,
+  pageSlug,
   ...props
 }: BlogPostSliderBlockProps) {
   const [posts, setPosts] = useState([])
@@ -35,11 +38,26 @@ export default function BlogPostSliderBlockEditor({
 
   useEffect(() => {
     const fetchData = async () => {
+      let filters
       const tagIds = content?.tags?.map((tag: Option) => tag.value)
       const categoryIds = content?.categories?.map((tag: Option) => tag.value)
+
+      if (tagIds?.length > 0) {
+        filters = { tags: tagIds }
+      }
+
+      if (content?.usePageCategory && pageSlug) {
+        // logic to handle usePageCategory and pageSlug
+        const category = await getCategoryAction({ slug: pageSlug })
+        if (category) filters = { categories: [category.id], ...filters }
+      } else {
+        if (categoryIds?.length > 0)
+          filters = { categories: categoryIds, ...filters }
+      }
+
       const [result] = await Promise.all([
         getPosts({
-          filters: { categories: categoryIds, tags: tagIds },
+          filters,
         }),
       ])
       const posts = result.data

@@ -6,11 +6,18 @@ import { getSettings } from '@/features/settings/controller'
 import templateCtrl from '@/features/template/controller'
 import { extractFiltersFromParams } from '@/lib/utils'
 
-export default async function ArchivePage({
-  params,
-}: {
+type Prop = {
   params: { filters?: string[] }
-}) {
+  searchParams: Promise<{
+    query?: string
+    page?: string
+    perPage?: string
+  }>
+}
+
+export default async function ArchivePage({ params, searchParams }: Prop) {
+  const resolvedSearchParams = await searchParams
+  const { query = '', page = '1', perPage = '10' } = resolvedSearchParams
   const filters: Record<string, string[]> = extractFiltersFromParams(
     params.filters
   )
@@ -29,6 +36,8 @@ export default async function ArchivePage({
             <ArchivePost
               categorySlugs={filters.categories}
               tagSlugs={filters.tags}
+              page={parseInt(page)}
+              perPage={parseInt(perPage)}
             />
           }
         />
@@ -36,6 +45,11 @@ export default async function ArchivePage({
     )
   }
   return (
-    <ArchivePost categorySlugs={filters.categories} tagSlugs={filters.tags} />
+    <ArchivePost
+      categorySlugs={filters.categories}
+      tagSlugs={filters.tags}
+      page={parseInt(page)}
+      perPage={parseInt(perPage)}
+    />
   )
 }

@@ -24,20 +24,24 @@ export function PostCommentItem({ postComment, depth = 0 }: CommentItemProps) {
 
   return (
     <div className={`mt-4 ${depth > 0 ? 'ml-10 border-r pr-4' : ''}`}>
-      <div className="flex gap-3">
-        <Avatar>
-          <AvatarImage src={postComment.author?.image?.srcSmall || ''} />
-          <AvatarFallback>{postComment.author?.name[0] || '?'}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <div className="flex items-center gap-2">
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-2">
+          <Avatar>
+            <AvatarImage src={postComment.author?.image?.srcSmall || ''} />
+            <AvatarFallback>
+              {postComment.author?.name[0] || '?'}
+            </AvatarFallback>
+          </Avatar>
+          <div className="flex flex-col justify-between gap-1">
             <span className="text-sm font-semibold">
               {postComment.author?.name || 'ناشناس'}
             </span>
-            <span className="text-sm text-gray-500">
+            <span className="text-xs font-thin text-gray-500">
               {timeAgo(postComment.createdAt)}
             </span>
           </div>
+        </div>
+        <div className="flex-1 ps-4">
           <div
             className="mt-1 text-gray-700 dark:text-gray-200"
             dangerouslySetInnerHTML={{ __html: content.contentJson }}

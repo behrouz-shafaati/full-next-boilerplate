@@ -7,18 +7,20 @@ import {
 } from '@/components/ui/dialog'
 
 type ModalProps = {
-  title: string
+  title?: string
   content: any
   isOpen: boolean
   onCloseModal: () => void
   description?: string
   size?: 'small' | 'medium' | 'large' | 'full'
+  className?: string
 }
 export default function Modal({
-  title,
+  title = '',
   content,
   isOpen,
   onCloseModal,
+  className = '',
   description = '',
   size = 'medium',
 }: ModalProps) {
@@ -39,11 +41,15 @@ export default function Modal({
   }
   return (
     <Dialog open={isOpen} onOpenChange={onCloseModal}>
-      <DialogContent className={sizeClass}>
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
+      <DialogContent className={`${sizeClass} ${className}`}>
+        {title !== '' && description !== '' && (
+          <DialogHeader>
+            {title !== '' && <DialogTitle>{title}</DialogTitle>}
+            {description !== '' && (
+              <DialogDescription>{description}</DialogDescription>
+            )}
+          </DialogHeader>
+        )}
         {content}
       </DialogContent>
     </Dialog>

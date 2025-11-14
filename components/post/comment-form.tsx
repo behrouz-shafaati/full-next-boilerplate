@@ -8,5 +8,9 @@ type PostCoverProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const PostCommentForm = (props: PostCoverProps) => {
-  return <PostCommentFormLazy {...props} />
+  return (
+    <>
+      <PostCommentFormLazy {...props} />
+    </>
+  )
 }

@@ -8,6 +8,9 @@ import { KeyRound, UserIcon } from 'lucide-react'
 import Password from '@/components/form-fields/password'
 import { SubmitButton } from '@/components/form-fields/submit-button'
 import { ActionsState } from '@/types'
+import Image from 'next/image'
+import { getTranslation } from '@/lib/utils'
+import ImageAlba from '@/components/image-alba'
 
 function UserAuthFormComponent() {
   const initialState: ActionsState = {
@@ -57,14 +60,22 @@ function UserAuthFormComponent() {
   )
 }
 
-export default function LoginForm() {
+export default function LoginForm({
+  site_title,
+  logo,
+}: {
+  site_title: any
+  logo: any
+}) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<div className="flex m-auto">Loading...</div>}>
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">ورود</h1>
+        <div className="flex flex-col text-center justify-center">
+          <Link href={'/'} target="_self" className=" w-20 m-auto">
+            {logo && <ImageAlba zoomable={false} file={logo} />}
+          </Link>
           <p className="text-sm text-muted-foreground">
-            برای ورود به حساب کاربری فرم زیر را پر کنید
+            ورود {site_title && ` به ${site_title}`}
           </p>
         </div>
         <UserAuthFormComponent />

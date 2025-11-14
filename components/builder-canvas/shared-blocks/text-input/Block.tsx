@@ -18,18 +18,26 @@ type BlockProps = {
     type: 'content_post_title'
     settings: {}
   } & BlockType
+  locale: 'fa'
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const Block = ({ blockData, content, ...props }: BlockProps) => {
+export const Block = ({
+  blockData,
+  content,
+  locale = 'fa',
+  ...props
+}: BlockProps) => {
   const { id, settings } = blockData
   const { className, ...restProps } = props
+
+  console.log(settings?.title?.[locale] || settings.title?.fa || '')
   return (
     <Text
       style={{
         ...computedStyles(blockData?.styles),
       }}
-      title={settings?.title || ''}
-      placeholder={settings?.placeholder || ''}
+      title={settings?.title?.[locale] || ''}
+      placeholder={settings?.placeholder?.[locale] || ''}
       name={id}
       id={id}
       {...(settings?.icon
@@ -37,11 +45,11 @@ export const Block = ({ blockData, content, ...props }: BlockProps) => {
             icon: <IconRenderer name={settings.icon} className={`w-5 h-5`} />,
           }
         : {})}
-      description={settings?.description || ''}
+      description={settings?.description?.[locale] || ''}
       required={settings?.required || false}
       className={className}
       readOnly={settings?.readOnly || false}
-      defaultValue={settings?.defaultValue || ''}
+      defaultValue={settings?.defaultValue?.[locale] || ''}
       {...restProps}
     />
   )

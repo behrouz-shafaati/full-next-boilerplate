@@ -1,9 +1,14 @@
 import mongoose, { model, Schema } from 'mongoose'
 import { FormSchema } from './interface'
 
+const MultiLangString = {
+  type: Map,
+  of: String,
+  default: {},
+}
+
 const FieldSchema = new Schema(
   {
-    label: { type: String, required: true }, // متن نمایشی فیلد
     name: { type: String, required: true }, // name فیلد در HTML
     type: {
       type: String,
@@ -21,8 +26,10 @@ const FieldSchema = new Schema(
     },
     options: [String], // برای select یا radio
     required: { type: Boolean, default: false },
-    placeholder: String,
-    defaultValue: String,
+    label: MultiLangString,
+    placeholder: MultiLangString,
+    description: MultiLangString,
+    defaultValue: MultiLangString,
   },
   { _id: false }
 )
@@ -30,11 +37,6 @@ const FieldSchema = new Schema(
 const TranslationSchema = new Schema(
   {
     lang: { type: String, required: true }, // "fa", "en", "de", ...
-    content: {
-      type: Schema.Types.Mixed, // whole page structure as JSON
-      required: true,
-    },
-    fields: { type: [FieldSchema] },
     successMessage: { type: String, default: '' },
   },
   { _id: false }
@@ -49,6 +51,11 @@ const formSchema = new Schema<FormSchema>(
       default: null,
       required: true,
     },
+    content: {
+      type: Schema.Types.Mixed, // whole page structure as JSON
+      required: true,
+    },
+    fields: [FieldSchema],
     translations: [TranslationSchema],
     status: {
       type: String,

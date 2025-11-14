@@ -25,6 +25,7 @@ export async function UserNav() {
   const { user } = (await getSession()) as Session
   const userRoles = user?.roles || []
   const canCreatePost = await can(userRoles, 'post.create', false)
+  const canDashboardView = await can(userRoles, 'dashboard.view.any', false)
   if (user) {
     return (
       <DropdownMenu dir="rtl">
@@ -63,15 +64,17 @@ export async function UserNav() {
                 </Link>
               </DropdownMenuItem>
             )}
-            <DropdownMenuItem className="p-0">
-              <Link
-                href="/dashboard"
-                className="w-full flex justify-between py-1.5 px-2"
-              >
-                <span>داشبورد</span>
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </Link>
-            </DropdownMenuItem>
+            {canDashboardView && (
+              <DropdownMenuItem className="p-0">
+                <Link
+                  href="/dashboard"
+                  className="w-full flex justify-between py-1.5 px-2"
+                >
+                  <span>داشبورد</span>
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </Link>
+              </DropdownMenuItem>
+            )}
             {/* <DropdownMenuItem>
                 پروفایل
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>

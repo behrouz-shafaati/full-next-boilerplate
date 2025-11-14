@@ -14,22 +14,45 @@ export type FormColumn = FormColumnComponent
 
 export type FormBlock = FormBlockComponent
 
-export type FormTranslationSchema = {
+export type FormFieldTranslationSchema = {
   /**
-   * زبان مطلب
+   * زبان فرم
    */
   lang: string // "fa", "en", "de", ...
   /**
-   * عنوان برگه
+   * عنوان فیلد
+   */
+  label: string
+}
+
+export type FormField = {
+  translations: FormFieldTranslationSchema[]
+  name: string
+  type:
+    | 'text'
+    | 'email'
+    | 'textarea'
+    | 'select'
+    | 'checkbox'
+    | 'radio'
+    | 'number'
+    | 'date'
+
+  options: string[]
+  required: boolean
+  placeholder: string
+  defaultValue: string
+}
+
+export type FormTranslationSchema = {
+  /**
+   * زبان فرم
+   */
+  lang: string // "fa", "en", "de", ...
+  /**
+   * پیام ارسال موفق فرم
    */
   successMessage: string
-
-  /**
-   * محتوای برگه
-   */
-  content: FormContentComponent
-
-  fields: any
 }
 
 /**
@@ -37,10 +60,12 @@ export type FormTranslationSchema = {
  */
 type FormBase = {
   /**
-   * عنوان سربرگ
+   * عنوان فرم
    */
   title: string
 
+  fields: FormField[]
+  content: string // jsonString
   user: Id
 
   /**

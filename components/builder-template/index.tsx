@@ -5,13 +5,14 @@ import SettingsPanel from './SettingsPanel'
 import { Category } from '@/features/category/interface'
 import { blockRegistry } from './registry/blockRegistry'
 import { blockRegistry as pageBlockregistry } from '../builder-page/registry/blockRegistry'
+import { Template } from '@/features/template/interface'
 
 type BuilderPageProp = {
   title?: string
   name: string
   submitFormHandler: (prevState: any, formData: FormData) => Promise<any>
   initialContent?: PageContent
-  allTemplates: PageContent[]
+  allTemplates: Template[]
   allCategories: Category[]
 }
 

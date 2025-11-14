@@ -43,6 +43,10 @@ export function getTemplateForOptions({
       value: 'archive',
     },
     {
+      label: 'نویسنده مطالب',
+      value: 'author',
+    },
+    {
       label: 'خانه‌ی دسته بندی مطالب',
       value: 'categories',
     },

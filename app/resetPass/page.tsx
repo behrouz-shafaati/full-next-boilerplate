@@ -44,7 +44,7 @@ export default function AuthenticationPage() {
               &ldquo;تلاشی در راه افزایش رفاه و میزان بهره وری کسب و
               کارها&rdquo;
             </p>
-            <footer className="text-sm">بهروز شفاعتی</footer>
+            {/* <footer className="text-sm">بهروز شفاعتی</footer> */}
           </blockquote>
         </div>
       </div>

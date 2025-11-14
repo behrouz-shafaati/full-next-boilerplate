@@ -73,12 +73,8 @@ export const FormBlockEditor = ({
     form?.translations?.[0] ||
     {}
 
-  const formContent = translation?.content?.rows ? (
-    <RendererRows
-      rows={translation?.content?.rows}
-      editroMode={true}
-      {...props}
-    />
+  const formContent = form?.content?.rows ? (
+    <RendererRows rows={form?.content?.rows} editroMode={true} {...props} />
   ) : null
 
   return (

@@ -39,11 +39,7 @@ export default async function FormBlock({
     {}
 
   const formContent = (
-    <RendererRows
-      rows={translation?.content?.rows}
-      editroMode={false}
-      {...props}
-    />
+    <RendererRows rows={form?.content?.rows} editroMode={false} {...props} />
   )
 
   // فقط داده‌ی ساده به Form پاس بده

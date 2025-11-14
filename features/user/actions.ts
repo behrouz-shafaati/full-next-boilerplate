@@ -56,6 +56,8 @@ const FormSchema = z.object({
     })
     .min(1, { message: 'لطفا رمز ورود را وارد کنید.' }),
   image: z.string({}).nullable(),
+  locale: z.string({}).nullable(),
+  about: z.string({}).nullable(),
 })
 
 const SignupFormSchema = z.object({
@@ -215,14 +217,9 @@ export async function createUser(prevState: State, formData: FormData) {
       roles: JSON.parse(validatedFields.data.roles),
     }
     // Create the user
-    const roles: Option[] = validatedFields.data.roles || []
-    const cleanedUserData = {
-      ...validatedFields.data,
-      ...(validatedFields.data.image === '' && { image: null }),
-      roles: roles.map((role) => role.value),
-      userName: await userCtrl.generateUniqueUsername(),
-    }
-    await userCtrl.create({ params: cleanedUserData })
+    const params = await sanitizeData(validatedFields.data)
+
+    await userCtrl.create({ params })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
       slug: [`/dashboard/users`],
@@ -293,17 +290,10 @@ export async function updateUser(
     }
     // validatedFields.data.image ;
     // Create the user
-    console.log('#209 validatedFields.data.roles:', validatedFields.data.roles)
-    const roles: Option[] = validatedFields.data.roles || []
-    const cleanedUserData = {
-      ...validatedFields.data,
-      ...(validatedFields.data.image === '' && { image: null }),
-      roles: roles.map((role) => role.value),
-    }
-    console.log('#209 validatedFields.data:', validatedFields.data)
+    const params = await sanitizeData(validatedFields.data, prevUser)
     await userCtrl.findOneAndUpdate({
       filters: id,
-      params: cleanedUserData,
+      params,
     })
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'user',
@@ -328,6 +318,102 @@ export async function updateUser(
     return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.', values }
   }
   redirect('/dashboard/users')
+}
+export async function updateAccountUserAction(
+  id: string,
+  prevState: State,
+  formData: FormData
+) {
+  const siteSettings = await getSettings()
+  const user = (await getSession())?.user as User
+  const rawValues = Object.fromEntries(formData.entries())
+  const values = rawValues
+  try {
+    if (id != user.id) throw new Error('Forbidden')
+    const prevUser = await userCtrl.findById({ id })
+    await can(
+      user.roles,
+      prevUser.id !== user.id ? 'user.edit.any' : 'user.edit.own'
+    )
+    if (!siteSettings?.mobileVerificationRequired) {
+      if (prevUser?.mobile !== rawValues.mobile) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          mobile: rawValues.mobile,
+        })
+      }
+    }
+    if (!siteSettings?.emailVerificationRequired) {
+      if (prevUser?.email !== rawValues.email) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          email: rawValues.email,
+        })
+      }
+    }
+
+    const validatedFields = UpdateUserSchema.safeParse(rawValues)
+
+    // If form validation fails, return errors early. Otherwise, continue.
+    if (!validatedFields.success) {
+      return {
+        errors: validatedFields.error.flatten().fieldErrors,
+        message: 'لطفا فیلدهای لازم را پر کنید.',
+        success: false,
+        values,
+      }
+    }
+    // Parse the roles field from a string to an array
+    validatedFields.data = {
+      ...validatedFields.data,
+      roles: JSON.parse(validatedFields.data.roles),
+    }
+    // validatedFields.data.image ;
+    // Create the user
+    const params = await sanitizeData(validatedFields.data, prevUser)
+    const { roles, ...restParams } = params
+    await userCtrl.findOneAndUpdate({
+      filters: id,
+      params: restParams,
+    })
+    const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
+      feature: 'user',
+      slug: [`/dashboard/users`],
+    })
+
+    for (const slug of pathes) {
+      // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
+      revalidatePath(slug)
+    }
+    return { message: 'کاربر با موفقیت بروزرسانی شد.', values, success: true }
+  } catch (error: any) {
+    if (error.message === 'Forbidden') {
+      return {
+        success: false,
+        status: 403,
+        message: 'شما اجازه انجام این کار را ندارید',
+        values,
+      }
+    }
+    if (error.message === 'DuplicateEmail') {
+      return {
+        success: false,
+        status: 403,
+        message: 'ایمیل تکراری است.',
+        values,
+      }
+    }
+    if (error.message === 'DuplicateMobile') {
+      return {
+        success: false,
+        status: 403,
+        message: 'موبایل تکراری است.',
+        values,
+      }
+    }
+    if (process.env.NODE_ENV === 'development') throw error
+    console.log('!77234:', error)
+    return { message: 'خطای پایگاه داده: بروزرسانی کاربر ناموفق بود.', values }
+  }
+  // redirect(`/account/${id}`)
 }
 
 export async function deleteUsersAction(ids: string[]) {
@@ -415,8 +501,8 @@ export async function signUpAction(prevState: State, formData: FormData) {
       success: false,
     }
   }
-  console.log('#-------------------validatedFields.data:', validatedFields.data)
   try {
+    const siteSettings = await getSettings()
     // Parse the roles field from a string to an array
     validatedFields.data = {
       ...validatedFields.data,
@@ -425,7 +511,7 @@ export async function signUpAction(prevState: State, formData: FormData) {
     const cleanedUserData = {
       ...validatedFields.data,
       image: null,
-      roles: ['subscriber'],
+      roles: siteSettings?.user?.defaultRoles || ['subscriber'],
       userName: await userCtrl.generateUniqueUsername(),
     }
     newUser = await userCtrl.create({ params: cleanedUserData })
@@ -457,4 +543,20 @@ export async function signUpAction(prevState: State, formData: FormData) {
   if (settings.emailVerificationRequired || settings.mobileVerificationRequired)
     redirect('/verification?purpose=signup&user=' + newUser?.id)
   redirect('/login')
+}
+
+const sanitizeData = async (data: any, prevUser?: User) => {
+  const translations = [
+    ...(prevUser?.translations.filter((t) => t.lang !== data.locale) || []),
+    { lang: data.locale, about: data.about },
+  ]
+  const roles: Option[] = data.roles || []
+  const cleanedUserData = {
+    ...data,
+    ...(data.image === '' && { image: null }),
+    roles: roles.map((role) => role.value),
+    userName: await userCtrl.generateUniqueUsername(),
+    translations,
+  }
+  return cleanedUserData
 }

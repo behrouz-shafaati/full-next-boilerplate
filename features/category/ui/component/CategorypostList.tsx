@@ -1,22 +1,35 @@
 import { getPosts } from '@/features/post/actions'
 import categoryCtrl from '../../controller'
 import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/PostList/designs/ArticalHorizontalCard'
+import { getTranslation } from '@/lib/utils'
+import { PostListColumn } from '@/components/builder-canvas/shared-blocks/PostList/designs/PostListColumn'
+import CategoryDescription from './Description'
+import { Category } from '../../interface'
 
 type Prop = {
+  category: Category
   slug: string
+  page: number
 }
-export default async function CategoryPostList({ slug }: Prop) {
-  const category = await categoryCtrl.find({ filters: { slug } })
-  console.log('#2134 category:', category)
-  if (category.data.length == 0) return <>دسته ی مورد نظر یافت نشد!</>
+export default async function CategoryPostList({ category, slug, page }: Prop) {
+  const perPage = 10
+
+  if (!category) return <>دسته ی مورد نظر یافت نشد!</>
   const [postsResult] = await Promise.all([
     getPosts({
-      filters: { categories: [category.data[0].id] },
+      filters: { categories: [category.id] },
+      pagination: { page, perPage },
     }),
   ])
 
+  const translation = getTranslation({ translations: category.translations })
+
   if (postsResult.data.length == 0)
-    return <>هیچ مطلب ای با این دسته بندی ثبت نشده است!</>
+    return (
+      <div className="flex p-10 items-center justify-center">
+        مطلبی در این دسته بندی ثبت نشده است!
+      </div>
+    )
   const posts = postsResult.data
   const postItems = posts.map((post) => {
     return (
@@ -27,4 +40,19 @@ export default async function CategoryPostList({ slug }: Prop) {
       />
     )
   })
+  const showMoreHref = `/archive/categories/${category.slug}?page=1&perPage=10`
+  return (
+    <>
+      <PostListColumn
+        posts={posts}
+        postItems={postItems}
+        blockData={{
+          settings: { showNewest: false },
+          content: { title: `دسته‌ی ${translation.title}` },
+        }}
+        showMoreHref={showMoreHref}
+      />
+      <CategoryDescription contentJson={translation?.description} />
+    </>
+  )
 }

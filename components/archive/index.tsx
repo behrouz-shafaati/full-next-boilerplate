@@ -10,6 +10,8 @@ import Pagination from '../ui/pagination'
 import { getSettings } from '@/features/settings/controller'
 
 export default async function ArchivePost({
+  page = 1,
+  perPage = 6,
   categoryIds = [],
   tagIds = [],
   categorySlugs = [],
@@ -19,6 +21,8 @@ export default async function ArchivePost({
   tagIds?: string[]
   categorySlugs?: string[]
   tagSlugs?: string[]
+  page?: number
+  perPage?: number
 }) {
   let defaultSelectedCategories: Option[] = []
   let defaultSelectedTags: Option[] = []
@@ -45,6 +49,7 @@ export default async function ArchivePost({
     getSettings(),
     getPosts({
       filters: { categories: categoryIds, tags: tagIds },
+      pagination: { page, perPage },
     }),
     getAllCategories(),
     getAllTags(),
@@ -59,7 +64,7 @@ export default async function ArchivePost({
       />
     )
   })
-  console.log('#24 siteSettings:', siteSettings?.desktopHeaderHeight)
+
   return (
     <div className="grid grid-cols-4 gap-4 relative">
       <div

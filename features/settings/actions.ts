@@ -9,9 +9,12 @@ import { getSession } from '@/lib/auth'
 import { User } from '../user/interface'
 import { can } from '@/lib/utils/can.server'
 import { Settings } from './interface'
+import { getTranslation } from '@/lib/utils'
 
 const FormSchema = z.object({
   homePageId: z.string({}).nullable().optional(),
+  termsPageId: z.string({}).nullable().optional(),
+  privacyPageId: z.string({}).nullable().optional(),
   commentApprovalRequired: z.string({}).nullable().optional(),
   emailVerificationRequired: z.string({}).nullable().optional(),
   mobileVerificationRequired: z.string({}).nullable().optional(),
@@ -25,12 +28,14 @@ const FormSchema = z.object({
   favicon: z.string({}).nullable().optional(),
   site_title: z.string({}).nullable().optional(),
   site_introduction: z.string({}).nullable().optional(),
+  site_url: z.string({}).nullable().optional(),
   desktopHeaderHeight: z.string({}).nullable().optional(),
   tabletHeaderHeight: z.string({}).nullable().optional(),
   mobileHeaderHeight: z.string({}).nullable().optional(),
   //ad
   fallbackBehavior: z.string().nullable().optional(),
   targetUrl: z.string().nullable().optional(),
+  defaultRoles: z.string().nullable().optional(),
   // banners آرایه‌ای از آبجکت‌هاست
   banners: z
     .array(
@@ -93,7 +98,6 @@ export async function updateSettings(prevState: State, formData: FormData) {
           file: b.file?.id || b.file,
         })),
       })),
-      favicon: prevSettings?.favicon?.id,
       banners,
       ...validatedFields.data,
     })
@@ -162,6 +166,7 @@ async function sanitizeSettingsData(validatedFields: any) {
 
   // sms
   const settingsPayload = validatedFields
+  console.log('#@3423432 vsettingsPayload:', settingsPayload)
   const farazsms = {
     farazsms_apiKey: settingsPayload?.farazsms_apiKey,
     farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
@@ -169,14 +174,45 @@ async function sanitizeSettingsData(validatedFields: any) {
   }
 
   // public
+  const infoTranslation = getTranslation({
+    translations: siteSettings?.infoTranslations || [],
+    locale,
+  })
   const infoTranslations = [
     ...((siteSettings?.infoTranslations || []).filter(
       (t) => t?.lang !== locale
     ) || []),
     {
       lang: locale,
-      site_title: settingsPayload?.site_title || '',
-      site_introduction: settingsPayload?.site_introduction || '',
+      site_title:
+        settingsPayload?.site_title || infoTranslation?.site_title || '',
+      site_introduction:
+        settingsPayload?.site_introduction ||
+        infoTranslation?.site_introduction ||
+        '',
+    },
+  ]
+
+  // pages
+  const pageTranslation = getTranslation({
+    translations: siteSettings?.pageTranslations || [],
+    locale,
+  })
+  const pageTranslations = [
+    ...((siteSettings?.pageTranslations || []).filter(
+      (t) => t?.lang !== locale
+    ) || []),
+    {
+      lang: locale,
+      homePageId: settingsPayload?.homePageId
+        ? settingsPayload?.homePageId
+        : pageTranslation?.homePageId?.id || null,
+      termsPageId: settingsPayload?.termsPageId
+        ? settingsPayload?.termsPageId
+        : pageTranslation?.termsPageId?.id || null,
+      privacyPageId: settingsPayload?.privacyPageId
+        ? settingsPayload?.privacyPageId
+        : pageTranslation?.privacyPageId?.id || null,
     },
   ]
 
@@ -189,6 +225,12 @@ async function sanitizeSettingsData(validatedFields: any) {
       banners: settingsPayload.banners,
     },
   ]
+
+  const user = {
+    defaultRoles: settingsPayload?.defaultRoles
+      ? JSON.parse(settingsPayload.defaultRoles).map((role: any) => role.value)
+      : settingsPayload.user?.defaultRoles ?? [],
+  }
 
   const ad = {
     fallbackBehavior: settingsPayload?.fallbackBehavior || 'random',
@@ -213,13 +255,15 @@ async function sanitizeSettingsData(validatedFields: any) {
       settingsPayload?.mobileVerificationRequired == true
         ? true
         : false,
-    favicon: settingsPayload?.favicon == '' ? null : settingsPayload?.favicon,
-    homePageId:
-      settingsPayload?.homePageId == '' ? null : settingsPayload?.homePageId,
+    favicon:
+      settingsPayload?.favicon != ''
+        ? settingsPayload?.favicon
+        : siteSettings?.favicon?.id || null,
+    pageTranslations,
     farazsms,
     infoTranslations,
     ad,
+    user,
   }
-
   return params
 }

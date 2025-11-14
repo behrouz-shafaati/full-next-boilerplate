@@ -1,7 +1,8 @@
 export type Permission =
   | 'all'
+  | 'dashboard.view.any'
 
-  // ===== ARTICLE_COMMENT =====
+  // ===== POST_COMMENT =====
   | 'postComment.view.any'
   | 'postComment.view.own'
   | 'postComment.create'
@@ -16,7 +17,7 @@ export type Permission =
   | 'settings.moderate.any'
   | 'settings.moderate.own'
 
-  // ===== ARTICLE =====
+  // ===== POST =====
   | 'post.view.any'
   | 'post.view.own'
   | 'post.create'

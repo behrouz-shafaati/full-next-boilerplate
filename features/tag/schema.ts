@@ -15,6 +15,7 @@ const tagSchema = new Schema<TagSchema>(
     slug: { type: String, required: true },
     translations: [TagTranslationSchema], // 👈 لیست ترجمه‌ها
     image: { type: Schema.Types.ObjectId, ref: 'file' },
+    icon: { type: String, default: '' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },
     user: {
       type: Schema.Types.ObjectId,

@@ -7,7 +7,7 @@ import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import { getSession } from '@/lib/auth'
 import { QueryFind, QueryResult } from '@/lib/entity/core/interface'
-import { Form } from './interface'
+import { Form, FormField } from './interface'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { User } from '../user/interface'
 import { can } from '@/lib/utils/can.server'
@@ -128,13 +128,13 @@ export async function updateForm(
     type: content.type,
     templateFor: content.templateFor,
     status: content.status,
+    fields: extractFieldsFromFormContent(content),
     translation: {
       lang: content?.lang || 'fa',
       title: content?.title || '',
       successMessage: content?.successMessage,
-      fields: extractFieldsFromFormContent(content),
-      content,
     },
+    content,
   }
   try {
     const user = (await getSession())?.user as User
@@ -156,9 +156,11 @@ export async function updateForm(
 
     params = await sanitizeFormData(validatedFields)
 
+    console.log('$$$$$$$$#534543 params:', params.fields)
+
     // if is home Form so revalidate home Form
 
-    await formCtrl.findOneAndUpdate({
+    updatedPage = await formCtrl.findOneAndUpdate({
       filters: id,
       params,
     })
@@ -234,38 +236,34 @@ export async function getAllForms() {
 }
 
 async function sanitizeFormData(validatedFields: any, id?: string | undefined) {
-  let prevState = { translations: [] }
+  let prevState: Form = { translations: [] },
+    preFields: FormField[] = []
   if (id) {
     prevState = await formCtrl.findById({ id })
+    preFields = prevState.fields
     console.log('#prevState 098776 :', prevState)
   }
   const session = (await getSession()) as Session
 
   const user = session.user.id
 
-  // Create the post
   const content = JSON.parse(validatedFields.data.contentJson)
-
-  const translations = [
+  const fields = extractFieldsFromFormContent(content)
+  const formTranslations = [
     ...prevState.translations.filter(
       (t: PostTranslationSchema) => t.lang != content.lang
     ),
     {
       lang: content?.lang || 'fa',
-      title: content?.title || '',
       successMessage: content?.successMessage,
-      fields: extractFieldsFromFormContent(content),
-      content,
     },
   ]
 
   const params = {
     content,
     title: content.title,
-    // type: content.type,
-    // templateFor: content.templateFor,
-    // slug: content.slug,
-    translations,
+    fields,
+    translations: formTranslations,
     status: content.status,
     user,
   }

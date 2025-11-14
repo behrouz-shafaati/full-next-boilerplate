@@ -9,17 +9,14 @@ import { FormSubmission } from '@/features/form-submission/interface'
 
 interface Props {
   response: QueryResponse<FormSubmission>
-  formTranslation: FormTranslationSchema
+  fields: any
 }
 
-export default function FormSubmissionClientTable({
-  response,
-  formTranslation,
-}: Props) {
+export default function FormSubmissionClientTable({ response, fields }: Props) {
   return (
     <DataTable
       searchTitle="جستجو ..."
-      columns={columns(formTranslation.fields)}
+      columns={columns(fields)}
       response={response}
       groupAction={GroupAction}
     />

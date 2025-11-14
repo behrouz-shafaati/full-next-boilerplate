@@ -1,9 +1,9 @@
 'use client'
 import { buildUrlFromFilters, getTranslation } from '@/lib/utils'
 import { Filter } from '../Filter'
-import { use, useEffect, useState } from 'react'
+import { use, useEffect, useRef, useState } from 'react'
 import { Option } from '@/types'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { DrawerWidget } from '../DrawerWidget'
 import { Badge } from '../ui/badge'
 
@@ -21,12 +21,18 @@ export function MobileFilters({
   defaultSelectedTags,
 }: Props) {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const page = Number(searchParams.get('page')) || 1
+  const perPage = Number(searchParams.get('perPage')) || 10
   const [selectedCategory, setSelectedCategory] = useState<Option[]>(
     defaultSelectedCategories || []
   )
   const [selectedTag, setSelectedTag] = useState<Option[]>(
     defaultSelectedTags || []
   )
+
+  //  نگهداری اولین بار رندر شدن برای جلوگیری از اجرای اولیه‌ی useEffect
+  const hasUserChangedFilters = useRef(false)
 
   const categoryOptions = allCategories.data.map((cat: any) => {
     const t = getTranslation({ translations: cat.translations })
@@ -45,6 +51,14 @@ export function MobileFilters({
   })
 
   useEffect(() => {
+    //  اولین بار که صفحه لود میشه کاری نکن
+    if (!hasUserChangedFilters.current) {
+      return
+    }
+
+    //  وقتی فیلترها عوض شدن، همیشه برگرد به صفحه ۱
+    const newPage = 1
+
     let showMoreHref = '/archive'
     showMoreHref =
       selectedTag.length != 0 || selectedCategory.length != 0
@@ -55,9 +69,10 @@ export function MobileFilters({
             categories: selectedCategory.map((cat) => cat.value),
           })
         : showMoreHref
-    router.replace(showMoreHref, { scroll: false })
+    const searchParams = `?page=${newPage}&perPage=${perPage}`
+    router.replace(showMoreHref + searchParams, { scroll: false })
     window.scrollTo({ top: 0, behavior: 'smooth' })
-  }, [selectedTag, selectedCategory, router])
+  }, [selectedTag, selectedCategory])
   const categoryTriggerLabel = (
     <div className="flex flex-row gap-2">
       <span>فیلتر دسته</span>
@@ -84,7 +99,10 @@ export function MobileFilters({
             defaultValue={selectedCategory}
             placeholder="جستجو در دسته"
             className="mt-4"
-            onChange={(cats) => setSelectedCategory(cats)}
+            onChange={(cats) => {
+              setSelectedCategory(cats)
+              hasUserChangedFilters.current = true
+            }}
             approveChangeWithButton={true}
           />
         }
@@ -98,7 +116,10 @@ export function MobileFilters({
             defaultValue={selectedTag}
             placeholder="جستجو در برچسب"
             className="mt-4"
-            onChange={(tags) => setSelectedTag(tags)}
+            onChange={(tags) => {
+              setSelectedTag(tags)
+              hasUserChangedFilters.current = true
+            }}
             approveChangeWithButton={true}
           />
         }

@@ -6,6 +6,8 @@ import { PostList } from './PostList'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
 import EmptyBlock from '../../components/EmptyBlock'
+import { getCategoryAction } from '@/features/category/actions'
+import { PostListFallback } from './PostListFallback'
 
 type PostListBlockProps = {
   widgetName: string
@@ -13,6 +15,7 @@ type PostListBlockProps = {
     id: string
     type: 'postList'
     content: {
+      usePageCategory: boolean
       tags: Option[]
       categories: Option[]
     }
@@ -23,16 +26,17 @@ type PostListBlockProps = {
       autoplayDelay: number
     }
   } & Block
+  pageSlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function PostListBlockEditor({
   widgetName,
   blockData,
+  pageSlug,
   ...props
 }: PostListBlockProps) {
   const [posts, setPosts] = useState([])
   const { content, settings } = blockData
-
   useEffect(() => {
     const fetchData = async () => {
       const tagIds = content?.tags?.map((tag: Option) => tag.value)
@@ -42,11 +46,17 @@ export default function PostListBlockEditor({
       if (settings?.showNewest == true) {
         filters = {}
       } else {
-        filters = { tags: tagIds[0] }
+        filters = { tags: tagIds?.[0] ?? {} }
       }
 
-      if (categoryIds?.length > 0)
-        filters = { categories: categoryIds, ...filters }
+      if (content?.usePageCategory && pageSlug) {
+        // logic to handle usePageCategory and pageSlug
+        const category = await getCategoryAction({ slug: pageSlug })
+        if (category) filters = { categories: [category.id], ...filters }
+      } else {
+        if (categoryIds?.length > 0)
+          filters = { categories: categoryIds, ...filters }
+      }
 
       const [result] = await Promise.all([
         getPosts({
@@ -57,12 +67,20 @@ export default function PostListBlockEditor({
 
       const posts = result.data
       setPosts(posts)
-      console.log('#89782345 posts:', posts)
     }
 
     fetchData()
   }, [content, settings?.countOfPosts, settings?.showNewest])
+  const randomMap = posts.map(() => Math.random() < 0.1)
   if (posts?.length == 0)
     return <EmptyBlock widgetName={widgetName} {...props} />
-  return <PostList posts={posts} blockData={blockData} {...props} />
+  return (
+    <PostList
+      posts={posts}
+      blockData={blockData}
+      pageSlug={pageSlug}
+      randomMap={randomMap}
+      {...props}
+    />
+  )
 }

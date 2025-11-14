@@ -13,7 +13,7 @@ export default async function Home() {
     pageCtrl.getHomePage(),
     templateCtrl.getTemplate({ slug: 'allPages' }),
   ])
-
+  console.log('------------->template:', template)
   if (homePage != null) {
     if (template) {
       return (

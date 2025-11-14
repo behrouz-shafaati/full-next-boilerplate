@@ -1,5 +1,4 @@
 'use client'
-import * as z from 'zod'
 import { useActionState, useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -29,29 +28,37 @@ import MultipleSelector, {
 import { AlertModal } from '../../../components/modal/alert-modal'
 import ProfileUpload from '../../../components/form-fields/profile-upload'
 import { Role } from '@/features/role/interface'
-import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
+import StickyBox from 'react-sticky-box'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { cn, getTranslation } from '@/lib/utils'
+import { User } from 'next-auth'
 // import FileUpload from "../file-upload";
 
 interface ProductFormProps {
   initialData: any | null
+  lodginedUser: User | null
 }
 
-export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
+export const UserForm: React.FC<ProductFormProps> = ({
+  initialData: user,
+  lodginedUser,
+}) => {
   const locale = 'fa'
+  const META_DESC_LIMIT = 300
   const router = useRouter()
-  const { user: lodinedUser } = useSession()
-  const lodinedUserRoles = lodinedUser?.roles || []
+  const lodginedUserRoles = lodginedUser?.roles || []
 
-  const canCreate = can(lodinedUserRoles, 'user.create')
+  const canCreate = can(lodginedUserRoles, 'user.create')
   const canEdit = can(
-    lodinedUserRoles,
-    lodinedUser?.id !== user?.id ? 'user.edit.any' : 'user.edit.own'
+    lodginedUserRoles,
+    lodginedUser?.id !== user?.id ? 'user.edit.any' : 'user.edit.own'
   )
   const canDelete = can(
-    lodinedUserRoles,
-    lodinedUser?.id !== user?.id ? 'user.delete.any' : 'user.delete.own'
+    lodginedUserRoles,
+    lodginedUser?.id !== user?.id ? 'user.delete.any' : 'user.delete.own'
   )
 
   const initialState = {
@@ -67,6 +74,9 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
   const [open, setOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [imgLoading, setImgLoading] = useState(false)
+
+  const translation = getTranslation({ translations: user.translations })
+  const [about, setAbout] = useState(translation?.about || '')
   useEffect(() => {
     if (state.message && state.message !== null)
       toast({
@@ -91,7 +101,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
     : []
 
   const title = user ? 'ویرایش کاربر' : 'افزودن کاربر'
-  const description = user ? 'ویرایش یک کاربر' : 'افزودن یک کاربر'
+  const description = user ? user.name : 'افزودن یک کاربر'
   const toastMessage = user ? 'کاربر بروزرسانی شد' : 'کاربر اضافه شد'
   const action = user ? 'ذخیره تغییرات' : 'ذخیره'
 
@@ -145,9 +155,9 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full">
-        <ProfileUpload title="" name="image" defaultValue={user?.image} />
-        <div className="md:grid md:grid-cols-3 gap-8">
+      <form action={dispatch} className="grid grid-cols-12 gap-8">
+        <div className="col-span-12 md:col-span-9 grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <input type="hidden" name="locale" value="fa" />
           {/* First Name */}
           <Text
             title="نام"
@@ -156,6 +166,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="نام"
             state={state}
             icon={<UserIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* Last Name */}
           <Text
@@ -165,6 +176,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="نام خانوادگی"
             state={state}
             icon={<UserIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* Email */}
           <Text
@@ -174,6 +186,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="ایمیل"
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* userName */}
           <Text
@@ -183,6 +196,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="نام کاربری"
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* Mobile */}
           <Text
@@ -192,6 +206,7 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="موبایل"
             state={state}
             icon={<PhoneIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* Roles */}
           <MultipleSelector
@@ -201,7 +216,8 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             placeholder="نقش های کاربر را انتخاب کنید"
             state={state}
             defaultSuggestions={roleOptions}
-            icon={ShieldQuestionIcon}
+            icon={<ShieldQuestionIcon className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
           {/* Password */}
           <Text
@@ -215,9 +231,41 @@ export const UserForm: React.FC<ProductFormProps> = ({ initialData: user }) => {
             }
             state={state}
             icon={<KeyRound className="w-4 h-4" />}
+            className="col-span-3 lg:col-span-1"
           />
+          <div className="col-span-3">
+            {/* Meta Description */}
+            <div className="space-y-1">
+              <Label htmlFor="about">معرفی</Label>
+              <Textarea
+                id="about"
+                name="about"
+                defaultValue={state.values?.about}
+                value={about}
+                onChange={(e) => setAbout(e.target.value)}
+                maxLength={META_DESC_LIMIT}
+                rows={3}
+                placeholder="معرفی کوتاه کاربر..."
+              />
+              <p
+                className={cn(
+                  'text-xs text-gray-500 text-right',
+                  about.length > META_DESC_LIMIT - 20 && 'text-yellow-600',
+                  about.length >= META_DESC_LIMIT && 'text-red-600'
+                )}
+              >
+                {about.length}/{META_DESC_LIMIT} کاراکتر
+              </p>
+            </div>
+          </div>
         </div>
-        <SubmitButton />
+
+        <div className="relative col-span-12 md:col-span-3 gap-2">
+          <StickyBox offsetBottom={0}>
+            <ProfileUpload title="" name="image" defaultValue={user?.image} />
+            <SubmitButton loading={loading} className="my-4 w-full" />
+          </StickyBox>
+        </div>
       </form>
     </>
   )

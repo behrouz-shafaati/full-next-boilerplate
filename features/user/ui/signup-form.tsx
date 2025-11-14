@@ -8,6 +8,8 @@ import { KeyRound, MailIcon, PhoneIcon, UserIcon } from 'lucide-react'
 import Password from '@/components/form-fields/password'
 import { SubmitButton } from '@/components/form-fields/submit-button'
 import { ActionsState } from '@/types'
+import ImageAlba from '@/components/image-alba'
+import { File } from '@/lib/entity/file/interface'
 
 function UserAuthFormComponent() {
   const initialState: ActionsState = {
@@ -28,7 +30,7 @@ function UserAuthFormComponent() {
   }, [state])
 
   return (
-    <>
+    <div>
       <form action={dispatch} className="space-y-2 w-full">
         {/* First Name */}
         <Text
@@ -99,48 +101,64 @@ function UserAuthFormComponent() {
       </div>
       <GitHubSignInButton /> */}
       </form>
-    </>
+    </div>
   )
 }
 
-export default function SignupForm() {
+type props = {
+  termsPageHref: string
+  privacyPageHref: string
+  site_title?: string
+  logo?: File
+}
+
+export default function SignupForm({
+  termsPageHref,
+  privacyPageHref,
+  site_title,
+  logo,
+}: props) {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
-        <div className="flex flex-col space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">ثبت نام</h1>
-          <p className="text-sm text-muted-foreground">
-            برای ایجاد حساب کاربری فرم زیر را پر کنید
+    <>
+      <Suspense fallback={<div className="flex m-auto">Loading...</div>}>
+        <div className="mx-auto flex w-full flex-col  space-y-6 sm:w-[350px] ">
+          <div className="flex flex-col text-center ">
+            <Link href={'/'} target="_self" className=" w-20 m-auto">
+              {logo && <ImageAlba zoomable={false} file={logo} />}
+            </Link>
+            <p className="text-sm text-muted-foreground">
+              عضویت {site_title && ` در ${site_title}`}
+            </p>
+          </div>
+          <UserAuthFormComponent />
+          <div className="text-center text-sm">
+            حساب کاربری دارید؟{' '}
+            <Link
+              href="/login"
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              وارد شوید
+            </Link>
+          </div>
+          <p className="px-8 text-center text-sm text-muted-foreground">
+            با کلیک بر روی ادامه، با{' '}
+            <Link
+              href={termsPageHref}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              قوانین سایت
+            </Link>{' '}
+            و{' '}
+            <Link
+              href={privacyPageHref}
+              className="underline underline-offset-4 hover:text-primary"
+            >
+              حریم خصوصی
+            </Link>{' '}
+            موافقت می کنید.
           </p>
         </div>
-        <UserAuthFormComponent />
-        <div className="text-center text-sm">
-          حساب کاربری دارید؟{' '}
-          <Link
-            href="/login"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            وارد شوید
-          </Link>
-        </div>
-        <p className="px-8 text-center text-sm text-muted-foreground">
-          با کلیک بر روی ادامه، با{' '}
-          <Link
-            href="/terms"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            شرایط استفاده از خدمات
-          </Link>{' '}
-          و{' '}
-          <Link
-            href="/privacy"
-            className="underline underline-offset-4 hover:text-primary"
-          >
-            حریم خصوصی
-          </Link>{' '}
-          ما موافقت می کنید.
-        </p>
-      </div>
-    </Suspense>
+      </Suspense>
+    </>
   )
 }

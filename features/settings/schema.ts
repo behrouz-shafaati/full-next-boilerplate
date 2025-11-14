@@ -9,6 +9,21 @@ const InfoTranslationSchema = new Schema(
   },
   { _id: false }
 )
+const PageTranslationSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    homePageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
+    termsPageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
+    privacyPageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
+  },
+  { _id: false }
+)
+const UserSchema = new Schema(
+  {
+    defaultRoles: { type: [String] },
+  },
+  { _id: false }
+)
 
 const FarazsmsSchema = new Schema(
   {
@@ -48,10 +63,11 @@ const settingsSchema = new Schema<SettingsSchema>(
   {
     type: { type: String, default: 'site-settings', unique: true }, // مهم!
     infoTranslations: [InfoTranslationSchema],
-    homePageId: { type: Schema.Types.ObjectId, ref: 'page', default: null },
+    pageTranslations: [PageTranslationSchema],
     commentApprovalRequired: { type: Boolean, default: true },
     emailVerificationRequired: { type: Boolean, default: false },
     mobileVerificationRequired: { type: Boolean, default: false },
+    site_url: { type: String, default: '' },
     favicon: {
       type: Schema.Types.ObjectId,
       ref: 'file',
@@ -75,6 +91,7 @@ const settingsSchema = new Schema<SettingsSchema>(
     integrations: {
       googleAnalyticsId: String,
     },
+    user: UserSchema,
     deleted: { type: Boolean, default: false },
   },
   { timestamps: true }
@@ -98,8 +115,13 @@ settingsSchema.set('toJSON', {
 settingsSchema.pre(
   ['find', 'findOne', 'findOneAndUpdate'],
   function (next: any) {
-    this.populate('favicon')
-    this.populate('ad.translations.banners.file')
+    this.populate([
+      { path: 'favicon' },
+      { path: 'ad.translations.banners.file' },
+      { path: 'pageTranslations.homePageId', select: ' slug' },
+      { path: 'pageTranslations.termsPageId', select: ' slug' },
+      { path: 'pageTranslations.privacyPageId', select: ' slug' },
+    ])
     next()
   }
 )

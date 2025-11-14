@@ -16,6 +16,7 @@ import { computedStyles } from '../../utils/styleUtils'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 import { can } from '@/lib/utils/can.client'
+import Link from 'next/link'
 type props = {
   widgetName: string
   user: User
@@ -31,6 +32,7 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
   const router = useRouter()
   const userRoles = user?.roles || []
   const canCreatePost = can(userRoles, 'post.create')
+  const canDashboardView = can(userRoles, 'dashboard.view.any')
   const defaultAvatar = '/assets/default-profile.png'
   const { content, settings, styles } = blockData || {}
   if (user) {
@@ -43,19 +45,14 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
         {...res}
       >
         <DropdownMenu dir="rtl">
-          <DropdownMenuTrigger asChild>
-            <Button
-              variant="ghost"
-              className="relative p-0 rounded-full overflow-hidden "
-            >
-              <Image
-                src={user?.image?.srcSmall || defaultAvatar}
-                height={24}
-                width={24}
-                alt={user?.name}
-                className="rounded-[50%]"
-              />
-            </Button>
+          <DropdownMenuTrigger asChild className="cursor-pointer">
+            <Image
+              src={user?.image?.srcSmall || defaultAvatar}
+              height={24}
+              width={24}
+              alt={user?.name}
+              className="rounded-[50%]"
+            />
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56" align="end" forceMount>
             <DropdownMenuLabel className="font-normal">
@@ -75,10 +72,17 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
                   افزودن مطلب
                 </DropdownMenuItem>
               )}
-              <DropdownMenuItem onClick={() => router.push('/dashboard')}>
-                داشبورد
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+              <DropdownMenuItem>
+                <Link href={`/account/${user.id}`} className="w-full h-full">
+                  پروفایل
+                </Link>
               </DropdownMenuItem>
+              {canDashboardView && (
+                <DropdownMenuItem onClick={() => router.push('/dashboard')}>
+                  داشبورد
+                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                </DropdownMenuItem>
+              )}
               {/* <DropdownMenuItem>
                 پروفایل
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>

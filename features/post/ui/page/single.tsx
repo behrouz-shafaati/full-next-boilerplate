@@ -10,6 +10,11 @@ import { PostCommentForm } from '@/components/post/comment-form'
 import { PostContent } from '@/components/post/content'
 import { PostMetaData } from '@/components/post/meta-data'
 import { PostTitle } from '@/components/post/title'
+import ShareButtons from '@/components/share/share-buttons'
+import { getSettings } from '@/features/settings/controller'
+import { PostTags } from '@/components/post/tags'
+import { PostAuthorCard } from '@/components/post/author-card'
+import { CommentsHeader } from '@/components/post/comments-header'
 
 type props = {
   locale?: string
@@ -28,10 +33,10 @@ const SinglePageBlog = async ({
   tableOfContent,
   comments,
 }: props) => {
+  const siteSettings = await getSettings()
   const translation: PostTranslationSchema = getTranslation({
     translations: post?.translations,
   })
-
   return (
     <div className=" max-w-4xl m-auto text-justify p-2">
       <PostBreadcrumb content={breadcrumbItems} />
@@ -44,16 +49,26 @@ const SinglePageBlog = async ({
         />
       )}
       <PostTitle title={translation?.title} />
-      <PostMetaData
-        author={post?.user}
-        createdAt={post.createdAt}
-        readingDuration={readingDuration}
-      />
+      <div className="flex justify-between">
+        <PostMetaData
+          author={post?.user}
+          createdAt={post.createdAt}
+          readingDuration={readingDuration}
+        />
+        <ShareButtons
+          url={`${siteSettings.site_url}${post.href}`}
+          title={translation?.title}
+        />
+      </div>
+
       {tableOfContent}
       <PostContent
         content={<RenderedHtml contentJson={translation?.contentJson} />}
       />
+      <PostTags tags={post.tags} />
+      <PostAuthorCard author={post.author} />
       <div>
+        <CommentsHeader />
         <PostComments content={comments} />
         <PostCommentForm post={post} />
       </div>

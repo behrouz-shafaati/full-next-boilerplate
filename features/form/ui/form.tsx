@@ -72,7 +72,7 @@ export const Form: React.FC<FormProps> = ({ initialData: form }) => {
     rows: [],
   }
 
-  console.log('#299 form:', translation?.content?.rows)
+  console.log('#299 form:', form?.content?.rows)
   const onDelete = async () => {
     try {
       setLoading(true)
@@ -105,10 +105,10 @@ export const Form: React.FC<FormProps> = ({ initialData: form }) => {
         title="فرم ساز"
         name="contentJson"
         submitFormHandler={dispatch}
-        {...(form || state?.values?.translation?.content
+        {...(form || state?.values?.content
           ? {
               initialContent: {
-                ...state?.values?.translation?.content,
+                ...state?.values?.content,
               },
             }
           : {

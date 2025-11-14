@@ -21,7 +21,10 @@ type TemplateBase = {
    * عنوان سربرگ
    */
   title: string
-
+  /**
+   * Parent Template
+   */
+  parent: Id | null
   user: Id
 
   /**

@@ -19,9 +19,11 @@ type BlockInEditorProps = {
     type: 'content_post_title'
     settings: {}
   } & Block
+  locale: 'fa'
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const BlockInEditor = ({
+  locale = 'fa',
   widgetName,
   blockData,
   ...props
@@ -36,8 +38,8 @@ export const BlockInEditor = ({
       {...props}
     >
       <TextArea
-        title={settings?.title || ''}
-        placeholder={settings?.placeholder || ''}
+        title={settings?.title?.[locale] || ''}
+        placeholder={settings?.placeholder?.[locale] || ''}
         name={id}
         id={id}
         {...(settings?.icon
@@ -45,7 +47,7 @@ export const BlockInEditor = ({
               icon: <IconRenderer name={settings.icon} className={`w-5 h-5`} />,
             }
           : {})}
-        description={settings?.description || ''}
+        description={settings?.description?.[locale] || ''}
         rows={settings?.rows || 4}
         required={settings?.required || false}
       />

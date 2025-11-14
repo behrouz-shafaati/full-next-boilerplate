@@ -20,8 +20,9 @@ export default async function Page({ params }: PageProps) {
   }
 
   if (id !== 'create') {
-    ;[page, allCategories] = await Promise.all([
+    ;[page, allTemplates, allCategories] = await Promise.all([
       templateCtrl.findById({ id }),
+      templateCtrl.findAll({}),
       categoryCtrl.findAll({}),
     ])
     if (!page) {
@@ -32,12 +33,19 @@ export default async function Page({ params }: PageProps) {
       link: `/dashboard/templates/${id}`,
     }
   } else {
-    ;[allCategories] = await Promise.all([categoryCtrl.findAll({})])
+    ;[allTemplates, allCategories] = await Promise.all([
+      templateCtrl.findAll({}),
+      categoryCtrl.findAll({}),
+    ])
   }
 
   return (
     <>
-      <Form initialData={page} allCategories={allCategories.data} />
+      <Form
+        initialData={page}
+        allCategories={allCategories.data}
+        allTemplates={allTemplates.data}
+      />
     </>
   )
 }

@@ -10,6 +10,7 @@ import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
 import { User } from '../user/interface'
 import { can } from '@/lib/utils/can.server'
+import { slugify } from '@/lib/utils'
 
 const FormSchema = z.object({
   title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
@@ -18,6 +19,7 @@ const FormSchema = z.object({
   description: z.string({}),
   status: z.string({}).min(1, { message: 'لطفا وضعیت را تعیین کنید.' }),
   image: z.string({}).nullable(),
+  icon: z.string({}).nullable(),
 })
 
 async function sanitizePostData(validatedFields: any, id?: string | undefined) {
@@ -29,6 +31,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   const session = (await getSession()) as Session
   const payload = validatedFields.data
   const user = session.user.id
+  const slug = payload.slug !== '' ? payload.slug : slugify(payload.title)
   const translations = [
     {
       lang: payload.lang,
@@ -43,6 +46,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
     ...payload,
     translations,
     user,
+    slug,
   }
 
   return params

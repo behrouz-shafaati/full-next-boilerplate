@@ -28,18 +28,22 @@ const PostImageCard = ({ post, options }: Props) => {
   return (
     <div
       key={post.id}
-      className="flex-shrink-0 basis-[85vw] sm:basis-[45vw] md:basis-[30vw] xl:basis-[23vw] snap-start"
+      className="flex-shrink-0 basis-[85vw] sm:basis-[45vw] md:basis-[23vw] xl:basis-[16vw] snap-start"
     >
       <div className="rounded overflow-hidden shadow-lg bg-white dark:bg-gray-900">
         <div className="relative w-full h-52">
           <Image
-            src={post?.image?.srcMedium || '/placeholder.png'}
+            src={
+              post?.image?.srcMedium || '/assets/image-placeholder-Medium.webp'
+            }
             sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
             alt={translationImage?.alt || translationImage?.title}
             layout="fill"
             objectFit="cover"
             placeholder="blur"
-            blurDataURL={post?.image?.srcSmall}
+            blurDataURL={
+              post?.image?.srcSmall || '/assets/image-placeholder-Small.webp'
+            }
           />
         </div>
         <div className="p-4">

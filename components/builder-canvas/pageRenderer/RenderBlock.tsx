@@ -7,11 +7,13 @@ type RestProps = Record<string, unknown>
 type RenderBlockProp = {
   editroMode: boolean
   item: Block
+  pageSlug: string | null
   contents: React.ReactNode[]
 }
 const RenderBlock = ({
   editroMode = false,
   item,
+  pageSlug,
   ...rest
 }: RenderBlockProp) => {
   const blocks = getBlockRegistry() // برای محتوا دار بودن این برای رسیدن به این کامپوننت هیچ کامپوننتی نباید از use client‌ استفاده کرده باشد
@@ -19,8 +21,6 @@ const RenderBlock = ({
   const className = getVisibilityClass(visibility)
 
   const block = blocks[item.type]
-  console.log('item.type:', item.type)
-  console.log(block)
   const Component = block?.Renderer
   const EditorComponent = block?.RendererInEditor
 
@@ -30,6 +30,7 @@ const RenderBlock = ({
         <EditorComponent
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
+          pageSlug={pageSlug}
         />
       )
     }
@@ -43,7 +44,7 @@ const RenderBlock = ({
          *   content_post_metadata={metadata}
          * بعد در تابغ زیر هر بلاک محتوای خودش را بر می دارد و نمایش میدهد. مثلا بلاک content_post_title محتوایی که از RenderRows با همین نام آمده را توسط تابع زیر واکشی می کند و آن را نمایش میدهد.
          */
-        const node = extractNode(rest, item.type) // محتوای مورد نظر استخراج میشود
+        const node = extractNode(rest, item.type) // محتوای مورد نظر از پراپ های ارسال شده استخراج میشود
         if (node)
           return (
             <Component
@@ -52,6 +53,7 @@ const RenderBlock = ({
                 item.classNames || {}
               )}`}
               content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
+              pageSlug={pageSlug}
             />
           )
       }
@@ -63,6 +65,7 @@ const RenderBlock = ({
               item.classNames || {}
             )}`}
             {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
+            pageSlug={pageSlug}
           />
         )
       }
@@ -71,6 +74,7 @@ const RenderBlock = ({
         <Component
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
+          pageSlug={pageSlug}
         />
       )
     }

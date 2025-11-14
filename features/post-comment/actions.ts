@@ -65,7 +65,7 @@ export async function createPostComment(
 
   try {
     const user = (await getSession())?.user as User
-    await can(user.roles, 'postComment.create')
+    await can(user?.roles, 'postComment.create')
     const post = await postCtrl.findById({
       id,
     })
@@ -335,6 +335,13 @@ async function sanitizePostCommentData(
       (t: PostCommentTranslationSchema) => t.lang != postCommentPayload.lang
     ),
   ]
+  const status = (await can(
+    session?.user.roles,
+    'postComment.moderate.any',
+    false
+  ))
+    ? 'approved'
+    : 'pending'
   const parent =
     postCommentPayload.parent == '' ? null : postCommentPayload.parent
   const params = {
@@ -344,6 +351,7 @@ async function sanitizePostCommentData(
     author,
     translations,
     parent,
+    status,
   }
 
   return params

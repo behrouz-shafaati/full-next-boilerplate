@@ -14,12 +14,14 @@ type TemplateProps = {
     }
     settings: {}
   } & Block
+  pageSlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const TemplatePart = ({
   editroMode = false,
   template,
   blockData,
+  pageSlug,
   ...props
 }: TemplateProps) => {
   const { content, settings } = blockData
@@ -30,6 +32,7 @@ export const TemplatePart = ({
       <RendererRows
         rows={template?.content?.rows}
         editroMode={editroMode}
+        pageSlug={pageSlug}
         {...props}
       />
     </section>

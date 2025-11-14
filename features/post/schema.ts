@@ -5,8 +5,8 @@ import { createPostHref } from './utils'
 const PostTranslationSchema = new Schema(
   {
     lang: { type: String, required: true }, // "fa", "en", "de", ...
-    title: { type: String, required: true },
-    seoTitle: { type: String, required: true },
+    title: { type: String, default: '' },
+    seoTitle: { type: String, default: '' },
     excerpt: { type: String, default: '' },
     metaDescription: { type: String, default: '' },
     jsonLd: { type: String, default: '' },
@@ -41,6 +41,8 @@ const postSchema = new Schema<PostSchema>(
     mainCategory: {
       type: Schema.Types.ObjectId,
       ref: 'category',
+      default: null,
+      required: false,
     },
     categories: [
       {

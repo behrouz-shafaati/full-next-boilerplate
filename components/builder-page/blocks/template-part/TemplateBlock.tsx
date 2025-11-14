@@ -16,6 +16,7 @@ type Props = {
       stickyTemplate: boolean
     }
   } & Block
+  pageSlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function TemplateBlock({
@@ -31,6 +32,7 @@ export default async function TemplateBlock({
       blockData={blockData}
       {...props}
       editroMode={false}
+      pageSlug={props.pageSlug}
     />
   )
 }

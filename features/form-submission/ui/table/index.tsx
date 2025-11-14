@@ -36,9 +36,6 @@ export default async function FormSubmissionTable({
     formCtrl.findById({ id: formId }),
   ])
 
-  const formTranslation: FormTranslationSchema = getTranslation({
-    translations: form.translations,
-  })
   return (
     <>
       <div className="flex items-start justify-between">
@@ -58,7 +55,7 @@ export default async function FormSubmissionTable({
         )} */}
       </div>
       <FormSubmissionClientTable
-        formTranslation={formTranslation}
+        fields={form?.fields}
         response={formSubmissionResult}
       />
     </>

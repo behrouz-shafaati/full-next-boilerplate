@@ -18,19 +18,18 @@
  * @returns {string} Generated username.
  *
  * @example
- * generateUsername({ firstName: 'Behrouz', lastName: 'Shafaati' })
+ * generateHumanId({ firstName: 'Behrouz', lastName: 'Shafaati' })
  * // -> "behrouz.shafaati123"
  *
  * @example
- * generateUsername({ preferred: 'Coder Pro', appendNumber: false, separator: '_' })
+ * generateHumanId({ preferred: 'Coder Pro', appendNumber: false, separator: '_' })
  * // -> "coder_pro"
  *
  * @example
- * generateUsername({ }) // no inputs -> random 6-char base + suffix, e.g. "xk3a9b123"
+ * generateHumanId({ }) // no inputs -> random 6-char base + suffix, e.g. "xk3a9b123"
  */
-export default function generateUsername(opts?: {
-  firstName?: string
-  lastName?: string
+export default function generateHumanId(opts?: {
+  text?: string
   preferred?: string
   maxLength?: number
   separator?: string
@@ -39,8 +38,7 @@ export default function generateUsername(opts?: {
   forceLowercase?: boolean
 }): string {
   const {
-    firstName = '',
-    lastName = '',
+    text = '',
     preferred,
     maxLength = 20,
     separator = '.',
@@ -103,13 +101,12 @@ export default function generateUsername(opts?: {
   let base = ''
   if (preferred && preferred.trim().length > 0) {
     base = sanitize(preferred)
-  } else if (firstName || lastName) {
-    const a = sanitize(firstName)
-    const b = sanitize(lastName)
-    if (a && b) {
-      base = `${a}${separator}${b}`
+  } else if (text) {
+    const a = sanitize(text)
+    if (a) {
+      base = `${a}${separator}`
     } else {
-      base = a || b
+      base = a
     }
   }
 

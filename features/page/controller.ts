@@ -5,6 +5,7 @@ import pageService from './service'
 import settingsCtrl, { getSettings } from '../settings/controller'
 import { Page } from './interface'
 import categoryCtrl from '../category/controller'
+import { getTranslation } from '@/lib/utils'
 
 class controller extends baseController {
   /**
@@ -84,10 +85,30 @@ class controller extends baseController {
   }
 
   async getHomePage() {
-    const homePageId = await getSettings('homePageId')
-    if (homePageId == null) return null
-    const homePage = await this.findById({ id: homePageId })
-    console.log('#2346 HomePage: ', homePage)
+    const siteSettings = await getSettings()
+    const pageTranslation = getTranslation({
+      translations: siteSettings?.pageTranslations || [],
+    })
+    if (pageTranslation?.homePageId == null) return null
+    const homePage = await this.findById({ id: pageTranslation.homePageId.id })
+    return homePage
+  }
+  async getTermsPage() {
+    const siteSettings = await getSettings()
+    const pageTranslation = getTranslation({
+      translations: siteSettings?.pageTranslations || [],
+    })
+    if (pageTranslation?.termsPageId == null) return null
+    const homePage = await this.findById({ id: pageTranslation.termsPageId })
+    return homePage
+  }
+  async getPrivacyPage() {
+    const siteSettings = await getSettings()
+    const pageTranslation = getTranslation({
+      translations: siteSettings?.pageTranslations || [],
+    })
+    if (pageTranslation?.privacyPageId == null) return null
+    const homePage = await this.findById({ id: pageTranslation.privacyPageId })
     return homePage
   }
 

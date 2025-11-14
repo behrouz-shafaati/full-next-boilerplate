@@ -7,68 +7,84 @@ import Link from 'next/link'
 
 type Props = {
   post: Post
-  options: {
-    showExcerpt: boolean
+  direction?: 'row' | 'column'
+  options?: {
+    showExcerpt?: boolean
+    showCreatedAt?: boolean
+    titleClasses?: string
+    aspectRatio?: string
   }
 }
 
-const PostOverlayCard = ({ post, options }: Props) => {
+const PostOverlayCard = ({ post, direction = 'row', options }: Props) => {
   const locale = 'fa'
+  const {
+    showExcerpt = true,
+    showCreatedAt = true,
+    titleClasses = '',
+    aspectRatio = '3 / 2',
+  } = options || {}
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t) => t.lang === locale) ||
-    post?.translations[0] ||
+    post?.translations?.[0] ||
     ({} as PostTranslationSchema)
 
   const translationImage: FileTranslationSchema =
-    post.image?.translations?.find((t) => t.lang === locale) ||
-    post.image?.translations[0] ||
+    post?.image?.translations?.find((t) => t.lang === locale) ||
+    post?.image?.translations?.[0] ||
     ({} as FileTranslationSchema)
 
   return (
-    <div
+    <Link
+      href={post.href}
       key={post.id}
-      className="flex-shrink-0 basis-[85vw] sm:basis-[45vw] md:basis-[30vw] xl:basis-[23vw]  snap-start"
+      className={`group relative block overflow-hidden rounded-lg shadow-md transition-all duration-500 ${
+        direction === 'row'
+          ? 'basis-[85vw] sm:basis-[45vw] md:basis-[30vw] xl:basis-[23vw] h-56 flex-shrink-0 snap-start'
+          : ''
+      }`}
+      style={direction === 'column' ? { aspectRatio: aspectRatio } : undefined}
     >
-      <Link href={post.href} className="hover:underline">
-        <div className="relative h-48 rounded overflow-hidden shadow-lg group">
-          {/* تصویر پس‌زمینه */}
-          <Image
-            src={post?.image.srcLarge || '/placeholder.png'}
-            alt={translationImage?.alt || translationImage?.title}
-            fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-          />
+      {/* تصویر پس‌زمینه */}
+      <Image
+        src={post?.image?.srcMedium || '/image-placeholder-Medium.webp'}
+        alt={translationImage?.alt || translationImage?.title || ''}
+        fill
+        className="object-cover transition-transform duration-700 group-hover:scale-110"
+        sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px"
+      />
 
-          {/* لایه تاریک نیمه‌شفاف برای خوانایی متن */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+      {/* ماسک تیره */}
+      <div className="absolute inset-0 bg-black/60 transition-all duration-500 group-hover:bg-black/40" />
 
-          {/* محتوای کارت روی تصویر */}
-          <div className="absolute bottom-0 p-4 text-white">
-            <h3 className="text-sm font-semibold mb-2 leading-5 line-clamp-2">
-              {translationPost?.title}
-            </h3>
+      {/* محتوای کارت */}
+      <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center p-4 text-white transition-all duration-500">
+        <h3
+          className={`text-2xl font-semibold leading-6 mb-2 line-clamp-2 group-hover:text-white/90 ${titleClasses} py-2`}
+        >
+          {translationPost?.title}
+        </h3>
 
-            {options?.showExcerpt !== false && (
-              <p className="text-xs text-gray-200 line-clamp-2 mb-2 hidden md:block">
-                {translationPost?.excerpt}
-              </p>
-            )}
+        {showExcerpt && translationPost?.excerpt && (
+          <p className="text-xs text-gray-200/90 line-clamp-2 mb-4 max-w-md group-hover:text-gray-100">
+            {translationPost?.excerpt}
+          </p>
+        )}
 
-            <div className="flex items-center gap-4 text-[11px] text-gray-300">
-              {post?.commentsCount && (
-                <div className="flex items-center gap-1">
-                  <MessageCircleMore width={14} /> {post?.commentsCount}
-                </div>
-              )}
-              <div className="flex items-center gap-1">
-                <CalendarPlus width={14} /> حدود {timeAgo(post?.createdAt)}
-              </div>
+        <div className="flex items-center gap-4 text-[11px] text-gray-300 group-hover:text-gray-200">
+          {post?.commentsCount > 0 && (
+            <div className="flex items-center gap-1">
+              <MessageCircleMore width={14} /> {post.commentsCount}
             </div>
-          </div>
+          )}
+          {showCreatedAt && post?.createdAt && (
+            <div className="flex items-center gap-1">
+              <CalendarPlus width={14} /> حدود {timeAgo(post.createdAt)}
+            </div>
+          )}
         </div>
-      </Link>
-    </div>
+      </div>
+    </Link>
   )
 }
 

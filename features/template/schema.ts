@@ -4,6 +4,11 @@ import { TemplateSchema } from './interface'
 const templateSchema = new Schema<TemplateSchema>(
   {
     title: { type: String, required: false },
+    parent: {
+      type: Schema.Types.ObjectId,
+      ref: 'template',
+      default: null,
+    },
     user: {
       type: Schema.Types.ObjectId,
       ref: 'user',

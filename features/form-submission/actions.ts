@@ -254,10 +254,8 @@ async function sanitizeFormSubmissionData(
   const form: Form = await formCtrl.findById({ id: formId })
   if (!form) new Error('NotFounForm')
 
-  // get values from sended form
-  const formTranslation = getTranslation({ translations: form.translations })
   const formInputValues = {}
-  for (const field of formTranslation.fields) {
+  for (const field of form.fields) {
     formInputValues[field.name] = formData.get(field.name) || ''
   }
 

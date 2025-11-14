@@ -18,6 +18,7 @@ const categorySchema = new Schema<CategorySchema>(
       default: null,
     },
     slug: { type: String, required: true },
+    icon: { type: String, default: '' },
     translations: [CategoryTranslationSchema], // 👈 لیست ترجمه‌ها
     image: { type: Schema.Types.ObjectId, ref: 'file' },
     status: { type: String, enum: ['active', 'inactive'], default: 'active' },

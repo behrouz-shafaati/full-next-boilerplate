@@ -1,14 +1,21 @@
 import { hashPassword } from '@/lib/utils'
 import mongoose, { Schema, model } from 'mongoose'
 import { UserSchema } from '@/features/user/interface'
-import { boolean } from 'zod'
+
+const TranslationsUserSchema = new Schema(
+  {
+    lang: { type: String, required: true }, // "fa", "en", "de", ...
+    about: { type: String, default: '' },
+  },
+  { _id: false }
+)
 
 const userSchema = new Schema<UserSchema>(
   {
     roles: { type: [String], required: true },
     mobile: {
       type: String,
-      default: null, // می‌تونه null باشه
+      default: null, // می‌تونه null باشه. ممکنه کاربر با این موبال پاک شده باشد یا موبال خود را وریفای نکرده باشد
       trim: true,
     },
     mobileVerified: { type: Boolean, default: false },
@@ -27,7 +34,6 @@ const userSchema = new Schema<UserSchema>(
     state: String,
     city: String,
     address: String,
-    about: String,
     image: {
       type: Schema.Types.ObjectId,
       ref: 'file',
@@ -38,6 +44,7 @@ const userSchema = new Schema<UserSchema>(
     darkMode: Boolean,
     active: { type: Boolean, default: true },
     deleted: { type: Boolean, default: false },
+    translations: [TranslationsUserSchema],
   },
   { timestamps: true }
 )

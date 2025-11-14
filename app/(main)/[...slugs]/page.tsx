@@ -27,8 +27,8 @@ import PostCommentList from '@/features/post-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '@/features/post-comment/interface'
 import { getPostCommentsForClient } from '@/features/post-comment/actions'
-import { CommentForm } from '@/features/post-comment/ui/comment-form'
 import { getSettings } from '@/features/settings/controller'
+import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -183,7 +183,56 @@ export default async function Page({ params }: PageProps) {
       <>
         {writeJsonLd()}
         <>
-          <RendererRows
+          <RendererTemplate
+            template={template}
+            siteSettings={siteSettings}
+            pageSlug={slug}
+            editroMode={false}
+            content_all={
+              <DefaultSinglePageBlog
+                post={post}
+                breadcrumbItems={breadcrumbItems}
+                readingDuration={readingDuration}
+                tableOfContent={<TableOfContents toc={toc} />}
+                comments={
+                  <PostCommentList
+                    post={post}
+                    postCommentsResult={postCommentsResult}
+                  />
+                }
+              />
+            }
+            content_post_title={translation?.title}
+            content_post_cover={{
+              image: post?.image ?? null,
+              postType: post?.type ?? 'article',
+              primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
+            }}
+            content_post_share={{
+              url: `${siteSettings?.site_url ?? ''}${post?.href}`,
+              title: translation?.title ?? '',
+            }}
+            content_post_tags={{
+              tags: post?.tags ?? [],
+            }}
+            content_post_author_card={{
+              author: post?.author ?? null,
+            }}
+            content_post_metadata={metadata}
+            content_post_breadcrumb={breadcrumbItems}
+            content_post_content={
+              <RenderedHtml contentJson={translation?.contentJson} />
+            }
+            content_post_tablecontent={<TableOfContents toc={toc} />}
+            content_post_comments={
+              <PostCommentList
+                post={post}
+                postCommentsResult={postCommentsResult}
+              />
+            }
+            content_post_comment_form={{ post }}
+          />
+          {/* <RendererRows
             siteSettings={siteSettings}
             rows={template?.content.rows}
             editroMode={false}
@@ -207,6 +256,16 @@ export default async function Page({ params }: PageProps) {
               postType: post?.type ?? 'article',
               primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
             }}
+            content_post_share={{
+              url: `${siteSettings?.site_url ?? ''}${post?.href}`,
+              title: translation?.title ?? '',
+            }}
+            content_post_tags={{
+              tags: post?.tags ?? [],
+            }}
+            content_post_author_card={{
+              author: post?.author ?? null,
+            }}
             content_post_metadata={metadata}
             content_post_breadcrumb={breadcrumbItems}
             content_post_content={
@@ -220,7 +279,7 @@ export default async function Page({ params }: PageProps) {
               />
             }
             content_post_comment_form={{ post }}
-          />
+          /> */}
         </>
       </>
     )

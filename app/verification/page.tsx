@@ -54,11 +54,11 @@ export default async function AuthenticationPage({
               &ldquo;تلاشی در راه افزایش رفاه و میزان بهره وری کسب و
               کارها&rdquo;
             </p>
-            <footer className="text-sm">بهروز شفاعتی</footer>
+            {/* <footer className="text-sm">بهروز شفاعتی</footer> */}
           </blockquote>
         </div>
       </div>
-      <div className="p-4 lg:p-8 h-full flex items-center">
+      <div className="p-4">
         <VerificationForm settings={settings} user={user} purpose={purpose} />
       </div>
     </div>

@@ -26,9 +26,13 @@ type CategoryBase = {
   parent: Category | null
 
   /**
-   * عنوان برچسب
+   * عنوان دسته
    */
   slug: string
+  /**
+   * آیکون دسته
+   */
+  icon: string
 
   /**
    * محتوا

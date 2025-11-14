@@ -1,15 +1,23 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { buttonVariants } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, getTranslation } from '@/lib/utils'
 import SignupForm from '@/features/user/ui/signup-form'
+import { getSettingsAction } from '@/features/settings/actions'
 
 export const metadata: Metadata = {
   title: 'Authentication',
   description: 'Authentication forms built using the components.',
 }
 
-export default function AuthenticationPage() {
+export default async function AuthenticationPage() {
+  const siteSettings = await getSettingsAction()
+  const pageTranslation = getTranslation({
+    translations: siteSettings?.pageTranslations || [],
+  })
+  const infoTranslation = getTranslation({
+    translations: siteSettings?.infoTranslations || [],
+  })
   return (
     <div className="relative h-screen flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
       <Link
@@ -44,12 +52,17 @@ export default function AuthenticationPage() {
               &ldquo;تلاشی در راه افزایش رفاه و میزان بهره وری کسب و
               کارها&rdquo;
             </p>
-            <footer className="text-sm">بهروز شفاعتی</footer>
+            {/* <footer className="text-sm">بهروز شفاعتی</footer> */}
           </blockquote>
         </div>
       </div>
-      <div className="p-4 lg:p-8 h-full flex items-center">
-        <SignupForm />
+      <div className="p-4 lg:p-8 ">
+        <SignupForm
+          termsPageHref={`/${pageTranslation?.termsPageId?.slug || `#`}`}
+          privacyPageHref={`/${pageTranslation?.privacyPageId?.slug || `#`}`}
+          site_title={infoTranslation?.site_title || ''}
+          logo={siteSettings?.favicon || null}
+        />
       </div>
     </div>
   )

@@ -14,6 +14,7 @@ type Props = {
   siteSettings: Settings
   editroMode: boolean
   rows: Row[]
+  pageSlug: string | null
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
@@ -21,6 +22,7 @@ const RendererRows = ({
   siteSettings,
   editroMode = false,
   rows,
+  pageSlug,
   ...rest
 }: Props) => {
   // فیلتر کردن propsهایی که content_ شروع میشن
@@ -63,6 +65,7 @@ const RendererRows = ({
               const classBaseOnResponsiveDesign = responsiveDesign
                 ? `col-span-12 md:col-span-${col.width}`
                 : `col-span-${col.width} md:col-span-${col.width}`
+
               return (
                 <div
                   data-column
@@ -95,14 +98,17 @@ const RendererRows = ({
                       ...computedStyles(col.settings),
                     }}
                   >
-                    {col.blocks.map((el: any, index: number) => (
-                      <RenderBlock
-                        key={el.id}
-                        item={el}
-                        editroMode={editroMode}
-                        {...contentProps}
-                      />
-                    ))}
+                    {col.blocks.map((el: any, index: number) => {
+                      return (
+                        <RenderBlock
+                          key={el.id}
+                          item={el}
+                          editroMode={editroMode}
+                          pageSlug={pageSlug}
+                          {...contentProps}
+                        />
+                      )
+                    })}
                   </div>
                 </div>
               )

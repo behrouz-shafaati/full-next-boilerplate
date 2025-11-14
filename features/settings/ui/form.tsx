@@ -7,9 +7,17 @@ import { FormValidation } from './form-validation'
 import { FormSMS } from './form-sms'
 import { FormEmail } from './form-email'
 import { FormAD } from './form-ad'
+import { FormUsers } from './form-users'
 
 type FormProps = {
-  tab: 'general' | 'appearance' | 'email' | 'validation' | 'sms' | 'ad'
+  tab:
+    | 'general'
+    | 'appearance'
+    | 'email'
+    | 'validation'
+    | 'sms'
+    | 'ad'
+    | 'users'
 }
 
 export default async function Form({ tab }: FormProps) {
@@ -29,6 +37,7 @@ export default async function Form({ tab }: FormProps) {
       {tab === 'validation' && <FormValidation settings={settings} />}
       {tab === 'sms' && <FormSMS settings={settings} />}
       {tab === 'email' && <FormEmail settings={settings} />}
+      {tab === 'users' && <FormUsers settings={settings} />}
     </div>
   )
 }

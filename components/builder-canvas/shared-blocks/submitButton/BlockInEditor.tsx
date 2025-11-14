@@ -20,9 +20,11 @@ type BlockInEditorProps = {
     type: 'content_post_title'
     settings: {}
   } & Block
+  locale: 'fa'
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const BlockInEditor = ({
+  locale = 'fa',
   widgetName,
   blockData,
   ...props
@@ -36,7 +38,10 @@ export const BlockInEditor = ({
       }}
       {...props}
     >
-      <SubmitButton className="w-full" />
+      <SubmitButton
+        className="w-full"
+        text={settings?.label?.[locale] || 'ارسال'}
+      />
     </div>
   )
 }

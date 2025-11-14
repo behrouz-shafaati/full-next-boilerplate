@@ -4,20 +4,43 @@ export const SettingsSchema = {
   properties: {
     title: {
       title: 'عنوان',
-      type: 'string',
+      type: 'object',
+      properties: {
+        fa: { type: 'string', title: 'فارسی' },
+        // en: { type: 'string', title: 'انگلیسی' },
+        // de: { type: 'string', title: 'آلمانی' },
+        // هر زبان دیگه‌ای هم می‌خوای اضافه کن
+      },
+      required: ['fa'],
+      default: { fa: '' },
     },
     defaultValue: {
       title: 'مقدار پیش فرض',
-      type: 'string',
+      type: 'object',
+      properties: {
+        fa: { type: 'string', title: 'فارسی' },
+      },
+      required: ['fa'],
+      default: { fa: '' },
     },
     description: {
       title: 'توضیح',
-      type: 'string',
+      type: 'object',
+      properties: {
+        fa: { type: 'string', title: 'فارسی' },
+      },
+      required: ['fa'],
+      default: { fa: '' },
     },
 
     placeholder: {
       title: 'جایگذار',
-      type: 'string',
+      type: 'object',
+      properties: {
+        fa: { type: 'string', title: 'فارسی' },
+      },
+      required: ['fa'],
+      default: { fa: '' },
     },
     icon: {
       type: 'string',

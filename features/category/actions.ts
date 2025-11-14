@@ -5,7 +5,7 @@ import categoryCtrl from './controller'
 import { redirect } from 'next/navigation'
 import { Session, State } from '@/types'
 import { Category, CategoryTranslationSchema } from './interface'
-import { createCatrgoryBreadcrumb } from '@/lib/utils'
+import { createCatrgoryBreadcrumb, slugify } from '@/lib/utils'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
 import { revalidatePath } from 'next/cache'
@@ -19,6 +19,7 @@ const FormSchema = z.object({
   slug: z.string({}),
   description: z.string({}),
   status: z.string({}).min(1, { message: 'لطفا وضعیت را تعیین کنید.' }),
+  icon: z.string({}).nullable(),
   image: z.string({}).nullable(),
 })
 
@@ -31,11 +32,12 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   const session = (await getSession()) as Session
   const payload = validatedFields.data
   const user = session.user.id
+  const slug = payload.slug !== '' ? payload.slug : slugify(payload.title)
   const translations = [
     {
       lang: payload.lang,
       title: payload.title,
-      description: payload.description,
+      description: payload.description, // contentJson
     },
     ...prevState.translations.filter(
       (t: CategoryTranslationSchema) => t.lang != payload.lang
@@ -45,6 +47,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
     ...payload,
     translations,
     user,
+    slug,
   }
 
   return params
@@ -225,6 +228,11 @@ export async function deleteCategorysAction(ids: string[]) {
 
 export async function getAllCategories(filters: any = {}) {
   return categoryCtrl.findAll({ filters })
+}
+
+export async function getCategoryAction({ slug }: { slug: string }) {
+  const categoryResult = await categoryCtrl.find({ filters: { slug } })
+  return categoryResult.data[0] || null
 }
 
 export async function searchCategories(query: string, locale: string = 'fa') {

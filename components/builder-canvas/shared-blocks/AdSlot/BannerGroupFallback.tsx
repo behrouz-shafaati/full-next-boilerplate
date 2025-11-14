@@ -17,8 +17,9 @@ export const BannerGroupFallback = ({
 }: BannerGroupProps) => {
   const locale = 'fa'
   const { id, content, settings } = blockData
+  const { pageSlug, ...restProps } = props
   return (
-    <div {...props}>
+    <div {...restProps}>
       <div
         style={{
           display: 'flex',

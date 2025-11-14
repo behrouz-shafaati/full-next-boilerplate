@@ -7,7 +7,7 @@ export const navItems: SidebarNavItem[] = [
     href: '/dashboard',
     icon: 'dashboard',
     label: '',
-    authorized: [],
+    authorized: ['dashboard.view.any'],
   },
   {
     slug: 'post',

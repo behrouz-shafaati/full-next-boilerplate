@@ -212,6 +212,7 @@ async function sanitizeTemplateData(validatedFields: any) {
     templateFor: content.templateFor,
     slug: content.slug,
     status: content.status,
+    parent: content.parent == 'none' ? null : content.parent,
     user,
   }
   return params

@@ -23,6 +23,8 @@ class controller {
         description:
           'مدیریت بخش فنی و ظاهر سایت شامل صفحات، قالب‌ها، منوها و تنظیمات سایت.',
         permissions: [
+          'dashboard.view.any',
+
           'user.edit.own',
           'postComment.create',
           'page.view.any',
@@ -43,6 +45,14 @@ class controller {
           'menu.publish.any',
           'menu.delete.any',
 
+          'form.view.any',
+          'form.create',
+          'form.edit.any',
+          'form.publish.any',
+
+          'formSubmission.create',
+          'formSubmission.view.any',
+
           'settings.view.any',
           'settings.moderate.any',
         ],
@@ -53,6 +63,8 @@ class controller {
         description:
           'مدیریت کامل محتوای سایت شامل مطالب، دسته‌بندی‌ها، تگ‌ها و کامنت‌ها.',
         permissions: [
+          'dashboard.view.any',
+
           'user.edit.own',
           'postComment.create',
           'post.view.any',
@@ -73,6 +85,8 @@ class controller {
           'tag.publish.any',
 
           'postComment.moderate.any',
+
+          'formSubmission.create',
         ],
       },
       {
@@ -81,12 +95,16 @@ class controller {
         description:
           'می‌تواند مطالب خود را ایجاد، ویرایش و منتشر کند. به مطالب دیگران دسترسی ندارد.',
         permissions: [
+          'dashboard.view.any',
+
           'user.edit.own',
           'postComment.create',
           'post.view.own',
           'post.create',
           'post.edit.own',
           'post.publish.own',
+
+          'formSubmission.create',
         ],
       },
       {
@@ -100,6 +118,8 @@ class controller {
           'post.view.own',
           'post.create',
           'post.edit.own',
+
+          'formSubmission.create',
         ],
       },
       {
@@ -107,7 +127,11 @@ class controller {
         slug: 'subscriber',
         description:
           'می‌تواند وارد سایت شود و پروفایل خود را مشاهده و بروزرسانی کند، اما دسترسی مدیریتی ندارد.',
-        permissions: ['user.edit.own', 'postComment.create'],
+        permissions: [
+          'user.edit.own',
+          'postComment.create',
+          'formSubmission.create',
+        ],
       },
       {
         title: 'مشاهده‌کننده',
@@ -115,6 +139,7 @@ class controller {
         description:
           'این نقش فقط امکان مشاهده پنل و محتوا را دارد و هیچ دسترسی مدیریتی ندارد.',
         permissions: [
+          'dashboard.view.any',
           'user.edit.own',
           'postComment.create',
           'postComment.view.any',
@@ -126,13 +151,14 @@ class controller {
           'menu.view.any',
           'page.view.any',
           'template.view.any',
+          'formSubmission.create',
         ],
       },
       {
         title: 'میهمان',
         slug: 'guest',
         description: 'کاربری که لاگین نکرده',
-        permissions: ['formSubmission.create'],
+        permissions: ['formSubmission.create', 'postComment.create'],
         shwoInSetUserRolesList: false,
       },
       {

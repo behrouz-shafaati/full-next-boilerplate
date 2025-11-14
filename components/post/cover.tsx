@@ -5,6 +5,7 @@ import VideoEmbed from '../video-embed/VideoEmbed'
 
 type PostCoverProps = {
   file: File
+  aspectRatio: any | null
   postType: 'article' | 'video'
   primaryVideoEmbedUrl: string | null
   styles?: any
@@ -12,6 +13,7 @@ type PostCoverProps = {
 
 export const PostCover = ({
   file,
+  aspectRatio = null,
   postType,
   primaryVideoEmbedUrl,
   styles = {},
@@ -21,7 +23,13 @@ export const PostCover = ({
     return <VideoEmbed src={primaryVideoEmbedUrl} title="" className="my-4" />
   }
   return file ? (
-    <ImageAlba file={file} showCaption={false} style={styles} {...props} />
+    <ImageAlba
+      file={file}
+      showCaption={false}
+      style={styles}
+      aspectRatio={aspectRatio}
+      {...props}
+    />
   ) : (
     <></>
   )

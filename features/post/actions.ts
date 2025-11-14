@@ -15,15 +15,13 @@ import { User } from '../user/interface'
 import { can } from '../../lib/utils/can.server'
 
 const FormSchema = z.object({
-  title: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
-  seoTitle: z.string({}).min(1, { message: 'لطفا عنوان را وارد کنید.' }),
+  title: z.string({}).nullable(),
+  seoTitle: z.string({}).nullable(),
   contentJson: z.string({}),
   metaDescription: z.string({}),
   lang: z.string({}),
   status: z.string({}),
-  mainCategory: z
-    .string({})
-    .min(1, { message: 'لطفا دسته‌ی اصلی را مشخص کنید.' }),
+  mainCategory: z.string({}).nullable(),
   primaryVideo: z.string({}).nullable(),
   primaryVideoEmbedUrl: z.string({}).nullable(),
   categories: z.string({}),
@@ -281,8 +279,9 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
       (t: PostTranslationSchema) => t.lang != postPayload.lang
     ),
   ]
+  const mainCategory = postPayload.mainCategory || null
   const categoriesId = categories.map((cat: Option) => cat.value)
-  if (!categoriesId.includes(postPayload.mainCategory))
+  if (mainCategory && !categoriesId.includes(postPayload.mainCategory))
     categoriesId.push(postPayload.mainCategory)
   let params = {
     type: postType,
@@ -291,7 +290,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
     tags,
     categories: categoriesId,
     image,
-
+    mainCategory,
     ...(postPayload.status == 'published' ? { publishedAt: new Date() } : {}),
   }
 

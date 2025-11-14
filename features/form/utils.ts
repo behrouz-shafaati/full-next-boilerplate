@@ -21,7 +21,7 @@ export function extractFieldsFromFormContent(form: any): string[] {
           if (INPUT_TYPES.includes(block.type)) {
             const c = block.content || {}
             const s = block.settings || {}
-
+            console.log('$#%#$5$#% swerwer:', s)
             // تبدیل نوع بلاک به نوع HTML استاندارد
             const typeMap: Record<string, string> = {
               textInput: 'text',
@@ -35,13 +35,14 @@ export function extractFieldsFromFormContent(form: any): string[] {
             }
 
             fields.push({
-              label: s?.title || s?.label || 'بدون عنوان',
+              label: s?.title || s?.label || { fa: 'بدون عنوان' },
               name: s.name || block.id, // اگه کاربر نام نداد، از id استفاده می‌کنیم
               type: typeMap[block.type] || 'text',
               options: c?.options || [],
               required: !!s.required,
-              placeholder: s?.placeholder || '',
-              defaultValue: s?.defaultValue || '',
+              placeholder: s?.placeholder || { fa: '' },
+              description: s?.description || { fa: '' },
+              defaultValue: s?.defaultValue || { fa: '' },
             })
           }
         }

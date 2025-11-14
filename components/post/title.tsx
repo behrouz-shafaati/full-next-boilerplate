@@ -7,7 +7,7 @@ type PostCoverProps = {
 
 export const PostTitle = ({ title, styles = {}, ...props }: PostCoverProps) => {
   return (
-    <h1 style={styles} {...props} className="text-md">
+    <h1 style={styles} {...props} className="text-[1.2rem]">
       {title}
     </h1>
   )

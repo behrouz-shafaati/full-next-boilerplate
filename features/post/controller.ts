@@ -14,6 +14,7 @@ import { Post } from './interface'
 import { Category } from '../category/interface'
 import { getTranslation, slugify } from '@/lib/utils'
 import { FileDetails } from '@/lib/entity/file/interface'
+import generateHumanId from '../user/utils/generateUsername'
 
 class controller extends baseController {
   /**
@@ -193,11 +194,12 @@ class controller extends baseController {
     postId: string = ''
   ): Promise<object> {
     console.log('#237s8 params: ', params)
-    const baseSlug =
+    let baseSlug =
       params.slug != '' && params.slug != null
         ? slugify(params.slug)
         : slugify(params.title)
     console.log('#237s8 baseSlug: ', baseSlug)
+    if (baseSlug == null || baseSlug == '') baseSlug = generateHumanId()
     // if it is update and slug doesn't change remove slug from parameters
     if (postId !== '') {
       const findedPostBySlug = await postCtrl.findOne({

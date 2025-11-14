@@ -13,7 +13,7 @@ import {
 } from '@/lib/entity/core/interface'
 import { z } from 'zod'
 import shippingAddressCtrl from '../shippingAddress/controller'
-import generateUsername from './utils/generateUsername'
+import generateHumanId from './utils/generateUsername'
 // import { Role } from "@entity/role/interface";
 // import hash from "@/utils/hash";
 
@@ -176,11 +176,47 @@ class controller extends coreController {
     return { ...user, addresses: addresses.data }
   }
 
-  async isExistUnverifyedUserEmail(email: string) {
+  async isExistUnverifiedUserEmail(email: string) {
     let foundUser = await this.findOne({
       filters: { email: email, emailVerified: false },
     })
-    return foundUser
+    return !!foundUser
+  }
+
+  async isExistUnverifiedUserMobile(mobile: string) {
+    let foundUser = await this.findOne({
+      filters: { mobile: mobile, mobileVerified: false },
+    })
+    return !!foundUser
+  }
+  async isDuplicateUnverifiedMobileEmail({
+    mobile = null,
+    email = null,
+    throwError = true,
+  }: {
+    mobile?: string | null
+    email?: string | null
+    throwError?: boolean
+  }) {
+    if (email) {
+      let foundUser = await this.findOne({
+        filters: { email: email },
+      })
+      if (!!foundUser) {
+        if (throwError) throw new Error('DuplicateEmail')
+        return true
+      }
+    }
+    if (mobile) {
+      let foundUser = await this.findOne({
+        filters: { mobile: mobile },
+      })
+      if (!!foundUser) {
+        if (throwError) throw new Error('DuplicateMobile')
+        return true
+      }
+    }
+    return false
   }
 
   async setEmailIsVerified(email: string) {
@@ -193,7 +229,7 @@ class controller extends coreController {
   async generateUniqueUsername(opt?: any) {
     let flgrepeat = true
     while (flgrepeat) {
-      const userName: string = generateUsername()
+      const userName: string = generateHumanId()
       let foundUser = await this.findOne({
         filters: { userName: userName },
       })

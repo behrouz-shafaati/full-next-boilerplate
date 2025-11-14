@@ -1,8 +1,8 @@
+import highlightText from '@/components/highlight-text'
 import { Separator } from '@/components/ui/separator'
 import { Post, PostTranslationSchema } from '@/features/post/interface'
 import { FileTranslationSchema } from '@/lib/entity/file/interface'
 import { timeAgo } from '@/lib/utils'
-import { CalendarPlus, MessageCircleMore } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -11,9 +11,10 @@ type Props = {
   options: {
     showExcerpt: boolean
   }
+  query?: string
 }
 
-const PostHorizontalCard = ({ post, options }: Props) => {
+const PostHorizontalCard = ({ post, options, query = '' }: Props) => {
   const locale = 'fa'
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
@@ -32,26 +33,30 @@ const PostHorizontalCard = ({ post, options }: Props) => {
         {/* عنوان و توضیح */}
         <div className="p-2">
           <h3 className="text-sm font-semibold mb-1 leading-5 min-h-[2.5rem] line-clamp-2">
-            {translationPost?.title}
+            {highlightText(translationPost.title, query)}
           </h3>
           {options?.showExcerpt != false && (
             <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 m-0 hidden md:block">
-              {translationPost?.excerpt}
+              {highlightText(translationPost?.excerpt, query)}
             </p>
           )}
         </div>
 
         {/* تصویر */}
         <div className="relative w-full h-full min-h-28 aspect-square md:aspect-[4/3] md:row-span-2 overflow-hidden rounded-sm">
-          <Image
-            src={post?.image?.srcMedium || '/placeholder.png'}
-            alt={translationImage?.alt || translationImage?.title}
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 112px, (max-width: 768px) 200px, 300px"
-            placeholder="blur"
-            blurDataURL={post?.image?.srcSmall}
-          />
+          {post?.image?.srcSmall && (
+            <Image
+              src={post?.image?.srcMedium || '/image-placeholder-Medium.webp'}
+              alt={translationImage?.alt || translationImage?.title}
+              fill
+              className="object-cover"
+              sizes="(max-width: 640px) 112px, (max-width: 768px) 200px, 300px"
+              placeholder="blur"
+              blurDataURL={
+                post?.image?.srcSmall || '/image-placeholder-Small.webp'
+              }
+            />
+          )}
         </div>
 
         {/* اطلاعات پایین (تاریخ و دیدگاه) */}

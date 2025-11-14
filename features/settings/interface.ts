@@ -5,6 +5,10 @@ import {
   FallbackBehaviorType,
 } from '../campaign/interface'
 
+type UserSettings = {
+  defaultRoles: string[]
+}
+
 type InfoTranslation = {
   lang: string
   /**
@@ -18,6 +22,23 @@ type InfoTranslation = {
   site_introduction: string
 }
 
+type PageTranslation = {
+  /**
+   * شناسه برگه خانه
+   */
+  homePageId: Id
+
+  /**
+   * شناسه برگه قوانین سایت
+   */
+  termsPageId: Id
+
+  /**
+   * شناسه برگه حریم خصوصی
+   */
+  privacyPageId: Id
+}
+
 /**
  * اطلاعات پایه تنظیمات که شامل فیلدهای اصلی تنظیمات می‌باشد
  */
@@ -27,17 +48,19 @@ type SettingsBase = {
    */
   type: 'site-settings'
 
+  /**
+   *   آدرس سایت
+   */
+  site_url: string
+
   infoTranslations: InfoTranslation[]
+  pageTranslations: PageTranslation[]
+  user: UserSettings
 
   /**
    *   معرفی کوتاه
    */
   favicon: File
-
-  /**
-   * شناسه برگه خانه
-   */
-  homePageId: Id
 
   /**
    * نمایش دیدگاه‌ها فقط بعد از تأیید/بررسی

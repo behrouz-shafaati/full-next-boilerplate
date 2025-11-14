@@ -31,7 +31,7 @@ export const columns = (formFields: any): ColumnDef<FormSubmission>[] => {
     ...formFields.slice(0, countColumnsToShow).map((f: any) => {
       return {
         accessorKey: `values.${f.name}`,
-        header: f.label,
+        header: f.label?.['fa'],
         cell: ({ row }) => {
           const translation = getTranslation({
             translations: row.original.translations,

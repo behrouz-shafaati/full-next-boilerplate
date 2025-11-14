@@ -73,7 +73,9 @@ class controller extends baseController {
   }
 
   async findOneAndUpdate(payload: Update) {
+    console.log('@#4234 4324 payload:', payload)
     const template = await super.findOneAndUpdate(payload)
+    console.log('@#4234 4324 template:', template)
     if (template.status == 'active') {
       await this.deactiveTemplateFor({
         activeId: template.id,
@@ -85,7 +87,6 @@ class controller extends baseController {
 
   async existSlug(slug: string): Promise<boolean> {
     const count = await this.countAll({ slug })
-    console.log('#7d736 Template count: ', count)
     if (count > 0) return true
     return false
   }
@@ -130,24 +131,50 @@ class controller extends baseController {
         if (postTemplateResult.data[0] != undefined)
           return postTemplateResult.data[0]
         break
+      case 'author': // مطلب تکی
+        const [authorTemplateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'author', status: 'active' } }),
+        ])
+        if (authorTemplateResult.data[0] != undefined)
+          return authorTemplateResult.data[0]
+        break
+      case 'account': // مطلب تکی
+        const [accountTemplateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'account', status: 'active' } }),
+        ])
+        if (accountTemplateResult.data[0] != undefined)
+          return accountTemplateResult.data[0]
+        break
       default:
+        let SpecialCategoryTemplate
         // بررسی کند که یک دسته بندی خاص یا والدهای آن اگر هست قالب آن را برگرداند
         const categoryResult = await categoryCtrl.find({ filters: { slug } })
-        if (categoryResult) {
-          const [categoryTemplate] = await Promise.all([
+        if (categoryResult?.data?.length > 0) {
+          ;[SpecialCategoryTemplate] = await Promise.all([
             this.getCategoryTemplate(categoryResult.data[0]),
           ])
-          if (categoryTemplate != undefined && categoryTemplate != null)
-            return categoryTemplate
+
+          if (
+            SpecialCategoryTemplate != undefined &&
+            SpecialCategoryTemplate != null
+          )
+            return SpecialCategoryTemplate
         }
-        // اگر این دسته قالب مخصوصی نداشت از قالب عمومی برای تمام دسته ها استفاده شود
-        ;[categoriesTemplateResult] = await Promise.all([
-          this.find({
-            filters: { templateFor: 'categories', status: 'active' },
-          }),
-        ])
-        if (categoriesTemplateResult.data[0] != undefined)
-          return categoriesTemplateResult.data[0]
+        if (
+          slug !== 'allPages' &&
+          (SpecialCategoryTemplate == undefined ||
+            SpecialCategoryTemplate == null)
+        ) {
+          // با این شرط چک میکنیم که اگر در حال جستجو برای قالب عمومی هستیم از این بخش گذر کنیم
+          // اگر این دسته قالب مخصوصی نداشت از قالب عمومی برای تمام دسته ها استفاده شود
+          ;[categoriesTemplateResult] = await Promise.all([
+            this.find({
+              filters: { templateFor: 'categories', status: 'active' },
+            }),
+          ])
+          if (categoriesTemplateResult.data[0] != undefined)
+            return categoriesTemplateResult.data[0]
+        }
     }
 
     // در غیر این صورت قالب عمومی سایت برگردد
@@ -227,7 +254,15 @@ class controller extends baseController {
 }
 
 type getTemplateProp = {
-  slug: 'allPages' | 'blog' | 'categories' | 'archive' | 'post' | 'category'
+  slug:
+    | 'allPages'
+    | 'blog'
+    | 'categories'
+    | 'archive'
+    | 'post'
+    | 'category'
+    | 'author'
+    | 'account'
 }
 
 const templateCtrl = new controller(new templateService(templateSchema))

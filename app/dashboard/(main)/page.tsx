@@ -45,11 +45,13 @@ export default async function page() {
               icon={<User />}
             />
           )}
-          <StatCard
-            title="نظرات در انتظار"
-            value={stats.pendingComments}
-            icon={<MessageSquare />}
-          />
+          {canViewPostComment && (
+            <StatCard
+              title="نظرات در انتظار"
+              value={stats.pendingComments}
+              icon={<MessageSquare />}
+            />
+          )}
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-1  lg:grid-cols-2 gap-4">
           {canViewPost && (

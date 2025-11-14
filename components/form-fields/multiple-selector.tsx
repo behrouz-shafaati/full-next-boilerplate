@@ -21,6 +21,7 @@ type MultiSelect = {
   state?: any
   onChange?: (values: Option[]) => void
   onSearch?: (query: string) => Promise<Option[]>
+  disabled?: boolean
 }
 export default function MultiSelect({
   title,
@@ -33,6 +34,7 @@ export default function MultiSelect({
   state,
   onChange,
   onSearch,
+  disabled = false,
 }: MultiSelect) {
   const [values, setValues] = useState<Option[]>(defaultValues || [])
   const [defaultOptions, setDefaultOptions] = useState<Option[]>(
@@ -43,7 +45,7 @@ export default function MultiSelect({
   const hasError = state?.errors?.[name]?.length > 0
   const InputIcon = typeof icon === 'object' ? () => icon : icon
   return (
-    <div className="mb-4">
+    <div className="mb-4 w-full">
       <input
         type="hidden"
         readOnly
@@ -75,6 +77,7 @@ export default function MultiSelect({
             }
             {...(onSearch ? { onSearch: onSearch } : {})}
             {...(maxSelected ? { maxSelected } : {})}
+            disabled={disabled}
           />
         </div>
         {icon && (

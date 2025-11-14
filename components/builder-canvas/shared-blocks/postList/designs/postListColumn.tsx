@@ -16,10 +16,12 @@ type PostListProps = {
     id: string
     type: 'postList'
     content: {
+      title: string
       tags: Option[]
       categories: Option[]
     }
     settings: {
+      showNewest: boolean
       showArrows: boolean
       loop: boolean
       autoplay: boolean
@@ -42,10 +44,6 @@ export const PostListColumn = ({
     : 'w-full h-auto max-w-full'
 
   const { onClick, ...restProps } = props
-  const filters = {
-    tags: content?.tags?.map((tag) => tag.slug) || [],
-    categories: content?.categories?.map((category) => category.slug) || [],
-  }
 
   let queryParamLS = content?.tags || []
   if (settings?.showNewest == true)

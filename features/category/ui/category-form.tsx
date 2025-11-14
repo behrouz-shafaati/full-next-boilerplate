@@ -2,7 +2,14 @@
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Braces as CategoryIcon, Mail as MailIcon, Trash } from 'lucide-react'
+import {
+  Braces as CategoryIcon,
+  ListTree,
+  Mail as MailIcon,
+  Tag,
+  ToggleLeft,
+  Trash,
+} from 'lucide-react'
 // import { Separator } from "@/components/ui/separator";
 import { Heading } from '@/components/ui/heading'
 // import FileUpload from "@/components/FileUpload";
@@ -24,6 +31,10 @@ import Select from '../../../components/form-fields/select'
 import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
+import StickyBox from 'react-sticky-box'
+import { IconPicker } from '@/components/form-fields/IconPicker'
+import TiptapEditor from '@/components/tiptap-editor'
+import { Label } from '@/components/ui/label'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -122,6 +133,12 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         description: state.message,
       })
   }, [state])
+  const submitManually = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit() // بهترین راه
+    }
+  }
+
   if ((category && !canEdit) || !canCreate) return <AccessDenied />
   return (
     <>
@@ -148,19 +165,8 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         )}
       </div>
       {/* <Separator /> */}
-      <form action={dispatch} className="space-y-8 w-full" ref={formRef}>
-        {/* Product Media image */}
-        <section className="mt-2 rounded-md  p-4 md:mt-0 md:p-6">
-          <FileUpload
-            title="تصویر شاخص دسته بندی"
-            name="image"
-            state={state}
-            maxFiles={1}
-            allowedFileTypes={{ 'image/*': [] }}
-            defaultValues={state?.values?.image}
-          />
-        </section>
-        <div className="md:grid md:grid-cols-3 gap-8">
+      <form action={dispatch} className="grid grid-cols-12 gap-8" ref={formRef}>
+        <div className="col-span-12 md:col-span-9">
           <input
             type="text"
             name="lang"
@@ -184,7 +190,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             defaultValue={state?.values?.slug || ''}
             placeholder="نامک"
             state={state}
-            icon={<CategoryIcon className="w-4 h-4" />}
+            icon={<Tag className="w-4 h-4" />}
           />
           {/* Parent */}
           <Combobox
@@ -194,17 +200,35 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             options={parentOptions}
             placeholder="دسته والد"
             state={state}
-            icon={<CategoryIcon className="w-4 h-4" />}
+            icon={<ListTree className="w-4 h-4" />}
           />
-          {/* description */}
-          <Text
-            title="توضیحات"
+          {/* description contentJson*/}
+
+          <Label
+            htmlFor="description"
+            className="mb-2 block text-sm font-medium"
+          >
+            توضیحات
+          </Label>
+          <TiptapEditor
+            attachedFilesTo={[
+              { feature: 'category', id: category?.id || null },
+            ]}
             name="description"
-            defaultValue={state?.values?.translation?.description}
-            placeholder="توضیحات"
-            state={state}
-            icon={<MailIcon className="w-4 h-4" />}
+            defaultContent={
+              category
+                ? JSON.parse(state?.values?.translation?.description)
+                : {}
+            }
+            onChangeFiles={submitManually}
+            className="h-full"
+            onLoading={setLoading}
           />
+        </div>
+        <div className="relative col-span-12 md:col-span-3 gap-2">
+          <StickyBox offsetBottom={0}>
+            <SubmitButton loading={loading} className="my-4 w-full" />
+          </StickyBox>
           {/* status */}
           <Select
             title="وضعیت"
@@ -213,10 +237,23 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
             options={statusOptions}
             placeholder="وضعیت"
             state={state}
-            icon={<MailIcon className="w-4 h-4" />}
+            icon={<ToggleLeft className="w-4 h-4" />}
+          />
+          <IconPicker
+            title="آیکون"
+            name="icon"
+            defaultValue={state?.values?.icon}
+          />
+          <FileUpload
+            title="تصویر شاخص دسته بندی"
+            name="image"
+            state={state}
+            maxFiles={1}
+            allowedFileTypes={{ 'image/*': [] }}
+            defaultValues={state?.values?.image}
+            onLoading={setLoading}
           />
         </div>
-        <SubmitButton />
       </form>
     </>
   )

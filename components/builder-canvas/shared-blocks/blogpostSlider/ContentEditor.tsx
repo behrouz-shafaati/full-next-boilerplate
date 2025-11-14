@@ -13,6 +13,7 @@ import { getAllCategories } from '@/features/category/actions'
 import { getAllTags, searchTags } from '@/features/tag/actions'
 import Text from '@/components/form-fields/text'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
+import Switch from '@/components/form-fields/switch'
 
 type Props = {
   initialData: any
@@ -94,7 +95,19 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
             categories: values,
           })
         }}
+        disabled={selectedBlock?.content?.usePageCategory ?? false}
         // icon={ShieldQuestionIcon}
+      />
+      <Switch
+        name="usePageCategory"
+        title="مطالب مرتبط با دسته‌ی صفحه‌ی جاری"
+        defaultChecked={selectedBlock?.content?.usePageCategory ?? false}
+        onChange={(values) => {
+          update(selectedBlock?.id as string, 'content', {
+            ...selectedBlock?.content,
+            usePageCategory: values,
+          })
+        }}
       />
       {/* tags */}
       <MultipleSelector

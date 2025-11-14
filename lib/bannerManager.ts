@@ -95,7 +95,6 @@ export class BannerManager {
     fallbackBehavior: FallbackBehaviorType
     cb: AdSlotCallback
   }) {
-    console.log('#banner ', id, ' regestred.')
     this.slots[id] = { aspect, placement, linkedCampaign, fallbackBehavior, cb }
     this.scheduleFetch()
   }

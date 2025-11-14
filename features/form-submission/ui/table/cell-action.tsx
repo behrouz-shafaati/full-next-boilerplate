@@ -26,6 +26,7 @@ interface CellActionProps {
 }
 
 export const CellAction: React.FC<CellActionProps> = ({ data, formFields }) => {
+  const locale = 'fa'
   const [loading, setLoading] = useState(false)
   const [open, setOpen] = useState(false)
   const [openDetails, setOpenDetails] = useState(false)
@@ -72,7 +73,7 @@ export const CellAction: React.FC<CellActionProps> = ({ data, formFields }) => {
           key={f.id}
           className="flex flex-row gap-2 p-2 hover:bg-slate-200 dark:hover:bg-slate-800 rounded"
         >
-          <div>{f.label}:</div>
+          <div>{f.label?.[locale]}:</div>
           <div className="font-light leading-relaxed">
             {translation.values[f.name]}
           </div>

@@ -18,6 +18,7 @@ import { TextInputBlockDef } from '../shared-blocks/text-input'
 import { TextareaInputBlockDef } from '../shared-blocks/textarea-input'
 import { SubmitButtonBlockDef } from '../shared-blocks/submitButton'
 import { FormBlockDef } from '../shared-blocks/form'
+import { SearchBlockDef } from '../shared-blocks/search'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
@@ -28,7 +29,7 @@ export const blockRegistry = {
   imageSlider: ImageSliderBlockDef,
   blogPostSlider: BlogPostSliderBlockDef,
   menu: MenuBlockDef,
-  alticleList: PostListBlockDef,
+  postList: PostListBlockDef,
   button: ButtonBlockDef,
   write: WriteBlockDef,
   adSlot: AdSlotBlockDef,
@@ -37,6 +38,7 @@ export const blockRegistry = {
   textareaInput: TextareaInputBlockDef,
   submitButton: SubmitButtonBlockDef,
   form: FormBlockDef,
+  search: SearchBlockDef,
 }
 
 registerBlock(blockRegistry)
