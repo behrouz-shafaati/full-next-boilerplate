@@ -9,7 +9,7 @@ import {
   CategoryTranslationSchema,
 } from '@/features/category/interface'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
-import { getAllCategories } from '@/features/category/actions'
+import { getAllCategories, searchCategories } from '@/features/category/actions'
 import { getAllTags, searchTags } from '@/features/tag/actions'
 import Text from '@/components/form-fields/text'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
@@ -96,6 +96,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
           })
         }}
         disabled={selectedBlock?.content?.usePageCategory ?? false}
+        onSearch={searchCategories}
         // icon={ShieldQuestionIcon}
       />
 

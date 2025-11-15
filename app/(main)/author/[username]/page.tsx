@@ -1,7 +1,7 @@
+export const dynamic = 'force-dynamic'
 import React from 'react'
 import userCtrl from '@/features/user/controller'
 import { notFound } from 'next/navigation'
-import { getTranslation } from '@/lib/utils'
 import postCtrl from '@/features/post/controller'
 import AuthorPage from '@/features/post/ui/page/author'
 import { getSettings } from '@/features/settings/controller'

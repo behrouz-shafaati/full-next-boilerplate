@@ -7,7 +7,6 @@ import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
 import EmptyBlock from '../../components/EmptyBlock'
 import { getCategoryAction } from '@/features/category/actions'
-import { PostListFallback } from './PostListFallback'
 
 type PostListBlockProps = {
   widgetName: string

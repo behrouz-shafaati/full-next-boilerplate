@@ -17,16 +17,16 @@ export const PostTags = ({ tags, styles = {}, ...props }: PostCoverProps) => {
         {tags.map((t) => {
           const translation = getTranslation({ translations: t.translations })
           return (
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex gap-1"
-              key={t.id}
-            >
-              {t?.icon && t?.icon != '' && (
-                <IconRenderer name={t.icon} className={`w-5 h-5`} />
-              )}
-              <Link href={`/archive/tags/${t.slug}`}>{translation?.title}</Link>
+            <Button variant="outline" size="sm" key={t.id} className="p-0">
+              <Link
+                href={`/archive/tags/${t.slug}`}
+                className="flex gap-1 h-full px-2 items-center"
+              >
+                {t?.icon && t?.icon != '' && (
+                  <IconRenderer name={t.icon} className={`w-5 h-5`} />
+                )}
+                {translation?.title}
+              </Link>
             </Button>
           )
         })}

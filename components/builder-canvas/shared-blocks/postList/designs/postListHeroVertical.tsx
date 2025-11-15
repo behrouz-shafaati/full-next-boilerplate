@@ -10,6 +10,7 @@ import { PostTitle } from '@/components/post/title'
 import PostHorizontalCard from './ArticalHorizontalCard'
 import { PostExcerpt } from '@/components/post/excerpt'
 import { useDeviceType } from '@/hooks/use-device-type'
+import Link from 'next/link'
 
 type PostListProps = {
   posts: Post[]
@@ -42,6 +43,7 @@ export const PostListHeroVertical = ({
   const [loadingHeight, setLoadingHeight] = useState<boolean>(true)
   const [mainHeight, setMainHeight] = useState<number | null>(0)
   const device = useDeviceType({ initial: 'mobile' })
+  const { settings } = blockData
 
   useEffect(() => {
     if (mainRef.current) {
@@ -63,13 +65,16 @@ export const PostListHeroVertical = ({
       <div className="flex flex-col md:flex-row gap-4">
         {/* Right column — active item */}
         <div ref={mainRef} className="md:w-2/3 w-full h-fit overflow-hidden">
-          <PostCover
-            file={firstPost.image}
-            postType={firstPost.type}
-            primaryVideoEmbedUrl={firstPost.primaryVideoEmbedUrl}
-          />
-          <PostTitle title={firstPostTranslation.title} />
-          <PostExcerpt content={firstPostTranslation.excerpt} />
+          <Link href={firstPost?.href} className="w-full h-fit">
+            <PostCover
+              file={firstPost.image}
+              postType={firstPost.type}
+              primaryVideoEmbedUrl={firstPost.primaryVideoEmbedUrl}
+              zoomable={false}
+            />
+            <PostTitle title={firstPostTranslation.title} />
+            <PostExcerpt content={firstPostTranslation.excerpt} />
+          </Link>
         </div>
 
         {/* Left column — playlist list */}
@@ -90,7 +95,9 @@ export const PostListHeroVertical = ({
                   <PostHorizontalCard
                     key={post.id}
                     post={post}
-                    options={{ showExcerpt: true }}
+                    options={{
+                      showExcerpt: settings?.showExcerpt == true ? true : false,
+                    }}
                   />
                 )
               )}

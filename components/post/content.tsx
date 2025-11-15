@@ -10,8 +10,9 @@ export const PostContent = ({
   styles = {},
   ...props
 }: PostCoverProps) => {
+  const { className, ...rest } = props
   return (
-    <article style={styles} {...props}>
+    <article style={styles} className={`font-light ${className}`} {...rest}>
       {content}
     </article>
   )

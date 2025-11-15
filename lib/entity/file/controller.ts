@@ -17,6 +17,8 @@ const sharp = require('sharp')
 const path = require('path')
 const fs = require('fs')
 
+import { dirname, join } from 'path'
+
 // const extractFrames = require('ffmpeg-extract-frames');
 
 class controller extends c_controller {
@@ -332,23 +334,70 @@ function createFileName(title: string, fileExtension: string) {
   return `${uniqueSuffix}.${fileExtension}`
 }
 
-function safeUnlink(filePath: string, retries = 10, delay = 500) {
+export async function safeUnlink(
+  filePath: string,
+  maxRetries = 12,
+  baseDelay = 200
+) {
   let attempt = 0
 
-  function tryUnlink() {
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms))
+
+  // یک نام موقتی در همان فولدر بساز (تا cross-device مشکل نداشته باشیم)
+  const makeTmpName = () => {
+    const dir = dirname(filePath)
+    const name = `${Date.now()}-${Math.random().toString(36).slice(2)}.delete`
+    return join(dir, name)
+  }
+
+  while (attempt <= maxRetries) {
     try {
-      fs.unlinkSync(filePath)
+      await fs.promises.unlink(filePath)
       // موفق شد
-      // console.log("tmp file deleted:", filePath);
+      return true
     } catch (err: any) {
-      if (err.code === 'EBUSY' && attempt < retries) {
-        attempt++
-        setTimeout(tryUnlink, delay)
-      } else if (err.code !== 'ENOENT') {
-        console.warn('cannot delete tmp file:', err)
+      // اگر فایل اصلاً نبود => موفق به هدف شدیم (هیچ کاری لازم نیست)
+      if (err.code === 'ENOENT') return true
+
+      // خطاهایی که می‌تونیم retry کنیم
+      if (
+        err.code === 'EBUSY' ||
+        err.code === 'EPERM' ||
+        err.code === 'EACCES'
+      ) {
+        // تلاش برای rename به نام موقتی (اگر امکان داشت، خیلی از locks رو دور می‌زنه)
+        const tmp = makeTmpName()
+        try {
+          await fs.promises.rename(filePath, tmp)
+          // اگر rename موفق شد، حالا سعی کن tmp رو پاک کنی
+          try {
+            await fs.promises.unlink(tmp)
+            return true
+          } catch (e2) {
+            // اگر حذف tmp هم نشد، سعی می‌کنیم بعداً حذفش کنیم — ولی نام اصلی آزاد شد
+            // برنامه‌نویس میتواند tmp را در فهرست پاک‌سازی بعدی پاک کند
+            console.warn(
+              'renamed but could not unlink tmp file, will retry later',
+              tmp,
+              e2
+            )
+            return false
+          }
+        } catch (renameErr: any) {
+          // rename هم نشد — پس retry بعدی
+          attempt++
+          const delay = baseDelay * attempt
+          await wait(delay)
+          continue
+        }
       }
+
+      // خطای دیگریه — log کن و بیرون بزن
+      console.warn('cannot delete tmp file:', err)
+      return false
     }
   }
 
-  tryUnlink()
+  console.warn('safeUnlink: exceeded retries for', filePath)
+  return false
 }

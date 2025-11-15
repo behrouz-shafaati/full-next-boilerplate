@@ -1,7 +1,6 @@
 // پنل تنظیمات برای این بلاک
 import React from 'react'
 import { useBuilderStore } from '../../store/useBuilderStore'
-import Select from '@/components/form-fields/select'
 import { useDebouncedCallback } from 'use-debounce'
 
 const ContentEditor = () => {

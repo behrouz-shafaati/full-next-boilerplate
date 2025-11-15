@@ -52,6 +52,7 @@ export default function EnhanceHtmlForNext({
               width,
               height,
             } = domNode.attribs
+
             return (
               <ImageAlba
                 file={{

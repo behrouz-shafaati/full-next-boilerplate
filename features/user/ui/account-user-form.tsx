@@ -191,6 +191,7 @@ export const AccountUserForm: React.FC<ProductFormProps> = ({
             state={state}
             icon={<MailIcon className="w-4 h-4" />}
             className=""
+            readOnly
           />
           {/* Mobile */}
           <Text

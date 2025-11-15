@@ -22,7 +22,7 @@ export default function MenuItemDesktop({
   }
 
   return item.url ? (
-    <div className={`relative group transition-all`}>
+    <div className={`relative group transition-all z-20`}>
       <Link
         href={item.url}
         className="flex items-center gap-1 px-2 py-1 hover:text-blue-600"

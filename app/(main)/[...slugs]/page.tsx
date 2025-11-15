@@ -9,7 +9,6 @@ import postCtrl from '@/features/post/controller'
 import { notFound } from 'next/navigation'
 import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 import templateCtrl from '@/features/template/controller'
-import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
 import { Post, PostTranslationSchema } from '@/features/post/interface'
 import {
   createPostHref,

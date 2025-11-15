@@ -21,16 +21,11 @@ export const PostListBlockSchema = {
       ],
       default: 'row',
     },
-
-    showExcerpt: {
-      type: 'boolean',
-      title: 'نمایش گزیده',
-      default: true,
-    },
   },
   required: ['listDesign'],
   allOf: [
     {
+      // حالت column / row (بدون تغییر)
       if: {
         properties: { listDesign: { enum: ['column', 'row'] } },
       },
@@ -39,7 +34,12 @@ export const PostListBlockSchema = {
           cardDesign: {
             type: 'string',
             title: 'طرح کارت',
-            enum: ['image-card', 'overly-card', 'horizontal-card'],
+            oneOf: [
+              { const: 'image-card', title: 'عمودی' },
+              { const: 'overly-card', title: 'عنوان روی تصویر' },
+              { const: 'horizontal-card', title: 'کارت افقی' },
+              { const: 'horizontal-card-small', title: 'کارت افقی کوچک' },
+            ],
             default: 'image-card',
           },
           showNewest: {
@@ -55,13 +55,46 @@ export const PostListBlockSchema = {
             description: `aspect: 4/1`,
           },
         },
+        allOf: [
+          {
+            if: {
+              properties: {
+                cardDesign: { not: { const: 'horizontal-card-small' } },
+              },
+            },
+            then: {
+              properties: {
+                showExcerpt: {
+                  type: 'boolean',
+                  title: 'نمایش گزیده',
+                  default: true,
+                },
+              },
+            },
+          },
+        ],
       },
+
+      // ⭐⭐ حالت hero + spotlight (فقط نمایش showExcerpt) ⭐⭐
       else: {
-        properties: {
-          // cardDesign: { type: 'null' },
-          // showExcerpt: { type: 'null' },
-          // showNewest: { type: 'null' },
-          // advertisingAfter: { type: 'null' },
+        if: {
+          properties: {
+            listDesign: {
+              enum: ['heroVertical', 'heroHorizontal', 'spotlight'],
+            },
+          },
+        },
+        then: {
+          properties: {
+            showExcerpt: {
+              type: 'boolean',
+              title: 'نمایش گزیده',
+              default: true,
+            },
+          },
+        },
+        else: {
+          properties: {},
         },
       },
     },

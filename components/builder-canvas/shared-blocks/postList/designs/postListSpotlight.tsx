@@ -1,15 +1,9 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { getTranslation } from '@/lib/utils'
 import { Block } from '@/components/builder-canvas/types'
-import { ScrollArea } from '@/components/ui/scroll-area'
-import { PostCover } from '@/components/post/cover'
-import { PostTitle } from '@/components/post/title'
-import PostHorizontalCard from './ArticalHorizontalCard'
-import { PostExcerpt } from '@/components/post/excerpt'
-import { useDeviceType } from '@/hooks/use-device-type'
 import PostOverlayCard from './OverlayCard'
 
 type PostListProps = {
@@ -40,13 +34,22 @@ export const PostListSpotlight = ({
   ...props
 }: PostListProps) => {
   if (!posts?.length) return null
-  const { settings } = blockData
+  const { settings, content } = blockData
   const firstPost = posts[0]
   const otherPosts = posts.slice(1)
 
   return (
     <div {...props}>
-      <div className="w-full flex flex-col gap-6 my-6">
+      {content?.title && (
+        <div className="flex flex-row justify-between pb-2 ">
+          <div className="py-4">
+            <span className="block px-4 border-r-4 border-primary">
+              {content?.title}
+            </span>
+          </div>
+        </div>
+      )}
+      <div className="w-full flex flex-col gap-6 ">
         {/* ---- Featured (اولی) ---- */}
         <PostOverlayCard
           post={firstPost}
@@ -60,6 +63,7 @@ export const PostListSpotlight = ({
             const t = getTranslation({ translations: post.translations })
             return (
               <PostOverlayCard
+                key={post.id}
                 post={post}
                 direction="column"
                 options={settings}

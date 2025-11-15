@@ -1,6 +1,6 @@
-// export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic'
 // export const dynamic = 'auto'
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
 

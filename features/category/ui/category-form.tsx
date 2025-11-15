@@ -228,31 +228,31 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
         <div className="relative col-span-12 md:col-span-3 gap-2">
           <StickyBox offsetBottom={0}>
             <SubmitButton loading={loading} className="my-4 w-full" />
+            {/* status */}
+            <Select
+              title="وضعیت"
+              name="status"
+              defaultValue={state?.values?.status}
+              options={statusOptions}
+              placeholder="وضعیت"
+              state={state}
+              icon={<ToggleLeft className="w-4 h-4" />}
+            />
+            <IconPicker
+              title="آیکون"
+              name="icon"
+              defaultValue={state?.values?.icon}
+            />
+            <FileUpload
+              title="تصویر شاخص دسته بندی"
+              name="image"
+              state={state}
+              maxFiles={1}
+              allowedFileTypes={{ 'image/*': [] }}
+              defaultValues={state?.values?.image}
+              onLoading={setLoading}
+            />
           </StickyBox>
-          {/* status */}
-          <Select
-            title="وضعیت"
-            name="status"
-            defaultValue={state?.values?.status}
-            options={statusOptions}
-            placeholder="وضعیت"
-            state={state}
-            icon={<ToggleLeft className="w-4 h-4" />}
-          />
-          <IconPicker
-            title="آیکون"
-            name="icon"
-            defaultValue={state?.values?.icon}
-          />
-          <FileUpload
-            title="تصویر شاخص دسته بندی"
-            name="image"
-            state={state}
-            maxFiles={1}
-            allowedFileTypes={{ 'image/*': [] }}
-            defaultValues={state?.values?.image}
-            onLoading={setLoading}
-          />
         </div>
       </form>
     </>

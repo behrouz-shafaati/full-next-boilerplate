@@ -145,7 +145,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({
   useEffect(() => {
     if (state?.message && state.message !== null)
       toast({
-        variant: 'destructive',
+        variant: state?.success ? 'default' : 'destructive',
         title: '',
         description: state.message,
       })
@@ -154,6 +154,13 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({
   const translation: CampaignTranslation = getTranslation({
     translations: state?.values?.translations,
   })
+
+  const submitManually = () => {
+    if (formRef.current) {
+      formRef.current.requestSubmit() // بهترین راه
+    }
+  }
+
   return (
     <>
       <div className="flex items-center justify-between">
@@ -281,6 +288,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({
                   maxFiles={1}
                   allowedFileTypes={{ 'image/*': [] }}
                   defaultValues={defaultValu?.file ? [defaultValu?.file] : []}
+                  onChange={submitManually}
                   onLoading={setLoading}
                 />
               </section>

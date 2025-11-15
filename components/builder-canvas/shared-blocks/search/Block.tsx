@@ -3,16 +3,22 @@
 import React, { useEffect, useState } from 'react'
 import { Block } from '../../types'
 import { Button } from '@/components/custom/button'
-import { MoveLeft, Search as SearchIcon } from 'lucide-react'
+import { MoveLeft, Search as SearchIcon, X } from 'lucide-react'
 import { computedStyles } from '../../utils/styleUtils'
 import Modal from '@/components/modal/modal'
 import Link from 'next/link'
-import Search from '@/components/ui/search'
-import PostHorizontalCard from '../PostList/designs/ArticalHorizontalCard'
-import { useSearchParams, useRouter } from 'next/navigation'
+import PostHorizontalCard from '../postList/designs/ArticalHorizontalCard'
 import { getPosts } from '@/features/post/actions'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { motion } from 'framer-motion'
+import Text from '@/components/form-fields/text'
+import { useDebouncedCallback } from 'use-debounce'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+} from '@/components/ui/dialog'
 
 type Props = {
   blockData: {
@@ -27,15 +33,9 @@ export const SearchBlock = ({ blockData, ...props }: Props) => {
   const [open, setOpen] = useState(false)
   const [postResults, setPostResults] = useState<any>({})
   const [loading, setLoading] = useState(false)
+  const [query, setQuery] = useState('')
 
-  const searchParams = useSearchParams()
-  const router = useRouter()
-
-  // query فعلی از آدرس
-  const query = searchParams.get('query') || ''
-
-  // گرفتن نتایج هر وقت query تغییر کرد
-  useEffect(() => {
+  const debouncedSearch = useDebouncedCallback(async (q: string) => {
     if (!query) {
       setPostResults({})
       return
@@ -56,6 +56,11 @@ export const SearchBlock = ({ blockData, ...props }: Props) => {
     }
 
     fetchPosts()
+  }, 700)
+
+  // گرفتن نتایج هر وقت query تغییر کرد
+  useEffect(() => {
+    debouncedSearch(query)
   }, [query])
 
   //  حالت خالی (بدون query)
@@ -107,7 +112,7 @@ export const SearchBlock = ({ blockData, ...props }: Props) => {
               <PostHorizontalCard
                 query={query}
                 post={post}
-                options={{ showExcerpt: false }}
+                options={{ showExcerpt: true }}
               />
             </motion.div>
           )
@@ -127,38 +132,44 @@ export const SearchBlock = ({ blockData, ...props }: Props) => {
     </div>
   )
 
-  // ⬇ محتویات مودال
-  const SearchModal = () => {
-    return (
-      <div className="flex flex-col">
-        <div className="flex flex-col items-center gap-4 p-4">
-          <Search placeholder="جستجو کنید ..." className="w-full " />
-        </div>
-
-        <ScrollArea className="flex flex-col m-auto justify-center w-full h-[90vh] md:h-[75vh]">
-          {!query ? (
-            <EmptyQueryView />
-          ) : loading ? (
-            <LoadingView />
-          ) : postResults?.data?.length === 0 ? (
-            <EmptyQueryView />
-          ) : (
-            <ResultsList />
-          )}
-        </ScrollArea>
-      </div>
-    )
-  }
-
   return (
     <>
-      <Modal
-        content={<SearchModal />}
-        isOpen={open}
-        onCloseModal={() => setOpen(false)}
-        size="medium"
-        className="h-[100vh] md:h-[90vh]"
-      />
+      <Dialog open={open} onOpenChange={() => setOpen(false)}>
+        <DialogContent className={``}>
+          <div className="flex flex-col">
+            <div className="flex flex-row items-center gap-4 p-4 justify-between">
+              <Text
+                value={query}
+                name="search"
+                title=""
+                icon={<SearchIcon className="w-4 h-4" />}
+                placeholder="جستجو کنید ..."
+                className="w-full "
+                onChange={(e) => setQuery(e.target.value)}
+              />
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setOpen(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+
+            <ScrollArea className="flex flex-col m-auto justify-center w-full h-[90vh] md:h-[75vh]">
+              {!query ? (
+                <EmptyQueryView />
+              ) : loading ? (
+                <LoadingView />
+              ) : postResults?.data?.length === 0 ? (
+                <EmptyQueryView />
+              ) : (
+                <ResultsList />
+              )}
+            </ScrollArea>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Button
         variant="ghost"

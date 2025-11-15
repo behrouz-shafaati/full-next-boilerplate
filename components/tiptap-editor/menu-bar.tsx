@@ -592,6 +592,7 @@ const MenuBar = ({
               {...(fileUploadSettings.onChangeFiles
                 ? { onChange: fileUploadSettings.onChangeFiles }
                 : {})}
+              onLoading={fileUploadSettings?.onLoading}
             />
           </ScrollArea>
           <DialogFooter className="fixed bottom-0 w-full  px-6 pb-6 bg-white dark:bg-slate-900">

@@ -59,13 +59,13 @@ export default function Combobox({
   const [loading, setLoading] = useState(false)
   const debouncedFetchOptions = useDebouncedCallback((query) => {
     setLoading(true)
-    fetchOptions(query).then((opts) => {
+    fetchOptions?.(query).then((opts) => {
       setOptions(opts)
       setLoading(false)
     })
   }, 600)
   useEffect(() => {
-    if (options) {
+    if (options && !fetchOptions) {
       const filteredOptions: Option[] = initialOptions.filter((opt) => {
         const label = opt.label || '' // اگر label وجود ندارد، مقدار خالی
         return label.toString().toLowerCase().includes(query.toLowerCase())

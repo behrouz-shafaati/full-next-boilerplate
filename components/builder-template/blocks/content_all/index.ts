@@ -13,5 +13,5 @@ export const ContentBlockDef = {
   settingsSchema: contentBlockSchema,
   defaultSettings: contentBlockDefaults,
   ContentEditor: ContentEditor,
-  inTemplateFor: ['allPages', 'category', 'categories', 'post'],
+  inTemplateFor: ['allPages', 'category', 'categories', 'post', 'author'],
 }

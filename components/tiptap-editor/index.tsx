@@ -197,9 +197,11 @@ export default function TiptapEditor({
           className={`prose prose-sm max-w-full outline-none focus:outline-none focus:ring-0 focus:border-transparent 
             focus-within:[&>div]:outline-none focus-within:[&>div]:ring-0 border p-4 rounded-lg bg-white dark:bg-neutral-900 ${className}`}
         />
-        <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
-          <code>{content}</code>
-        </pre>
+        {process.env.NODE_ENV === 'development' && (
+          <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
+            <code>{content}</code>
+          </pre>
+        )}
       </div>
     </div>
   )

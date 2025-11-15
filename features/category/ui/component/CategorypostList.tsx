@@ -1,8 +1,7 @@
 import { getPosts } from '@/features/post/actions'
-import categoryCtrl from '../../controller'
-import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/PostList/designs/ArticalHorizontalCard'
+import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/postList/designs/ArticalHorizontalCard'
 import { getTranslation } from '@/lib/utils'
-import { PostListColumn } from '@/components/builder-canvas/shared-blocks/PostList/designs/PostListColumn'
+import { PostListColumn } from '@/components/builder-canvas/shared-blocks/postList/designs/PostListColumn'
 import CategoryDescription from './Description'
 import { Category } from '../../interface'
 

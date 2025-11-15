@@ -247,7 +247,6 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   const session = (await getSession()) as Session
   // Create the post
   const postPayload = validatedFields.data
-  const tagsArray: Option[] = JSON.parse(postPayload?.tags || '[]')
 
   // for multi categories select
   // const categoriesArray: Option[] = JSON.parse(postPayload?.categories || '[]')
@@ -260,7 +259,8 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   const user = session.user.id
   const contentJson = await postCtrl.setFileData(postPayload.contentJson)
   // CHECK IF TAG DOES'T EXIST CREATE IT
-  const tags = await tagCtrl.ensureTagsExist(tagsArray)
+  const tagsArray: Option[] = JSON.parse(postPayload?.tags || '[]')
+  // const tags = await tagCtrl.ensureTagsExist(tagsArray)
   const categories = JSON.parse(postPayload?.categories)
 
   const postType = postPayload.primaryVideoEmbedUrl != '' ? 'video' : 'article'
@@ -268,8 +268,12 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
     {
       lang: postPayload.lang,
       title: postPayload.title,
-      seoTitle: postPayload.seoTitle,
-      metaDescription: postPayload.metaDescription,
+      seoTitle:
+        postPayload.seoTitle != '' ? postPayload.seoTitle : postPayload.title,
+      metaDescription:
+        postPayload.metaDescription != ''
+          ? postPayload.metaDescription
+          : excerpt,
       excerpt,
       contentJson: JSON.stringify(contentJson),
       readingTime: postPayload.readingTime,
@@ -287,7 +291,7 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
     type: postType,
     ...postPayload,
     translations,
-    tags,
+    tags: tagsArray.map((tag: Option) => tag.value),
     categories: categoriesId,
     image,
     mainCategory,

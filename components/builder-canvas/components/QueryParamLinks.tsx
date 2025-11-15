@@ -32,16 +32,19 @@ export function QueryParamLinks({
   paramKey = 'param',
   items,
   className = '',
+  onChangeSelectedTab,
 }: {
   paramKey?: string
   items: { label: string; slug: string }[]
   className?: string
+  onChangeSelectedTab?: (slug: string) => {}
 }) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const selectedTag = searchParams.get(paramKey) || ''
 
   const handleClick = (slug: string) => {
+    onChangeSelectedTab?.(slug)
     const params = new URLSearchParams(searchParams)
 
     // اگر دوباره روی همان مقدار کلیک شود حذف شود

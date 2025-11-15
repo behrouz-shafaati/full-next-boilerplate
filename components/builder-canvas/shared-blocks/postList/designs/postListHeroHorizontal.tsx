@@ -1,17 +1,9 @@
 'use client'
-import React, { useEffect, useRef, useState } from 'react'
+import React from 'react'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
-import { getTranslation } from '@/lib/utils'
 import { Block } from '@/components/builder-canvas/types'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
-import { PostCover } from '@/components/post/cover'
-import { PostTitle } from '@/components/post/title'
-import PostHorizontalCard from './ArticalHorizontalCard'
-import { PostExcerpt } from '@/components/post/excerpt'
-import { useDeviceType } from '@/hooks/use-device-type'
 import PostOverlayCard from './OverlayCard'
-import PostImageCard from './ImageCard'
 import VerticalPostCard from '@/components/post/vertical-card'
 
 type PostListProps = {
@@ -74,12 +66,14 @@ export const PostListHeroHorizontal = ({
                 'linear-gradient(to bottom, rgba(0,0,0,1) 10%, rgba(0,0,0,0) 100%)',
             }}
           ></div>
-          <div className=" flex flex-col md:flex-row gap-2 justify-center ">
+          <div className="relative flex flex-col md:flex-row gap-2 justify-center ">
             {posts.slice(1, 5).map((post) => (
               <VerticalPostCard
                 key={post.id}
                 post={post}
-                options={{ showExcerpt: false }}
+                options={{
+                  showExcerpt: settings?.showExcerpt == true ? true : false,
+                }}
                 className={'shadow'}
               />
             ))}

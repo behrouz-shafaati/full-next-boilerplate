@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import tagCtrl from './controller'
 import { redirect } from 'next/navigation'
-import { Session, State } from '@/types'
+import { Option, Session, State } from '@/types'
 import { Tag, TagTranslationSchema } from './interface'
 import { getSession } from '@/lib/auth'
 import revalidatePathCtrl from '@/lib/revalidatePathCtrl'
@@ -231,7 +231,10 @@ export async function getTagAction({ slug }: { slug: string }) {
   return tagResult.data[0] || null
 }
 
-export async function searchTags(query: string, locale: string = 'fa') {
+export async function searchTags(
+  query: string,
+  locale: string = 'fa'
+): Promise<Option[]> {
   const results = await tagCtrl.find({ filters: { query } })
 
   return results.data.map((tag: Tag) => {

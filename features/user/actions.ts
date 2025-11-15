@@ -27,11 +27,7 @@ const FormSchema = z.object({
       required_error: 'لطفا نام خانوادگی را وارد کنید.',
     })
     .min(1, { message: 'لطفا نام خانوادگی را وارد کنید.' }),
-  userName: z
-    .string({
-      required_error: 'لطفا نام کاربری را وارد کنید.',
-    })
-    .min(1, { message: 'لطفا نام کاربری را وارد کنید.' }),
+  userName: z.string({}).nullable(),
   email: z
     .string({
       required_error: 'لطفا ایمیل را وارد کنید.',
@@ -195,11 +191,27 @@ export async function loginAction(
  * @returns An object with errors and a message if there are any, or redirects to the user dashboard.
  */
 export async function createUser(prevState: State, formData: FormData) {
+  const siteSettings = await getSettings()
   const rawValues = Object.fromEntries(formData.entries())
   const values = rawValues
   try {
     const user = (await getSession())?.user as User
     await can(user.roles, 'user.create')
+
+    if (!siteSettings?.mobileVerificationRequired) {
+      if (prevUser?.mobile !== rawValues.mobile) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          mobile: rawValues.mobile,
+        })
+      }
+    }
+    if (!siteSettings?.emailVerificationRequired) {
+      if (prevUser?.email !== rawValues.email) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          email: rawValues.email,
+        })
+      }
+    }
     // Validate form fields
     const validatedFields = FormSchema.safeParse(rawValues)
     // If form validation fails, return errors early. Otherwise, continue.
@@ -262,6 +274,7 @@ export async function updateUser(
   prevState: State,
   formData: FormData
 ) {
+  const siteSettings = await getSettings()
   const user = (await getSession())?.user as User
   const rawValues = Object.fromEntries(formData.entries())
   const values = rawValues
@@ -271,6 +284,21 @@ export async function updateUser(
       user.roles,
       prevUser.id !== user.id ? 'user.edit.any' : 'user.edit.own'
     )
+
+    if (!siteSettings?.mobileVerificationRequired) {
+      if (prevUser?.mobile !== rawValues.mobile) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          mobile: rawValues.mobile,
+        })
+      }
+    }
+    if (!siteSettings?.emailVerificationRequired) {
+      if (prevUser?.email !== rawValues.email) {
+        await userCtrl.isDuplicateUnverifiedMobileEmail({
+          email: rawValues.email,
+        })
+      }
+    }
 
     const validatedFields = UpdateUserSchema.safeParse(rawValues)
 
@@ -555,7 +583,7 @@ const sanitizeData = async (data: any, prevUser?: User) => {
     ...data,
     ...(data.image === '' && { image: null }),
     roles: roles.map((role) => role.value),
-    userName: await userCtrl.generateUniqueUsername(),
+    // userName: await userCtrl.generateUniqueUsername(),
     translations,
   }
   return cleanedUserData

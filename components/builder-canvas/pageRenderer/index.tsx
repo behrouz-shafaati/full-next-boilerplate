@@ -30,7 +30,11 @@ export const PageRenderer = async ({ page, locale = 'fa' }: Props) => {
         rows={template.content.rows}
         editroMode={false}
         content_all={
-          <RendererRows rows={translation?.content.rows} editroMode={false} />
+          <RendererRows
+            rows={translation?.content.rows}
+            editroMode={false}
+            siteSettings={siteSettings}
+          />
         }
       />
     )

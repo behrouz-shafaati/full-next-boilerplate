@@ -31,7 +31,7 @@ import {
 import { Option } from '@/types'
 import { createCatrgoryBreadcrumb } from '@/lib/utils'
 import { Braces as CategoryIcon } from 'lucide-react'
-import TagInput from '@/components/form-fields/TagInput'
+// import TagInput from '@/components/form-fields/TagInput'
 import { searchTags } from '@/features/tag/actions'
 import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
@@ -48,6 +48,7 @@ import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
 import { getEmbedUrl } from '@/components/tiptap-editor/utils'
 import VideoEmbed from '@/components/video-embed/VideoEmbed'
+import { searchCategories } from '@/features/category/actions'
 
 interface PostFormProps {
   initialData: any | null
@@ -281,6 +282,7 @@ export const PostForm: React.FC<PostFormProps> = ({
                 placeholder="دسته اصلی"
                 state={state}
                 icon={<CategoryIcon className="w-4 h-4" />}
+                fetchOptions={searchCategories}
               />
               {/* categories */}
               <MultipleSelec
@@ -297,13 +299,35 @@ export const PostForm: React.FC<PostFormProps> = ({
                     return { label: translation?.title, value: category.id }
                   }) || []
                 }
-                placeholder="دسته‌ها"
+                placeholder="دسته‌ها را وارد کنید..."
                 state={state}
                 defaultSuggestions={categoryOptions}
+                onSearch={searchCategories}
                 // icon={ShieldQuestionIcon}
                 // maxSelected={1}
               />
-              <TagInput
+              {/* tags */}
+              <MultipleSelec
+                title="برچسب ها"
+                name="tags"
+                defaultValues={
+                  tagsArray.map((tag: Tag) => {
+                    const translation: TagTranslationSchema =
+                      tag?.translations?.find(
+                        (t: CategoryTranslationSchema) => t.lang === locale
+                      ) ||
+                      tag?.translations[0] ||
+                      {}
+                    return { label: translation?.title, value: tag.id }
+                  }) || []
+                }
+                placeholder="برچسب ها را وارد کنید..."
+                state={state}
+                onSearch={searchTags}
+
+                // icon={ShieldQuestionIcon}
+              />
+              {/* <TagInput
                 name="tags"
                 title="برچسب ها"
                 placeholder="برچسب ها را وارد کنید..."
@@ -319,7 +343,7 @@ export const PostForm: React.FC<PostFormProps> = ({
                   }) || []
                 }
                 fetchOptions={searchTags}
-              />
+              /> */}
               <FileUpload
                 name="image"
                 title="پوستر مطلب"

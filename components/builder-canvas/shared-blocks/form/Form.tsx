@@ -28,11 +28,11 @@ function Form({
   formContent,
   ...props
 }: MainFormProps) {
+  const [state, dispatch] = useActionState(createFormSubmission as any, {})
   if (!form) return null
   form.translations = form?.translations || []
 
   const userRoles = user?.roles || []
-  const [state, dispatch] = useActionState(createFormSubmission as any, {})
 
   const { settings } = blockData
   const { className, ...restProps } = props
@@ -48,4 +48,5 @@ function Form({
   )
 }
 
+Form.displayName = 'Form'
 export default Form

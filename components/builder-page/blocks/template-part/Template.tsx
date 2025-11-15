@@ -2,8 +2,10 @@
 import { Block } from '../../../builder-canvas/types'
 import { Template as TemplateType } from '@/features/template/interface'
 import RendererRows from '@/components/builder-canvas/pageRenderer/RenderRows'
+import { Settings } from '@/features/settings/interface'
 
 type TemplateProps = {
+  siteSettings: Settings
   editroMode: boolean
   template: TemplateType
   blockData: {
@@ -18,6 +20,7 @@ type TemplateProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const TemplatePart = ({
+  siteSettings,
   editroMode = false,
   template,
   blockData,
@@ -30,6 +33,7 @@ export const TemplatePart = ({
   return (
     <section {...props} className={`w-full z-50 ${className}`}>
       <RendererRows
+        siteSettings={siteSettings}
         rows={template?.content?.rows}
         editroMode={editroMode}
         pageSlug={pageSlug}

@@ -36,7 +36,6 @@ export function ImageAlba({
   const { srcLarge, srcMedium, srcSmall, width, height, translations } = file
   const translation = getTranslation({ translations })
   const displaySrc = src !== '' ? src : srcMedium || srcSmall
-  if (!displaySrc) return null
 
   // --- local state
   const [mounted, setMounted] = useState(false) // SSR guard
@@ -205,6 +204,8 @@ export function ImageAlba({
       overlay.removeEventListener('touchcancel', onTouchEnd)
     }
   }, [isZoomed, zoomLevel])
+
+  if (!displaySrc) return null
 
   // download handler
   const handleDownload = () => {

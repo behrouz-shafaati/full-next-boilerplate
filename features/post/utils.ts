@@ -68,6 +68,7 @@ function msToMinutes(ms: number): number {
 }
 
 export function createPostHref(post: Post) {
+  if (!post?.mainCategory) return `/_nocategory_/${post?.slug}`
   const categorySection: string = buildCategoryHref(
     post.mainCategory as Category
   )

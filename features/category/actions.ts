@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import categoryCtrl from './controller'
 import { redirect } from 'next/navigation'
-import { Session, State } from '@/types'
+import { Option, Session, State } from '@/types'
 import { Category, CategoryTranslationSchema } from './interface'
 import { createCatrgoryBreadcrumb, slugify } from '@/lib/utils'
 import { getSession } from '@/lib/auth'
@@ -235,7 +235,10 @@ export async function getCategoryAction({ slug }: { slug: string }) {
   return categoryResult.data[0] || null
 }
 
-export async function searchCategories(query: string, locale: string = 'fa') {
+export async function searchCategories(
+  query: string,
+  locale: string = 'fa'
+): Promise<Option[]> {
   const results = await categoryCtrl.find({ filters: { query } })
 
   return results.data.map((cat: Category) => {

@@ -151,7 +151,12 @@ export async function createCampaign(prevState: State, formData: FormData) {
       values,
     }
   }
-  redirect('/dashboard/campaigns')
+  return {
+    message: 'ذخیره شد',
+    success: true,
+    values,
+  }
+  // redirect('/dashboard/campaigns')
 }
 
 export async function updateCampaign(
@@ -224,7 +229,12 @@ export async function updateCampaign(
     console.log(error)
     return { message: 'خطای پایگاه داده: بروزرسانی دسته ناموفق بود.', values }
   }
-  redirect('/dashboard/campaigns')
+  return {
+    message: 'ذخیره شد',
+    success: true,
+    values,
+  }
+  // redirect('/dashboard/campaigns')
 }
 
 export async function deleteCampaignsAction(ids: string[]) {

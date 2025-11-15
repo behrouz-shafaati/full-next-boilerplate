@@ -70,9 +70,14 @@ export const BlogPostSliderSimple = ({
     : 'w-full h-auto max-w-full'
 
   const { onClick, ...restProps } = props
-  const postSlids = posts.map((post) => {
+  const postSlids = posts.map((post, index) => {
     return (
-      <VerticalPostCard post={post} options={settings} className={'shadow'} />
+      <VerticalPostCard
+        key={index}
+        post={post}
+        options={settings}
+        className={'shadow'}
+      />
     )
   })
   const filters = {

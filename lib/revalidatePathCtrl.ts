@@ -46,7 +46,7 @@ class controller {
       '/',
       ...(await this.getAllPagesPaths()),
       ...(await this.getAllPostsPaths()),
-      ...(await this.getAllCategoriessPaths()),
+      // ...(await this.getAllCategoriessPaths()),  category change to daynamic page
       ...(await this.getBlogPath()),
     ]
   }

@@ -230,9 +230,11 @@ export default function Builder({
             >
               افزودن ردیف
             </Button>
-            <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
-              <code>{getJson()}</code>
-            </pre>
+            {process.env.NODE_ENV === 'development' && (
+              <pre className="p-4 ltr bg-slate-300 mt-2 rounded">
+                <code>{getJson()}</code>
+              </pre>
+            )}
           </div>
         </div>
       </DndContext>

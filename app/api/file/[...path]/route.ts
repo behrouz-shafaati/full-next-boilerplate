@@ -9,7 +9,8 @@ export async function GET(
   { params }: { params: { path: string[] } }
 ) {
   try {
-    const filePath = join(process.cwd(), 'uploads', ...params.path)
+    const { path } = await params // <<— درباره این خط پایین‌تر توضیح دادم
+    const filePath = join(process.cwd(), 'uploads', ...path)
 
     if (!existsSync(filePath)) {
       return NextResponse.json({ error: 'File not found' }, { status: 404 })

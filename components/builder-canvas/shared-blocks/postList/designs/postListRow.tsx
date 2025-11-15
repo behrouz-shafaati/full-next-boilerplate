@@ -1,11 +1,9 @@
 'use client'
 // کامپوننت نمایشی بلاک
 import React, { Suspense } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
-import { Badge } from '@/components/ui/badge'
 import { ArrowLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
 import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'

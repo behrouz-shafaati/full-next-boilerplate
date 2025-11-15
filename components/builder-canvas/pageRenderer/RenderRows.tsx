@@ -101,6 +101,7 @@ const RendererRows = ({
                     {col.blocks.map((el: any, index: number) => {
                       return (
                         <RenderBlock
+                          siteSettings={siteSettings}
                           key={el.id}
                           item={el}
                           editroMode={editroMode}

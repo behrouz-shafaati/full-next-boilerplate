@@ -48,8 +48,7 @@ const SinglePageBlog = async ({
           primaryVideoEmbedUrl={post?.primaryVideoEmbedUrl ?? null}
         />
       )}
-      <PostTitle title={translation?.title} />
-      <div className="flex justify-between">
+      <div className="flex flex-col md:flex-row items-center justify-center md:justify-between overflow-hidden">
         <PostMetaData
           author={post?.user}
           createdAt={post.createdAt}
@@ -60,6 +59,7 @@ const SinglePageBlog = async ({
           title={translation?.title}
         />
       </div>
+      <PostTitle title={translation?.title} />
 
       {tableOfContent}
       <PostContent

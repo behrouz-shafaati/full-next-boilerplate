@@ -1,16 +1,19 @@
 import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
 import { Block } from '../types'
 import { combineClassNames, getVisibilityClass } from '../utils/styleUtils'
+import { Settings } from '@/features/settings/interface'
 
 type RestProps = Record<string, unknown>
 
 type RenderBlockProp = {
+  siteSettings: Settings
   editroMode: boolean
   item: Block
   pageSlug: string | null
   contents: React.ReactNode[]
 }
 const RenderBlock = ({
+  siteSettings,
   editroMode = false,
   item,
   pageSlug,
@@ -28,6 +31,7 @@ const RenderBlock = ({
     {
       return (
         <EditorComponent
+          siteSettings={siteSettings}
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
           pageSlug={pageSlug}
@@ -48,6 +52,7 @@ const RenderBlock = ({
         if (node)
           return (
             <Component
+              siteSettings={siteSettings}
               blockData={item}
               className={`${className} ${combineClassNames(
                 item.classNames || {}
@@ -60,6 +65,7 @@ const RenderBlock = ({
       if (item.type === 'templatePart') {
         return (
           <Component
+            siteSettings={siteSettings}
             blockData={item}
             className={`${className} ${combineClassNames(
               item.classNames || {}
@@ -72,6 +78,7 @@ const RenderBlock = ({
 
       return (
         <Component
+          siteSettings={siteSettings}
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
           pageSlug={pageSlug}

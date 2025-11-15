@@ -1,14 +1,10 @@
 'use client'
 // کامپوننت نمایشی بلاک
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Block } from '../../types'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { PostListColumn } from './designs/PostListColumn'
-
-// import { useSearchParams } from 'next/navigation'
-// import { getPosts } from '@/features/post/actions'
-// import { getTagAction } from '@/features/tag/actions'
 import { buildUrlFromFilters } from '@/lib/utils'
 import { PostListRow } from './designs/PostListRow'
 import PostImageCard from './designs/ImageCard'
@@ -16,10 +12,14 @@ import PostOverlayCard from './designs/OverlayCard'
 import PostHorizontalCard from './designs/ArticalHorizontalCard'
 import { PostListHeroVertical } from './designs/postListHeroVertical'
 import { PostListSpotlight } from './designs/postListSpotlight'
-import { PostListHeroHorizontal } from './designs/postListHeroHorizontal'
-// import { getCategoryAction } from '@/features/category/actions'
+import { PostListHeroHorizontal } from './designs/PostListHeroHorizontal'
 import VerticalPostCard from '@/components/post/vertical-card'
 import BannerGroup from '../AdSlot/BannerGroup'
+import PostHorizontalSmallCard from './designs/PostHorizontalSmallCard'
+import { useSearchParams } from 'next/navigation'
+import { getCategoryAction } from '@/features/category/actions'
+import { getTagAction } from '@/features/tag/actions'
+import { getPosts } from '@/features/post/actions'
 
 type PostListProps = {
   posts: Post[]
@@ -44,12 +44,12 @@ type PostListProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const PostList = React.memo(
-  ({ posts: _posts, randomMap, blockData, ...props }: PostListProps) => {
+  ({ posts: posts, randomMap, blockData, ...props }: PostListProps) => {
     const locale = 'fa'
     const { pageSlug } = props ? props : { pageSlug: null }
     const { id, content, settings } = blockData
-    // const [_posts, setPosts] = useState(posts)
-    // const searchParams = useSearchParams()
+    const [_posts, setPosts] = useState(posts)
+    const searchParams = useSearchParams()
 
     const bannerSettings = useMemo(() => ({ settings: { aspect: '4/1' } }), [])
 
@@ -57,51 +57,51 @@ export const PostList = React.memo(
     if (settings?.showNewest == true)
       queryParams = [{ label: 'تازه‌ها', slug: '' }, ...queryParams]
 
-    // const selectedTag = searchParams.get('tag') || ''
+    const selectedTag = searchParams.get('tag') || ''
 
-    // useEffect(() => {
-    //   const fetchData = async () => {
-    //     let posts = {}
-    //     let filters = {}
+    useEffect(() => {
+      const fetchData = async () => {
+        let posts = {}
+        let filters = {}
 
-    //     if (content?.usePageCategory && pageSlug) {
-    //       // logic to handle usePageCategory and pageSlug
-    //       const category = await getCategoryAction({ slug: pageSlug })
-    //       filters = { categories: [category.id], ...filters }
-    //     } else {
-    //       const categoryIds =
-    //         content?.categories?.map((category: Option) => category.value) || {}
+        if (content?.usePageCategory && pageSlug) {
+          // logic to handle usePageCategory and pageSlug
+          const category = await getCategoryAction({ slug: pageSlug })
+          filters = { categories: [category.id], ...filters }
+        } else {
+          const categoryIds =
+            content?.categories?.map((category: Option) => category.value) || {}
 
-    //       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
-    //       if (categoryIds?.length > 0)
-    //         filters = { categories: categoryIds, ...filters }
-    //     }
+          //       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
+          if (categoryIds?.length > 0)
+            filters = { categories: categoryIds, ...filters }
+        }
 
-    //     const selectedTagExistInItems = queryParams?.some(
-    //       (tag) => tag.slug === selectedTag
-    //     )
-    //     // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود
-    //     if (!selectedTagExistInItems) return
-    //     if (selectedTag !== '') {
-    //       const tag = await getTagAction({ slug: selectedTag })
-    //       filters = { tags: [tag.id], ...filters }
-    //       posts = await getPosts({
-    //         filters,
-    //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-    //       })
-    //       // setPosts(posts.data)
-    //     } else {
-    //       posts = await getPosts({
-    //         filters,
-    //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-    //       })
-    //       // setPosts(posts.data)
-    //     }
-    //   }
+        const selectedTagExistInItems = queryParams?.some(
+          (tag) => tag.slug === selectedTag
+        )
+        //     // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود
+        if (!selectedTagExistInItems) return
+        if (selectedTag !== '') {
+          const tag = await getTagAction({ slug: selectedTag })
+          filters = { tags: [tag.id], ...filters }
+          posts = await getPosts({
+            filters,
+            pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
+          })
+          setPosts(posts.data)
+        } else {
+          posts = await getPosts({
+            filters,
+            pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
+          })
+          setPosts(posts.data)
+        }
+      }
 
-    //   // fetchData  باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
-    //   // fetchData()
-    // }, [selectedTag])
+      //   // fetchData  باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
+      fetchData()
+    }, [selectedTag])
 
     const tagSlugs = content?.tags?.map((tag: Option) => tag.slug) || []
     const categorySlugs =
@@ -122,13 +122,13 @@ export const PostList = React.memo(
           '/' +
           buildUrlFromFilters({ categories: categorySlugs })
     }
-    showMoreHref = showMoreHref + `?page=1&perPage=${showMoreHref.length || 6}`
 
+    // showMoreHref = showMoreHref + `?page=1&perPage=${showMoreHref.length || 6}`
     // selectedTag از نوار آدرس مرورگر خوانده میشود
-    // showMoreHref =
-    //   selectedTag != ''
-    //     ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
-    //     : showMoreHref
+    showMoreHref =
+      selectedTag != ''
+        ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
+        : showMoreHref
 
     const postItems = useMemo(() => {
       const advertisingAfter = blockData?.settings?.advertisingAfter || 0
@@ -143,7 +143,7 @@ export const PostList = React.memo(
 
         const flgShowVertical = randomMap[index]
 
-        switch (blockData?.settings.cardDesign) {
+        switch (blockData?.settings?.cardDesign) {
           case 'overly-card':
             return (
               <React.Fragment key={post.id}>
@@ -180,6 +180,24 @@ export const PostList = React.memo(
                     options={settings}
                   />
                 )}
+                {flgShowBanner && (
+                  <BannerGroup
+                    blockData={{
+                      id: `${id}${index}`,
+                      settings: { aspect: '4/1', countOfBanners: 1 },
+                    }}
+                  />
+                )}
+              </React.Fragment>
+            )
+          case 'horizontal-card-small':
+            return (
+              <React.Fragment key={post.id}>
+                <PostHorizontalSmallCard
+                  key={post.id}
+                  post={post}
+                  options={settings}
+                />
                 {flgShowBanner && (
                   <BannerGroup
                     blockData={{
@@ -261,3 +279,5 @@ export const PostList = React.memo(
     }
   }
 )
+
+PostList.displayName = 'PostList'

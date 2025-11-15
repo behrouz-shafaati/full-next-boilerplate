@@ -56,7 +56,6 @@ export default function MultiSelect({
         {title}
       </label>
       <div className="relative">
-        <input type="hidden" name={name} value={JSON.stringify(values)} />
         <div className=" top-16">
           <MultipleSelectorInput
             placeholder={placeholder || 'انتخاب کنید'}
@@ -64,14 +63,11 @@ export default function MultiSelect({
             value={values}
             hidePlaceholderWhenSelected
             onChange={(options) => {
-              const selectedOptions = defaultOptions.filter((o) =>
-                options.some((opt) => opt.value === o.value)
-              )
-              setValues(selectedOptions)
-              onChange?.(selectedOptions)
+              setValues(options)
+              onChange?.(options)
             }}
             emptyIndicator={
-              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+              <p className="w-full text-center text-xs font-normal leading-10 text-gray-600 dark:text-gray-400 pt-4">
                 چیزی پیدا نشد
               </p>
             }
