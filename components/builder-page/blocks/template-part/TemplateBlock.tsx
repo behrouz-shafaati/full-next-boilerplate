@@ -17,6 +17,7 @@ type Props = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function TemplateBlock({
@@ -33,6 +34,7 @@ export default async function TemplateBlock({
       {...props}
       editroMode={false}
       pageSlug={props.pageSlug}
+      categorySlug={props.categorySlug}
     />
   )
 }

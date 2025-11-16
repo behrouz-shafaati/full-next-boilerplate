@@ -31,12 +31,14 @@ type PostListProps = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const PostListFallback = ({
   posts,
   blockData,
   pageSlug,
+  categorySlug,
   ...props
 }: PostListProps) => {
   const locale = 'fa'

@@ -10,6 +10,7 @@ type RenderBlockProp = {
   editroMode: boolean
   item: Block
   pageSlug: string | null
+  categorySlug: string | null
   contents: React.ReactNode[]
 }
 const RenderBlock = ({
@@ -17,6 +18,7 @@ const RenderBlock = ({
   editroMode = false,
   item,
   pageSlug,
+  categorySlug,
   ...rest
 }: RenderBlockProp) => {
   const blocks = getBlockRegistry() // برای محتوا دار بودن این برای رسیدن به این کامپوننت هیچ کامپوننتی نباید از use client‌ استفاده کرده باشد
@@ -35,6 +37,7 @@ const RenderBlock = ({
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
           pageSlug={pageSlug}
+          categorySlug={categorySlug}
         />
       )
     }
@@ -59,6 +62,7 @@ const RenderBlock = ({
               )}`}
               content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
               pageSlug={pageSlug}
+              categorySlug={categorySlug}
             />
           )
       }
@@ -72,6 +76,7 @@ const RenderBlock = ({
             )}`}
             {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
             pageSlug={pageSlug}
+            categorySlug={categorySlug}
           />
         )
       }
@@ -82,6 +87,7 @@ const RenderBlock = ({
           blockData={item}
           className={`${className} ${combineClassNames(item.classNames || {})}`}
           pageSlug={pageSlug}
+          categorySlug={categorySlug}
         />
       )
     }

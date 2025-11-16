@@ -35,7 +35,7 @@ export function getTemplateForOptions({
       value: 'blog',
     },
     {
-      label: 'مطلب‌ی تکی',
+      label: 'مطلب تکی',
       value: 'post',
     },
     {

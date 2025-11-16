@@ -186,6 +186,7 @@ export default async function Page({ params }: PageProps) {
             template={template}
             siteSettings={siteSettings}
             pageSlug={slug}
+            categorySlug={post?.mainCategory?.slug || null}
             editroMode={false}
             content_all={
               <DefaultSinglePageBlog

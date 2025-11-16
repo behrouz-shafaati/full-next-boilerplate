@@ -15,6 +15,7 @@ type Props = {
   editroMode: boolean
   rows: Row[]
   pageSlug: string | null
+  categorySlug: string | null
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
@@ -23,6 +24,7 @@ const RendererRows = ({
   editroMode = false,
   rows,
   pageSlug,
+  categorySlug,
   ...rest
 }: Props) => {
   // فیلتر کردن propsهایی که content_ شروع میشن
@@ -106,6 +108,7 @@ const RendererRows = ({
                           item={el}
                           editroMode={editroMode}
                           pageSlug={pageSlug}
+                          categorySlug={categorySlug}
                           {...contentProps}
                         />
                       )

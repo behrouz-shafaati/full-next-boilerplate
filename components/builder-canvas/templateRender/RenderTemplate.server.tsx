@@ -10,6 +10,7 @@ type Props = {
   editroMode: boolean
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
   pageSlug: string | null
+  categorySlug: string | null
 }
 
 const RendererTemplate = async ({
@@ -18,6 +19,7 @@ const RendererTemplate = async ({
   content_all,
   editroMode = false,
   pageSlug = null,
+  categorySlug = null,
   ...rest
 }: Props) => {
   const parentTemplateId = template.parent
@@ -31,6 +33,7 @@ const RendererTemplate = async ({
         rows={parentTemplate?.content.rows}
         editroMode={false}
         pageSlug={pageSlug}
+        categorySlug={categorySlug}
         content_all={
           <RendererRows
             siteSettings={siteSettings}
@@ -38,6 +41,7 @@ const RendererTemplate = async ({
             editroMode={false}
             content_all={content_all}
             pageSlug={pageSlug}
+            categorySlug={categorySlug}
             {...rest}
           />
         }
@@ -52,6 +56,7 @@ const RendererTemplate = async ({
       editroMode={false}
       content_all={content_all}
       pageSlug={pageSlug}
+      categorySlug={categorySlug}
       {...rest}
     />
   )

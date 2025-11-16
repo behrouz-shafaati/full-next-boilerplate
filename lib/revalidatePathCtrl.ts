@@ -34,7 +34,7 @@ class controller {
   }
 
   async getBlogPath() {
-    return ['blog']
+    return ['/blog']
   }
 
   async getAllCategoriessPaths() {
@@ -46,7 +46,7 @@ class controller {
       '/',
       ...(await this.getAllPagesPaths()),
       ...(await this.getAllPostsPaths()),
-      // ...(await this.getAllCategoriessPaths()),  category change to daynamic page
+      ...(await this.getAllCategoriessPaths()), //category change to daynamic page
       ...(await this.getBlogPath()),
     ]
   }
@@ -56,7 +56,6 @@ class controller {
   ): Promise<string[]> {
     if (!revalidate) return []
     let pathes = []
-    console.log('#7677 in revalidate:', revalidate)
     const { feature, slug } = revalidate
     if (Array.isArray(slug)) {
       for (const path of slug) {

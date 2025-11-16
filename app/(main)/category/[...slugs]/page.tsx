@@ -1,6 +1,6 @@
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 // export const dynamic = 'auto'
-// export const dynamic = 'force-static'
+export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
 
@@ -81,6 +81,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         template={template}
         siteSettings={siteSettings}
         pageSlug={categorySlug}
+        categorySlug={categorySlug}
         editroMode={false}
         content_all={
           <CategoryPostList category={category} slug={categorySlug} page={1} />

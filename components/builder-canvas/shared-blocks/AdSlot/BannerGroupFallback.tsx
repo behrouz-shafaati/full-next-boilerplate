@@ -6,8 +6,10 @@ import { AdSlotWidgetProps } from './type'
 import { Skeleton } from '@/components/ui/skeleton'
 
 type BannerGroupProps = AdSlotWidgetProps &
-  Block &
-  React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
+  Block & {
+    pageSlug: string | null
+    categorySlug: string | null
+  } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 const defaultAspect = '4/1'
 export const BannerGroupFallback = ({
@@ -17,7 +19,7 @@ export const BannerGroupFallback = ({
 }: BannerGroupProps) => {
   const locale = 'fa'
   const { id, content, settings } = blockData
-  const { pageSlug, ...restProps } = props
+  const { pageSlug, categorySlug, ...restProps } = props
   return (
     <div {...restProps}>
       <div

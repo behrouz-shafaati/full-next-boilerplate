@@ -26,12 +26,14 @@ type PostListBlockProps = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function PostListBlockEditor({
   widgetName,
   blockData,
   pageSlug,
+  categorySlug,
   ...props
 }: PostListBlockProps) {
   const [posts, setPosts] = useState([])
@@ -48,9 +50,9 @@ export default function PostListBlockEditor({
         filters = { tags: tagIds?.[0] ?? {} }
       }
 
-      if (content?.usePageCategory && pageSlug) {
-        // logic to handle usePageCategory and pageSlug
-        const category = await getCategoryAction({ slug: pageSlug })
+      if (content?.usePageCategory && categorySlug) {
+        // logic to handle usePageCategory and categorySlug
+        const category = await getCategoryAction({ slug: categorySlug })
         if (category) filters = { categories: [category.id], ...filters }
       } else {
         if (categoryIds?.length > 0)
@@ -78,6 +80,7 @@ export default function PostListBlockEditor({
       posts={posts}
       blockData={blockData}
       pageSlug={pageSlug}
+      categorySlug={categorySlug}
       randomMap={randomMap}
       {...props}
     />

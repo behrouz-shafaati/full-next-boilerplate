@@ -84,7 +84,7 @@ class controller extends baseController {
     return super.findOneAndUpdate(payload)
   }
 
-  async getHomePage() {
+  async getHomePage(): Promise<Page | null> {
     const siteSettings = await getSettings()
     const pageTranslation = getTranslation({
       translations: siteSettings?.pageTranslations || [],
@@ -121,7 +121,7 @@ class controller extends baseController {
 
   async getAllSlugs(): Promise<{ slug: string }[]> {
     const result = await this.findAll({})
-    return result.data.map((page: Page) => ({ slug: page.slug }))
+    return result.data.map((page: Page) => ({ slug: `/${page.slug}` }))
   }
 
   async generateStaticParams() {

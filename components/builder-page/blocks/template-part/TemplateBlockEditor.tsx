@@ -19,12 +19,14 @@ type TemplateBlockEditorProps = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default function TemplateBlockEditor({
   widgetName,
   blockData,
   pageSlug,
+  categorySlug,
   ...props
 }: TemplateBlockEditorProps) {
   const [template, setTemplate] = useState({ content: { rows: [] } })
@@ -49,6 +51,7 @@ export default function TemplateBlockEditor({
       {...props}
       editroMode={true}
       pageSlug={pageSlug}
+      categorySlug={categorySlug}
     />
   )
 }

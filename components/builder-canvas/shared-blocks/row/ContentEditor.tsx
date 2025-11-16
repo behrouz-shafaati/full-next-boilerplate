@@ -50,10 +50,6 @@ const columnOptions = [
     value: '3-6-3',
   },
   {
-    label: '3-6-3',
-    value: '3-6-3',
-  },
-  {
     label: '2-8-2',
     value: '2-8-2',
   },

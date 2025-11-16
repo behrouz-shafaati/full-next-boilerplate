@@ -17,6 +17,7 @@ type TemplateProps = {
     settings: {}
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const TemplatePart = ({
@@ -25,6 +26,7 @@ export const TemplatePart = ({
   template,
   blockData,
   pageSlug,
+  categorySlug,
   ...props
 }: TemplateProps) => {
   const { content, settings } = blockData
@@ -37,6 +39,7 @@ export const TemplatePart = ({
         rows={template?.content?.rows}
         editroMode={editroMode}
         pageSlug={pageSlug}
+        categorySlug={categorySlug}
         {...props}
       />
     </section>

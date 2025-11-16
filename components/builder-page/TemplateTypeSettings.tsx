@@ -35,7 +35,7 @@ const TemplateTypeSettings = ({
       value: 'blogs',
     },
     {
-      label: 'مطلب‌ی تکی',
+      label: 'مطلب تکی',
       value: 'blog',
     },
     {

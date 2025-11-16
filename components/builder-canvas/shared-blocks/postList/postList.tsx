@@ -40,13 +40,14 @@ type PostListProps = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
   randomMap: boolean[]
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const PostList = React.memo(
   ({ posts: posts, randomMap, blockData, ...props }: PostListProps) => {
     const locale = 'fa'
-    const { pageSlug } = props ? props : { pageSlug: null }
+    const { categorySlug } = props ? props : { categorySlug: null }
     const { id, content, settings } = blockData
     const [_posts, setPosts] = useState(posts)
     const searchParams = useSearchParams()
@@ -64,9 +65,9 @@ export const PostList = React.memo(
         let posts = {}
         let filters = {}
 
-        if (content?.usePageCategory && pageSlug) {
-          // logic to handle usePageCategory and pageSlug
-          const category = await getCategoryAction({ slug: pageSlug })
+        if (content?.usePageCategory && categorySlug) {
+          // logic to handle usePageCategory and categorySlug
+          const category = await getCategoryAction({ slug: categorySlug })
           filters = { categories: [category.id], ...filters }
         } else {
           const categoryIds =
@@ -112,9 +113,9 @@ export const PostList = React.memo(
       showMoreHref =
         showMoreHref + '/' + buildUrlFromFilters({ tags: tagSlugs })
 
-    if (content?.usePageCategory && pageSlug) {
+    if (content?.usePageCategory && categorySlug) {
       showMoreHref =
-        showMoreHref + '/' + buildUrlFromFilters({ categories: [pageSlug] })
+        showMoreHref + '/' + buildUrlFromFilters({ categories: [categorySlug] })
     } else {
       if (categorySlugs.length > 0)
         showMoreHref =

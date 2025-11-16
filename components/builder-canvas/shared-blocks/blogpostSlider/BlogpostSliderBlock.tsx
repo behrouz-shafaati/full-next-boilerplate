@@ -24,12 +24,14 @@ type BlogPostSliderBlockProps = {
     }
   } & Block
   pageSlug: string | null
+  categorySlug: string | null
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function BlogPostSliderBlock({
   widgetName,
   blockData,
   pageSlug,
+  categorySlug,
   ...props
 }: BlogPostSliderBlockProps) {
   let filters
@@ -41,9 +43,9 @@ export default async function BlogPostSliderBlock({
     filters = { tags: tagIds }
   }
 
-  if (content?.usePageCategory && pageSlug) {
-    // logic to handle usePageCategory and pageSlug
-    const category = await getCategoryAction({ slug: pageSlug })
+  if (content?.usePageCategory && categorySlug) {
+    // logic to handle usePageCategory and categorySlug
+    const category = await getCategoryAction({ slug: categorySlug })
     if (category) filters = { categories: [category.id], ...filters }
   } else {
     if (categoryIds?.length > 0)
