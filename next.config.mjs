@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+import bundleAnalyzer from '@next/bundle-analyzer'
+
 const nextConfig = {
   images: {
     domains: [], // نیازی به دامنه نیست برای تصاویر محلی
@@ -43,4 +45,11 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+// ⭐ wrap config with analyzer
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withBundleAnalyzer(nextConfig)
+
+// export default nextConfig
