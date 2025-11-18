@@ -15,7 +15,7 @@ export function Providers({ children }: ProvidersProps) {
       enableSystem
       disableTransitionOnChange
     >
-      <main>{children}</main>
+      {children}
       <Toaster />
     </ThemeProvider>
   )

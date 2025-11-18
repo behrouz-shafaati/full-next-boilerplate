@@ -1,28 +1,28 @@
 'use server'
 import { BreadCrumbType } from '@/components/breadcrumb'
-import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
+// import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { Post, PostTranslationSchema } from '../../interface'
 import { getTranslation, timeAgo } from '@/lib/utils'
 import { PostCover } from '@/components/post/cover'
 import { PostBreadcrumb } from '@/components/post/breadcrumb'
-import { PostComments } from '@/components/post/comments'
-import { PostCommentForm } from '@/components/post/comment-form'
-import { PostContent } from '@/components/post/content'
+// import { PostComments } from '@/components/post/comments'
+// import { PostCommentForm } from '@/components/post/comment-form'
+// import { PostContent } from '@/components/post/content'
 import { PostMetaData } from '@/components/post/meta-data'
 import { PostTitle } from '@/components/post/title'
-import ShareButtons from '@/components/share/share-buttons'
+// import ShareButtons from '@/components/share/share-buttons'
 import { getSettings } from '@/features/settings/controller'
-import { PostTags } from '@/components/post/tags'
-import { PostAuthorCard } from '@/components/post/author-card'
-import { CommentsHeader } from '@/components/post/comments-header'
+// import { PostTags } from '@/components/post/tags'
+// import { PostAuthorCard } from '@/components/post/author-card'
+// import { CommentsHeader } from '@/components/post/comments-header'
 
 type props = {
   locale?: string
   breadcrumbItems: BreadCrumbType[]
   post: Post
   readingDuration: number
-  tableOfContent: any
-  comments: any
+  tableOfContent?: any
+  comments?: any
 }
 
 const SinglePageBlog = async ({
@@ -30,7 +30,7 @@ const SinglePageBlog = async ({
   post,
   locale = 'fa',
   readingDuration,
-  tableOfContent,
+  tableOfContent = null,
   comments,
 }: props) => {
   const siteSettings = await getSettings()
@@ -54,23 +54,23 @@ const SinglePageBlog = async ({
           createdAt={post.createdAt}
           readingDuration={readingDuration}
         />
-        <ShareButtons
+        {/* <ShareButtons
           url={`${siteSettings.site_url}${post.href}`}
           title={translation?.title}
-        />
+        /> */}
       </div>
       <PostTitle title={translation?.title} />
 
       {tableOfContent}
-      <PostContent
+      {/* <PostContent
         content={<RenderedHtml contentJson={translation?.contentJson} />}
-      />
-      <PostTags tags={post.tags} />
-      <PostAuthorCard author={post.author} />
+      /> */}
+      {/* <PostTags tags={post.tags} />
+      <PostAuthorCard author={post.author} /> */}
       <div>
-        <CommentsHeader />
+        {/* <CommentsHeader />
         <PostComments content={comments} />
-        <PostCommentForm post={post} />
+        <PostCommentForm post={post} /> */}
       </div>
     </div>
   )

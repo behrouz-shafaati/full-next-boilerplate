@@ -27,6 +27,7 @@ const RenderBlock = ({
 
   const block = blocks[item.type]
   const Component = block?.Renderer
+  // const Island = block?.Island
   const EditorComponent = block?.RendererInEditor
 
   if (editroMode && EditorComponent) {
@@ -54,41 +55,84 @@ const RenderBlock = ({
         const node = extractNode(rest, item.type) // محتوای مورد نظر از پراپ های ارسال شده استخراج میشود
         if (node)
           return (
+            <>
+              <Component
+                siteSettings={siteSettings}
+                blockData={item}
+                className={`${className} ${combineClassNames(
+                  item.classNames || {}
+                )}`}
+                content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
+                pageSlug={pageSlug}
+                categorySlug={categorySlug}
+              />
+              {/* {Island && (
+                <Island
+                  siteSettings={siteSettings}
+                  blockData={item}
+                  className={`${className} ${combineClassNames(
+                    item.classNames || {}
+                  )}`}
+                  content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
+                  pageSlug={pageSlug}
+                  categorySlug={categorySlug}
+                />
+              )} */}
+            </>
+          )
+      }
+      if (item.type === 'templatePart') {
+        return (
+          <>
             <Component
               siteSettings={siteSettings}
               blockData={item}
               className={`${className} ${combineClassNames(
                 item.classNames || {}
               )}`}
-              content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
+              {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
               pageSlug={pageSlug}
               categorySlug={categorySlug}
             />
-          )
+            {/* {Island && (
+              <Island
+                siteSettings={siteSettings}
+                blockData={item}
+                className={`${className} ${combineClassNames(
+                  item.classNames || {}
+                )}`}
+                {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
+                pageSlug={pageSlug}
+                categorySlug={categorySlug}
+              />
+            )} */}
+          </>
+        )
       }
-      if (item.type === 'templatePart') {
-        return (
+
+      return (
+        <>
           <Component
             siteSettings={siteSettings}
             blockData={item}
             className={`${className} ${combineClassNames(
               item.classNames || {}
             )}`}
-            {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
             pageSlug={pageSlug}
             categorySlug={categorySlug}
           />
-        )
-      }
-
-      return (
-        <Component
-          siteSettings={siteSettings}
-          blockData={item}
-          className={`${className} ${combineClassNames(item.classNames || {})}`}
-          pageSlug={pageSlug}
-          categorySlug={categorySlug}
-        />
+          {/* {Island && (
+            <Island
+              siteSettings={siteSettings}
+              blockData={item}
+              className={`${className} ${combineClassNames(
+                item.classNames || {}
+              )}`}
+              pageSlug={pageSlug}
+              categorySlug={categorySlug}
+            />
+          )} */}
+        </>
       )
     }
     return <p>رندر بلاک {item.type} ناموفق بود</p>

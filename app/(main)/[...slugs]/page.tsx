@@ -1,8 +1,8 @@
-// پس من اصلا از اول باید بجای export const dynamic = 'force-static' export const dynamic = 'auto' میزاشتم. اصلا دنبال همین بودم. چون من تو کدم یهو گفتم تمام صفحات revalidate بشن اما چون از export const dynamic = 'force-static' در همون لحظه میخاسته همه رو بسازه و کش کنه که سیستم میترکیده. اما همینو اگکه بکنم export const dynamic = 'auto' و اعلام کنم همه revalidate شدن دیگه در همون لحظه همه رو نمیسازه و کش نمیکنه.
+// // پس من اصلا از اول باید بجای export const dynamic = 'force-static' export const dynamic = 'auto' میزاشتم. اصلا دنبال همین بودم. چون من تو کدم یهو گفتم تمام صفحات revalidate بشن اما چون از export const dynamic = 'force-static' در همون لحظه میخاسته همه رو بسازه و کش کنه که سیستم میترکیده. اما همینو اگکه بکنم export const dynamic = 'auto' و اعلام کنم همه revalidate شدن دیگه در همون لحظه همه رو نمیسازه و کش نمیکنه.
 
-// export const dynamic = 'auto'
+// // export const dynamic = 'auto'
 export const dynamic = 'force-static'
-// export const dynamic = 'force-dynamic'
+// // export const dynamic = 'force-dynamic'
 
 import React from 'react'
 import postCtrl from '@/features/post/controller'
@@ -33,9 +33,9 @@ interface PageProps {
   params: Promise<{ slugs: string[] }>
 }
 
-// export async function generateStaticParams() {
-//   return postCtrl.generateStaticParams()
-// }
+export async function generateStaticParams() {
+  return postCtrl.generateStaticParams()
+}
 
 export async function generateMetadata({
   params,
@@ -177,6 +177,7 @@ export default async function Page({ params }: PageProps) {
         مطلب هنوز منتشر نشده است!
       </div>
     )
+
   if (template)
     return (
       <>
@@ -233,60 +234,60 @@ export default async function Page({ params }: PageProps) {
             content_post_comment_form={{ post }}
           />
           {/* <RendererRows
-            siteSettings={siteSettings}
-            rows={template?.content.rows}
-            editroMode={false}
-            content_all={
-              <DefaultSinglePageBlog
-                post={post}
-                breadcrumbItems={breadcrumbItems}
-                readingDuration={readingDuration}
-                tableOfContent={<TableOfContents toc={toc} />}
-                comments={
-                  <PostCommentList
-                    post={post}
-                    postCommentsResult={postCommentsResult}
-                  />
-                }
-              />
-            }
-            content_post_title={translation?.title}
-            content_post_cover={{
-              image: post?.image ?? null,
-              postType: post?.type ?? 'article',
-              primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
-            }}
-            content_post_share={{
-              url: `${siteSettings?.site_url ?? ''}${post?.href}`,
-              title: translation?.title ?? '',
-            }}
-            content_post_tags={{
-              tags: post?.tags ?? [],
-            }}
-            content_post_author_card={{
-              author: post?.author ?? null,
-            }}
-            content_post_metadata={metadata}
-            content_post_breadcrumb={breadcrumbItems}
-            content_post_content={
-              <RenderedHtml contentJson={translation?.contentJson} />
-            }
-            content_post_tablecontent={<TableOfContents toc={toc} />}
-            content_post_comments={
-              <PostCommentList
-                post={post}
-                postCommentsResult={postCommentsResult}
-              />
-            }
-            content_post_comment_form={{ post }}
-          /> */}
+          siteSettings={siteSettings}
+          rows={template?.content.rows}
+          editroMode={false}
+          content_all={
+            <DefaultSinglePageBlog
+              post={post}
+              breadcrumbItems={breadcrumbItems}
+              readingDuration={readingDuration}
+              tableOfContent={<TableOfContents toc={toc} />}
+              comments={
+                <PostCommentList
+                  post={post}
+                  postCommentsResult={postCommentsResult}
+                />
+              }
+            />
+          }
+          content_post_title={translation?.title}
+          content_post_cover={{
+            image: post?.image ?? null,
+            postType: post?.type ?? 'article',
+            primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
+          }}
+          content_post_share={{
+            url: `${siteSettings?.site_url ?? ''}${post?.href}`,
+            title: translation?.title ?? '',
+          }}
+          content_post_tags={{
+            tags: post?.tags ?? [],
+          }}
+          content_post_author_card={{
+            author: post?.author ?? null,
+          }}
+          content_post_metadata={metadata}
+          content_post_breadcrumb={breadcrumbItems}
+          content_post_content={
+            <RenderedHtml contentJson={translation?.contentJson} />
+          }
+          content_post_tablecontent={<TableOfContents toc={toc} />}
+          content_post_comments={
+            <PostCommentList
+              post={post}
+              postCommentsResult={postCommentsResult}
+            />
+          }
+          content_post_comment_form={{ post }}
+        /> */}
         </>
       </>
     )
 
   return (
     <>
-      {writeJsonLd()}
+      {/* {writeJsonLd()} */}
       <>
         <DefaultSinglePageBlog
           post={post}
@@ -304,3 +305,7 @@ export default async function Page({ params }: PageProps) {
     </>
   )
 }
+
+// export default async function name() {
+//   return <div>blogggggsss....</div>
+// }

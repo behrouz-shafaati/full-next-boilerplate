@@ -19,12 +19,14 @@ import { TextareaInputBlockDef } from '../shared-blocks/textarea-input'
 import { SubmitButtonBlockDef } from '../shared-blocks/submitButton'
 import { FormBlockDef } from '../shared-blocks/form'
 import { SearchBlockDef } from '../shared-blocks/search'
+import { ThemeToggleBlockDef } from '../shared-blocks/ThemeToggle'
 export const blockRegistry = {
   row: RowBlockDef,
   column: columnBlockDef,
   text: TextBlockDef,
   image: ImageBlockDef,
   themeModdeSwitch: ThemeModeSwitchBlockDef,
+  themeToggle: ThemeToggleBlockDef,
   userNav: UserNavBlockDef,
   imageSlider: ImageSliderBlockDef,
   blogPostSlider: BlogPostSliderBlockDef,

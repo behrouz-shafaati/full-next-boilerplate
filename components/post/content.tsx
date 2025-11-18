@@ -1,3 +1,4 @@
+'use server'
 import React from 'react'
 
 type PostCoverProps = {
@@ -5,7 +6,7 @@ type PostCoverProps = {
   styles?: any
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const PostContent = ({
+export const PostContent = async ({
   content,
   styles = {},
   ...props

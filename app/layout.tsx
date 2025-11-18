@@ -2,10 +2,11 @@ import './initial-load'
 import type { Metadata } from 'next'
 import './globals.css'
 import localFont from 'next/font/local'
-import { Providers } from './providers'
+// import { Providers } from './providers'
 import { getSettings } from '@/features/settings/controller'
 import { Settings } from '@/features/settings/interface'
 import { getTranslation } from '@/lib/utils'
+import { Providers } from './providers'
 
 const iransans = localFont({
   src: [
@@ -70,7 +71,9 @@ export default async function RootLayout({
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <body className={iransans.className}>
-        <Providers>{children}</Providers>
+        {/* <Providers> */}
+        <main>{children}</main>
+        {/* </Providers> */}
       </body>
     </html>
   )

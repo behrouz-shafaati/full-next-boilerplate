@@ -1,3 +1,4 @@
+'use server'
 import { renderTiptapJsonToHtml } from '@/lib/renderTiptapToHtml'
 import { TNode } from '../type'
 import EnhanceHtmlForNext from './EnhanceHtmlForNext'

@@ -10,6 +10,7 @@ const config = {
     './features/**/*.{ts,tsx}',
   ],
   safelist: [
+    ,
     {
       pattern: /col-span-(1[0-2]|[1-9])/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'],
@@ -28,7 +29,6 @@ const config = {
       pattern: /(bg|text|border)-(black|white|transparent)/,
       variants: ['dark', 'dark:hover'],
     },
-    ,
     // تمام breakpointها برای displayهای مهم
     'sm:!block',
     'md:!block',

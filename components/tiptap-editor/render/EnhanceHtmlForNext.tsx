@@ -1,3 +1,4 @@
+'use server'
 import Link from 'next/link'
 import parse, { domToReact, Element } from 'html-react-parser'
 import { slugify } from '@/lib/utils'
@@ -24,7 +25,7 @@ type Props = {
   contentJson: string
   HTML_string: string
 }
-export default function EnhanceHtmlForNext({
+export default async function EnhanceHtmlForNext({
   siteSettings,
   contentJson,
   HTML_string,

@@ -1,6 +1,6 @@
 'use client'
 // کامپوننت نمایشی بلاک
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Block } from '../../types'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
@@ -16,7 +16,7 @@ import { PostListHeroHorizontal } from './designs/PostListHeroHorizontal'
 import VerticalPostCard from '@/components/post/vertical-card'
 import BannerGroup from '../AdSlot/BannerGroup'
 import PostHorizontalSmallCard from './designs/PostHorizontalSmallCard'
-import { useSearchParams } from 'next/navigation'
+// import { useSearchParams } from 'next/navigation'
 import { getCategoryAction } from '@/features/category/actions'
 import { getTagAction } from '@/features/tag/actions'
 import { getPosts } from '@/features/post/actions'
@@ -45,12 +45,12 @@ type PostListProps = {
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export const PostList = React.memo(
-  ({ posts: posts, randomMap, blockData, ...props }: PostListProps) => {
+  ({ posts: _posts, randomMap, blockData, ...props }: PostListProps) => {
     const locale = 'fa'
     const { categorySlug } = props ? props : { categorySlug: null }
     const { id, content, settings } = blockData
-    const [_posts, setPosts] = useState(posts)
-    const searchParams = useSearchParams()
+    // const [_posts, setPosts] = useState(posts)
+    // const searchParams = useSearchParams()
 
     const bannerSettings = useMemo(() => ({ settings: { aspect: '4/1' } }), [])
 
@@ -58,51 +58,51 @@ export const PostList = React.memo(
     if (settings?.showNewest == true)
       queryParams = [{ label: 'تازه‌ها', slug: '' }, ...queryParams]
 
-    const selectedTag = searchParams.get('tag') || ''
+    // const selectedTag = searchParams.get('tag') || ''
 
-    useEffect(() => {
-      const fetchData = async () => {
-        let posts = {}
-        let filters = {}
+    // useEffect(() => {
+    //   const fetchData = async () => {
+    //     let posts = {}
+    //     let filters = {}
 
-        if (content?.usePageCategory && categorySlug) {
-          // logic to handle usePageCategory and categorySlug
-          const category = await getCategoryAction({ slug: categorySlug })
-          filters = { categories: [category.id], ...filters }
-        } else {
-          const categoryIds =
-            content?.categories?.map((category: Option) => category.value) || {}
+    //     if (content?.usePageCategory && categorySlug) {
+    //       // logic to handle usePageCategory and categorySlug
+    //       const category = await getCategoryAction({ slug: categorySlug })
+    //       filters = { categories: [category.id], ...filters }
+    //     } else {
+    //       const categoryIds =
+    //         content?.categories?.map((category: Option) => category.value) || {}
 
-          //       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
-          if (categoryIds?.length > 0)
-            filters = { categories: categoryIds, ...filters }
-        }
+    //       //       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
+    //       if (categoryIds?.length > 0)
+    //         filters = { categories: categoryIds, ...filters }
+    //     }
 
-        const selectedTagExistInItems = queryParams?.some(
-          (tag) => tag.slug === selectedTag
-        )
-        //     // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود
-        if (!selectedTagExistInItems) return
-        if (selectedTag !== '') {
-          const tag = await getTagAction({ slug: selectedTag })
-          filters = { tags: [tag.id], ...filters }
-          posts = await getPosts({
-            filters,
-            pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-          })
-          setPosts(posts.data)
-        } else {
-          posts = await getPosts({
-            filters,
-            pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-          })
-          setPosts(posts.data)
-        }
-      }
+    //     const selectedTagExistInItems = queryParams?.some(
+    //       (tag) => tag.slug === selectedTag
+    //     )
+    //     //     // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود
+    //     if (!selectedTagExistInItems) return
+    //     if (selectedTag !== '') {
+    //       const tag = await getTagAction({ slug: selectedTag })
+    //       filters = { tags: [tag.id], ...filters }
+    //       posts = await getPosts({
+    //         filters,
+    //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
+    //       })
+    //       setPosts(posts.data)
+    //     } else {
+    //       posts = await getPosts({
+    //         filters,
+    //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
+    //       })
+    //       setPosts(posts.data)
+    //     }
+    //   }
 
-      //   // fetchData  باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
-      fetchData()
-    }, [selectedTag])
+    //   //   // fetchData  باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
+    //   fetchData()
+    // }, [selectedTag])
 
     const tagSlugs = content?.tags?.map((tag: Option) => tag.slug) || []
     const categorySlugs =
@@ -126,10 +126,10 @@ export const PostList = React.memo(
 
     // showMoreHref = showMoreHref + `?page=1&perPage=${showMoreHref.length || 6}`
     // selectedTag از نوار آدرس مرورگر خوانده میشود
-    showMoreHref =
-      selectedTag != ''
-        ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
-        : showMoreHref
+    // showMoreHref =
+    //   selectedTag != ''
+    //     ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
+    //     : showMoreHref
 
     const postItems = useMemo(() => {
       const advertisingAfter = blockData?.settings?.advertisingAfter || 0

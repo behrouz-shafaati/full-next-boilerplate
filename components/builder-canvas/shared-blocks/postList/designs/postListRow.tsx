@@ -42,7 +42,8 @@ export const PostListRow = ({
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'
 
-  const { onClick, ...restProps } = props
+  // const { onClick, ...restProps } = props
+  const restProps = props
 
   let queryParamLS = content?.tags || []
   if (settings?.showNewest == true)
@@ -50,7 +51,7 @@ export const PostListRow = ({
   return (
     <div
       className=" relative w-full min-h-10  overflow-hidden "
-      {...(onClick ? { onClick } : {})}
+      // {...(onClick ? { onClick } : {})}
     >
       <div className="flex flex-row justify-between pb-2 ">
         <div className=" py-4">

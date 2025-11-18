@@ -1,5 +1,5 @@
 // رندر کردن بلاک‌ها از روی JSON
-
+// RenderRows.tsx
 import React from 'react'
 import type { Row } from '@/components/builder-canvas/types'
 import {

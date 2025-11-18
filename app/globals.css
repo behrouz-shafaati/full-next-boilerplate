@@ -285,3 +285,17 @@ p {
   height: max-content;
   width: 100%;
 }
+
+/*======= ThemeToggle ============*/
+:root,
+.light,
+.dark {
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+/* وقتی صفحه فقط mount شده، transition را غیرفعال کن */
+html[data-theme-ready='true'] :root,
+html[data-theme-ready='true'] .light,
+html[data-theme-ready='true'] .dark {
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
