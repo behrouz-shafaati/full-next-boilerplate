@@ -1,18 +1,20 @@
-'use client'
 // کامپوننت نمایشی بلاک
-import React, { Suspense } from 'react'
+import React, { Dispatch, SetStateAction, Suspense } from 'react'
 import Link from 'next/link'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { ArrowLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
-import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'
+// import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
+import { SelectableTags } from '@/components/builder-canvas/components/SelectableTags'
 
 type PostListProps = {
   posts: Post[]
-  showMoreHref: string
   postItems: any
+  searchParams?: any
+  showMoreHref: string
+  setSelectedTag: Dispatch<SetStateAction<string>>
   blockData: {
     id: string
     type: 'postList'
@@ -31,9 +33,11 @@ type PostListProps = {
 
 export const PostListRow = ({
   posts,
-  showMoreHref,
   postItems,
+  showMoreHref,
   blockData,
+  searchParams = {},
+  setSelectedTag,
   ...props
 }: PostListProps) => {
   const locale = 'fa'
@@ -69,9 +73,9 @@ export const PostListRow = ({
       </div>
       <div>
         <Suspense fallback={<div>در حال بارگذاری...</div>}>
-          <QueryParamLinks
+          <SelectableTags
             items={queryParamLS}
-            paramKey="tag"
+            setSelectedTag={setSelectedTag}
             className="p-2"
           />
         </Suspense>

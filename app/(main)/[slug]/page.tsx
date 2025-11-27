@@ -11,12 +11,18 @@ import { notFound } from 'next/navigation'
 
 interface PageProps {
   params: { lang?: string; slug: string }
+  searchParams: Promise<{
+    tag?: string
+  }>
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { lang = 'fa', slug: encodeSlug } = await params
   const slug = decodeURIComponent(encodeSlug)
 
+  const resolvedSearchParams = {}
+  // const resolvedSearchParams = await searchParams
+  // const { tag } = resolvedSearchParams
   // زبان پیش‌فرض
   const locale = pickLocale(lang)
 
@@ -30,5 +36,11 @@ export default async function Page({ params }: PageProps) {
 
   // this is a page
   if (pageResult?.data[0])
-    return <PageRenderer page={pageResult?.data[0]} locale={locale} />
+    return (
+      <PageRenderer
+        page={pageResult?.data[0]}
+        locale={locale}
+        searchParams={resolvedSearchParams}
+      />
+    )
 }

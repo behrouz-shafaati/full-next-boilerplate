@@ -6,6 +6,7 @@ import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
 // import { PostListFallback } from './PostListFallback'
 import { getCategoryAction } from '@/features/category/actions'
+// import { getTagAction } from '@/features/tag/actions'
 
 type PostListBlockProps = {
   widgetName: string
@@ -27,6 +28,7 @@ type PostListBlockProps = {
   } & Block
   pageSlug: string | null
   categorySlug: string | null
+  searchParams?: any
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 export default async function PostListBlock({
@@ -34,20 +36,15 @@ export default async function PostListBlock({
   blockData,
   pageSlug,
   categorySlug,
+  searchParams = {},
   ...props
 }: PostListBlockProps) {
-  console.log('PostListBlock rendered')
   const { content, settings } = blockData
-  const tagIds = content?.tags?.map((tag: Option) => tag.value)
+
+  let filters = {}
+
   const categoryIds =
     content?.categories?.map((category: Option) => category.value) || {}
-  let filters
-  if (settings?.showNewest == true || tagIds?.length == 0) {
-    filters = {}
-  } else if (tagIds?.length > 0) {
-    filters = { tags: tagIds[0] }
-  }
-
   if (content?.usePageCategory && categorySlug) {
     // logic to handle usePageCategory and categorySlug
     const category = await getCategoryAction({ slug: categorySlug })
@@ -73,24 +70,9 @@ export default async function PostListBlock({
       pageSlug={pageSlug}
       categorySlug={categorySlug}
       randomMap={randomMap}
+      searchParams={searchParams}
+      filters={filters}
       {...props}
     />
   )
-
-  // مدل زیر باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
-  // return (
-  //   <Suspense
-  //     fallback={
-  //       <PostListFallback posts={posts} blockData={blockData} {...props} />
-  //     }
-  //   >
-  //     <PostList
-  //       posts={posts}
-  //       blockData={blockData}
-  //       pageSlug={pageSlug}
-  //       categorySlug={categorySlug}
-  //       {...props}
-  //     />
-  //   </Suspense>
-  // )
 }

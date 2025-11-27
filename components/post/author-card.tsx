@@ -14,11 +14,11 @@ export const PostAuthorCard = ({
   styles = {},
   ...props
 }: PostCoverProps) => {
-  const translation = getTranslation({ translations: author.translations })
+  const translation = getTranslation({ translations: author?.translations })
   return (
     <div style={styles} {...props}>
       <div className="p-7 border-t border-b">
-        <Link href={`/author/${author.userName}`} className="flex gap-4">
+        <Link href={`/author/${author?.userName}`} className="flex gap-4">
           <div>
             <Avatar className="size-12 ring-background  ring-2">
               <AvatarImage

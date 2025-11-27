@@ -1,3 +1,4 @@
+'use server'
 import templateCtrl from '@/features/template/controller'
 import { Template } from '@/features/template/interface'
 import RendererRows from '../pageRenderer/RenderRows'
@@ -11,6 +12,7 @@ type Props = {
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
   pageSlug: string | null
   categorySlug: string | null
+  searchParams?: any
 }
 
 const RendererTemplate = async ({
@@ -20,6 +22,7 @@ const RendererTemplate = async ({
   editroMode = false,
   pageSlug = null,
   categorySlug = null,
+  searchParams = {},
   ...rest
 }: Props) => {
   const parentTemplateId = template.parent
@@ -34,6 +37,7 @@ const RendererTemplate = async ({
         editroMode={false}
         pageSlug={pageSlug}
         categorySlug={categorySlug}
+        searchParams={searchParams}
         content_all={
           <RendererRows
             siteSettings={siteSettings}
@@ -42,6 +46,7 @@ const RendererTemplate = async ({
             content_all={content_all}
             pageSlug={pageSlug}
             categorySlug={categorySlug}
+            searchParams={searchParams}
             {...rest}
           />
         }
@@ -57,6 +62,7 @@ const RendererTemplate = async ({
       content_all={content_all}
       pageSlug={pageSlug}
       categorySlug={categorySlug}
+      searchParams={searchParams}
       {...rest}
     />
   )

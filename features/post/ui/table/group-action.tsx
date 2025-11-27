@@ -22,7 +22,7 @@ export default function GroupAction({ table, items }: GroupActionProps) {
   for (const item of items) {
     const canDeleteItem = can(
       userRoles,
-      item?.author.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
+      item?.author?.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
     )
     if (!canDeleteItem) {
       canDelete = false

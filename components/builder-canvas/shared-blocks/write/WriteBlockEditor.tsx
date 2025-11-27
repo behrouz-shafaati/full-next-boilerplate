@@ -49,11 +49,12 @@ export const WriteEditorBlock = ({
       }}
       {...props}
     >
-      <EnhanceHtmlForNext
+      <div dangerouslySetInnerHTML={{ __html: HTML_string }} />
+      {/* <EnhanceHtmlForNext
         siteSettings={siteSettings}
         HTML_string={HTML_string}
         contentJson={content?.json}
-      />
+      /> */}
     </div>
   )
 }

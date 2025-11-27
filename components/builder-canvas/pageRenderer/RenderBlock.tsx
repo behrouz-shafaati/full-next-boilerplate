@@ -1,3 +1,4 @@
+'use server'
 import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
 import { Block } from '../types'
 import { combineClassNames, getVisibilityClass } from '../utils/styleUtils'
@@ -11,14 +12,15 @@ type RenderBlockProp = {
   item: Block
   pageSlug: string | null
   categorySlug: string | null
-  contents: React.ReactNode[]
+  searchParams?: any
 }
-const RenderBlock = ({
+const RenderBlock = async ({
   siteSettings,
   editroMode = false,
   item,
   pageSlug,
   categorySlug,
+  searchParams = {},
   ...rest
 }: RenderBlockProp) => {
   const blocks = getBlockRegistry() // برای محتوا دار بودن این برای رسیدن به این کامپوننت هیچ کامپوننتی نباید از use client‌ استفاده کرده باشد
@@ -39,6 +41,7 @@ const RenderBlock = ({
           className={`${className} ${combineClassNames(item.classNames || {})}`}
           pageSlug={pageSlug}
           categorySlug={categorySlug}
+          searchParams={searchParams}
         />
       )
     }
@@ -65,19 +68,8 @@ const RenderBlock = ({
                 content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
                 pageSlug={pageSlug}
                 categorySlug={categorySlug}
+                searchParams={searchParams}
               />
-              {/* {Island && (
-                <Island
-                  siteSettings={siteSettings}
-                  blockData={item}
-                  className={`${className} ${combineClassNames(
-                    item.classNames || {}
-                  )}`}
-                  content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
-                  pageSlug={pageSlug}
-                  categorySlug={categorySlug}
-                />
-              )} */}
             </>
           )
       }
@@ -93,19 +85,8 @@ const RenderBlock = ({
               {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
               pageSlug={pageSlug}
               categorySlug={categorySlug}
+              searchParams={searchParams}
             />
-            {/* {Island && (
-              <Island
-                siteSettings={siteSettings}
-                blockData={item}
-                className={`${className} ${combineClassNames(
-                  item.classNames || {}
-                )}`}
-                {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
-                pageSlug={pageSlug}
-                categorySlug={categorySlug}
-              />
-            )} */}
           </>
         )
       }
@@ -120,18 +101,8 @@ const RenderBlock = ({
             )}`}
             pageSlug={pageSlug}
             categorySlug={categorySlug}
+            searchParams={searchParams}
           />
-          {/* {Island && (
-            <Island
-              siteSettings={siteSettings}
-              blockData={item}
-              className={`${className} ${combineClassNames(
-                item.classNames || {}
-              )}`}
-              pageSlug={pageSlug}
-              categorySlug={categorySlug}
-            />
-          )} */}
         </>
       )
     }
@@ -141,10 +112,7 @@ const RenderBlock = ({
 
 export default RenderBlock
 
-export function extractNode(
-  rest: RestProps,
-  key: string
-): React.ReactNode | null {
+function extractNode(rest: RestProps, key: string): React.ReactNode | null {
   if (!key.startsWith('content_')) return null
   const value = rest[key]
   if (!value) return null

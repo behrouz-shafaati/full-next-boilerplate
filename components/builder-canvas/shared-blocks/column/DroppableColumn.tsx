@@ -30,7 +30,6 @@ export default function DroppableColumn({
   let activeClass = ''
   if (selectedBlock?.id == col.id)
     activeClass = ' border-2 border-fuchsia-500 border-opacity-30'
-
   return (
     <div
       ref={setNodeRef}

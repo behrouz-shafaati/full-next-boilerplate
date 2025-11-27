@@ -31,28 +31,17 @@ import {
 import { ToggleGroup, ToggleGroupItem } from '../ui/toggle-group'
 import { Editor } from '@tiptap/core'
 import { AddVideoButton } from './component/AddVideoButton'
-import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../ui/dialog'
-import { Button } from '../custom/button'
-import { ScrollArea } from '../ui/scroll-area'
-import FileUpload from '../form-fields/file-upload'
 import StickyBox from 'react-sticky-box'
 
 const MenuBar = ({
   editor,
   fileUploadSettings,
+  setShowGallery,
 }: {
   editor: Editor
-  fileUploadSettings: any
+  fileUploadSettings?: any
+  setShowGallery?: (show: boolean) => void
 }) => {
-  const [openGallery, setOpenGallery] = useState(false)
   if (!editor) {
     return null
   }
@@ -358,21 +347,6 @@ const MenuBar = ({
     return ''
   }
 
-  function openModalGallery() {
-    // setError(null);
-    // setFile(null);
-    // setPreview(null);
-    setOpenGallery(true)
-  }
-
-  function closeModalGallery() {
-    setOpenGallery(false)
-    // setFile(null);
-    // setPreview(null);
-    // setLoading(false);
-    // setError(null);
-  }
-
   return (
     <>
       <StickyBox className=" z-10 flex flex-row items-center max-w-full gap-1 py-2 overflow-auto bg-white rtl dark:bg-slate-900">
@@ -522,7 +496,7 @@ const MenuBar = ({
         <ToggleGroup type="single" value="" className="rtl">
           <ToggleGroupItem
             value="link"
-            onClick={openModalGallery}
+            onClick={() => setShowGallery?.(true)}
             title="تصویر"
             aria-label="Image"
           >
@@ -564,48 +538,6 @@ const MenuBar = ({
           <AddVideoButton editor={editor} />
         </ToggleGroup>
       </StickyBox>
-      {/* full-screen modal */}
-      <Dialog
-        open={openGallery}
-        onOpenChange={(val) => (val ? openModalGallery() : closeModalGallery())}
-      >
-        <DialogContent className="mb-8 h-[calc(100vh-2rem)] min-w-[calc(100vw-2rem)] grid-cols-1 auto-rows-max">
-          <DialogHeader className="contents py-4 ">
-            <DialogTitle className="block px-6 h-fit">تصاویر مطلب</DialogTitle>
-            {/* <DialogDescription className="text-sm text-slate-500">
-              برای درج، عکس را انتخاب و "درج" را بزن
-            </DialogDescription> */}
-          </DialogHeader>
-          <ScrollArea className="px-6 pb-16">
-            <FileUpload
-              key={
-                fileUploadSettings.defaultFiles?.map((f) => f.id).join(',') ||
-                'empty'
-              } // 👈 تغییر باعث remount میشه
-              attachedTo={fileUploadSettings.attachedFilesTo}
-              name={fileUploadSettings.name}
-              title="رسانه های مطلب"
-              responseHnadler={fileUploadSettings.responseFileUploadHandler}
-              ref={fileUploadSettings.fileUploadRef}
-              showDeleteButton={false}
-              defaultValues={fileUploadSettings.defaultFiles}
-              {...(fileUploadSettings.onChangeFiles
-                ? { onChange: fileUploadSettings.onChangeFiles }
-                : {})}
-              onLoading={fileUploadSettings?.onLoading}
-            />
-          </ScrollArea>
-          <DialogFooter className="fixed bottom-0 w-full  px-6 pb-6 bg-white dark:bg-slate-900">
-            <Button variant="ghost" onClick={closeModalGallery}>
-              بستن
-            </Button>
-            {/* 
-            <Button className="ml-auto" loading={true}>
-              {false ? 'در حال درج...' : 'درج'}
-            </Button> */}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </>
   )
 }

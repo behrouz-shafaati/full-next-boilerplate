@@ -10,7 +10,7 @@ class SiteSettingsSingleton {
     const settingsFromDB = await settingsCtrl.find({
       filters: { type: 'site-settings' },
     })
-    SiteSettingsSingleton.instance = settingsFromDB.data[0] ?? {}
+    SiteSettingsSingleton.instance = settingsFromDB?.data[0] ?? {}
     return SiteSettingsSingleton.instance
   }
 

@@ -3,7 +3,6 @@
 export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
-
 import type { Metadata } from 'next'
 import CategoryPostList from '@/features/category/ui/component/CategoryPostList'
 import categoryCtrl from '@/features/category/controller'

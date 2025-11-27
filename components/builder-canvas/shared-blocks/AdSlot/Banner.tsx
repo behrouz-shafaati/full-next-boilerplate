@@ -6,15 +6,16 @@ import { BannerData, BannerManager } from '@/lib/bannerManager'
 import { Skeleton } from '@/components/ui/skeleton'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ImageAlba } from '@/components/image-alba'
 
 type BannerProps = {
+  banner: BannerData
   banerSlotId: string
 } & AdSlotWidgetProps &
   React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 const defaultAspect = '4/1'
 export const Banner = ({
+  banner,
   blockData,
   banerSlotId: id,
   ...props
@@ -22,34 +23,34 @@ export const Banner = ({
   const locale = 'fa'
   const { content, settings } = blockData
 
-  const [banner, setBanner] = useState<BannerData | null | 'loading'>('loading')
-  useEffect(() => {
-    const fetchData = async () => {
-      const manager = BannerManager.getInstance()
-      // register callback
-      const cb = (data: BannerData | null) => {
-        console.log('#23408273490 in banner data: ', data)
-        if (!data) {
-          setBanner(null)
-        } else {
-          setBanner(data)
-        }
-      }
-      manager.register({
-        id,
-        aspect: settings?.aspect || defaultAspect,
-        placement: settings?.placement || 'all',
-        linkedCampaign: content?.linkedCampaign || 'none',
-        fallbackBehavior: settings?.fallbackBehavior || 'random',
-        cb,
-      })
+  // const [banner, setBanner] = useState<BannerData | null | 'loading'>('loading')
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     const manager = BannerManager.getInstance()
+  //     // register callback
+  //     const cb = (data: BannerData | null) => {
+  //       console.log('#23408273490 in banner data: ', data)
+  //       if (!data) {
+  //         setBanner(null)
+  //       } else {
+  //         setBanner(data)
+  //       }
+  //     }
+  //     manager.register({
+  //       id,
+  //       aspect: settings?.aspect || defaultAspect,
+  //       placement: settings?.placement || 'all',
+  //       linkedCampaign: content?.linkedCampaign || 'none',
+  //       fallbackBehavior: settings?.fallbackBehavior || 'random',
+  //       cb,
+  //     })
 
-      return () => {
-        manager.unregister(id)
-      }
-    }
-    fetchData()
-  }, [id])
+  //     return () => {
+  //       manager.unregister(id)
+  //     }
+  //   }
+  //   fetchData()
+  // }, [id])
 
   const linkClickHandler = async () => {
     try {

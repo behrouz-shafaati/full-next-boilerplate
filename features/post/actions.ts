@@ -137,7 +137,7 @@ export async function updatePost(
     const prevPost = await postCtrl.findById({ id })
     await can(
       user.roles,
-      prevPost.author.id !== user.id ? 'post.edit.any' : 'post.edit.own'
+      prevPost.author?.id !== user.id ? 'post.edit.any' : 'post.edit.own'
     )
 
     const validatedFields = FormSchema.safeParse(rawValues)
@@ -154,7 +154,9 @@ export async function updatePost(
     if (params.status === 'published') {
       await can(
         user.roles,
-        prevPost.author.id !== user.id ? 'post.publish.any' : 'post.publish.own'
+        prevPost.author?.id !== user.id
+          ? 'post.publish.any'
+          : 'post.publish.own'
       )
     }
     const cleanedParams = await postCtrl.generateUniquePostSlug(params, id)
@@ -202,7 +204,7 @@ export async function deletePostsAction(ids: string[]) {
     for (const prevPost of prevPostResult.data) {
       await can(
         user.roles,
-        prevPost.author.id !== user.id ? 'post.delete.any' : 'post.delete.own'
+        prevPost.author?.id !== user.id ? 'post.delete.any' : 'post.delete.own'
       )
     }
 

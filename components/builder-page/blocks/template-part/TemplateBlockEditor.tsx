@@ -29,7 +29,7 @@ export default function TemplateBlockEditor({
   categorySlug,
   ...props
 }: TemplateBlockEditorProps) {
-  const [template, setTemplate] = useState({ content: { rows: [] } })
+  const [template, setTemplate] = useState({ title: '', content: { rows: [] } })
   const { content } = blockData
   useEffect(() => {
     const fetchData = async () => {
@@ -45,13 +45,20 @@ export default function TemplateBlockEditor({
   if (!content?.templateId)
     return <EmptyBlock widgetName={widgetName} {...props} />
   return (
-    <TemplatePart
-      template={template}
-      blockData={blockData}
-      {...props}
-      editroMode={true}
-      pageSlug={pageSlug}
-      categorySlug={categorySlug}
-    />
+    <div {...props} className="p-4 text-center">
+      قطعه قالب {template?.title}
+    </div>
   )
+
+  //====> چون کامپوننت زیر تمام سروری شده است دیرگ نمیتواتنیم از ان استفاده کنیم
+  // return (
+  //   <TemplatePart
+  //     template={template}
+  //     blockData={blockData}
+  //     {...props}
+  //     editroMode={true}
+  //     pageSlug={pageSlug}
+  //     categorySlug={categorySlug}
+  //   />
+  // )
 }

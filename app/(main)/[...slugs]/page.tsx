@@ -2,7 +2,7 @@
 
 // // export const dynamic = 'auto'
 export const dynamic = 'force-static'
-// // export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 import React from 'react'
 import postCtrl from '@/features/post/controller'
@@ -31,11 +31,14 @@ import RendererTemplate from '@/components/builder-canvas/templateRender/RenderT
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
+  searchParams: Promise<{
+    tag?: string
+  }>
 }
 
-export async function generateStaticParams() {
-  return postCtrl.generateStaticParams()
-}
+// export async function generateStaticParams() {
+//   return postCtrl.generateStaticParams()
+// }
 
 export async function generateMetadata({
   params,
@@ -93,10 +96,15 @@ export async function generateMetadata({
   }
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const locale = 'fa'
   const resolvedParams = await params
   const { slugs } = resolvedParams
+
+  const resolvedSearchParams = {}
+  // const resolvedSearchParams = await searchParams
+  // const { tag } = resolvedSearchParams
+
   const slug = slugs[slugs.length - 1]
   let findResult = null
 
@@ -188,6 +196,7 @@ export default async function Page({ params }: PageProps) {
             siteSettings={siteSettings}
             pageSlug={slug}
             categorySlug={post?.mainCategory?.slug || null}
+            searchParams={resolvedParams}
             editroMode={false}
             content_all={
               <DefaultSinglePageBlog
@@ -287,7 +296,7 @@ export default async function Page({ params }: PageProps) {
 
   return (
     <>
-      {/* {writeJsonLd()} */}
+      {writeJsonLd()}
       <>
         <DefaultSinglePageBlog
           post={post}

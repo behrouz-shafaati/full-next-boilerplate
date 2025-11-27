@@ -1,6 +1,7 @@
+'use client'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
+import { Dispatch, SetStateAction, useState } from 'react'
 
 /**
  * A reusable component that renders clickable items which update a specific query parameter in the URL.
@@ -22,48 +23,43 @@ import Link from 'next/link'
  * ```
  *
  * @param {Object} props
- * @param {string} props.paramKey - The name of the query parameter to set (e.g. "tag", "filter", "ls")
  * @param {Array<{label: string, slug: string}>} props.items - List of items to render as clickable badges
  * @param {string} [props.className] - Optional extra classes for the container
  */
-export function QueryParamLinks({
-  paramKey = 'param',
+export function SelectableTags({
   items,
   className = '',
-  searchParams,
+  setSelectedTag,
 }: {
-  paramKey?: string
   items: { label: string; slug: string }[]
   className?: string
-  searchParams?: any
+  setSelectedTag: Dispatch<SetStateAction<string>>
 }) {
-  const selectedTag = searchParams?.[paramKey] || ''
+  const [selected, setSelected] = useState('')
 
-  let selectedTagExistInItems = items.some((item) => item.slug === selectedTag)
+  let selectedTagExistInItems = items.some((item) => item.slug === selected)
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {items?.map((item, index) => (
-        <Link
-          key={item.slug}
-          scroll={false}
-          href={`?${paramKey}=${item.slug}`}
-          className="focus:outline-none"
+        <Badge
+          key={index}
+          onClick={() => {
+            setSelectedTag(item.slug)
+            setSelected(item.slug)
+          }}
+          variant="outline"
+          className={cn(
+            'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
+            {
+              'bg-primary text-white':
+                (selectedTagExistInItems && item.slug === selected) ||
+                (!selectedTagExistInItems && index == 0),
+            }
+          )}
         >
-          <Badge
-            variant="outline"
-            className={cn(
-              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
-              {
-                'bg-primary text-white':
-                  (selectedTagExistInItems && item.slug === selectedTag) ||
-                  (!selectedTagExistInItems && index == 0),
-              }
-            )}
-          >
-            {item.label}
-          </Badge>
-        </Link>
+          {item.label}
+        </Badge>
       ))}
     </div>
   )

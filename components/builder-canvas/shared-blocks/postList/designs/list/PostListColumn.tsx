@@ -1,4 +1,3 @@
-'use client'
 // کامپوننت نمایشی بلاک
 import React, { Suspense } from 'react'
 import Link from 'next/link'
@@ -7,10 +6,12 @@ import { Option } from '@/types'
 import { MoveLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
 import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'
+import { SelectableTags } from '@/components/builder-canvas/components/SelectableTags'
 
 type PostListProps = {
   posts: Post[]
   postItems: any
+  setSelectedTag: React.Dispatch<React.SetStateAction<string>>
   showMoreHref: string
   blockData: {
     id: string
@@ -34,6 +35,7 @@ export const PostListColumn = ({
   posts,
   postItems,
   showMoreHref,
+  setSelectedTag,
   blockData,
   ...props
 }: PostListProps) => {
@@ -51,7 +53,7 @@ export const PostListColumn = ({
   return (
     <div
       className=" relative w-full min-h-10  overflow-hidden "
-      {...(onClick ? { onClick } : {})}
+      // {...(onClick ? { onClick } : {})}
     >
       <div className="flex flex-row justify-between pb-2 ">
         <div className="py-4">
@@ -62,7 +64,12 @@ export const PostListColumn = ({
       </div>
       <div className="px-2">
         <Suspense fallback={<div>در حال بارگذاری...</div>}>
-          <QueryParamLinks items={queryParamLS} paramKey="tag" />
+          {/* <QueryParamLinks items={queryParamLS} paramKey="tag" /> */}
+          <SelectableTags
+            items={queryParamLS}
+            setSelectedTag={setSelectedTag}
+            className="p-2"
+          />
         </Suspense>
         <div className={`mt-2 `}>
           <div className="grid grid-cols-1 gap-2">{postItems}</div>

@@ -158,8 +158,6 @@ export default function Builder({
     }
   }
 
-  useEffect(() => {}, [content])
-
   useEffect(() => {
     if (initialContent) setContent(initialContent)
     else resetContent()
@@ -170,6 +168,7 @@ export default function Builder({
       formRef.current.requestSubmit() // بهترین راه
     }
   }
+
   return (
     <>
       <DndContext

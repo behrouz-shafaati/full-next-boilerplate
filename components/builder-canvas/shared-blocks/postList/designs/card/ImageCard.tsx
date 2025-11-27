@@ -3,6 +3,7 @@ import { FileTranslationSchema } from '@/lib/entity/file/interface'
 import { timeAgo } from '@/lib/utils'
 import { CalendarPlus, MessageCircleMore } from 'lucide-react'
 import Image from 'next/image'
+
 import Link from 'next/link'
 
 type Props = {
@@ -25,6 +26,12 @@ const PostImageCard = ({ post, options }: Props) => {
     ) ||
     post.image?.translations[0] ||
     {}
+
+  const imgHeight = 208
+  const imgWidth = Math.round(
+    (imgHeight * post?.image?.width) / post?.image?.height
+  )
+
   return (
     <div
       key={post.id}
@@ -33,6 +40,26 @@ const PostImageCard = ({ post, options }: Props) => {
       <Link href={post.href}>
         <div className="rounded overflow-hidden shadow-lg bg-white dark:bg-gray-900">
           <div className="relative w-full h-52">
+            {/* <Image
+              src={
+                post?.image?.srcMedium ||
+                '/assets/image-placeholder-Medium.webp'
+              }
+              alt={translationImage?.alt || translationImage?.title || 'image'}
+              width={imgWidth}
+              height={imgHeight}
+              sizes="(max-width: 640px) 100vw,
+         (max-width: 768px) 50vw,
+         33vw"
+              style={{ objectFit: 'cover' }}
+              placeholder="blur"
+              blurDataURL={
+                post?.image?.srcSmall || '/assets/image-placeholder-Small.webp'
+              }
+              loading="lazy"
+              decoding="async"
+              quality={80}
+            /> */}
             <Image
               src={
                 post?.image?.srcMedium ||

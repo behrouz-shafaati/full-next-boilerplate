@@ -1,6 +1,6 @@
 import { Post } from '../../interface'
 import Pagination from '@/components/ui/pagination'
-import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/postList/designs/ArticalHorizontalCard'
+import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/postList/designs/card/ArticalHorizontalCard'
 import Search from '@/components/ui/search'
 import { getSettings } from '@/features/settings/controller'
 

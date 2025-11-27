@@ -9,6 +9,7 @@ import { Settings } from '@/features/settings/interface'
 import AdSlotBlock from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlock'
 import { ImageAlba } from '@/components/image-alba'
 import VideoEmbed from '@/components/video-embed/VideoEmbed'
+import fileCtrl from '@/lib/entity/file/controller'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -16,6 +17,15 @@ function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
   if (node.type === 'accordion' || node.type === 'faq') out.push(node)
   if (node.content && node.content.length) {
     for (const child of node.content) collectAccordions(child, out)
+  }
+  return out
+}
+// تابع کمکی: جمع‌آوری همه‌ی نودهای img (ترتیب درختی)
+function collectImages(node: TNode | undefined, out: TNode[] = []) {
+  if (!node) return out
+  if (node.type === 'img' || node.type === 'image') out.push(node)
+  if (node.content && node.content.length) {
+    for (const child of node.content) collectImages(child, out)
   }
   return out
 }
@@ -33,8 +43,27 @@ export default async function EnhanceHtmlForNext({
   // 1. JSON پارس شده (doc)
   const doc = JSON.parse(contentJson) as TNode
 
-  // 2. همه آکاردئون‌ها را از JSON جمع می‌کنیم (ترتیب درخت)
+  // 2. جمع‌آوری آکاردئون‌ها و تصاویر
   const accordions: AccordionNode = collectAccordions(doc) as AccordionNode
+  const images: TNode[] = collectImages(doc)
+
+  // 3. Map کردن تصاویر بر اساس ID و fetch از DB برای کسانی که translations ندارن
+  const imageMap: Record<string, any> = {}
+  await Promise.all(
+    images.map(async (img) => {
+      const id = img.attrs?.id
+      if (!id) return
+      if (!img.attrs?.translations) {
+        const fileFromDb = await fileCtrl.findById({ id })
+        if (fileFromDb) imageMap[id] = fileFromDb
+      } else {
+        imageMap[id] = {
+          ...img.attrs,
+        }
+      }
+    })
+  )
+
   // شمارنده برای نگه داشتن هم‌پوشانی HTML <-> JSON
   let accordionIndex = 0
   return (
@@ -43,30 +72,12 @@ export default async function EnhanceHtmlForNext({
         replace(domNode) {
           // console.log('#324 domNode.name: ', domNode.name)
           if (domNode instanceof Element && domNode.name === 'img') {
-            const {
-              src,
-              id,
-              translations,
-              srclarge,
-              srcsmall,
-              srcmedium,
-              width,
-              height,
-            } = domNode.attribs
+            const id = domNode.attribs.id
+            if (!id) return null
+            const fileData = imageMap[id]
+            if (!fileData) return null
 
-            return (
-              <ImageAlba
-                file={{
-                  id,
-                  translations: JSON.parse(translations),
-                  srcSmall: srcsmall,
-                  srcMedium: srcmedium,
-                  srcLarge: srclarge,
-                  width: Number(width),
-                  height: Number(height),
-                }}
-              />
-            )
+            return <ImageAlba file={fileData} />
           }
 
           if (domNode instanceof Element && domNode.name === 'a') {

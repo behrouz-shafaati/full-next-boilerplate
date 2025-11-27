@@ -161,16 +161,29 @@ const nodes = {
   },
   image: {
     inline: true,
+
     attrs: {
       src: { default: null },
       id: { default: null },
       translations: { default: null },
-      // فقط این سه‌تا در تگ HTML قرار می‌گیرن
       srcSmall: { default: null },
       srcMedium: { default: null },
       srcLarge: { default: null },
       width: { default: null },
       height: { default: null },
+      patchSmall: { default: null },
+      patchMedium: { default: null },
+      patchLarge: { default: null },
+      href: { default: null },
+      target: { default: null },
+      previewPath: { default: null },
+      mimeType: { default: null },
+      main: { default: null },
+      user: { default: null },
+      attachedTo: { default: null },
+      createdAt: { default: null },
+      updatedAt: { default: null },
+      extension: { default: null },
     },
     group: 'inline',
     draggable: true,
@@ -178,14 +191,15 @@ const nodes = {
       {
         tag: 'img[src]',
         getAttrs: (dom: any) => ({
-          src: '/placeholder-image.webp',
+          src: '/image-placeholder-Medium.webp',
         }),
       },
     ],
     toDOM: (node: any) => {
       const { id, translations, srcSmall, srcMedium, srcLarge, width, height } =
         node.attrs
-      const src = srcMedium || srcSmall || srcLarge || '/placeholder-image.webp'
+      const src =
+        srcMedium || srcSmall || srcLarge || '/image-placeholder-Medium.webp'
       return [
         'img',
         {
@@ -479,6 +493,27 @@ const marks = {
       },
     ],
     toDOM: (mark) => ['a', mark.attrs, 0],
+  },
+  strike: {
+    parseDOM: [
+      { tag: 's' },
+      { tag: 'del' },
+      { tag: 'strike' },
+      {
+        style: 'text-decoration',
+        getAttrs: (value) => {
+          // value ممکنه چیزی مثل "line-through" یا "underline" باشه
+          if (typeof value === 'string' && value.includes('line-through')) {
+            return null // قبولش کن، بدون attrs
+          }
+          return false // رد کن
+        },
+      },
+    ],
+    toDOM() {
+      // شبیه رفتار پیش‌فرض Tiptap Strike: از <s> استفاده می‌کنه
+      return ['s', 0]
+    },
   },
 }
 

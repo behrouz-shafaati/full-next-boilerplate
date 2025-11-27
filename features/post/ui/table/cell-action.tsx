@@ -30,11 +30,11 @@ export const CellAction: React.FC<CellActionProps> = ({ data }) => {
 
   const canEdit = can(
     userRoles,
-    data?.author.id !== user?.id ? 'post.edit.any' : 'post.edit.own'
+    data?.author?.id !== user?.id ? 'post.edit.any' : 'post.edit.own'
   )
   const canDelete = can(
     userRoles,
-    data?.author.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
+    data?.author?.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
   )
 
   const onConfirm = async () => {

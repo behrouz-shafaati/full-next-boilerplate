@@ -18,10 +18,12 @@ const path = require('path')
 const fs = require('fs')
 
 import { dirname, join } from 'path'
+import { mkdir } from 'fs/promises'
 
 // const extractFrames = require('ffmpeg-extract-frames');
 
 class controller extends c_controller {
+  private tmpPath: string = `./uploads/tmp`
   /**
    * constructor function for controller.
    *
@@ -49,6 +51,8 @@ class controller extends c_controller {
   }
 
   async saveFileInDirectory(buffer: Uint8Array, patch: string) {
+    const tmpPath = path.join(process.cwd(), 'uploads', 'tmp')
+    await mkdir(tmpPath, { recursive: true })
     return new Promise<void>((resolve) => {
       // Write the Uint8Array data to the file
       fs.writeFile(patch, buffer, (err: any) => {
@@ -58,15 +62,6 @@ class controller extends c_controller {
         }
         resolve()
       })
-
-      // fs.createWriteStream(patch)
-      //   .write(buffer)
-      //   .on('finish', () => {
-      //     resolve();
-      //   });
-      // result.on('finish', () => {
-      //   resolve();
-      // });
     })
   }
 
@@ -90,7 +85,6 @@ class controller extends c_controller {
     let src: string = ''
     let fullSrc: string = ''
     let patch: string = ''
-    let tmpPath: string = `./uploads/tmp`
     let width, height
 
     const { name: defualtFileName, type: mimeType, size: fileSize } = file
@@ -126,7 +120,7 @@ class controller extends c_controller {
       fs.createWriteStream(`${patch}/${fileName}`).write(buffer)
     }
 
-    await this.saveFileInDirectory(buffer, `${tmpPath}/${fileName}`)
+    await this.saveFileInDirectory(buffer, `${this.tmpPath}/${fileName}`)
 
     const urls: Record<string, string> = {}
     const patches: Record<string, string> = {}
@@ -134,9 +128,9 @@ class controller extends c_controller {
       targetFormat == '' || targetFormat == null ? 'webp' : targetFormat
     try {
       if (mimeType.startsWith('image/')) {
-        const tmpFilePath = path.resolve(tmpPath, fileName)
+        const tmpFilePath = path.resolve(this.tmpPath, fileName)
         // گرفتن ابعاد
-        const image = await sharp(tmpFilePath).metadata()
+        const image = await sharp(buffer).metadata()
         width = image.width
         height = image.height
 
@@ -166,15 +160,24 @@ class controller extends c_controller {
           // حالا فایل موقت رو پاک کن
           safeUnlink(tmpFilePath)
         } else {
+          sharp.cache(false)
+          sharp.concurrency(1)
           for (const size of sizes) {
             const destinationFilePath = path.join(
               patch,
               `${baseName}-${size.name}.${extension}`
             )
-            await sharp(buffer)
+            const sharpInstance = sharp(buffer)
               .resize({ width: size.width, withoutEnlargement: true })
               .webp({ quality: size.quality })
-              .toFile(destinationFilePath)
+
+            await sharpInstance.toFile(destinationFilePath)
+
+            // ------------- 👇 VERY IMPORTANT -------------
+            // یہ باعث می‌شود هندل آزاد شود و فایل قابل delete شود
+            await sharpInstance.destroy()
+            // ---------------------------------------------
+
             urls[
               `src${size.name}`
             ] = `/api/file${src}/${baseName}-${size.name}.${extension}`
@@ -324,12 +327,6 @@ export async function createDir(pathname: string) {
 
 function createFileName(title: string, fileExtension: string) {
   const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9)
-  // const fileExtension = mimeType.split('/')[1];
-  // if (title && title !== '') {
-  //   // const fileExtension = title.split('.').pop();
-  //   title = title.replace(/\s+/g, '-').toLowerCase();
-  //   return `${uniqueSuffix}-${title}.${fileExtension}`;
-  // }
   // generate random file name if title is empty
   return `${uniqueSuffix}.${fileExtension}`
 }

@@ -47,7 +47,7 @@ export function ImageAlba({
     x: number
     y: number
   } | null>(null)
-
+  console.log('albaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa')
   // pinch-to-zoom state
   const pinchRef = useRef<{ startDist: number; startZoom: number } | null>(null)
 
@@ -417,7 +417,7 @@ export function ImageAlba({
         {/* caption */}
         {showCaption && translation?.description && (
           <figcaption className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-black/40 backdrop-blur-md text-white px-4 py-2 rounded-lg text-sm">
-            {translation.description}
+            {translation?.description}
           </figcaption>
         )}
       </figure>

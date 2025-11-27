@@ -75,14 +75,15 @@ export default function PostListBlockEditor({
   const randomMap = posts.map(() => Math.random() < 0.1)
   if (posts?.length == 0)
     return <EmptyBlock widgetName={widgetName} {...props} />
-  return (
-    <PostList
-      posts={posts}
-      blockData={blockData}
-      pageSlug={pageSlug}
-      categorySlug={categorySlug}
-      randomMap={randomMap}
-      {...props}
-    />
-  )
+  return <div {...props}>لیست مطالب</div>
+  // return (
+  //   <PostList
+  //     posts={posts}
+  //     blockData={blockData}
+  //     pageSlug={pageSlug}
+  //     categorySlug={categorySlug}
+  //     randomMap={randomMap}
+  //     {...props}
+  //   />
+  // )
 }

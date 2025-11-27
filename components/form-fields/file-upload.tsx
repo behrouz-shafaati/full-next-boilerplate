@@ -1,14 +1,14 @@
-/* Create public/uploads/tmp directory. */
-
 'use client'
+
 import Image from 'next/image'
 import {
   useEffect,
   useState,
   forwardRef,
   useImperativeHandle,
-  useRef,
   Ref,
+  useMemo,
+  useCallback,
 } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react'
@@ -26,7 +26,6 @@ import {
   File as BeFile,
   FileDetails,
   FileDetailsPayload,
-  FileTranslationSchema,
 } from '@/lib/entity/file/interface'
 import { useToast } from '../../hooks/use-toast'
 import { getTranslation } from '@/lib/utils'
@@ -42,6 +41,15 @@ export interface FileUploadRef {
   clearFiles: () => void
 }
 
+export type AllowedFileCategory =
+  | 'image'
+  | 'video'
+  | 'audio'
+  | 'pdf'
+  | 'document'
+  | 'zip'
+  | 'text'
+
 // Type تعریف برای Props
 interface FileUploadProps {
   className?: string
@@ -50,289 +58,341 @@ interface FileUploadProps {
   defaultValues?: BeFile[]
   state?: any
   maxFiles?: number
-  allowedFileTypes?: any
+  allowedFileTypes?: AllowedFileCategory[]
   showDeleteButton?: boolean
   responseHnadler?: (FileDetails: FileDetails) => void
-  updateFileDetailsHnadler?: (FileDetails: FileDetails[]) => void
+  updateFileDetailsHandler?: (FileDetails: FileDetails[]) => void
   deleteFileHnadler?: (fileId: string) => void
   onChange?: () => void
   onLoading?: (loading: boolean) => void
-  attachedTo?: [{ feature: string; id: string }]
+  attachedTo?: { feature: string; id: string }[]
 }
 
-// Context from Function app/ui/components/dropzone.tsx:Dropzone
-const FileUpload = forwardRef(function FileUpload(
-  {
-    className,
-    title,
-    name,
-    defaultValues = [],
-    state,
-    maxFiles,
-    allowedFileTypes,
-    showDeleteButton = true,
-    responseHnadler,
-    updateFileDetailsHnadler,
-    deleteFileHnadler,
-    onChange,
-    attachedTo,
-    onLoading,
-  }: FileUploadProps,
-  ref: Ref<FileUploadRef>
-) {
-  const locale = 'fa'
-  defaultValues = defaultValues == null ? [] : defaultValues
-  const { toast } = useToast()
-  if (!Array.isArray(defaultValues)) {
-    defaultValues = [defaultValues]
-  }
-  const errorMessages = state?.errors?.[name] ?? []
-  const hasError = state?.errors?.[name]?.length > 0
+const FileUpload = forwardRef<FileUploadRef, FileUploadProps>(
+  function FileUpload(
+    {
+      className,
+      title,
+      name,
+      defaultValues,
+      state,
+      maxFiles,
+      allowedFileTypes,
+      showDeleteButton = true,
+      responseHnadler,
+      updateFileDetailsHandler,
+      deleteFileHnadler,
+      onChange,
+      attachedTo,
+      onLoading,
+    },
+    ref: Ref<FileUploadRef>
+  ) {
+    const locale = 'fa'
+    const { toast } = useToast()
 
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [files, setFiles] = useState<any[]>(defaultValues)
-  const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0)
+    const errorMessages: string[] = state?.errors?.[name] ?? []
+    const hasError = errorMessages.length > 0
 
-  const acceptedFiles = allowedFileTypes ? { accept: allowedFileTypes } : {}
-  const onCloseModal = () => {
-    setIsModalOpen(false)
-  }
+    // 🔹 defaultValues را نرمال می‌کنیم (بدون mutate کردن props)
+    const normalizedDefaultValues = useMemo<BeFile[]>(() => {
+      if (!defaultValues) return []
+      return Array.isArray(defaultValues) ? defaultValues : [defaultValues]
+    }, [defaultValues])
 
-  const onDrop = (acceptedFiles: any[]) => {
-    if (maxFiles) {
-      if ((files?.length ?? 0) + (acceptedFiles?.length ?? 0) > maxFiles) {
-        toast({
-          variant: 'destructive',
-          title: '',
-          description: `حداکثر ${maxFiles} فایل قابل آپلود است.`,
-        })
-        return
-      }
+    const [isModalOpen, setIsModalOpen] = useState(false)
+    const [files, setFiles] = useState<any[]>(normalizedDefaultValues)
+    const [selectedFileIndex, setSelectedFileIndex] = useState<number>(0)
+
+    const accept = buildAccept(allowedFileTypes)
+
+    const onCloseModal = () => {
+      setIsModalOpen(false)
     }
-    let firstImage = true
-    if (acceptedFiles?.length) {
-      const newFiles = acceptedFiles.map((file) =>
-        Object.assign(file, {
-          id: ObjectId().toString(),
-          preview: URL.createObjectURL(file),
-          main: (() => {
-            if (files.length === 0 && firstImage) {
-              firstImage = false
-              return true
-            }
-            return false
-          })(),
-          lang: 'fa',
-          title: file.name.split('.')[0],
-          alt: '',
-          href: '',
-          description: '',
-          attachedTo,
-          locale,
-        })
-      )
 
-      setFiles((previousFiles) => [...previousFiles, ...newFiles])
-      console.log('#230 onDrop:', newFiles)
-      for (const file of newFiles) {
-        submitFile(file)
-      }
-    }
-  }
+    const submitFile = useCallback(
+      async (file: any) => {
+        try {
+          onLoading?.(true)
 
-  const submitFile = async (file: any) => {
-    onLoading?.(true)
-    const formData = new FormData()
+          const formData = new FormData()
+          formData.append('file', file)
+          formData.append('id', file?.id)
+          formData.append('title', file?.title ?? '')
+          formData.append('alt', file?.alt ?? '')
+          formData.append('href', file?.href ?? '')
+          formData.append('target', file?.target ?? '')
+          formData.append('description', file?.description ?? '')
+          formData.append('main', String(!!file?.main))
+          formData.append('lang', file?.lang ?? locale)
+          formData.append(
+            'attachedTo',
+            JSON.stringify(file?.attachedTo ?? attachedTo ?? [])
+          )
+          formData.append('locale', locale)
 
-    formData.append('file', file)
-    formData.append('id', file?.id)
-    formData.append('title', file?.title)
-    formData.append('alt', file?.alt)
-    formData.append('href', file?.href)
-    formData.append('target', file?.target)
-    formData.append('description', file?.description)
-    formData.append('main', file?.main)
-    formData.append('lang', file?.lang)
-    formData.append('attachedTo', file?.attachedTo)
-    formData.append('locale', locale)
+          const fileDetails: FileDetails = await uploadFile(formData)
+          responseHnadler?.(fileDetails)
 
-    const FileDetails: FileDetails = await uploadFile(formData)
-    if (responseHnadler) responseHnadler(FileDetails)
-    requestAnimationFrame(() => {
-      onChange?.()
-    })
-    onLoading?.(false)
-  }
-
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    ...acceptedFiles,
-    multiple: true,
-    maxSize: 6 * 1024 * 1000, // 6 MB
-    onDrop,
-  })
-  useEffect(() => {
-    const handelUpdateFileDetails = async (filesDetails: any) => {
-      onLoading?.(true)
-      const updatedFilesArray = await updateFileDetails(filesDetails)
-
-      if (updateFileDetailsHnadler) updateFileDetailsHnadler(updatedFilesArray)
-      onLoading?.(false)
-    }
-    // Revoke the data uris to avoid memory leaks
-    // return () => files.forEach((file) => URL.revokeObjectURL(file.preview));
-
-    // Context from Function app/lib/entity/file/actions.ts:updateFileDetails
-    // save file details
-    const filesDetails: FileDetailsPayload[] = files
-      .filter((file) => file?.id)
-      .map((file) => {
-        const translation = getTranslation({
-          translations: file?.translations,
-          locale,
-        })
-        const newFile = {
-          id: file.id,
-          title: translation.title,
-          alt: translation.alt,
-          href: file.href,
-          target: file.target,
-          description: translation.description,
-          main: file.main,
-          lang: locale,
-          attachedTo,
-          locale,
+          requestAnimationFrame(() => {
+            onChange?.()
+          })
+        } catch (e) {
+          console.error('upload error:', e)
+          toast({
+            variant: 'destructive',
+            title: 'خطا در آپلود فایل',
+            description: 'در هنگام آپلود فایل مشکلی پیش آمد.',
+          })
+        } finally {
+          onLoading?.(false)
         }
-        console.log('#3333333333333 newFile:', newFile)
-        return newFile
-      })
-    handelUpdateFileDetails(filesDetails)
-  }, [files, attachedTo])
+      },
+      [attachedTo, locale, onChange, onLoading, responseHnadler, toast]
+    )
 
-  const removeFileById = (id: string) => {
-    const items = [...files]
-    for (let index = 0; index < items.length; index++) {
-      if (String(items[index].id) === id) {
-        removeFile(index)
-        return
+    const onDrop = useCallback(
+      (accepted: any[]) => {
+        if (!accepted?.length) return
+
+        if (maxFiles) {
+          if ((files?.length ?? 0) + (accepted?.length ?? 0) > maxFiles) {
+            toast({
+              variant: 'destructive',
+              title: '',
+              description: `حداکثر ${maxFiles} فایل قابل آپلود است.`,
+            })
+            return
+          }
+        }
+
+        let firstImage = true
+        const newFiles = accepted.map((file) =>
+          Object.assign(file, {
+            id: ObjectId().toString(),
+            preview: URL.createObjectURL(file),
+            main: (() => {
+              if (files.length === 0 && firstImage) {
+                firstImage = false
+                return true
+              }
+              return false
+            })(),
+            lang: locale,
+            title: file.name.split('.')[0],
+            alt: '',
+            href: '',
+            description: '',
+            attachedTo,
+            locale,
+          })
+        )
+
+        setFiles((previousFiles) => [...previousFiles, ...newFiles])
+
+        for (const file of newFiles) {
+          void submitFile(file)
+        }
+      },
+      [attachedTo, files.length, locale, maxFiles, submitFile, toast]
+    )
+
+    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+      accept,
+      multiple: true,
+      maxSize: 6 * 1024 * 1024, // 6 MB (درست‌تر)
+      onDrop,
+    })
+
+    // 🔹 آپدیت جزئیات فایل‌ها وقتی files عوض می‌شود
+    useEffect(() => {
+      const handelUpdateFileDetails = async (
+        filesDetails: FileDetailsPayload[]
+      ) => {
+        if (!filesDetails.length) return
+        const updatedFilesArray = await updateFileDetails(filesDetails)
+        updateFileDetailsHandler?.(updatedFilesArray)
       }
-    }
-    return
-  }
 
-  const removeFile = async (index: number) => {
-    onLoading?.(true)
-    const items = [...files]
-    const [deletedItem] = items.splice(index, 1)
-    if (deletedItem.main && items.length) {
-      items[0].main = true
-    }
-    setFiles(items)
-    await deleteFile(deletedItem.id)
-    requestAnimationFrame(() => {
-      onChange?.()
-      deleteFileHnadler?.(deletedItem.id)
-    })
-    onLoading?.(false)
-  }
+      if (!files.length) return
 
-  const removeAll = () => {
-    setFiles([])
-    requestAnimationFrame(() => {
-      onChange?.()
-    })
-  }
+      const filesDetails: FileDetailsPayload[] = files
+        .filter((file) => file?.id)
+        .map((file) => {
+          const translation = getTranslation({
+            translations: file?.translations,
+            locale,
+          })
+          const newFile: FileDetailsPayload = {
+            id: file.id,
+            title: translation?.title ?? '',
+            alt: translation?.alt ?? '',
+            href: file.href ?? '',
+            target: file.target ?? '',
+            description: translation?.description ?? '',
+            main: !!file.main,
+            lang: locale,
+            attachedTo,
+            locale,
+          }
+          return newFile
+        })
 
-  const unCheckMainAllFiles = () => {
-    setFiles((previousFiles) => {
-      const newFiles = [...previousFiles]
-      newFiles.forEach((file) => {
-        file.main = false
+      void handelUpdateFileDetails(filesDetails)
+    }, [files, attachedTo, locale, updateFileDetailsHandler])
+
+    const removeFile = useCallback(
+      async (index: number) => {
+        onLoading?.(true)
+        const items = [...files]
+        const [deletedItem] = items.splice(index, 1)
+
+        if (deletedItem?.main && items.length) {
+          items[0].main = true
+        }
+
+        setFiles(items)
+
+        try {
+          if (deletedItem?.id) {
+            await deleteFile(deletedItem.id)
+          }
+          requestAnimationFrame(() => {
+            onChange?.()
+            deleteFileHnadler?.(deletedItem?.id)
+          })
+        } catch (e) {
+          console.error('delete error:', e)
+          toast({
+            variant: 'destructive',
+            title: 'خطا در حذف فایل',
+            description: 'در هنگام حذف فایل مشکلی پیش آمد.',
+          })
+        } finally {
+          onLoading?.(false)
+        }
+      },
+      [deleteFileHnadler, files, onChange, onLoading, toast]
+    )
+
+    const removeFileById = useCallback(
+      (id: string) => {
+        console.log('#deleteFileById id:', id)
+        const items = [...files]
+        for (let index = 0; index < items.length; index++) {
+          if (String(items[index].id) === id) {
+            void removeFile(index)
+            return
+          }
+        }
+      },
+      [files, removeFile]
+    )
+
+    const removeAll = useCallback(() => {
+      setFiles([])
+      requestAnimationFrame(() => {
+        onChange?.()
       })
-      return newFiles
-    })
-  }
+    }, [onChange])
 
-  const handleCheckMainFile = (e: any, index: number) => {
-    if (e.target.checked) {
+    const unCheckMainAllFiles = useCallback(() => {
+      setFiles((previousFiles) => {
+        const newFiles = previousFiles.map((file) => ({
+          ...file,
+          main: false,
+        }))
+        return newFiles
+      })
+    }, [])
+
+    const handleCheckMainFile = (e: any, index: number) => {
+      if (!e.target.checked) return
+
       unCheckMainAllFiles()
       setFiles((previousFiles) => {
         const newFiles = [...previousFiles]
-        newFiles[index].main = true
+        if (newFiles[index]) {
+          newFiles[index] = { ...newFiles[index], main: true }
+        }
         return newFiles
       })
     }
-  }
-  const onSaveFileDetails = (newFile: any, index: number) => {
-    setIsModalOpen(false)
-    if (newFile.main) {
-      unCheckMainAllFiles()
-    } else {
-      if (files.length === 1) {
+
+    const onSaveFileDetails = (newFile: any, index: number) => {
+      setIsModalOpen(false)
+
+      if (newFile.main) {
+        unCheckMainAllFiles()
+      } else if (files.length === 1) {
         newFile.main = true
       }
+
+      setFiles((previousFiles) => {
+        const newFiles = [...previousFiles]
+        newFiles[index] = newFile
+        return newFiles
+      })
     }
 
-    setFiles((previousFiles) => {
-      const newFiles = [...previousFiles]
-      newFiles[index] = newFile
-      return newFiles
-    })
-  }
+    useImperativeHandle(
+      ref,
+      () => ({
+        removeFileById,
+        removeFile: (index: number) => {
+          void removeFile(index)
+        },
+        removeAll,
+        getFiles: () => files,
+        clearFiles: () => setFiles([]),
+      }),
+      [files, removeAll, removeFile, removeFileById]
+    )
 
-  useImperativeHandle(ref, () => ({
-    removeFileById,
-    removeFile,
-    removeAll,
-    getFiles: () => files,
-    clearFiles: () => setFiles([]),
-  }))
+    const makeIdsClean = () => {
+      if (maxFiles === 1) return files.length === 1 ? files[0]?.id : ''
+      return JSON.stringify(files.filter((file) => file).map((file) => file.id))
+    }
 
-  const makeIdsClean = () => {
-    if (maxFiles == 1) return files.length == 1 ? files[0]?.id : ''
-    return JSON.stringify(files.filter((file) => file).map((file) => file.id))
-  }
+    return (
+      <>
+        <div>
+          <p className="mb-2 text-md">{title}</p>
 
-  return (
-    <>
-      <div>
-        {/* title */}
-        <p className="mb-2 text-md">{title}</p>
-        {/* {files.length > 0 && ( */}
-        <textarea name={name} value={makeIdsClean()} readOnly hidden />
-        {/* )} */}
-        {/* Dropzone */}
-        <div
-          {...getRootProps({
-            className: `${className} border-2 border-dashed border-secondary-400 p-4 text-center rounded-md text-gry-400`,
-          })}
-        >
-          <input {...getInputProps()} />
-          <div className="flex flex-col items-center justify-center gap-2 text-xs text-gray-400">
-            <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
-            {isDragActive ? (
-              <p>فایل ها را اینجا رها کنید...</p>
-            ) : (
-              <p>
-                فایل‌ها را اینجا بکشید و رها کنید یا برای انتخاب فایل‌ها کلیک
-                کنید. <br /> Max Size = 6 Mb
-              </p>
-            )}
+          <textarea name={name} value={makeIdsClean()} readOnly hidden />
+
+          <div
+            {...getRootProps({
+              className: `${
+                className ?? ''
+              } border-2 border-dashed border-secondary-400 p-4 text-center rounded-md text-gry-400`,
+            })}
+          >
+            <input {...getInputProps()} />
+            <div className="flex flex-col items-center justify-center gap-2 text-xs text-gray-400">
+              <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
+              {isDragActive ? (
+                <p>فایل ها را اینجا رها کنید...</p>
+              ) : (
+                <p>
+                  فایل‌ها را اینجا بکشید و رها کنید یا برای انتخاب فایل‌ها کلیک
+                  کنید. <br /> Max Size = 6 Mb
+                </p>
+              )}
+            </div>
           </div>
-        </div>
-        {/* Preview */}
-        <section className="">
-          {/* Accepted files */}
-          <ul className="grid grid-cols-3 gap-2 mt-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-            {files.map((file, index) => {
-              return (
+
+          <section>
+            <ul className="grid grid-cols-3 gap-2 mt-4 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+              {files.map((file, index) => (
                 <li
-                  key={index}
+                  key={file?.id ?? index}
                   className="relative rounded-md max-h-20 h-22 group min-h-12"
                 >
                   {(file?.srcSmall || file?.preview) && (
                     <Image
                       src={file?.preview || file?.srcSmall}
-                      alt={file?.title || file?.alt}
+                      alt={file?.title || file?.alt || ''}
                       width={100}
                       height={100}
                       className={clsx(
@@ -349,7 +409,7 @@ const FileUpload = forwardRef(function FileUpload(
                     <button
                       type="button"
                       className="absolute flex items-center justify-center w-5 h-5 text-white transition-colors bg-gray-400 border rounded-full border-secondary-400 bg-secondary-400 -right-1 -top-1 hover:bg-red-500 hover:text-white"
-                      onClick={() => removeFile(index)}
+                      onClick={() => void removeFile(index)}
                     >
                       <XMarkIcon className="w-5 h-5 transition-colors hover:fill-secondary-400" />
                     </button>
@@ -357,44 +417,46 @@ const FileUpload = forwardRef(function FileUpload(
                   <label className="absolute bottom-0 hidden w-full p-1 text-xs bg-white cursor-pointer group-hover:block">
                     <input
                       name="main"
-                      type="checkBox"
+                      type="checkbox"
                       className="mr-1"
-                      checked={file?.main}
+                      checked={!!file?.main}
                       onChange={(e) => handleCheckMainFile(e, index)}
                     />
                     <span className="mr-2">اصلی</span>
                   </label>
                 </li>
-              )
-            })}
-          </ul>
-        </section>
-        {hasError && (
-          <div id={`${name}-error`} aria-live="polite" aria-atomic="true">
-            {errorMessages.map((error: string) => (
-              <p className="mt-2 text-sm text-red-500" key={error}>
-                {error}
-              </p>
-            ))}
-          </div>
-        )}
-      </div>
-      <Modal
-        isOpen={isModalOpen}
-        content={
-          <ModalContent
-            file={files[selectedFileIndex]}
-            index={selectedFileIndex}
-            onCloseModal={onCloseModal}
-            onSave={onSaveFileDetails}
-          />
-        }
-        title="جزییات رسانه"
-        onCloseModal={onCloseModal}
-      />
-    </>
-  )
-})
+              ))}
+            </ul>
+          </section>
+
+          {hasError && (
+            <div id={`${name}-error`} aria-live="polite" aria-atomic="true">
+              {errorMessages.map((error) => (
+                <p className="mt-2 text-sm text-red-500" key={error}>
+                  {error}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
+
+        <Modal
+          isOpen={isModalOpen}
+          content={
+            <ModalContent
+              file={files[selectedFileIndex]}
+              index={selectedFileIndex}
+              onCloseModal={onCloseModal}
+              onSave={onSaveFileDetails}
+            />
+          }
+          title="جزییات رسانه"
+          onCloseModal={onCloseModal}
+        />
+      </>
+    )
+  }
+)
 
 const ModalContent = ({
   file,
@@ -404,45 +466,44 @@ const ModalContent = ({
 }: {
   file: any
   index: number
-  onCloseModal: any
+  onCloseModal: () => void
   onSave: (newFile: any, index: number) => void
 }) => {
-  const locale = 'fa' //  from formData
+  const locale = 'fa'
   const translation = getTranslation({
     translations: file?.translations,
     locale,
   })
+
   const [newFile, setNewFile] = useState({
     ...file,
     lang: locale,
   })
+
   const handleUpdate = (key: string, value: any) => {
-    setNewFile((s: any) => {
-      return {
-        ...s,
-        //[{ lang: locale }] => تا یک بار حلقه اجرا بشه و اطلاعات ثبت بشن
-        //[] => اطلاعات از دست میره اینجوری
-        translations: (s.translations ?? [{ lang: locale }]).map((t: any) =>
-          t.lang === locale ? { ...t, [key]: value } : t
-        ),
-      }
-    })
+    setNewFile((s: any) => ({
+      ...s,
+      translations: (s.translations ?? [{ lang: locale }]).map((t: any) =>
+        t.lang === locale ? { ...t, [key]: value } : t
+      ),
+    }))
   }
+
   return (
     <div className="mt-4">
-      <div>
-        <div className="relative h-24 ">
-          <Image
-            src={file?.preview || file?.srcSmall}
-            alt={file?.name || 'uploaded image'}
-            width={100}
-            height={100}
-            className="object-contain w-full h-full rounded-md"
-          />
-        </div>
+      <div className="relative h-24">
+        <Image
+          src={file?.preview || file?.srcSmall}
+          alt={file?.name || 'uploaded image'}
+          width={100}
+          height={100}
+          className="object-contain w-full h-full rounded-md"
+        />
       </div>
+
       <div className="mt-4">
         <input type="text" name="lang" className="hidden" value="fa" readOnly />
+
         <Text
           title="نام رسانه"
           name="title"
@@ -470,6 +531,7 @@ const ModalContent = ({
             setNewFile((s: any) => ({ ...s, href: e.target.value }))
           }
         />
+
         <Select
           title="باز شدن در"
           placeholder="انتخاب کنید..."
@@ -483,22 +545,27 @@ const ModalContent = ({
             setNewFile((s: any) => ({ ...s, target: value }))
           }
         />
+
         <Checkbox
           name="main"
           disabled={file.main}
           title="رسانه اصلی"
-          checked={newFile.main}
+          checked={!!newFile.main}
           onChange={(e: any) =>
-            setNewFile((s: any) => ({ ...s, main: e.target?.checked || false }))
+            setNewFile((s: any) => ({
+              ...s,
+              main: e.target?.checked || false,
+            }))
           }
         />
       </div>
+
       <div className="flex justify-end gap-4 mt-6">
         <Button
           onClick={onCloseModal}
           className="flex items-center h-10 px-4 text-sm font-medium text-gray-600 transition-colors bg-gray-100 rounded-lg hover:bg-gray-200"
         >
-          لفو
+          لغو
         </Button>
         <Button type="button" onClick={() => onSave(newFile, index)}>
           ذخیره
@@ -509,3 +576,37 @@ const ModalContent = ({
 }
 
 export default FileUpload
+
+const FILE_ACCEPT_MAP: Record<AllowedFileCategory, Record<string, string[]>> = {
+  image: { 'image/*': ['.jpg', '.jpeg', '.png', '.webp'] },
+  video: { 'video/*': ['.mp4', '.mov', '.avi', '.mkv'] },
+  audio: { 'audio/*': ['.mp3', '.wav', '.ogg'] },
+  pdf: { 'application/pdf': ['.pdf'] },
+  document: {
+    'application/msword': ['.doc'],
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document': [
+      '.docx',
+    ],
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': [
+      '.xlsx',
+    ],
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation':
+      ['.pptx'],
+    'text/plain': ['.txt'],
+  },
+  zip: {
+    'application/zip': ['.zip'],
+    'application/x-rar-compressed': ['.rar'],
+  },
+  text: { 'text/plain': ['.txt'] },
+}
+
+function buildAccept(allowedTypes?: AllowedFileCategory[]) {
+  if (!allowedTypes || allowedTypes.length === 0) return undefined
+
+  return allowedTypes.reduce((acc, type) => {
+    const mapping = FILE_ACCEPT_MAP[type]
+    if (mapping) Object.assign(acc, mapping)
+    return acc
+  }, {} as Record<string, string[]>)
+}

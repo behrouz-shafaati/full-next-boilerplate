@@ -3,7 +3,7 @@ import { User } from '@/features/user/interface'
 import { getTranslation } from '@/lib/utils'
 import { Post } from '../../interface'
 import Pagination from '@/components/ui/pagination'
-import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/postList/designs/ArticalHorizontalCard'
+import PostHorizontalCard from '@/components/builder-canvas/shared-blocks/postList/designs/card/ArticalHorizontalCard'
 
 type Props = {
   user: User

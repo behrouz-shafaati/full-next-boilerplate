@@ -268,7 +268,7 @@ export async function deletePostCommentAction(ids: string[]) {
       if (prevPost.author)
         await can(
           user.roles,
-          prevPost.author.id !== user.id
+          prevPost?.author?.id !== user.id
             ? 'postComment.delete.any'
             : 'postComment.delete.own'
         )

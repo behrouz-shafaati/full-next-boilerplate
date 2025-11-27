@@ -130,6 +130,7 @@ export const Form: React.FC<TemplateFormProps> = ({
       )}
       {showTemplateBuilder && (
         <BuilderTemplate
+          title="قالب ساز"
           name="contentJson"
           submitFormHandler={dispatch}
           allTemplates={allTemplates}
@@ -141,7 +142,7 @@ export const Form: React.FC<TemplateFormProps> = ({
                   status: Template.status,
                 },
               }
-            : { initialContent: { ...defaultValue } })}
+            : { initialContent: defaultValue })}
         />
       )}
     </>

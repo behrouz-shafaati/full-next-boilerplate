@@ -6,7 +6,7 @@ export default function ImageNodeView({ node, selected }) {
   const { id, srcSmall, srcMedium, srcLarge, src, alt, title } = attrs
 
   const finalSrc =
-    src || srcMedium || srcLarge || srcSmall || '/placeholder-image.webp'
+    src || srcMedium || srcLarge || srcSmall || '/image-placeholder-Medium.webp'
 
   return (
     <NodeViewWrapper

@@ -1,5 +1,5 @@
 'use client'
-import { useActionState, useEffect, useRef, useState } from 'react'
+import { useActionState, useCallback, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import {
@@ -66,15 +66,15 @@ export const PostForm: React.FC<PostFormProps> = ({
   const canCreate = can(userRoles, 'post.create')
   const canEdit = can(
     userRoles,
-    post?.author.id !== user?.id ? 'post.edit.any' : 'post.edit.own'
+    post?.author?.id !== user?.id ? 'post.edit.any' : 'post.edit.own'
   )
   const canDelete = can(
     userRoles,
-    post?.author.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
+    post?.author?.id !== user?.id ? 'post.delete.any' : 'post.delete.own'
   )
   const canPublish = can(
     userRoles,
-    post?.author.id !== user?.id ? 'post.publish.any' : 'post.publish.own'
+    post?.author?.id !== user?.id ? 'post.publish.any' : 'post.publish.own'
   )
 
   const translation: any =
@@ -166,11 +166,11 @@ export const PostForm: React.FC<PostFormProps> = ({
     setPrimaryVideoEmbedUrl(embedUrl)
   }
 
-  const submitManually = () => {
+  const submitManually = useCallback(() => {
     if (formRef.current) {
       formRef.current.requestSubmit() // بهترین راه
     }
-  }
+  }, [])
   const categoriesArray = Array.isArray(state.values?.categories)
     ? state.values?.categories
     : []

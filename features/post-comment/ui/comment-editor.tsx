@@ -91,6 +91,7 @@ const CommentEditor = forwardRef<CommentEditorRef, CommentEditorProps>(
         const text = JSON.stringify(json)
         setContent(text)
       },
+      immediatelyRender: false,
     })
 
     const clear = useCallback(() => {

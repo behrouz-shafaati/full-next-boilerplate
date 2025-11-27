@@ -127,7 +127,7 @@ class controller extends baseController {
       content.map(async (block: any) => {
         if (block.type === 'image') {
           const image = block.attrs
-          const imageFileData = await fileCtrl.findById({ id: image.id })
+          const imageFileData = await fileCtrl.findById({ id: image?.id })
           return { type: 'image', attrs: imageFileData }
         }
         return block

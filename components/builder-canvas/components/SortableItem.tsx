@@ -6,6 +6,7 @@ import { GripHorizontal, Settings, Trash } from 'lucide-react'
 import { useBuilderStore } from '../store/useBuilderStore'
 import { Button } from '@/components/ui/button'
 import { combineClassNames } from '../utils/styleUtils'
+import { useEffect } from 'react'
 
 type SortableItemProp = {
   item: Block
@@ -36,6 +37,7 @@ export default function SortableItem({
   let activeClass = ''
   if (selectedBlock?.id == item.id)
     activeClass = ' border-2 border-fuchsia-500 border-opacity-30'
+
   return (
     <div
       ref={setNodeRef}

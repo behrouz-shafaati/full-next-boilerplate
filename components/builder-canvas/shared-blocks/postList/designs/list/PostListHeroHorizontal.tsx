@@ -3,7 +3,7 @@ import React from 'react'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { Block } from '@/components/builder-canvas/types'
-import PostOverlayCard from './OverlayCard'
+import PostOverlayCard from '../card/OverlayCard'
 import VerticalPostCard from '@/components/post/vertical-card'
 
 type PostListProps = {

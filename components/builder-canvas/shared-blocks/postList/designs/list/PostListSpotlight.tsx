@@ -4,7 +4,7 @@ import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { getTranslation } from '@/lib/utils'
 import { Block } from '@/components/builder-canvas/types'
-import PostOverlayCard from './OverlayCard'
+import PostOverlayCard from '../card/OverlayCard'
 
 type PostListProps = {
   posts: Post[]

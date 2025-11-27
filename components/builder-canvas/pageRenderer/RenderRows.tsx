@@ -1,3 +1,4 @@
+'use server'
 // رندر کردن بلاک‌ها از روی JSON
 // RenderRows.tsx
 import React from 'react'
@@ -16,6 +17,7 @@ type Props = {
   rows: Row[]
   pageSlug: string | null
   categorySlug: string | null
+  searchParams?: any
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
@@ -25,6 +27,7 @@ const RendererRows = ({
   rows,
   pageSlug,
   categorySlug,
+  searchParams = {},
   ...rest
 }: Props) => {
   // فیلتر کردن propsهایی که content_ شروع میشن
@@ -109,6 +112,7 @@ const RendererRows = ({
                           editroMode={editroMode}
                           pageSlug={pageSlug}
                           categorySlug={categorySlug}
+                          searchParams={searchParams}
                           {...contentProps}
                         />
                       )
