@@ -1,3 +1,4 @@
+'use client'
 import { MenuItem } from '@/features/menu/interface'
 import { ChevronDown, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'

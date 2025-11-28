@@ -26,7 +26,7 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
         //     file,
         //   ])
         // }}
-        updateFileDetailsHnadler={(files) => {
+        updateFileDetailsHandler={(files) => {
           update(selectedBlock?.id as string, 'content', files)
         }}
         deleteFileHnadler={(fileId) => {

@@ -18,7 +18,7 @@ const PostHorizontalCard = ({ post, options, query = '' }: Props) => {
   const locale = 'fa'
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
+    post?.translations?.[0] ||
     {}
 
   const translationImage: FileTranslationSchema =
@@ -28,7 +28,7 @@ const PostHorizontalCard = ({ post, options, query = '' }: Props) => {
     post.image?.translations[0] ||
     {}
   return (
-    <Link key={post.id} href={post.href}>
+    <Link key={post?.id} href={post?.href || '#'}>
       <div className="grid grid-cols-[1fr_7rem] md:grid-cols-[1fr_200px] items-center md:items-start border-b py-2 gap-2">
         {/* عنوان و توضیح */}
         <div className="p-2">

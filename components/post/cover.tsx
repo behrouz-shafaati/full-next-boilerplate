@@ -28,6 +28,7 @@ export const PostCover = ({
       showCaption={false}
       style={styles}
       aspectRatio={aspectRatio}
+      isLCP={true}
       {...props}
     />
   ) : (

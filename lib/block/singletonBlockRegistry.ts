@@ -18,9 +18,11 @@ const blockRegistry: Record<string, BlockDef> = {}
 export function registerBlock(blocks: Record<string, BlockDef>) {
   Object.entries(blocks).forEach(([key, block]) => {
     if (blockRegistry[key]) {
-      throw new Error(`Block "${key}" is already registered`)
-    }
-    blockRegistry[key] = block
+      console.log(
+        `Block "${key}" is already registered, skipping duplicate registration.`
+      )
+      // throw new Error(`Block "${key}" is already registered`)
+    } else blockRegistry[key] = block
   })
 }
 

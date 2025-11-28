@@ -159,7 +159,7 @@ export async function updatePage(
     const settings = await settingsCtrl.findOne({
       filters: { type: 'site-settings' },
     })
-    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath, '/']
+    if (settings?.id === id) varRevalidatePath = [...varRevalidatePath]
     updatedPage = await pageCtrl.findOneAndUpdate({
       filters: id,
       params: cleanedParams,

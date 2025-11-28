@@ -279,7 +279,7 @@ export const CampaignForm: React.FC<CampaignFormProps> = ({
                   name="banners[][file]"
                   state={state}
                   maxFiles={1}
-                  allowedFileTypes={{ 'image/*': [] }}
+                  allowedFileTypes={['image']}
                   defaultValues={defaultValu?.file ? [defaultValu?.file] : []}
                   onLoading={setLoading}
                 />

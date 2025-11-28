@@ -36,9 +36,9 @@ interface PageProps {
   }>
 }
 
-// export async function generateStaticParams() {
-//   return postCtrl.generateStaticParams()
-// }
+export async function generateStaticParams() {
+  return postCtrl.generateStaticParams()
+}
 
 export async function generateMetadata({
   params,

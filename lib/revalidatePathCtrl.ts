@@ -71,13 +71,13 @@ class controller {
       case 'post':
       case 'menu':
       case 'category':
-      case 'page':
       case 'template':
       case 'templatePart':
       case 'form':
       case 'settings': {
         return [...(await this.getAllPaths()), ...pathes]
       }
+      case 'page':
       case 'postComment':
       case 'formSubmission':
         return [...pathes]

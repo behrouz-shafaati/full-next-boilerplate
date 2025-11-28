@@ -1,5 +1,5 @@
 // رجیستری مرکزی بلاک‌ها
-import { registerBlock } from '@/components/builder-canvas/singletonBlockRegistry'
+// import { registerBlock } from '@/lib/block/singletonBlockRegistry'
 import { TemplatePartBlockDef } from '../blocks/template-part'
 
 export const blockRegistry = {
@@ -7,4 +7,4 @@ export const blockRegistry = {
   // ...
 }
 
-registerBlock(blockRegistry)
+// registerBlock(blockRegistry)

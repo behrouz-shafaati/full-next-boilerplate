@@ -25,7 +25,7 @@ function renderNode(node: TNode, key: number): React.ReactNode {
   switch (node.type) {
     case 'paragraph':
       return (
-        <p key={key} className="mb-3 leading-7">
+        <p key={key} className="mb-3 leading-7 text-start">
           {renderNodes(node.content)}
         </p>
       )

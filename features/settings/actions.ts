@@ -109,9 +109,9 @@ export async function updateSettings(prevState: State, formData: FormData) {
     // Revalidate the path
     const pathes = await revalidatePathCtrl.getAllPathesNeedRevalidate({
       feature: 'settings',
-      slug: [`/`],
     })
 
+    // console.log('#234876 revalidating settings paths:', pathes)
     for (const slug of pathes) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)
@@ -166,7 +166,7 @@ async function sanitizeSettingsData(validatedFields: any) {
 
   // sms
   const settingsPayload = validatedFields
-  console.log('#@3423432 vsettingsPayload:', settingsPayload)
+  // console.log('#@3423432 vsettingsPayload:', settingsPayload)
   const farazsms = {
     farazsms_apiKey: settingsPayload?.farazsms_apiKey,
     farazsms_verifyPatternCode: settingsPayload?.farazsms_verifyPatternCode,
@@ -255,10 +255,9 @@ async function sanitizeSettingsData(validatedFields: any) {
       settingsPayload?.mobileVerificationRequired == true
         ? true
         : false,
-    favicon:
-      settingsPayload?.favicon != ''
-        ? settingsPayload?.favicon
-        : siteSettings?.favicon?.id || null,
+    favicon: settingsPayload?.favicon?.id
+      ? settingsPayload?.favicon?.id
+      : siteSettings?.favicon || null,
     pageTranslations,
     farazsms,
     infoTranslations,

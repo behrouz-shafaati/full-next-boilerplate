@@ -6,6 +6,8 @@ import { getSettings } from '@/features/settings/controller'
 import { Settings } from '@/features/settings/interface'
 import { getTranslation } from '@/lib/utils'
 import { ThemeScript } from '@/components/ThemeScript'
+import { PageLoadingProgressBar } from '@/components/loading-page-progress-bar'
+import { PageLoadingProgressBarActivator } from '@/components/loading-page-progress-bar-activator'
 // import { Providers } from './providers'
 
 const iransans = localFont({
@@ -74,6 +76,8 @@ export default async function RootLayout({
         <ThemeScript />
       </head>
       <body className={iransans.className}>
+        <PageLoadingProgressBarActivator />
+        <PageLoadingProgressBar />
         {/* <Providers> */}
         <main>{children}</main>
         {/* </Providers> */}

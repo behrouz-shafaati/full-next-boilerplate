@@ -2,6 +2,7 @@
 import React from 'react'
 import { useBuilderStore } from '../../store/useBuilderStore'
 import FileUpload from '@/components/form-fields/file-upload'
+import Switch from '@/components/form-fields/switch'
 
 type Props = {
   initialData: any
@@ -20,8 +21,8 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
         title="پوستر مطلب"
         maxFiles={1}
         defaultValues={defaultValu}
-        updateFileDetailsHnadler={(files) => {
-          console.log('#88237 updaTED DATA: ', files)
+        updateFileDetailsHandler={(files) => {
+          // console.log('#88237 updaTED DATA: ', files)
           update(selectedBlock?.id as string, 'content', files[0])
         }}
         deleteFileHnadler={(fileId) => {
@@ -38,6 +39,19 @@ export const ContentEditor = ({ initialData, savePage }: Props) => {
           })
         }}
         showDeleteButton={true}
+        allowedFileTypes={['image']}
+      />
+
+      <Switch
+        name="zoomable"
+        title="قابلیت بزرگنمایی تصویر"
+        defaultChecked={selectedBlock?.settings?.zoomable ?? false}
+        onChange={(values) => {
+          update(selectedBlock?.id as string, 'settings', {
+            ...selectedBlock?.settings,
+            zoomable: values,
+          })
+        }}
       />
       {/* <code>{JSON.stringify(selectedBlock?.content)}</code> */}
     </>

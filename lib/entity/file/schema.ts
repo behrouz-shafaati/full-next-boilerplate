@@ -52,10 +52,34 @@ const transform = (doc: any, ret: any, options: any) => {
   delete ret._id
   delete ret.__v
   delete ret.deleted
+
+  // 👇 ساخت blurDataURL برای تصاویر WebP کوچک
+  // فرض می‌کنیم patchSmall یا srcSmall مسیر فایل کوچک است
+  if (ret.patchSmall) {
+    // تبدیل مسیر به base64 WebP
+    try {
+      const fs = require('fs')
+
+      // مسیر واقعی روی سرور
+      const filePath = ret.patchSmall
+      if (fs.existsSync(filePath)) {
+        const buffer = fs.readFileSync(filePath)
+        const base64 = buffer.toString('base64')
+        const blurDataURL = `data:image/webp;base64,${base64}`
+        ret.blurDataURL = blurDataURL
+      } else {
+        ret.blurDataURL = null
+      }
+    } catch (err) {
+      ret.blurDataURL = null
+    }
+  } else {
+    ret.blurDataURL = null
+  }
 }
 
-fileSchema.set('toObject', { transform })
+fileSchema.set('toObject', { transform, virtuals: true })
 
-fileSchema.set('toJSON', { transform })
+fileSchema.set('toJSON', { transform, virtuals: true })
 
 export default mongoose.models?.file || model<SchemaFile>('file', fileSchema)

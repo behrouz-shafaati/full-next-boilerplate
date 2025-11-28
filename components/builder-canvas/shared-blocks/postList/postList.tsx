@@ -18,6 +18,9 @@ import BannerGroup from '../AdSlot/BannerGroup'
 import PostHorizontalSmallCard from './designs/card/PostHorizontalSmallCard'
 import { getPosts } from '@/features/post/actions'
 import { getTagAction } from '@/features/tag/actions'
+import PostImageCardSkeltone from './designs/card/skeleton/ImageCardSkeleton'
+import ArticalHorizontalCardSkeleton from './designs/card/skeleton/ArticalHorizontalCardSkeleton'
+import VerticalPostCardSkeleton from '@/components/post/skeleton/vertical-card-skeleton'
 
 type PostListProps = {
   posts: Post[]
@@ -58,6 +61,7 @@ export const PostList = ({
   const firstLoad = useRef(true)
   const [selectedTag, setSelectedTag] = useState('')
   const [_posts, setPosts] = useState(posts)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const fetchData = async () => {
@@ -65,6 +69,7 @@ export const PostList = ({
         firstLoad.current = false
         return
       }
+      setLoading(true)
       let _filters
       if (selectedTag != '') {
         const tag = await getTagAction({ slug: selectedTag })
@@ -80,6 +85,7 @@ export const PostList = ({
       ])
       const posts = result.data
       setPosts(posts)
+      setLoading(false)
     }
     fetchData()
   }, [selectedTag])
@@ -91,52 +97,6 @@ export const PostList = ({
   let queryParams = content?.tags || []
   if (settings?.showNewest == true)
     queryParams = [{ label: 'تازه‌ها', slug: '' }, ...queryParams]
-
-  // const selectedTag = searchParams.get('tag') || ''
-
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     let posts = {}
-  //     let filters = {}
-
-  //     if (content?.usePageCategory && categorySlug) {
-  //       // logic to handle usePageCategory and categorySlug
-  //       const category = await getCategoryAction({ slug: categorySlug })
-  //       filters = { categories: [category.id], ...filters }
-  //     } else {
-  //       const categoryIds =
-  //         content?.categories?.map((category: Option) => category.value) || {}
-
-  //       //       // اگر دسته ای انتخاب شده است روی  فیلتر اعمال شود
-  //       if (categoryIds?.length > 0)
-  //         filters = { categories: categoryIds, ...filters }
-  //     }
-
-  //     const selectedTagExistInItems = queryParams?.some(
-  //       (tag) => tag.slug === selectedTag
-  //     )
-  //     //     // اگر تگ انتخاب شده و ثبت شده در نوار آدرس در آیتم های این لیست نیست کاری انجام نشود
-  //     if (!selectedTagExistInItems) return
-  //     if (selectedTag !== '') {
-  //       const tag = await getTagAction({ slug: selectedTag })
-  //       filters = { tags: [tag.id], ...filters }
-  //       posts = await getPosts({
-  //         filters,
-  //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-  //       })
-  //       setPosts(posts.data)
-  //     } else {
-  //       posts = await getPosts({
-  //         filters,
-  //         pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-  //       })
-  //       setPosts(posts.data)
-  //     }
-  //   }
-
-  //   //   // fetchData  باعث تغیر در جایگاه نمایش کارت عمودی میشود. این جایگاه به صورت شانسی انتخاب میشود و موجب کاهش پرفورمنس میشود
-  //   fetchData()
-  // }, [selectedTag])
 
   const tagSlugs = content?.tags?.map((tag: Option) => tag.slug) || []
   const categorySlugs =
@@ -163,9 +123,18 @@ export const PostList = ({
   //     : showMoreHref
 
   const postItems = useMemo(() => {
+    if (!loading && _posts.length == 0)
+      return (
+        <div className="w-full p-24 items-center text-center">
+          داده ای وجود ندارد
+        </div>
+      )
+
     const advertisingAfter = blockData?.settings?.advertisingAfter || 0
     let adIndex = 0
-    return _posts.map((post, index) => {
+    return (
+      loading ? new Array(settings?.countOfPosts || 6).fill({}) : _posts
+    ).map((post, index) => {
       adIndex += 1
       let flgShowBanner = false
       if (advertisingAfter == adIndex) {
@@ -199,12 +168,18 @@ export const PostList = ({
           return (
             <React.Fragment key={post.id}>
               {flgShowVertical ? (
-                <VerticalPostCard
-                  key={post.id}
-                  post={post}
-                  options={{ showExcerpt: false }}
-                  className="border-b"
-                />
+                loading ? (
+                  <VerticalPostCardSkeleton />
+                ) : (
+                  <VerticalPostCard
+                    key={post.id}
+                    post={post}
+                    options={{ showExcerpt: false }}
+                    className="border-b"
+                  />
+                )
+              ) : loading ? (
+                <ArticalHorizontalCardSkeleton />
               ) : (
                 <PostHorizontalCard
                   key={post.id}
@@ -243,7 +218,11 @@ export const PostList = ({
         default:
           return (
             <React.Fragment key={post.id}>
-              <PostImageCard key={post.id} post={post} options={settings} />
+              {loading ? (
+                <PostImageCardSkeltone />
+              ) : (
+                <PostImageCard key={post.id} post={post} options={settings} />
+              )}
               {flgShowBanner && (
                 <BannerGroup
                   blockData={{
@@ -256,7 +235,7 @@ export const PostList = ({
           )
       }
     })
-  }, [_posts, blockData, randomMap, bannerSettings])
+  }, [_posts, blockData, randomMap, bannerSettings, loading])
 
   // const postItems =  postItemsFun()
   switch (settings?.listDesign) {

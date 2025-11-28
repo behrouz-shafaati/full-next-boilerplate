@@ -351,6 +351,7 @@ export const PostForm: React.FC<PostFormProps> = ({
                 defaultValues={state.values?.image || null}
                 onChange={submitManually}
                 onLoading={setLoading}
+                allowedFileTypes={['image']}
               />
               <Text
                 name="primaryVideo"

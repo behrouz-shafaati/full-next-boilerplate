@@ -1,6 +1,4 @@
-import MenuItemDesktop from '../desktop/MenuItemDesktop'
-import MobileMenu from '../mobile/MobileMenu'
-import MobileMenuList from '../mobile/MobileMenuList'
+import MobileMenuListLazy from '../mobile/MobileMenuListLazy'
 
 type Props = {
   items: any
@@ -9,7 +7,7 @@ type Props = {
 export default function VerticalMenu({ items, ...props }: Props) {
   return (
     <nav {...props}>
-      <MobileMenuList items={items} />
+      <MobileMenuListLazy items={items} />
     </nav>
   )
 }

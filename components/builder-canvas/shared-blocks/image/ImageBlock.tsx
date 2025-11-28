@@ -4,7 +4,7 @@ import React from 'react'
 import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'
 import Image from 'next/image'
-import Link from 'next/link'
+import ImageAlba from '@/components/image-alba'
 
 type TextBlockProps = {
   widgetName: string
@@ -44,25 +44,26 @@ export const ImageBlock = ({
       }}
     >
       {content?.srcSmall ? (
-        <Image
-          src={content?.srcMedium}
-          sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-          alt={content?.alt || 'تصویر'}
-          fill
-          // {...(!width || !height
-          //   ? { fill: true }
-          //   : {
-          //       width: Number(width),
-          //       height: Number(height),
-          //     })}
-          style={{
-            ...computedStyles(restStyle),
-          }}
-          className="object-cover w-full h-full min-h-4"
-          placeholder="blur"
-          blurDataURL={content?.srcSmall}
-        />
+        <ImageAlba file={content} zoomable={settings?.zoomable} />
       ) : (
+        // <Image
+        //   src={content?.srcMedium}
+        //   sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
+        //   alt={content?.alt || 'تصویر'}
+        //   fill
+        //   // {...(!width || !height
+        //   //   ? { fill: true }
+        //   //   : {
+        //   //       width: Number(width),
+        //   //       height: Number(height),
+        //   //     })}
+        //   style={{
+        //     ...computedStyles(restStyle),
+        //   }}
+        //   className="object-cover w-full h-full min-h-4"
+        //   placeholder="blur"
+        //   blurDataURL={content?.srcSmall}
+        // />
         <Image
           src={'/assets/general-img-landscape.png'}
           sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
@@ -84,15 +85,5 @@ export const ImageBlock = ({
     </div>
   )
 
-  return content?.href ? (
-    <Link
-      href={content.href}
-      target={content.target ?? '_blank'}
-      rel="noopener noreferrer"
-    >
-      {imageElement}
-    </Link>
-  ) : (
-    imageElement
-  )
+  return imageElement
 }

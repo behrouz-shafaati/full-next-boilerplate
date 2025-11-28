@@ -299,3 +299,13 @@ html[data-theme-ready='true'] .light,
 html[data-theme-ready='true'] .dark {
   transition: color 0.15s ease, background-color 0.15s ease;
 }
+
+/*=======  Page Process Bar ============*/
+#nprogress .bar {
+  background: #01963f !important; /* رنگ آبی Tailwind */
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #01963f, 0 0 5px #01963f !important;
+}

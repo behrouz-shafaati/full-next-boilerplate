@@ -104,7 +104,7 @@ export const FormAD: React.FC<SettingsFormProps> = ({ settings }) => {
                     name="banners[][file]"
                     state={state}
                     maxFiles={1}
-                    allowedFileTypes={{ 'image/*': [] }}
+                    allowedFileTypes={['image']}
                     defaultValues={defaultValu?.file ? [defaultValu?.file] : []}
                     onLoading={setLoading}
                   />

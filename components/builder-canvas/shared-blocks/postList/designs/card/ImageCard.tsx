@@ -1,3 +1,4 @@
+import { Skeleton } from '@/components/ui/skeleton'
 import { Post, PostTranslationSchema } from '@/features/post/interface'
 import { FileTranslationSchema } from '@/lib/entity/file/interface'
 import { timeAgo } from '@/lib/utils'

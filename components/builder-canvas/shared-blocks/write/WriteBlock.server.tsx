@@ -1,5 +1,5 @@
 // کامپوننت نمایشی بلاک
-
+'use server'
 import React from 'react'
 import { Block } from '../../types'
 import { computedStyles } from '../../utils/styleUtils'

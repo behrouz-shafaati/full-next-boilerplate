@@ -2,14 +2,15 @@
 import Link from 'next/link'
 import parse, { domToReact, Element } from 'html-react-parser'
 import { slugify } from '@/lib/utils'
-import { AccordionRenderer } from '../tiptap-renderers/AccordionRenderer'
+
 import { AccordionNode, TNode } from '../type'
 import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
 import { Settings } from '@/features/settings/interface'
-import AdSlotBlock from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlock'
 import { ImageAlba } from '@/components/image-alba'
 import VideoEmbed from '@/components/video-embed/VideoEmbed'
 import fileCtrl from '@/lib/entity/file/controller'
+import AccordionRenderLazy from '../tiptap-renderers/AccordionRenderLazy'
+import AdSlotBlockLazy from '@/components/builder-canvas/shared-blocks/AdSlot/AdSlotBlockLazy'
 
 // تابع کمکی: جمع‌آوری همه‌ی نودهای accordion (ترتیب درختی)
 function collectAccordions(node: TNode | undefined, out: TNode[] = []) {
@@ -76,7 +77,7 @@ export default async function EnhanceHtmlForNext({
             if (!id) return null
             const fileData = imageMap[id]
             if (!fileData) return null
-
+            return null
             return <ImageAlba file={fileData} />
           }
 
@@ -118,7 +119,8 @@ export default async function EnhanceHtmlForNext({
                 fallbackBehavior,
               },
             }
-            return <AdSlotBlock widgetName="adSlot" blockData={blockData} />
+
+            return <AdSlotBlockLazy widgetName="adSlot" blockData={blockData} />
           }
           // اگر توی renderTiptapJsonToHtml از div با data-type="accordion" استفاده کردی:
           if (
@@ -132,7 +134,7 @@ export default async function EnhanceHtmlForNext({
             const accNode = accordions[accordionIndex++]
 
             // پاس دادن JSON به کامپوننت client-side امن است (serializable)
-            return <AccordionRenderer node={accNode} />
+            return <AccordionRenderLazy node={accNode} />
           }
 
           // اگر توی renderTiptapJsonToHtml از div با data-type="videoEmbed" استفاده کردی:

@@ -1,5 +1,5 @@
 // کامپوننت نمایشی بلاک
-import React, { Suspense } from 'react'
+import React from 'react'
 import { Block } from '../../types'
 import { PostList } from './PostList'
 import { Option } from '@/types'

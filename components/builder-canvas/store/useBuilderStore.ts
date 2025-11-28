@@ -309,6 +309,7 @@ export const useBuilderStore = create<State>((set, get) => ({
         content: { ...state.content, rows: updatedRows },
       }
     }),
+
   /**
    *
    * @param itemId

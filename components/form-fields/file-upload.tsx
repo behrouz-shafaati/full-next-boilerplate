@@ -9,6 +9,7 @@ import {
   Ref,
   useMemo,
   useCallback,
+  useRef,
 } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { X as XMarkIcon, CloudUpload as ArrowUpTrayIcon } from 'lucide-react'
@@ -77,7 +78,7 @@ const FileUpload = forwardRef<FileUploadRef, FileUploadProps>(
       defaultValues,
       state,
       maxFiles,
-      allowedFileTypes,
+      allowedFileTypes = [],
       showDeleteButton = true,
       responseHnadler,
       updateFileDetailsHandler,
@@ -94,7 +95,7 @@ const FileUpload = forwardRef<FileUploadRef, FileUploadProps>(
     const errorMessages: string[] = state?.errors?.[name] ?? []
     const hasError = errorMessages.length > 0
 
-    // 🔹 defaultValues را نرمال می‌کنیم (بدون mutate کردن props)
+    //  defaultValues را نرمال می‌کنیم (بدون mutate کردن props)
     const normalizedDefaultValues = useMemo<BeFile[]>(() => {
       if (!defaultValues) return []
       return Array.isArray(defaultValues) ? defaultValues : [defaultValues]
@@ -238,7 +239,15 @@ const FileUpload = forwardRef<FileUploadRef, FileUploadProps>(
           return newFile
         })
 
-      void handelUpdateFileDetails(filesDetails)
+      // این قمست برای جلوگیری از افتادن در یک حلقه بی نهایت از  بازرندر کامپوننتها ضروری است
+      let flgFilesIsDefferentWithDefaultValues = areFilesDifferent(
+        files,
+        normalizedDefaultValues
+      )
+      if (flgFilesIsDefferentWithDefaultValues) {
+        console.log('#88823 files are different, updating file details...')
+        void handelUpdateFileDetails(filesDetails)
+      }
     }, [files, attachedTo, locale, updateFileDetailsHandler])
 
     const removeFile = useCallback(
@@ -604,9 +613,110 @@ const FILE_ACCEPT_MAP: Record<AllowedFileCategory, Record<string, string[]>> = {
 function buildAccept(allowedTypes?: AllowedFileCategory[]) {
   if (!allowedTypes || allowedTypes.length === 0) return undefined
 
-  return allowedTypes.reduce((acc, type) => {
+  return allowedTypes?.reduce((acc, type) => {
     const mapping = FILE_ACCEPT_MAP[type]
     if (mapping) Object.assign(acc, mapping)
     return acc
   }, {} as Record<string, string[]>)
+}
+
+/* ======================================== */
+/**
+ * بررسی می‌کند که آیا دو آرایه فایل با هم تفاوت دارند یا خیر
+ * فقط فیلد "updatedAt" نادیده گرفته می‌شود
+ *
+ * @param currentFiles آرایه فایل‌های فعلی
+ * @param defaultFiles آرایه فایل‌های پیش‌فرض
+ * @returns true اگر تفاوتی وجود داشته باشد، false اگر کاملاً برابر باشند (به جز updatedAt)
+ */
+export function areFilesDifferent(
+  currentFiles: any[] = [],
+  defaultFiles: any[] = []
+): boolean {
+  // اگر تعداد فایل‌ها متفاوت بود، حتماً فرق دارند
+  if (currentFiles.length !== defaultFiles.length) return true
+
+  for (let i = 0; i < currentFiles.length; i++) {
+    if (!areObjectsEqualIgnoringUpdatedAt(currentFiles[i], defaultFiles[i])) {
+      return true
+    }
+  }
+
+  return false
+}
+
+/**
+ * مقایسه دو مقدار (primitive, object, array) به صورت بازگشتی
+ * فقط فیلد "updatedAt" نادیده گرفته می‌شود
+ *
+ * @param objA مقدار اول
+ * @param objB مقدار دوم
+ * @returns true اگر برابر باشند (به جز updatedAt)، false اگر متفاوت باشند
+ */
+function areObjectsEqualIgnoringUpdatedAt(objA: any, objB: any): boolean {
+  // اگر کاملاً برابر بودند
+  if (objA === objB) {
+    return true
+  }
+
+  // اگر یکی null یا undefined باشد یا نوع‌ها متفاوت باشند
+  if (objA == null || objB == null || typeof objA !== typeof objB) {
+    // console.log('#88823 not equal objA or objB is null:', objA, objB)
+    return false
+  }
+
+  // اگر آرایه بودن بره بازگشتی اینا رو هم حساب کنه
+  if (Array.isArray(objA) && Array.isArray(objB)) {
+    if (objA.length !== objB.length) {
+      // console.log('#888a23aa different array lengths:', objA, objB)
+      return false
+    }
+    for (let i = 0; i < objA.length; i++) {
+      if (!areObjectsEqualIgnoringUpdatedAt(objA[i], objB[i])) {
+        // console.log('#8882aaa3 array items not equal:', objA[i], objB[i])
+        return false
+      }
+    }
+    return true
+  }
+
+  // آبجکت
+  if (typeof objA === 'object') {
+    const keysA = Object.keys(objA).filter(
+      (key) => key !== 'updatedAt' && key !== 'lang'
+    )
+    const keysB = Object.keys(objB).filter(
+      (key) => key !== 'updatedAt' && key !== 'lang'
+    )
+
+    if (keysA.length !== keysB.length) {
+      // console.log('#888a23 different number of keys:', objA, objB)
+      // console.log(`#888a23 keysA: ${keysA.length}  | keysB: ${keysB.length}`)
+      // console.log('#888a23 objA:', objA)
+      // console.log('#888a23 objB:', objB)
+      return false
+    }
+
+    for (const key of keysA) {
+      if (!keysB.includes(key)) {
+        // console.log('#88s823 key not found in keysB:', key, objA, objB)
+        return false
+      }
+      if (!areObjectsEqualIgnoringUpdatedAt(objA[key], objB[key])) {
+        // console.log(
+        //   '#88d823 values for key not equal:',
+        //   key,
+        //   objA[key],
+        //   objB[key]
+        // )
+        return false
+      }
+    }
+
+    return true
+  }
+
+  // primitive
+  // console.log('#88823 last compare:', objA === objB)
+  return objA === objB
 }

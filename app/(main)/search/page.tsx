@@ -25,7 +25,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   const [siteSettings, template, postResult] = await Promise.all([
     getSettings(),
-    templateCtrl.getTemplate({ slug: 'author' }),
+    templateCtrl.getTemplate({ slug: 'search' }),
     postCtrl.find({
       filters: { query },
       pagination: { page: Number(page), perPage: Number(perPage) },

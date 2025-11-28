@@ -20,14 +20,14 @@ export default function VerticalPostCard({
   const locale = 'fa'
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
+    post?.translations?.[0] ||
     {}
 
   const translationImage: FileTranslationSchema =
     post.image?.translations?.find(
       (t: FileTranslationSchema) => t.lang === locale
     ) ||
-    post.image?.translations[0] ||
+    post.image?.translations?.[0] ||
     {}
   return (
     <div className="embla__slide flex-shrink-0 w-full grow-0 basis-full sm:basis-1/2 md:basis-1/3 lg:basis-1/4 xl:basis-1/4 px-2">

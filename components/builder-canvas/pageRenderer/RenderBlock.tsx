@@ -1,5 +1,6 @@
 'use server'
-import { getBlockRegistry } from '@/components/builder-canvas/singletonBlockRegistry'
+import { registerAllBlocks } from '@/lib/block/register-all-blocks.server'
+import { getBlockRegistry } from '@/lib/block/singletonBlockRegistry'
 import { Block } from '../types'
 import { combineClassNames, getVisibilityClass } from '../utils/styleUtils'
 import { Settings } from '@/features/settings/interface'
@@ -23,6 +24,8 @@ const RenderBlock = async ({
   searchParams = {},
   ...rest
 }: RenderBlockProp) => {
+  // فقط در سرور اجرا می‌شود
+  registerAllBlocks()
   const blocks = getBlockRegistry() // برای محتوا دار بودن این برای رسیدن به این کامپوننت هیچ کامپوننتی نباید از use client‌ استفاده کرده باشد
   const visibility = item.styles?.visibility
   const className = getVisibilityClass(visibility)
@@ -30,50 +33,33 @@ const RenderBlock = async ({
   const block = blocks[item.type]
   const Component = block?.Renderer
   // const Island = block?.Island
-  const EditorComponent = block?.RendererInEditor
+  // const EditorComponent = block?.RendererInEditor
 
-  if (editroMode && EditorComponent) {
-    {
-      return (
-        <EditorComponent
-          siteSettings={siteSettings}
-          blockData={item}
-          className={`${className} ${combineClassNames(item.classNames || {})}`}
-          pageSlug={pageSlug}
-          categorySlug={categorySlug}
-          searchParams={searchParams}
-        />
-      )
-    }
-  } else {
-    if (Component) {
-      if (item.type.startsWith('content_')) {
-        /**
-         * محتواها در صفحه ی مورد نظر از دیتابیس خوانده میشوند و مانند زیر به کامپوننت رندر کننده اصلی داده میشوند و در اینجا همه ی آنها وجود دارند
-         * content_post_title={translation?.title}
-         *   content_post_cover={post?.image ?? null}
-         *   content_post_metadata={metadata}
-         * بعد در تابغ زیر هر بلاک محتوای خودش را بر می دارد و نمایش میدهد. مثلا بلاک content_post_title محتوایی که از RenderRows با همین نام آمده را توسط تابع زیر واکشی می کند و آن را نمایش میدهد.
-         */
-        const node = extractNode(rest, item.type) // محتوای مورد نظر از پراپ های ارسال شده استخراج میشود
-        if (node)
-          return (
-            <>
-              <Component
-                siteSettings={siteSettings}
-                blockData={item}
-                className={`${className} ${combineClassNames(
-                  item.classNames || {}
-                )}`}
-                content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
-                pageSlug={pageSlug}
-                categorySlug={categorySlug}
-                searchParams={searchParams}
-              />
-            </>
-          )
-      }
-      if (item.type === 'templatePart') {
+  // if (editroMode && EditorComponent) {
+  //   {
+  //     return (
+  //       <EditorComponent
+  //         siteSettings={siteSettings}
+  //         blockData={item}
+  //         className={`${className} ${combineClassNames(item.classNames || {})}`}
+  //         pageSlug={pageSlug}
+  //         categorySlug={categorySlug}
+  //         searchParams={searchParams}
+  //       />
+  //     )
+  //   }
+  // } else {
+  if (Component) {
+    if (item.type.startsWith('content_')) {
+      /**
+       * محتواها در صفحه ی مورد نظر از دیتابیس خوانده میشوند و مانند زیر به کامپوننت رندر کننده اصلی داده میشوند و در اینجا همه ی آنها وجود دارند
+       * content_post_title={translation?.title}
+       *   content_post_cover={post?.image ?? null}
+       *   content_post_metadata={metadata}
+       * بعد در تابغ زیر هر بلاک محتوای خودش را بر می دارد و نمایش میدهد. مثلا بلاک content_post_title محتوایی که از RenderRows با همین نام آمده را توسط تابع زیر واکشی می کند و آن را نمایش میدهد.
+       */
+      const node = extractNode(rest, item.type) // محتوای مورد نظر از پراپ های ارسال شده استخراج میشود
+      if (node)
         return (
           <>
             <Component
@@ -82,15 +68,15 @@ const RenderBlock = async ({
               className={`${className} ${combineClassNames(
                 item.classNames || {}
               )}`}
-              {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
+              content={node} // به ویژگی content جهت نمایش در جایگاه مورد نظر پاس داده میشود
               pageSlug={pageSlug}
               categorySlug={categorySlug}
               searchParams={searchParams}
             />
           </>
         )
-      }
-
+    }
+    if (item.type === 'templatePart') {
       return (
         <>
           <Component
@@ -99,6 +85,7 @@ const RenderBlock = async ({
             className={`${className} ${combineClassNames(
               item.classNames || {}
             )}`}
+            {...rest} // 👈 همه content_all به صورت داینامیک پاس داده میشه
             pageSlug={pageSlug}
             categorySlug={categorySlug}
             searchParams={searchParams}
@@ -106,8 +93,22 @@ const RenderBlock = async ({
         </>
       )
     }
-    return <p>رندر بلاک {item.type} ناموفق بود</p>
+
+    return (
+      <>
+        <Component
+          siteSettings={siteSettings}
+          blockData={item}
+          className={`${className} ${combineClassNames(item.classNames || {})}`}
+          pageSlug={pageSlug}
+          categorySlug={categorySlug}
+          searchParams={searchParams}
+        />
+      </>
+    )
   }
+  return <p>رندر بلاک {item.type} ناموفق بود</p>
+  // }
 }
 
 export default RenderBlock

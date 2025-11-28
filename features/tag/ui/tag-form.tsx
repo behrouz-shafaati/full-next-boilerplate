@@ -201,7 +201,7 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
               name="image"
               state={state}
               maxFiles={1}
-              allowedFileTypes={{ 'image/*': [] }}
+              allowedFileTypes={['image']}
               defaultValues={tag?.image}
               onLoading={setLoading}
             />

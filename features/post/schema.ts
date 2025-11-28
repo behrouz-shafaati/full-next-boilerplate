@@ -111,7 +111,7 @@ postSchema.pre(['find', 'findOne', 'findOneAndUpdate'], function (next: any) {
   this.populate({
     path: 'image',
     select:
-      '_id srcSmall srcMedium srcLarge translations href target width height previewPath main mimeType', // ✅ فقط همین فیلد از image بیاد
+      '_id patchSmall srcSmall srcMedium srcLarge translations href target width height previewPath main mimeType', // ✅ فقط همین فیلد از image بیاد
   })
     .populate('user')
     .populate('author')

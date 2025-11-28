@@ -248,7 +248,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
               name="image"
               state={state}
               maxFiles={1}
-              allowedFileTypes={{ 'image/*': [] }}
+              allowedFileTypes={['image']}
               defaultValues={state?.values?.image}
               onLoading={setLoading}
             />

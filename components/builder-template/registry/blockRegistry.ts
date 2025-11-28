@@ -1,5 +1,5 @@
 // رجیستری مرکزی بلاک‌ها
-import { registerBlock } from '@/components/builder-canvas/singletonBlockRegistry'
+// import { registerBlock } from '@/lib/block/singletonBlockRegistry'
 import { ContentBlockDef } from '../blocks/content_all'
 import { ContentPostTitleBlockDef } from '../blocks/content_post_title'
 import { ContentPostCoverBlockDef } from '../blocks/content_post_cover'
@@ -34,4 +34,4 @@ export const blockRegistry = {
   // ...
 }
 
-registerBlock(blockRegistry)
+// registerBlock(blockRegistry)

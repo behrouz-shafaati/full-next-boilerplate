@@ -142,7 +142,7 @@ class controller extends c_controller {
         const webpFileName = `${baseName}.${extension}`
         title = webpFileName
         const sizes = [
-          { name: 'Small', width: 100, quality: 80 },
+          { name: 'Small', width: 60, quality: 80 },
           { name: 'Medium', width: 640, quality: 80 },
           { name: 'Large', width: 1280, quality: 90 },
         ]
@@ -156,7 +156,6 @@ class controller extends c_controller {
             urls[`src${size.name}`] = `/api/file${src}/${baseName}.gif`
             patches[`patch${size.name}`] = `${patch}/${baseName}.gif`
           }
-
           // حالا فایل موقت رو پاک کن
           safeUnlink(tmpFilePath)
         } else {
@@ -185,6 +184,16 @@ class controller extends c_controller {
               `patch${size.name}`
             ] = `${patch}/${baseName}-${size.name}.${extension}`
           }
+
+          // ======================================================
+          // اینا برای  است که ظاهرا اگه در transform اسکیما نجام بشه بهترهblurDataURL
+          // base64 → buffer
+          // patches[`patchBase64`] = `${patch}/${baseName}-base64`
+          // const buffer = fs.readFileSync(patches['patchSmall'])
+          // const base64 = buffer.toString('base64') // این مقدار دقیقا همان چیزی است که به تابع می‌دهیم
+          // const bufferBase64 = Buffer.from(base64, 'base64')
+          // await fs.promises.writeFile(patches[`patchBase64`], bufferBase64)
+          // ======================================================
 
           // پاک کردن فایل موقت بعد از اتمام پردازش
           safeUnlink(tmpFilePath)
@@ -274,11 +283,26 @@ class controller extends c_controller {
   }
 
   async deleteFile(id: string) {
-    const file = await this.findById({ id })
-    fs.unlinkSync(file.patchSmall)
-    fs.unlinkSync(file.patchLarge)
-    fs.unlinkSync(file.patchMedium)
-    return this.delete({ filters: [id] })
+    try {
+      const file = await this.findById({ id })
+      if (file) {
+        fs.unlinkSync(file.patchSmall)
+        fs.unlinkSync(file.patchLarge)
+        fs.unlinkSync(file.patchMedium)
+        return this.delete({ filters: [id] })
+      } else {
+        if (process.env.NODE_ENV == 'development')
+          console.log(`#324786 File with id ${id} doesn't exist.`)
+      }
+    } catch (error) {
+      if (process.env.NODE_ENV == 'development')
+        console.log(`#23487 Error in remove file with id '${id}': `, error)
+      if (error?.code === 'ENOENT') {
+        // فایل وجود نداشت → نادیده بگیر و از دیتابیس حذفش کن
+        return this.delete({ filters: [id] })
+        return
+      }
+    }
   }
 
   async sanitizePostData(params: any, id?: string | undefined) {

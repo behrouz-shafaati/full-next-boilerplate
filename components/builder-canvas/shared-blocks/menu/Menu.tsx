@@ -1,4 +1,3 @@
-'use client'
 import {
   Menu as MenuType,
   MenuTranslationSchema,

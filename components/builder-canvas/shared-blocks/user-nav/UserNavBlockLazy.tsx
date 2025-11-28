@@ -1,15 +1,12 @@
 'use client'
 import dynamic from 'next/dynamic'
 
-const UserNavClientWrapper = dynamic(
-  () =>
-    import('./UserNavBlock').then((mod) => {
-      return mod.UserNavBlock
-    }),
-  {
-    ssr: false,
-    loading: () => null,
-  }
-)
+// کاملاً خارج از باندل اولیه
+const UserNavBlock = dynamic(() => import('./UserNavBlock'), {
+  ssr: false, // هیچ SSR اتفاق نمی‌افتد
+  loading: () => <div>در حال بارگذاری...</div>,
+})
 
-export default UserNavClientWrapper
+export default function UserNavBlockLazy(props) {
+  return <UserNavBlock {...props} />
+}

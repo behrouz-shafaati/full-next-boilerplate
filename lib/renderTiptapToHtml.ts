@@ -222,6 +222,13 @@ const nodes = {
     parseDOM: [{ tag: 'br' }],
     toDOM: () => ['br'],
   },
+  horizontalRule: {
+    inline: true,
+    group: 'inline',
+    selectable: false,
+    parseDOM: [{ tag: 'hr' }],
+    toDOM: () => ['hr', { style: 'padding-bottom: 16px' }],
+  },
   // 👇 تعریف adSlot برای رندر سمت سرور
   adSlot: {
     group: 'block',
