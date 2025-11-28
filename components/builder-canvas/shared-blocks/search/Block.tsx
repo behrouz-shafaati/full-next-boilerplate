@@ -27,7 +27,7 @@ type Props = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement>
 
-export const SearchBlock = ({ blockData, ...props }: Props) => {
+const SearchBlock = ({ blockData, ...props }: Props) => {
   const locale = 'fa'
   const [open, setOpen] = useState(false)
   const [postResults, setPostResults] = useState<any>({})
@@ -184,3 +184,5 @@ export const SearchBlock = ({ blockData, ...props }: Props) => {
     </>
   )
 }
+
+export default SearchBlock

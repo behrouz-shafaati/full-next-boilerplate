@@ -1,7 +1,7 @@
 import { userNavSchema } from './schema'
 import { userNavDefaults } from './defaultSettings'
 import { ContentEditor } from './ContentEditor'
-import { UserNavBlock } from './UserNavBlock'
+import UserNavBlock from './UserNavBlock'
 
 export const UserNavBlockDef = {
   type: 'userNav',

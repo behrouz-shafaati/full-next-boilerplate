@@ -244,7 +244,6 @@ async function sanitizePostData(validatedFields: any, id?: string | undefined) {
   let prevState = { translations: [] }
   if (id) {
     prevState = await postCtrl.findById({ id })
-    console.log('#prevState 098776 :', prevState)
   }
   const session = (await getSession()) as Session
   // Create the post

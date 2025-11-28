@@ -1,5 +1,5 @@
-import BlogPostSliderLazy from './BlogPostSliderBlockLazy'
+import BlogPostSlider from './BlogPostSliderBlock'
 
 export const serverRenderBlogPostSliderDef = {
-  Renderer: BlogPostSliderLazy,
+  Renderer: BlogPostSlider,
 }

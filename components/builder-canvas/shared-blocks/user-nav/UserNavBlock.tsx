@@ -17,7 +17,7 @@ type props = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const UserNavBlock = ({ blockData, ...props }: props) => {
+const UserNavBlock = ({ blockData, ...props }: props) => {
   const [loading, setLoading] = useState(true)
   const [session, setSession] = useState(null)
   // const { user } = useSession()
@@ -49,3 +49,4 @@ export const UserNavBlock = ({ blockData, ...props }: props) => {
   }
   return <UserNav blockData={blockData} user={session?.user} {...props} />
 }
+export default UserNavBlock

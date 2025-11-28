@@ -1,5 +1,5 @@
 import MenuItemDesktop from '../desktop/MenuItemDesktop'
-import MobileMenuListLazy from '../mobile/MobileMenuListLazy'
+import MobileMenuLazy from '../mobile/MobileMenuLazy'
 
 type Props = {
   items: any
@@ -23,7 +23,7 @@ export default function HorizontalMenu({ items, ...props }: Props) {
         </nav>
 
         {/* موبایل */}
-        <MobileMenuListLazy items={items} />
+        <MobileMenuLazy items={items} />
       </div>
     </nav>
   )

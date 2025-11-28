@@ -1,7 +1,7 @@
 import { schema } from './schema'
 import { defaultSettings } from './defaultSettings'
 import { ContentEditor } from './ContentEditor'
-import { SearchBlock } from './Block'
+import SearchBlock from './Block'
 
 export const SearchBlockDef = {
   type: 'search',

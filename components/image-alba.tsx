@@ -22,7 +22,7 @@ export function ImageAlba({
   src = '',
   file,
   showCaption = true,
-  zoomable = true,
+  zoomable = false,
   aspectRatio: inputAspectRatio = null,
   isLCP = false,
 }: ImageAlbaProps) {

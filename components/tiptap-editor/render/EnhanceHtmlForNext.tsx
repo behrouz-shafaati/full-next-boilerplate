@@ -77,7 +77,6 @@ export default async function EnhanceHtmlForNext({
             if (!id) return null
             const fileData = imageMap[id]
             if (!fileData) return null
-            return null
             return <ImageAlba file={fileData} />
           }
 

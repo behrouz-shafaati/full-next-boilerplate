@@ -26,7 +26,7 @@ export const serverRenderBlockRegistry = {
   themeModdeSwitch: serverRenderThemeModeSwitchDef,
   userNav: serverRenderUserNavDef,
   imageSlider: serverRenderImageSliderDef, // 61kb
-  blogPostSlider: serverRenderBlogPostSliderDef,
+  blogPostSlider: serverRenderBlogPostSliderDef, // need check size
   menu: serverRenderMenuDef,
   postList: serverRenderPostListDef, // 715 kb
   button: serverRenderButtonDef,
