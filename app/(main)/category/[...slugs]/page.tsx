@@ -1,6 +1,6 @@
 // export const dynamic = 'force-dynamic'
 // export const dynamic = 'auto'
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
 import type { Metadata } from 'next'
@@ -21,9 +21,9 @@ interface PageProps {
   }>
 }
 
-export async function generateStaticParams() {
-  return categoryCtrl.generateStaticParams()
-}
+// export async function generateStaticParams() {
+//   return categoryCtrl.generateStaticParams()
+// }
 
 export async function generateMetadata({
   params,
@@ -63,7 +63,7 @@ export default async function Page({ params, searchParams }: PageProps) {
   const locale = 'fa'
   const resolvedParams = await params
   const { slugs } = resolvedParams
-  // const resolvedSearchParams = await searchParams
+  const resolvedSearchParams = await searchParams
   // const { query = '', page = '1' } = resolvedSearchParams
   const categorySlug = decodeURIComponent(slugs[slugs.length - 1])
 
@@ -88,6 +88,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         content_category_description={
           <CategoryDescription contentJson={translation?.description} />
         }
+        searchParams={resolvedSearchParams}
       />
     )
 

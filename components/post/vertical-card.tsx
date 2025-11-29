@@ -44,7 +44,7 @@ export default function VerticalPostCard({
               objectFit="cover"
               placeholder="blur" //  فعال کردن حالت بلور
               blurDataURL={
-                post?.image?.srcSmall || '/image-placeholder-Small.webp'
+                post?.image?.blurDataURL || '/image-placeholder-Small.webp'
               } //  مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
             />
           </div>

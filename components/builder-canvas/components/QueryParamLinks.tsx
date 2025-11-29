@@ -1,6 +1,7 @@
+'use client'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
-import Link from 'next/link'
 
 /**
  * A reusable component that renders clickable items which update a specific query parameter in the URL.
@@ -26,44 +27,47 @@ import Link from 'next/link'
  * @param {Array<{label: string, slug: string}>} props.items - List of items to render as clickable badges
  * @param {string} [props.className] - Optional extra classes for the container
  */
-export function QueryParamLinks({
+export default function QueryParamLinks({
   paramKey = 'param',
   items,
   className = '',
-  searchParams,
-}: {
+}: // searchParams,
+{
   paramKey?: string
   items: { label: string; slug: string }[]
   className?: string
   searchParams?: any
 }) {
-  const selectedTag = searchParams?.[paramKey] || ''
+  const searchParams = useSearchParams()
+  const router = useRouter()
+  const selectedTag = searchParams.get(paramKey) || ''
 
   let selectedTagExistInItems = items.some((item) => item.slug === selectedTag)
+
+  const handleClick = (slug: string) => {
+    const params = new URLSearchParams(searchParams.toString())
+    params.set(paramKey, slug)
+    router.replace(`?${params.toString()}`, { scroll: false }) // 🔹 استفاده از replace به جای shallow
+  }
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {items?.map((item, index) => (
-        <Link
+        <Badge
           key={item.slug}
-          scroll={false}
-          href={`?${paramKey}=${item.slug}`}
-          className="focus:outline-none"
+          onClick={() => handleClick(item.slug)}
+          variant="outline"
+          className={cn(
+            'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
+            {
+              'bg-primary text-white':
+                (selectedTagExistInItems && item.slug === selectedTag) ||
+                (!selectedTagExistInItems && index == 0),
+            }
+          )}
         >
-          <Badge
-            variant="outline"
-            className={cn(
-              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
-              {
-                'bg-primary text-white':
-                  (selectedTagExistInItems && item.slug === selectedTag) ||
-                  (!selectedTagExistInItems && index == 0),
-              }
-            )}
-          >
-            {item.label}
-          </Badge>
-        </Link>
+          {item.label}
+        </Badge>
       ))}
     </div>
   )

@@ -1,12 +1,12 @@
+'use server'
 // کامپوننت نمایشی بلاک
 import React from 'react'
 import { Block } from '../../types'
-import { PostList } from './PostList'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
-// import { PostListFallback } from './PostListFallback'
 import { getCategoryAction } from '@/features/category/actions'
-// import { getTagAction } from '@/features/tag/actions'
+import PostList from './PostList'
+import { getTagAction } from '@/features/tag/actions'
 
 type PostListBlockProps = {
   widgetName: string
@@ -43,6 +43,21 @@ export default async function PostListBlock({
 
   let filters = {}
 
+  /*======== tag filter ========*/
+  const selectedTag = searchParams?.tag
+    ? searchParams?.tag
+    : settings?.showNewest == true
+    ? ''
+    : content?.tags?.[0]?.slug || ''
+  const flgSelectedTagExistInBlock = Array.isArray(content?.tags)
+    ? content.tags.some((tag) => tag.slug === selectedTag)
+    : false
+  if (selectedTag != '' && flgSelectedTagExistInBlock) {
+    const tag = await getTagAction({ slug: selectedTag })
+    filters = { ...filters, tags: [tag.id] }
+  }
+
+  /*======== category filter ========*/
   const categoryIds =
     content?.categories?.map((category: Option) => category.value) || {}
   if (content?.usePageCategory && categorySlug) {
@@ -62,7 +77,8 @@ export default async function PostListBlock({
   ])
   const posts = result.data
   const randomMap = posts.map(() => Math.random() < 0.1)
-  if (posts.length == 0) return null
+  // if (posts.length == 0) return null
+
   return (
     <PostList
       posts={posts}

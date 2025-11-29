@@ -53,7 +53,7 @@ const PostHorizontalCard = ({ post, options, query = '' }: Props) => {
               sizes="(max-width: 640px) 112px, (max-width: 768px) 200px, 300px"
               placeholder="blur"
               blurDataURL={
-                post?.image?.srcSmall || '/image-placeholder-Small.webp'
+                post?.image?.blurDataURL || '/image-placeholder-Small.webp'
               }
             />
           )}

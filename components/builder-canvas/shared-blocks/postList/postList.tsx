@@ -1,6 +1,6 @@
-'use client'
+'use server'
 // کامپوننت نمایشی بلاک
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo } from 'react'
 import { Block } from '../../types'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
@@ -16,8 +16,6 @@ import { PostListHeroHorizontal } from './designs/list/PostListHeroHorizontal'
 import VerticalPostCard from '@/components/post/vertical-card'
 import BannerGroup from '../AdSlot/BannerGroup'
 import PostHorizontalSmallCard from './designs/card/PostHorizontalSmallCard'
-import { getPosts } from '@/features/post/actions'
-import { getTagAction } from '@/features/tag/actions'
 import PostImageCardSkeltone from './designs/card/skeleton/ImageCardSkeleton'
 import ArticalHorizontalCardSkeleton from './designs/card/skeleton/ArticalHorizontalCardSkeleton'
 import VerticalPostCardSkeleton from '@/components/post/skeleton/vertical-card-skeleton'
@@ -45,52 +43,21 @@ type PostListProps = {
   randomMap: boolean[]
   searchParams?: any
   filters?: Object
+  loading?: boolean
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const PostList = ({
+export const PostList = async ({
   posts: posts,
   randomMap,
   blockData,
   searchParams = {},
   filters,
+  loading = false,
   ...props
 }: PostListProps) => {
   const locale = 'fa'
   const { categorySlug } = props ? props : { categorySlug: null }
   const { id, content, settings } = blockData
-  const firstLoad = useRef(true)
-  const [selectedTag, setSelectedTag] = useState('')
-  const [_posts, setPosts] = useState(posts)
-  const [loading, setLoading] = useState(false)
-
-  useEffect(() => {
-    const fetchData = async () => {
-      if (firstLoad.current === true) {
-        firstLoad.current = false
-        return
-      }
-      setLoading(true)
-      let _filters
-      if (selectedTag != '') {
-        const tag = await getTagAction({ slug: selectedTag })
-        _filters = { ...filters, tags: [tag.id] }
-      } else {
-        _filters = filters
-      }
-      const [result] = await Promise.all([
-        getPosts({
-          filters: _filters,
-          pagination: { page: 1, perPage: settings?.countOfPosts || 6 },
-        }),
-      ])
-      const posts = result.data
-      setPosts(posts)
-      setLoading(false)
-    }
-    fetchData()
-  }, [selectedTag])
-
-  // const searchParams = useSearchParams()
 
   const bannerSettings = useMemo(() => ({ settings: { aspect: '4/1' } }), [])
 
@@ -122,8 +89,8 @@ export const PostList = ({
   //     ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
   //     : showMoreHref
 
-  const postItems = useMemo(() => {
-    if (!loading && _posts.length == 0)
+  const postItemsFun = () => {
+    if (!loading && posts.length == 0)
       return (
         <div className="w-full p-24 items-center text-center">
           داده ای وجود ندارد
@@ -133,7 +100,7 @@ export const PostList = ({
     const advertisingAfter = blockData?.settings?.advertisingAfter || 0
     let adIndex = 0
     return (
-      loading ? new Array(settings?.countOfPosts || 6).fill({}) : _posts
+      loading ? new Array(settings?.countOfPosts || 6).fill({}) : posts
     ).map((post, index) => {
       adIndex += 1
       let flgShowBanner = false
@@ -235,25 +202,25 @@ export const PostList = ({
           )
       }
     })
-  }, [_posts, blockData, randomMap, bannerSettings, loading])
+  }
 
-  // const postItems =  postItemsFun()
+  const postItems = postItemsFun()
   switch (settings?.listDesign) {
     case 'column':
       return (
         <PostListColumn
-          posts={_posts}
+          posts={posts}
           postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
-          setSelectedTag={setSelectedTag}
+          searchParams={searchParams}
           {...props}
         />
       )
     case 'heroVertical':
       return (
         <PostListHeroVertical
-          posts={_posts}
+          posts={posts}
           postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
@@ -263,7 +230,7 @@ export const PostList = ({
     case 'heroHorizontal':
       return (
         <PostListHeroHorizontal
-          posts={_posts}
+          posts={posts}
           postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
@@ -273,7 +240,7 @@ export const PostList = ({
     case 'spotlight':
       return (
         <PostListSpotlight
-          posts={_posts}
+          posts={posts}
           postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
@@ -283,16 +250,15 @@ export const PostList = ({
     default: // case 'row':
       return (
         <PostListRow
-          posts={_posts}
+          posts={posts}
           postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           searchParams={searchParams}
-          setSelectedTag={setSelectedTag}
           {...props}
         />
       )
   }
 }
 
-PostList.displayName = 'PostList'
+export default PostList

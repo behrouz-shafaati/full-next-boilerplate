@@ -1,13 +1,13 @@
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 // export const dynamic = 'force-dynamic'
 import { PageRenderer } from '@/components/builder-canvas/pageRenderer'
 import pageCtrl from '@/features/page/controller'
 import { pickLocale, SUPPORTED_LANGUAGE } from '@/lib/utils'
 import { notFound } from 'next/navigation'
 
-export async function generateStaticParams() {
-  return pageCtrl.generateStaticParams()
-}
+// export async function generateStaticParams() {
+//   return pageCtrl.generateStaticParams()
+// }
 
 interface PageProps {
   params: { lang?: string; slug: string }
@@ -20,8 +20,8 @@ export default async function Page({ params, searchParams }: PageProps) {
   const { lang = 'fa', slug: encodeSlug } = await params
   const slug = decodeURIComponent(encodeSlug)
 
-  const resolvedSearchParams = {}
-  // const resolvedSearchParams = await searchParams
+  // const resolvedSearchParams = {}
+  const resolvedSearchParams = await searchParams
   // const { tag } = resolvedSearchParams
   // زبان پیش‌فرض
   const locale = pickLocale(lang)

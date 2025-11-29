@@ -1,4 +1,3 @@
-'use client'
 import React from 'react'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'

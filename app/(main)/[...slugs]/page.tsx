@@ -1,7 +1,7 @@
 // // پس من اصلا از اول باید بجای export const dynamic = 'force-static' export const dynamic = 'auto' میزاشتم. اصلا دنبال همین بودم. چون من تو کدم یهو گفتم تمام صفحات revalidate بشن اما چون از export const dynamic = 'force-static' در همون لحظه میخاسته همه رو بسازه و کش کنه که سیستم میترکیده. اما همینو اگکه بکنم export const dynamic = 'auto' و اعلام کنم همه revalidate شدن دیگه در همون لحظه همه رو نمیسازه و کش نمیکنه.
 
 // // export const dynamic = 'auto'
-export const dynamic = 'force-static'
+// export const dynamic = 'force-static'
 // export const dynamic = 'force-dynamic'
 
 import React from 'react'
@@ -36,9 +36,9 @@ interface PageProps {
   }>
 }
 
-export async function generateStaticParams() {
-  return postCtrl.generateStaticParams()
-}
+// export async function generateStaticParams() {
+//   return postCtrl.generateStaticParams()
+// }
 
 export async function generateMetadata({
   params,
@@ -101,8 +101,8 @@ export default async function Page({ params, searchParams }: PageProps) {
   const resolvedParams = await params
   const { slugs } = resolvedParams
 
-  const resolvedSearchParams = {}
-  // const resolvedSearchParams = await searchParams
+  // const resolvedSearchParams = {}
+  const resolvedSearchParams = await searchParams
   // const { tag } = resolvedSearchParams
 
   const slug = slugs[slugs.length - 1]

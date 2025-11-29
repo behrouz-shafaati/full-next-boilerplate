@@ -5,14 +5,13 @@ import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { MoveLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
-import { QueryParamLinks } from '@/components/builder-canvas/components/QueryParamLinks'
-import { SelectableTags } from '@/components/builder-canvas/components/SelectableTags'
+import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
 
 type PostListProps = {
   posts: Post[]
   postItems: any
-  setSelectedTag: React.Dispatch<React.SetStateAction<string>>
   showMoreHref: string
+  searchParams?: any
   blockData: {
     id: string
     type: 'postList'
@@ -35,8 +34,8 @@ export const PostListColumn = ({
   posts,
   postItems,
   showMoreHref,
-  setSelectedTag,
   blockData,
+  searchParams = {},
   ...props
 }: PostListProps) => {
   const locale = 'fa'
@@ -45,7 +44,7 @@ export const PostListColumn = ({
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'
 
-  const { onClick, ...restProps } = props
+  // const { onClick, ...restProps } = props
 
   let queryParamLS = content?.tags || []
   if (settings?.showNewest == true)
@@ -64,11 +63,11 @@ export const PostListColumn = ({
       </div>
       <div className="px-2">
         <Suspense fallback={<div>در حال بارگذاری...</div>}>
-          {/* <QueryParamLinks items={queryParamLS} paramKey="tag" /> */}
-          <SelectableTags
+          <QueryParamLinks
             items={queryParamLS}
-            setSelectedTag={setSelectedTag}
             className="p-2"
+            paramKey="tag"
+            searchParams={searchParams}
           />
         </Suspense>
         <div className={`mt-2 `}>
