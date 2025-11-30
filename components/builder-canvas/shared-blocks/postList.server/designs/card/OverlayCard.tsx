@@ -13,7 +13,6 @@ type Props = {
     showCreatedAt?: boolean
     titleClasses?: string
     aspectRatio?: string
-    isLCP?: boolean
   }
 }
 
@@ -24,7 +23,6 @@ const PostOverlayCard = ({ post, direction = 'row', options }: Props) => {
     showCreatedAt = true,
     titleClasses = '',
     aspectRatio = '3 / 2',
-    isLCP = false,
   } = options || {}
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t) => t.lang === locale) ||
@@ -54,10 +52,6 @@ const PostOverlayCard = ({ post, direction = 'row', options }: Props) => {
         fill
         className="object-cover transition-transform duration-700 group-hover:scale-110"
         sizes="(max-width: 640px) 640px, (max-width: 1024px) 1024px, 1280px"
-        priority={isLCP} // برای تصویر LCP
-        loading={isLCP ? 'eager' : 'lazy'}
-        placeholder="blur" // ✅ فعال کردن حالت بلور
-        blurDataURL={post?.image?.blurDataURL || ''} // ✅ مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
       />
 
       {/* ماسک تیره */}

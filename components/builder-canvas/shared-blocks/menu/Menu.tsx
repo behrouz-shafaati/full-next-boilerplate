@@ -4,6 +4,7 @@ import {
 } from '@/features/menu/interface'
 import HorizontalMenu from './designs/Horizontal'
 import VerticalMenu from './designs/Vertical'
+import MenuPrefetch from './MenuPrefetch'
 
 interface MainMenuProps {
   blockData: {
@@ -25,12 +26,22 @@ function Menu({ blockData, widgetName, menu, ...props }: MainMenuProps) {
     {}
   const items = translation.items
   const { settings } = blockData
+  let selectedMenu
   switch (settings?.design) {
     case 'vertical':
-      return <VerticalMenu items={items} {...props} />
+      selectedMenu = <VerticalMenu items={items} {...props} />
+      break
     default:
-      return <HorizontalMenu items={items} {...props} />
+      selectedMenu = <HorizontalMenu items={items} {...props} />
+      break
   }
+
+  return (
+    <>
+      <MenuPrefetch items={items} />
+      {selectedMenu}
+    </>
+  )
 }
 
 export default Menu

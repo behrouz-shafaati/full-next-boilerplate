@@ -1,15 +1,16 @@
 // کامپوننت نمایشی بلاک
-import React, { Suspense } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { MoveLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
-import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
+import PostItems from '../card/PostItems'
 
 type PostListProps = {
   posts: Post[]
-  postItems: any
+  randomMap: boolean[]
+  filters?: Object
   showMoreHref: string
   searchParams?: any
   blockData: {
@@ -32,10 +33,11 @@ type PostListProps = {
 
 export const PostListColumn = ({
   posts,
-  postItems,
   showMoreHref,
   blockData,
   searchParams = {},
+  filters = {},
+  randomMap,
   ...props
 }: PostListProps) => {
   const locale = 'fa'
@@ -62,16 +64,15 @@ export const PostListColumn = ({
         </div>
       </div>
       <div className="px-2">
-        <Suspense fallback={<div>در حال بارگذاری...</div>}>
-          <QueryParamLinks
-            items={queryParamLS}
-            className="p-2"
-            paramKey="tag"
-            searchParams={searchParams}
-          />
-        </Suspense>
         <div className={`mt-2 `}>
-          <div className="grid grid-cols-1 gap-2">{postItems}</div>
+          <div className="grid grid-cols-1 gap-2">
+            <PostItems
+              initialPosts={posts}
+              blockData={blockData}
+              randomMap={randomMap}
+              filters={filters}
+            />
+          </div>
           <Link
             href={showMoreHref}
             className="text-xs text-gray-600 dark:text-gray-300 font-normal flex flex-row items-center gap-2 w-full text-center justify-center p-4"

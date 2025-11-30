@@ -1,24 +1,15 @@
 'use server'
 // کامپوننت نمایشی بلاک
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Block } from '../../types'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
 import { PostListColumn } from './designs/list/PostListColumn'
 import { buildUrlFromFilters } from '@/lib/utils'
 import { PostListRow } from './designs/list/PostListRow'
-import PostImageCard from './designs/card/ImageCard'
-import PostOverlayCard from './designs/card/OverlayCard'
-import PostHorizontalCard from './designs/card/ArticalHorizontalCard'
 import { PostListHeroVertical } from './designs/list/PostListHeroVertical'
 import { PostListSpotlight } from './designs/list/PostListSpotlight'
 import { PostListHeroHorizontal } from './designs/list/PostListHeroHorizontal'
-import VerticalPostCard from '@/components/post/vertical-card'
-import BannerGroup from '../AdSlot/BannerGroup'
-import PostHorizontalSmallCard from './designs/card/PostHorizontalSmallCard'
-import PostImageCardSkeltone from './designs/card/skeleton/ImageCardSkeleton'
-import ArticalHorizontalCardSkeleton from './designs/card/skeleton/ArticalHorizontalCardSkeleton'
-import VerticalPostCardSkeleton from '@/components/post/skeleton/vertical-card-skeleton'
 
 type PostListProps = {
   posts: Post[]
@@ -59,7 +50,7 @@ export const PostList = async ({
   const { categorySlug } = props ? props : { categorySlug: null }
   const { id, content, settings } = blockData
 
-  const bannerSettings = useMemo(() => ({ settings: { aspect: '4/1' } }), [])
+  const bannerSettings = { settings: { aspect: '4/1' } }
 
   let queryParams = content?.tags || []
   if (settings?.showNewest == true)
@@ -89,131 +80,16 @@ export const PostList = async ({
   //     ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
   //     : showMoreHref
 
-  const postItemsFun = () => {
-    if (!loading && posts.length == 0)
-      return (
-        <div className="w-full p-24 items-center text-center">
-          داده ای وجود ندارد
-        </div>
-      )
-
-    const advertisingAfter = blockData?.settings?.advertisingAfter || 0
-    let adIndex = 0
-    return (
-      loading ? new Array(settings?.countOfPosts || 6).fill({}) : posts
-    ).map((post, index) => {
-      adIndex += 1
-      let flgShowBanner = false
-      if (advertisingAfter == adIndex) {
-        flgShowBanner = true
-        adIndex = 0
-      }
-
-      const flgShowVertical = randomMap[index]
-
-      switch (blockData?.settings?.cardDesign) {
-        case 'overly-card':
-          return (
-            <React.Fragment key={post.id}>
-              <PostOverlayCard
-                key={post.id}
-                post={post}
-                options={settings}
-                direction={settings?.listDesign}
-              />
-              {flgShowBanner && (
-                <BannerGroup
-                  blockData={{
-                    id: `${id}${index}`,
-                    settings: { aspect: '4/1', countOfBanners: 1 },
-                  }}
-                />
-              )}
-            </React.Fragment>
-          )
-        case 'horizontal-card':
-          return (
-            <React.Fragment key={post.id}>
-              {flgShowVertical ? (
-                loading ? (
-                  <VerticalPostCardSkeleton />
-                ) : (
-                  <VerticalPostCard
-                    key={post.id}
-                    post={post}
-                    options={{ showExcerpt: false }}
-                    className="border-b"
-                  />
-                )
-              ) : loading ? (
-                <ArticalHorizontalCardSkeleton />
-              ) : (
-                <PostHorizontalCard
-                  key={post.id}
-                  post={post}
-                  options={settings}
-                />
-              )}
-              {flgShowBanner && (
-                <BannerGroup
-                  blockData={{
-                    id: `${id}${index}`,
-                    settings: { aspect: '4/1', countOfBanners: 1 },
-                  }}
-                />
-              )}
-            </React.Fragment>
-          )
-        case 'horizontal-card-small':
-          return (
-            <React.Fragment key={post.id}>
-              <PostHorizontalSmallCard
-                key={post.id}
-                post={post}
-                options={settings}
-              />
-              {flgShowBanner && (
-                <BannerGroup
-                  blockData={{
-                    id: `${id}${index}`,
-                    settings: { aspect: '4/1', countOfBanners: 1 },
-                  }}
-                />
-              )}
-            </React.Fragment>
-          )
-        default:
-          return (
-            <React.Fragment key={post.id}>
-              {loading ? (
-                <PostImageCardSkeltone />
-              ) : (
-                <PostImageCard key={post.id} post={post} options={settings} />
-              )}
-              {flgShowBanner && (
-                <BannerGroup
-                  blockData={{
-                    id: `${id}${index}`,
-                    settings: { aspect: '4/1', countOfBanners: 1 },
-                  }}
-                />
-              )}
-            </React.Fragment>
-          )
-      }
-    })
-  }
-
-  const postItems = postItemsFun()
   switch (settings?.listDesign) {
     case 'column':
       return (
         <PostListColumn
           posts={posts}
-          postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           searchParams={searchParams}
+          randomMap={randomMap}
+          filters={filters}
           {...props}
         />
       )
@@ -221,7 +97,6 @@ export const PostList = async ({
       return (
         <PostListHeroVertical
           posts={posts}
-          postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           {...props}
@@ -231,7 +106,6 @@ export const PostList = async ({
       return (
         <PostListHeroHorizontal
           posts={posts}
-          postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           {...props}
@@ -241,7 +115,6 @@ export const PostList = async ({
       return (
         <PostListSpotlight
           posts={posts}
-          postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           {...props}
@@ -251,10 +124,11 @@ export const PostList = async ({
       return (
         <PostListRow
           posts={posts}
-          postItems={postItems}
           blockData={blockData}
           showMoreHref={showMoreHref}
           searchParams={searchParams}
+          randomMap={randomMap}
+          filters={filters}
           {...props}
         />
       )

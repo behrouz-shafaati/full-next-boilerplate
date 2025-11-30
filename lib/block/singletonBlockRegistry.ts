@@ -1,3 +1,4 @@
+'use server'
 // این فقط برای رندر در سمت سرور و برای رندر و نمایش به کابر کاربرد دارد.
 //  بکارگیری آن در سمت کلایتت و صفحه سازها منجر به خطا می شود.
 //  برای صفحه سازها مستقیم به صورت پراپ به کامپوننت ها پاس داده شود
@@ -15,7 +16,7 @@ export type BlockDef<TSettings = any> = {
 }
 const blockRegistry: Record<string, BlockDef> = {}
 
-export function registerBlock(blocks: Record<string, BlockDef>) {
+export async function registerBlock(blocks: Record<string, BlockDef>) {
   Object.entries(blocks).forEach(([key, block]) => {
     if (blockRegistry[key]) {
       console.log(
@@ -26,6 +27,6 @@ export function registerBlock(blocks: Record<string, BlockDef>) {
   })
 }
 
-export function getBlockRegistry() {
+export async function getBlockRegistry() {
   return blockRegistry
 }

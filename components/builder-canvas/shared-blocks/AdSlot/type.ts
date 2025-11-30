@@ -1,6 +1,9 @@
 import { FallbackBehaviorType } from '@/features/campaign/interface'
 
 export type AdSlotWidgetProps = {
+  pageSlug: string | null
+  categorySlug: string | null
+  widgetName: string
   blockData: {
     id: string
     type: 'adSlot'

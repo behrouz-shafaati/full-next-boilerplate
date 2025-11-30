@@ -7,14 +7,12 @@ import { ArrowLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
-import PostItems from '../card/PostItems'
 
 type PostListProps = {
   posts: Post[]
-  randomMap: boolean[]
+  postItems: any
   searchParams?: any
   showMoreHref: string
-  filters?: object
   blockData: {
     id: string
     type: 'postList'
@@ -33,11 +31,10 @@ type PostListProps = {
 
 export const PostListRow = ({
   posts,
+  postItems,
   showMoreHref,
   blockData,
   searchParams = {},
-  randomMap,
-  filters = {},
   ...props
 }: PostListProps) => {
   const locale = 'fa'
@@ -72,16 +69,17 @@ export const PostListRow = ({
         </Link>
       </div>
       <div>
+        <Suspense fallback={<div>در حال بارگذاری...</div>}>
+          <QueryParamLinks
+            items={queryParamLS}
+            className="p-2"
+            paramKey="tag"
+            searchParams={searchParams}
+          />
+        </Suspense>
         <div className={`mt-2 `}>
           <ScrollArea className="">
-            <div className="flex flex-row w-screen gap-4 pb-4">
-              <PostItems
-                initialPosts={posts}
-                blockData={blockData}
-                randomMap={randomMap}
-                filters={filters}
-              />
-            </div>
+            <div className="flex flex-row w-screen gap-4 pb-4">{postItems}</div>
             <ScrollBar orientation="horizontal" />
           </ScrollArea>
         </div>

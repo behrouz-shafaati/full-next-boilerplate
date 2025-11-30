@@ -88,7 +88,7 @@ export type AdSlotProps = {
 export type getBannerProps = {
   originPostSlug: string
   adSlots: AdSlotProps[]
-  sendedAlready: string[]
+  sendedAlready: string[] // banner Ids
   locale?: 'fa'
 }
 

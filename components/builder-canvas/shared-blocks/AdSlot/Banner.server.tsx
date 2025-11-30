@@ -1,9 +1,8 @@
-'use client'
+// 'use client'
 // کامپوننت نمایشی بلاک
 import React from 'react'
 import { AdSlotWidgetProps } from './type'
-import { BannerData, BannerManager } from '@/lib/bannerManager'
-import { Skeleton } from '@/components/ui/skeleton'
+import { BannerData } from '@/lib/bannerManager'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -14,7 +13,7 @@ type BannerProps = {
   React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
 const defaultAspect = '4/1'
-export const Banner = ({
+export const BannerServer = ({
   banner,
   blockData,
   banerSlotId: id,
@@ -72,19 +71,6 @@ export const Banner = ({
   }
 
   // Render logic: if banner has html prefer that (dangerouslySetInnerHTML), else image
-  if (banner === 'loading') {
-    console.log(`banner ${id} is loading.`)
-    return (
-      <Skeleton
-        className={` bg-gray-200 dark:bg-gray-800 animate-pulse ${
-          blockData?.classNames?.manualInputs || ''
-        }`}
-        style={{ aspectRatio: settings?.aspect || defaultAspect, flex: 1 }}
-        aria-busy="true"
-        aria-label={`banner-${id}-loading`}
-      />
-    )
-  }
 
   if (!banner) {
     // no banner available
@@ -132,7 +118,7 @@ export const Banner = ({
           <Link
             href={banner?.targetUrl}
             className="w-full h-full"
-            onClick={linkClickHandler}
+            // onClick={linkClickHandler}
           >
             {BannerImage}
           </Link>

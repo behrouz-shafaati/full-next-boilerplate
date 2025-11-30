@@ -138,6 +138,12 @@ class controller extends baseController {
         if (authorTemplateResult.data[0] != undefined)
           return authorTemplateResult.data[0]
         break
+      case 'search': // مطلب تکی
+        const [templateResult] = await Promise.all([
+          this.find({ filters: { templateFor: 'search', status: 'active' } }),
+        ])
+        if (templateResult.data[0] != undefined) return templateResult.data[0]
+        break
       case 'account': // مطلب تکی
         const [accountTemplateResult] = await Promise.all([
           this.find({ filters: { templateFor: 'account', status: 'active' } }),

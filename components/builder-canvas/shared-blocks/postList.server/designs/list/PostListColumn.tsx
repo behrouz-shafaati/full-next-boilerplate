@@ -3,26 +3,25 @@ import React, { Suspense } from 'react'
 import Link from 'next/link'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
-import { ArrowLeft } from 'lucide-react'
+import { MoveLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
-import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
-import PostItems from '../card/PostItems'
 
 type PostListProps = {
   posts: Post[]
-  randomMap: boolean[]
-  searchParams?: any
+  postItems: any
   showMoreHref: string
-  filters?: object
+  searchParams?: any
   blockData: {
     id: string
     type: 'postList'
     content: {
+      title: string
       tags: Option[]
       categories: Option[]
     }
     settings: {
+      showNewest: boolean
       showArrows: boolean
       loop: boolean
       autoplay: boolean
@@ -31,13 +30,12 @@ type PostListProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const PostListRow = ({
+export const PostListColumn = ({
   posts,
+  postItems,
   showMoreHref,
   blockData,
   searchParams = {},
-  randomMap,
-  filters = {},
   ...props
 }: PostListProps) => {
   const locale = 'fa'
@@ -47,7 +45,6 @@ export const PostListRow = ({
     : 'w-full h-auto max-w-full'
 
   // const { onClick, ...restProps } = props
-  const restProps = props
 
   let queryParamLS = content?.tags || []
   if (settings?.showNewest == true)
@@ -58,32 +55,30 @@ export const PostListRow = ({
       // {...(onClick ? { onClick } : {})}
     >
       <div className="flex flex-row justify-between pb-2 ">
-        <div className=" py-4">
+        <div className="py-4">
           <span className="block px-4 border-r-4 border-primary">
             {content.title}
           </span>
         </div>
-        <Link
-          href={showMoreHref}
-          className="text-xs text-gray-600 dark:text-gray-300 font-normal flex flex-row items-center gap-2 w-fit text-center justify-center p-4"
-        >
-          <span>مشاهده همه</span>
-          <ArrowLeft size={20} className="text-primary" />
-        </Link>
       </div>
-      <div>
+      <div className="px-2">
+        <Suspense fallback={<div>در حال بارگذاری...</div>}>
+          <QueryParamLinks
+            items={queryParamLS}
+            className="p-2"
+            paramKey="tag"
+            searchParams={searchParams}
+          />
+        </Suspense>
         <div className={`mt-2 `}>
-          <ScrollArea className="">
-            <div className="flex flex-row w-screen gap-4 pb-4">
-              <PostItems
-                initialPosts={posts}
-                blockData={blockData}
-                randomMap={randomMap}
-                filters={filters}
-              />
-            </div>
-            <ScrollBar orientation="horizontal" />
-          </ScrollArea>
+          <div className="grid grid-cols-1 gap-2">{postItems}</div>
+          <Link
+            href={showMoreHref}
+            className="text-xs text-gray-600 dark:text-gray-300 font-normal flex flex-row items-center gap-2 w-full text-center justify-center p-4"
+          >
+            <span>مشاهده مطالب بیشتر</span>
+            <MoveLeft size={20} className="text-primary" />
+          </Link>
         </div>
       </div>
     </div>

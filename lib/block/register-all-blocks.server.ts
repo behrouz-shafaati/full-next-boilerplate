@@ -1,3 +1,4 @@
+'use server'
 import { registerBlock } from './singletonBlockRegistry'
 
 import { serverRenderBlockRegistry } from '@/components/builder-canvas/registry/blockRegistry.server'
@@ -6,7 +7,7 @@ import { serverRenderBuilderPageRegistry } from '@/components/builder-page/regis
 import { serverRenderBuilderTemplatePartRegistry } from '@/components/builder-template-part/registry/blockRegistry.server'
 import { serverRenderBuilderFormRegistry } from '@/components/builder-form/registry/blockRegistry.server'
 
-export function registerAllBlocks() {
+export async function registerAllBlocks() {
   registerBlock(serverRenderBlockRegistry)
   registerBlock(serverRenderBuilderPageRegistry)
   registerBlock(serverRenderBuilderTemplateRegistry)

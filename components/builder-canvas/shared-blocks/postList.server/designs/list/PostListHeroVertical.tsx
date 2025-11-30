@@ -15,6 +15,7 @@ import Link from 'next/link'
 type PostListProps = {
   posts: Post[]
   showMoreHref: string
+  postItems: any
   blockData: {
     id: string
     type: 'postList'
@@ -34,6 +35,7 @@ type PostListProps = {
 export const PostListHeroVertical = ({
   posts,
   showMoreHref,
+  postItems,
   blockData,
   ...props
 }: PostListProps) => {

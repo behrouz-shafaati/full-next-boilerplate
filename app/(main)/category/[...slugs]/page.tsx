@@ -1,6 +1,6 @@
 // export const dynamic = 'force-dynamic'
 // export const dynamic = 'auto'
-// export const dynamic = 'force-static'
+export const dynamic = 'force-static'
 import React from 'react'
 import templateCtrl from '@/features/template/controller'
 import type { Metadata } from 'next'
@@ -12,6 +12,8 @@ import { Category } from '@/features/category/interface'
 import { getSettings } from '@/features/settings/controller'
 import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
 import CategoryDescription from '@/features/category/ui/component/Description'
+import pageCtrl from '@/features/page/controller'
+import postCtrl from '@/features/post/controller'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -21,9 +23,9 @@ interface PageProps {
   }>
 }
 
-// export async function generateStaticParams() {
-//   return categoryCtrl.generateStaticParams()
-// }
+export async function generateStaticParams() {
+  return categoryCtrl.generateStaticParams()
+}
 
 export async function generateMetadata({
   params,
@@ -72,6 +74,14 @@ export default async function Page({ params, searchParams }: PageProps) {
     templateCtrl.getTemplate({ slug: categorySlug }),
     getSettings(),
   ])
+
+  // const StaticParams = await categoryCtrl.generateStaticParams()
+  // const StaticParamspage = await pageCtrl.generateStaticParams()
+  // const StaticParamspost = await postCtrl.generateStaticParams()
+  // console.log('# generateStaticParams category:', StaticParams)
+  // console.log('#generateStaticParams page:', StaticParamspage)
+  // console.log('#generateStaticParams post:', StaticParamspost)
+
   const category = categoryResult.data?.[0] || null
   const translation = getTranslation({ translations: category?.translations })
   if (template)

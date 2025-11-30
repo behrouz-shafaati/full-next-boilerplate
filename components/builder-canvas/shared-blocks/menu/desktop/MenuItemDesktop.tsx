@@ -13,7 +13,11 @@ export default function MenuItemDesktop({
   const { className = '' } = props
   if (!hasSubMenu) {
     return item.url ? (
-      <Link href={item.url} className="block px-2 py-1 hover:text-blue-600">
+      <Link
+        href={item.url}
+        // prefetch={true}
+        className="block px-2 py-1 hover:text-blue-600"
+      >
         {item.label}
       </Link>
     ) : (
@@ -25,6 +29,7 @@ export default function MenuItemDesktop({
     <div className={`relative group transition-all z-20`}>
       <Link
         href={item.url}
+        // prefetch={true}
         className="flex items-center gap-1 px-2 py-1 hover:text-blue-600"
       >
         {item.label}
@@ -43,6 +48,7 @@ export default function MenuItemDesktop({
               <Link
                 key={`Desktop${sub.id ?? index}`}
                 href={sub.url}
+                // prefetch={true}
                 className="block px-4 py-2 hover:opacity-70 whitespace-nowrap"
               >
                 {sub.label}

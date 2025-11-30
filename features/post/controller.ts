@@ -172,8 +172,6 @@ class controller extends baseController {
       (category: any) => category.id
     )
     const tagIds = tagsResult.data.map((tag: any) => tag.id)
-    console.log('#categoryIds:', categoryIds)
-    console.log('#tagIds:', tagIds)
     return { categoryIds, tagIds }
   }
 
@@ -185,7 +183,9 @@ class controller extends baseController {
   }
 
   async generateStaticParams() {
-    const singlrPostSlugs = await this.getAllSlugs() // فرض کن فقط slug برمی‌گردونه
+    const singlrPostSlugs = (await this.getAllSlugs()).map((item: any) => ({
+      slugs: item.slug.replace(/^\/+/g, '').split('/'),
+    })) // فرض کن فقط slug برمی‌گردونه
     return singlrPostSlugs
   }
 

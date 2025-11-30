@@ -1,4 +1,3 @@
-'use client'
 // کامپوننت نمایشی بلاک
 import React from 'react'
 import { Block } from '../../types'

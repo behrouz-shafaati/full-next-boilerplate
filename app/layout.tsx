@@ -8,6 +8,7 @@ import { getTranslation } from '@/lib/utils'
 import { ThemeScript } from '@/components/ThemeScript'
 import { PageLoadingProgressBar } from '@/components/loading-page-progress-bar'
 import { PageLoadingProgressBarActivator } from '@/components/loading-page-progress-bar-activator'
+import { RequestStorage } from '@/lib/requestStorage.server'
 // import { Providers } from './providers'
 
 const iransans = localFont({
@@ -65,12 +66,12 @@ export async function generateMetadata(): Promise<Metadata> {
 
 ;<link rel="icon" href="/alba-white.svg" sizes="any" />
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  return (
+  return RequestStorage.runForRequest(() => (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
       <head>
         <ThemeScript />
@@ -83,5 +84,5 @@ export default async function RootLayout({
         {/* </Providers> */}
       </body>
     </html>
-  )
+  ))
 }

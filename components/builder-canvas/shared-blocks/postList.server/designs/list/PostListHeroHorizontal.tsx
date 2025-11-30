@@ -8,6 +8,7 @@ import VerticalPostCard from '@/components/post/vertical-card'
 type PostListProps = {
   posts: Post[]
   showMoreHref: string
+  postItems: any
   blockData: {
     id: string
     type: 'postList'
@@ -27,6 +28,7 @@ type PostListProps = {
 export const PostListHeroHorizontal = ({
   posts,
   showMoreHref,
+  postItems,
   blockData,
   ...props
 }: PostListProps) => {
@@ -43,7 +45,6 @@ export const PostListHeroHorizontal = ({
             key={firstPost.id}
             post={firstPost}
             options={{
-              isLCP: true,
               showExcerpt: false,
               titleClasses: '!text-4xl',
               aspectRatio: '16 / 9',
@@ -65,7 +66,7 @@ export const PostListHeroHorizontal = ({
             }}
           ></div>
           <div className="relative flex flex-col md:flex-row gap-2 justify-center ">
-            {posts.slice(1, 5).map((post, index) => (
+            {posts.slice(1, 5).map((post) => (
               <VerticalPostCard
                 key={post.id}
                 post={post}

@@ -130,7 +130,7 @@ class controller extends baseController {
   async getAllSlugs() {
     const result = await this.findAll({})
     return result.data.map((category: Category) => ({
-      slug: buildCategoryHref(category, ''),
+      slugs: buildCategoryHref(category, '').replace(/^\/+/g, '').split('/'),
     }))
   }
 }
