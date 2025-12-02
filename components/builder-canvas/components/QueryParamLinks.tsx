@@ -1,7 +1,8 @@
 'use client'
-import { useRouter, useSearchParams } from 'next/navigation'
 import { Badge } from '@/components/ui/badge'
 import { cn } from '@/lib/utils'
+import Link from 'next/link'
+import { useState } from 'react'
 
 /**
  * A reusable component that renders clickable items which update a specific query parameter in the URL.
@@ -38,36 +39,35 @@ export default function QueryParamLinks({
   className?: string
   searchParams?: any
 }) {
-  const searchParams = useSearchParams()
-  const router = useRouter()
-  const selectedTag = searchParams.get(paramKey) || ''
+  const [selectedTag, setSelectedTag] = useState('')
 
   let selectedTagExistInItems = items.some((item) => item.slug === selectedTag)
-
-  const handleClick = (slug: string) => {
-    const params = new URLSearchParams(searchParams.toString())
-    params.set(paramKey, slug)
-    router.replace(`?${params.toString()}`, { scroll: false }) // 🔹 استفاده از replace به جای shallow
-  }
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {items?.map((item, index) => (
-        <Badge
+        <Link
+          href={`?${paramKey}=${item.slug}`}
           key={item.slug}
-          onClick={() => handleClick(item.slug)}
-          variant="outline"
-          className={cn(
-            'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
-            {
-              'bg-primary text-white':
-                (selectedTagExistInItems && item.slug === selectedTag) ||
-                (!selectedTagExistInItems && index == 0),
-            }
-          )}
+          scroll={false}
+          data-nprogress="off"
+          onClick={() => setSelectedTag(item.slug)}
         >
-          {item.label}
-        </Badge>
+          <Badge
+            key={item.slug}
+            variant="outline"
+            className={cn(
+              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
+              {
+                'bg-primary text-white':
+                  (selectedTagExistInItems && item.slug === selectedTag) ||
+                  (!selectedTagExistInItems && index == 0),
+              }
+            )}
+          >
+            {item.label}
+          </Badge>
+        </Link>
       ))}
     </div>
   )

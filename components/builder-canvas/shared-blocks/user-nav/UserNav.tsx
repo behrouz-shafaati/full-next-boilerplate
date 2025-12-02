@@ -66,10 +66,13 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               {canCreatePost && (
-                <DropdownMenuItem
-                  onClick={() => router.push('/dashboard/posts/create')}
-                >
-                  افزودن مطلب
+                <DropdownMenuItem>
+                  <Link
+                    href={'/dashboard/posts/create'}
+                    className="w-full h-full"
+                  >
+                    افزودن مطلب
+                  </Link>
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem>
@@ -78,9 +81,10 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
                 </Link>
               </DropdownMenuItem>
               {canDashboardView && (
-                <DropdownMenuItem onClick={() => router.push('/dashboard')}>
-                  داشبورد
-                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
+                <DropdownMenuItem>
+                  <Link href={'/dashboard'} className="w-full h-full">
+                    داشبورد
+                  </Link>
                 </DropdownMenuItem>
               )}
               {/* <DropdownMenuItem>

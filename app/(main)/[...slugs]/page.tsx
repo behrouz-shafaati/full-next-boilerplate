@@ -7,7 +7,6 @@ export const dynamic = 'force-static'
 import React from 'react'
 import postCtrl from '@/features/post/controller'
 import { notFound } from 'next/navigation'
-import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 import templateCtrl from '@/features/template/controller'
 import { Post, PostTranslationSchema } from '@/features/post/interface'
 import {
@@ -19,15 +18,16 @@ import {
 } from '@/features/post/utils'
 
 import type { Metadata } from 'next'
-import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
+// import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { generateTableOfContents } from '@/components/tiptap-editor/utils'
-import { TableOfContents } from '@/components/post/table-of-contents'
-import PostCommentList from '@/features/post-comment/ui/list'
+// import { TableOfContents } from '@/components/post/table-of-contents'
+// import PostCommentList from '@/features/post-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '@/features/post-comment/interface'
 import { getPostCommentsForClient } from '@/features/post-comment/actions'
 import { getSettings } from '@/features/settings/controller'
-import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
+// import DefaultSinglePageBlog from '@/features/post/ui/page/single'
+// import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -59,7 +59,7 @@ export async function generateMetadata({
       description: 'محتوای درخواستی موجود نیست',
     }
   }
-  const href = createPostHref(post.mainCategory)
+  const href = createPostHref(post?.mainCategory)
   const translation: PostTranslationSchema =
     post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
     post?.translations[0] ||
@@ -186,135 +186,86 @@ export default async function Page({ params, searchParams }: PageProps) {
       </div>
     )
 
-  if (template)
-    return (
-      <>
-        {writeJsonLd()}
-        <>
-          <RendererTemplate
-            template={template}
-            siteSettings={siteSettings}
-            pageSlug={slug}
-            categorySlug={post?.mainCategory?.slug || null}
-            searchParams={resolvedParams}
-            editroMode={false}
-            content_all={
-              <DefaultSinglePageBlog
-                post={post}
-                breadcrumbItems={breadcrumbItems}
-                readingDuration={readingDuration}
-                tableOfContent={<TableOfContents toc={toc} />}
-                comments={
-                  <PostCommentList
-                    post={post}
-                    postCommentsResult={postCommentsResult}
-                  />
-                }
-              />
-            }
-            content_post_title={translation?.title}
-            content_post_cover={{
-              image: post?.image ?? null,
-              postType: post?.type ?? 'article',
-              primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
-            }}
-            content_post_share={{
-              url: `${siteSettings?.site_url ?? ''}${post?.href}`,
-              title: translation?.title ?? '',
-            }}
-            content_post_tags={{
-              tags: post?.tags ?? [],
-            }}
-            content_post_author_card={{
-              author: post?.author ?? null,
-            }}
-            content_post_metadata={metadata}
-            content_post_breadcrumb={breadcrumbItems}
-            content_post_content={
-              <RenderedHtml contentJson={translation?.contentJson} />
-            }
-            content_post_tablecontent={<TableOfContents toc={toc} />}
-            content_post_comments={
-              <PostCommentList
-                post={post}
-                postCommentsResult={postCommentsResult}
-              />
-            }
-            content_post_comment_form={{ post }}
-          />
-          {/* <RendererRows
-          siteSettings={siteSettings}
-          rows={template?.content.rows}
-          editroMode={false}
-          content_all={
-            <DefaultSinglePageBlog
-              post={post}
-              breadcrumbItems={breadcrumbItems}
-              readingDuration={readingDuration}
-              tableOfContent={<TableOfContents toc={toc} />}
-              comments={
-                <PostCommentList
-                  post={post}
-                  postCommentsResult={postCommentsResult}
-                />
-              }
-            />
-          }
-          content_post_title={translation?.title}
-          content_post_cover={{
-            image: post?.image ?? null,
-            postType: post?.type ?? 'article',
-            primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
-          }}
-          content_post_share={{
-            url: `${siteSettings?.site_url ?? ''}${post?.href}`,
-            title: translation?.title ?? '',
-          }}
-          content_post_tags={{
-            tags: post?.tags ?? [],
-          }}
-          content_post_author_card={{
-            author: post?.author ?? null,
-          }}
-          content_post_metadata={metadata}
-          content_post_breadcrumb={breadcrumbItems}
-          content_post_content={
-            <RenderedHtml contentJson={translation?.contentJson} />
-          }
-          content_post_tablecontent={<TableOfContents toc={toc} />}
-          content_post_comments={
-            <PostCommentList
-              post={post}
-              postCommentsResult={postCommentsResult}
-            />
-          }
-          content_post_comment_form={{ post }}
-        /> */}
-        </>
-      </>
-    )
+  // if (template)
+  //   return (
+  //     <>
+  //       {writeJsonLd()}
+  //       <>
+  //         <RendererTemplate
+  //           template={template}
+  //           siteSettings={siteSettings}
+  //           pageSlug={slug}
+  //           categorySlug={post?.mainCategory?.slug || null}
+  //           searchParams={resolvedSearchParams}
+  //           editroMode={false}
+  //           content_all={
+  //             <DefaultSinglePageBlog
+  //               post={post}
+  //               breadcrumbItems={breadcrumbItems}
+  //               readingDuration={readingDuration}
+  //               tableOfContent={<TableOfContents toc={toc} />}
+  //               comments={
+  //                 <PostCommentList
+  //                   post={post}
+  //                   postCommentsResult={postCommentsResult}
+  //                 />
+  //               }
+  //             />
+  //           }
+  //           content_post_title={translation?.title}
+  //           content_post_cover={{
+  //             image: post?.image ?? null,
+  //             postType: post?.type ?? 'article',
+  //             primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
+  //           }}
+  //           content_post_share={{
+  //             url: `${siteSettings?.site_url ?? ''}${post?.href}`,
+  //             title: translation?.title ?? '',
+  //           }}
+  //           content_post_tags={{
+  //             tags: post?.tags ?? [],
+  //           }}
+  //           content_post_author_card={{
+  //             author: post?.author ?? null,
+  //           }}
+  //           content_post_metadata={metadata}
+  //           content_post_breadcrumb={breadcrumbItems}
+  //           content_post_content={
+  //             <RenderedHtml contentJson={translation?.contentJson} />
+  //           }
+  //           content_post_tablecontent={<TableOfContents toc={toc} />}
+  //           content_post_comments={
+  //             <PostCommentList
+  //               post={post}
+  //               postCommentsResult={postCommentsResult}
+  //             />
+  //           }
+  //           content_post_comment_form={{ post }}
+  //         />
+
+  //       </>
+  //     </>
+  //   )
 
   return (
     <>
       {writeJsonLd()}
       <>
-        <DefaultSinglePageBlog
+        <p>Hello</p>
+        {/* <DefaultSinglePageBlog
+          searchParams={resolvedSearchParams}
           post={post}
           breadcrumbItems={breadcrumbItems}
           readingDuration={readingDuration}
-          tableOfContent={<TableOfContents toc={toc} />}
-          comments={
-            <PostCommentList
-              post={post}
-              postCommentsResult={postCommentsResult}
-            />
-          }
-        />
+          // tableOfContent={<TableOfContents toc={toc} />}
+          // comments={
+          //   <PostCommentList
+          //     post={post}
+          //     postCommentsResult={postCommentsResult}
+          //   />
+          // }
+        /> */}
       </>
     </>
   )
 }
-
-// export default async function name() {
-//   return <div>blogggggsss....</div>
-// }

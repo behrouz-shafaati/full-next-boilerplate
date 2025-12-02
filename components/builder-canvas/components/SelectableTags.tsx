@@ -26,7 +26,7 @@ import { Dispatch, SetStateAction, useState } from 'react'
  * @param {Array<{label: string, slug: string}>} props.items - List of items to render as clickable badges
  * @param {string} [props.className] - Optional extra classes for the container
  */
-export function SelectableTags({
+export default function SelectableTags({
   items,
   className = '',
   setSelectedTag,

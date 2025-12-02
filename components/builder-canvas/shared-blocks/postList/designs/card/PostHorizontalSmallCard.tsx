@@ -18,7 +18,7 @@ const PostHorizontalSmallCard = ({ post, options, query = '' }: Props) => {
   const locale = 'fa'
   const translationPost: PostTranslationSchema =
     post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
+    post?.translations?.[0] ||
     {}
 
   const translationImage: FileTranslationSchema =
@@ -28,7 +28,7 @@ const PostHorizontalSmallCard = ({ post, options, query = '' }: Props) => {
     post.image?.translations[0] ||
     {}
   return (
-    <Link key={post.id} href={post.href} className="group">
+    <Link key={post?.id} href={post?.href || ''} className="group">
       <div className="grid grid-cols-[72px_1fr] items-center md:items-start py-2 gap-2">
         {/* تصویر */}
         <div className="relative w-full h-full  aspect-square md:aspect-[4/3] overflow-hidden rounded-sm">

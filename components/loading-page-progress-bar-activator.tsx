@@ -13,6 +13,11 @@ export function PageLoadingProgressBarActivator() {
 
       if (!link) return
 
+      //  اگر data-nprogress="off" داشت → NProgress اجرا نشود
+      if (link.getAttribute('data-nprogress') === 'off') {
+        return
+      }
+
       const href = link.getAttribute('href')
       if (!href) return
 

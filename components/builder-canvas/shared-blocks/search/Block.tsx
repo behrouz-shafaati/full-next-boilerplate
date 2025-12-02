@@ -9,7 +9,6 @@ import Link from 'next/link'
 import PostHorizontalCard from '../postList/designs/card/ArticalHorizontalCard'
 import { getPosts } from '@/features/post/actions'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { motion } from 'framer-motion'
 import Text from '@/components/form-fields/text'
 import { useDebouncedCallback } from 'use-debounce'
 import {
@@ -64,36 +63,19 @@ const SearchBlock = ({ blockData, ...props }: Props) => {
 
   //  حالت خالی (بدون query)
   const EmptyQueryView = () => (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.7 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.4 }}
-      className="flex flex-col items-center justify-center h-[60vh] text-center text-muted-foreground"
-    >
-      <motion.div
-        initial={{ y: 40, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.2 }}
-      >
+    <div className="flex flex-col items-center justify-center h-[60vh] text-center text-muted-foreground">
+      <div>
         <SearchIcon size={60} className="opacity-50" />
-      </motion.div>
+      </div>
       <p className="mt-4 text-lg">عبارتی را در بخش جستجو وارد کنید...</p>
-    </motion.div>
+    </div>
   )
 
   //  حالت Loading
   const LoadingView = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex justify-center items-center h-[40vh]"
-    >
-      <motion.div
-        animate={{ scale: [1, 1.1, 1] }}
-        transition={{ repeat: Infinity, duration: 1 }}
-        className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin"
-      />
-    </motion.div>
+    <div className="flex justify-center items-center h-[40vh]">
+      <div className="w-10 h-10 rounded-full border-4 border-primary border-t-transparent animate-spin" />
+    </div>
   )
 
   //  بخش نتایج
@@ -102,18 +84,13 @@ const SearchBlock = ({ blockData, ...props }: Props) => {
       <div className="flex flex-col m-auto  w-full space-y-4">
         {(postResults?.data || []).map((post, idx) => {
           return (
-            <motion.div
-              key={post.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: idx * 0.05 }}
-            >
+            <div key={post.id}>
               <PostHorizontalCard
                 query={query}
                 post={post}
                 options={{ showExcerpt: true }}
               />
-            </motion.div>
+            </div>
           )
         })}
       </div>

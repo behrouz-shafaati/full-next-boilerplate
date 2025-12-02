@@ -9,8 +9,8 @@ import { serverRenderBuilderFormRegistry } from '@/components/builder-form/regis
 
 export async function registerAllBlocks() {
   registerBlock(serverRenderBlockRegistry)
-  registerBlock(serverRenderBuilderPageRegistry)
-  registerBlock(serverRenderBuilderTemplateRegistry)
+  // registerBlock(serverRenderBuilderPageRegistry)
+  // registerBlock(serverRenderBuilderTemplateRegistry)
   registerBlock(serverRenderBuilderTemplatePartRegistry)
   registerBlock(serverRenderBuilderFormRegistry)
 }

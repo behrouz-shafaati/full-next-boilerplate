@@ -71,9 +71,7 @@ const PostImageCard = ({ post, options }: Props) => {
               layout="fill"
               objectFit="cover"
               placeholder="blur"
-              blurDataURL={
-                post?.image?.srcSmall || '/assets/image-placeholder-Small.webp'
-              }
+              blurDataURL={post?.image?.blurDataURL || ''}
             />
           </div>
           <div className="p-4">

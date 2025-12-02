@@ -205,7 +205,7 @@ export function buildUrlFromFilters(filters: Record<string, string[]>): string {
   for (const key in filters) {
     const value = filters[key]
     if (value?.length > 0) {
-      parts.push(`${key}/${value.join(',')}`)
+      parts.push(`${key}/${value?.join(',')}`)
     }
   }
 

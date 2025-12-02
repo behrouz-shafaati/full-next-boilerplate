@@ -100,7 +100,7 @@ class controller {
         break
     }
 
-    finalPathes = finalPathes.map((p) => decodeURI(p))
+    // finalPathes = finalPathes.map((p) => decodeURI(p)) // اگر این دیکد انجام شود تولید مجدد صفحه انجام نمی شود
 
     // -------------------------------------------------
     // 🔥 ذخیره لاگ در فایل root/revalidate-log.txt

@@ -35,6 +35,7 @@ export function ImageAlba({
     translations,
     blurDataURL,
   } = file
+  console.log('#2304789 file in post:', file)
   const translation = getTranslation({ translations })
   const displaySrc = src !== '' ? src : srcMedium || srcSmall
 
