@@ -2,7 +2,7 @@
 'use client'
 import React, { useCallback } from 'react'
 import { Block } from '../../types'
-import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+import computedStyles from '../../utils/computedStyles'
 import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
@@ -11,6 +11,7 @@ import { FileDetails } from '@/lib/entity/file/interface'
 import LeftSliderButton from '@/components/ui/left-slider-button'
 import RightSliderButton from '@/components/ui/right-slider-button'
 import EmptyBlock from '../../components/EmptyBlock'
+import getTranslation from '@/lib/utils/getTranslation'
 
 type ImageSliderBlockProps = {
   widgetName: string
@@ -54,11 +55,14 @@ export const ImageSliderBlock = ({
     return <EmptyBlock widgetName={widgetName} {...props} />
   const { onClick, ...restProps } = props
   const images = content.map((img: FileDetails, i: number) => {
+    const Translation = getTranslation({ translations: img?.translations })
+    const isLCP = i === 0
+
     const imageElement = (
       <Image
         src={img.srcMedium || '/assets/general-img-landscape.png'}
         sizes="(max-width: 640px) 640px, (max-width: 768px) 768px, 1280px"
-        alt={img.alt || 'تصویر'}
+        alt={Translation?.alt || 'تصویر'}
         //   fill
         width={0}
         height={0}
@@ -67,10 +71,11 @@ export const ImageSliderBlock = ({
           objectFit: 'contain',
           ...computedStyles(styles),
         }}
-        priority={i === 0}
+        priority={isLCP} // برای تصویر LCP
+        loading={isLCP ? 'eager' : 'lazy'}
         className="block w-full h-auto"
         placeholder="blur"
-        blurDataURL={img?.srcSmall}
+        blurDataURL={img?.blurDataURL}
         {...props}
       />
     )

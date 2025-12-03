@@ -8,7 +8,7 @@ type SubmitButtonProps = {
   className?: string
   loading?: boolean
 }
-export function SubmitButton({
+export default function SubmitButton({
   text = 'ذخیره',
   className = '',
   loading = false,

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import { Block } from '../../types'
-import { Button } from '@/components/custom/button'
+import { Button } from '@/components/ui/button'
 import { MoveLeft, Search as SearchIcon, X } from 'lucide-react'
 import { computedStyles } from '../../utils/styleUtils'
 import Link from 'next/link'

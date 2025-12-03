@@ -2,9 +2,10 @@
 
 import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import { computedStyles } from '@/components/builder-canvas/utils/styleUtils'
+
 import { User } from '@/features/user/interface'
 import { PostMetaData } from '@/components/post/meta-data'
+import computedStyles from '@/components/builder-canvas/utils/computedStyles'
 
 type ContentBlockProps = {
   content: { author: User; createdAt: string; readingDuration: number }

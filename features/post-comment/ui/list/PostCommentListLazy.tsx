@@ -3,15 +3,16 @@ import { Skeleton } from '@/components/ui/skeleton'
 import dynamic from 'next/dynamic'
 
 // کاملاً خارج از باندل اولیه
-const UserNavBlock = dynamic(() => import('./UserNavBlock'), {
+const PostCommentList = dynamic(() => import('./index'), {
   ssr: false, // هیچ SSR اتفاق نمی‌افتد
   loading: () => (
     <div className="mx-1">
-      <Skeleton className="h-6 w-6 rounded-full" />
+      PostCommentList87
+      <Skeleton className="h-12 w-full rounded-md" />
     </div>
   ),
 })
 
-export default function UserNavBlockLazy(props) {
-  return <UserNavBlock {...props} />
+export default function PostCommentListLazy(props) {
+  return <PostCommentList {...props} />
 }

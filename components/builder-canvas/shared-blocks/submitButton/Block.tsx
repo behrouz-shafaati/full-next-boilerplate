@@ -2,7 +2,7 @@
 
 import React, { ElementType } from 'react'
 import { Block as BlockType } from '@/components/builder-canvas/types'
-import { SubmitButton } from '@/components/form-fields/submit-button'
+import SubmitButtonLazy from '@/components/form-fields/submit-buttonLazy'
 
 type BlockProps = {
   content: React.ReactNode
@@ -25,7 +25,7 @@ export const Block = ({
   const { id, settings } = blockData
   const { className, ...restProps } = props
   return (
-    <SubmitButton
+    <SubmitButtonLazy
       className="w-full"
       text={settings?.label?.[locale] || 'ارسال'}
     />

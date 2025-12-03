@@ -20,7 +20,7 @@ import {
   updateCategory,
 } from '../actions'
 import Text from '../../../components/form-fields/text'
-import { SubmitButton } from '../../../components/form-fields/submit-button'
+import SubmitButton from '../../../components/form-fields/submit-button'
 import { Option } from '../../../components/form-fields/combobox'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import Combobox from '../../../components/form-fields/combobox'

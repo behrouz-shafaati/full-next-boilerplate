@@ -23,7 +23,7 @@ import {
   updateCampaign,
 } from '../actions'
 import Text from '../../../components/form-fields/text'
-import { SubmitButton } from '../../../components/form-fields/submit-button'
+import SubmitButton from '../../../components/form-fields/submit-button'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import { CampaignTranslation } from '../interface'
 import { getTranslation } from '@/lib/utils'

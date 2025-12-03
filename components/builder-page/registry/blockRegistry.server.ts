@@ -4,7 +4,7 @@
 import { serverRendertemplatePartDef } from '../blocks/template-part/index.server'
 
 export const serverRenderBuilderPageRegistry = {
-  templatePart: serverRendertemplatePartDef,
+  templatePart: serverRendertemplatePartDef, // 0 KB
 }
 
 // registerBlock(blockRegistry)

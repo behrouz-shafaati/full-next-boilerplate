@@ -21,7 +21,7 @@ type Props = {
   [key: string]: any // اجازه props داینامیک مثل content_1, content_2
 }
 
-const RendererRows = ({
+const RendererRows = async ({
   siteSettings,
   editroMode = false,
   rows,

@@ -18,16 +18,16 @@ import {
 } from '@/features/post/utils'
 
 import type { Metadata } from 'next'
-// import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
+import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { generateTableOfContents } from '@/components/tiptap-editor/utils'
-// import { TableOfContents } from '@/components/post/table-of-contents'
-// import PostCommentList from '@/features/post-comment/ui/list'
 import { QueryResponse } from '@/lib/entity/core/interface'
 import { PostComment } from '@/features/post-comment/interface'
 import { getPostCommentsForClient } from '@/features/post-comment/actions'
 import { getSettings } from '@/features/settings/controller'
-// import DefaultSinglePageBlog from '@/features/post/ui/page/single'
-// import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
+import DefaultSinglePageBlog from '@/features/post/ui/page/single'
+import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
+import PostCommentListLazy from '@/features/post-comment/ui/list/PostCommentListLazy'
+import TableOfContentsLazy from '@/components/post/table-of-contents-lazy'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -185,86 +185,83 @@ export default async function Page({ params, searchParams }: PageProps) {
         مطلب هنوز منتشر نشده است!
       </div>
     )
-
-  // if (template)
-  //   return (
-  //     <>
-  //       {writeJsonLd()}
-  //       <>
-  //         <RendererTemplate
-  //           template={template}
-  //           siteSettings={siteSettings}
-  //           pageSlug={slug}
-  //           categorySlug={post?.mainCategory?.slug || null}
-  //           searchParams={resolvedSearchParams}
-  //           editroMode={false}
-  //           content_all={
-  //             <DefaultSinglePageBlog
-  //               post={post}
-  //               breadcrumbItems={breadcrumbItems}
-  //               readingDuration={readingDuration}
-  //               tableOfContent={<TableOfContents toc={toc} />}
-  //               comments={
-  //                 <PostCommentList
-  //                   post={post}
-  //                   postCommentsResult={postCommentsResult}
-  //                 />
-  //               }
-  //             />
-  //           }
-  //           content_post_title={translation?.title}
-  //           content_post_cover={{
-  //             image: post?.image ?? null,
-  //             postType: post?.type ?? 'article',
-  //             primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
-  //           }}
-  //           content_post_share={{
-  //             url: `${siteSettings?.site_url ?? ''}${post?.href}`,
-  //             title: translation?.title ?? '',
-  //           }}
-  //           content_post_tags={{
-  //             tags: post?.tags ?? [],
-  //           }}
-  //           content_post_author_card={{
-  //             author: post?.author ?? null,
-  //           }}
-  //           content_post_metadata={metadata}
-  //           content_post_breadcrumb={breadcrumbItems}
-  //           content_post_content={
-  //             <RenderedHtml contentJson={translation?.contentJson} />
-  //           }
-  //           content_post_tablecontent={<TableOfContents toc={toc} />}
-  //           content_post_comments={
-  //             <PostCommentList
-  //               post={post}
-  //               postCommentsResult={postCommentsResult}
-  //             />
-  //           }
-  //           content_post_comment_form={{ post }}
-  //         />
-
-  //       </>
-  //     </>
-  //   )
+  if (template)
+    return (
+      <>
+        {writeJsonLd()}
+        <>
+          <RendererTemplate
+            template={template}
+            siteSettings={siteSettings}
+            pageSlug={slug}
+            categorySlug={post?.mainCategory?.slug || null}
+            searchParams={resolvedSearchParams}
+            editroMode={false}
+            content_all={
+              <DefaultSinglePageBlog
+                post={post}
+                breadcrumbItems={breadcrumbItems}
+                readingDuration={readingDuration}
+                tableOfContent={<TableOfContentsLazy toc={toc} />}
+                comments={
+                  <PostCommentListLazy
+                    post={post}
+                    postCommentsResult={postCommentsResult}
+                  />
+                }
+              />
+            }
+            content_post_title={translation?.title}
+            content_post_cover={{
+              image: post?.image ?? null,
+              postType: post?.type ?? 'article',
+              primaryVideoEmbedUrl: post?.primaryVideoEmbedUrl ?? null,
+            }}
+            content_post_share={{
+              url: `${siteSettings?.site_url ?? ''}${post?.href}`,
+              title: translation?.title ?? '',
+            }}
+            content_post_tags={{
+              tags: post?.tags ?? [],
+            }}
+            content_post_author_card={{
+              author: post?.author ?? null,
+            }}
+            content_post_metadata={metadata}
+            content_post_breadcrumb={breadcrumbItems}
+            content_post_content={
+              <RenderedHtml contentJson={translation?.contentJson} />
+            }
+            content_post_tablecontent={<TableOfContentsLazy toc={toc} />}
+            content_post_comments={
+              <PostCommentListLazy
+                post={post}
+                postCommentsResult={postCommentsResult}
+              />
+            }
+            content_post_comment_form={{ post }}
+          />
+        </>
+      </>
+    )
 
   return (
     <>
       {writeJsonLd()}
       <>
-        <p>Hello</p>
-        {/* <DefaultSinglePageBlog
+        <DefaultSinglePageBlog
           searchParams={resolvedSearchParams}
           post={post}
           breadcrumbItems={breadcrumbItems}
           readingDuration={readingDuration}
-          // tableOfContent={<TableOfContents toc={toc} />}
-          // comments={
-          //   <PostCommentList
-          //     post={post}
-          //     postCommentsResult={postCommentsResult}
-          //   />
-          // }
-        /> */}
+          tableOfContent={<TableOfContentsLazy toc={toc} />}
+          comments={
+            <PostCommentListLazy
+              post={post}
+              postCommentsResult={postCommentsResult}
+            />
+          }
+        />
       </>
     </>
   )

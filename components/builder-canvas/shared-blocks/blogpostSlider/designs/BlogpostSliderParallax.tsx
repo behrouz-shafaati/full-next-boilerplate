@@ -13,7 +13,7 @@ import { EmblaOptionsType, EmblaPluginType } from 'embla-carousel'
 
 type BlogPostSliderProps = {
   options?: EmblaOptionsType
-  plugins?: EmblaPluginType[]
+  pluginsConfig?: Object
   posts: Post[]
   blockData: {
     id: string
@@ -31,15 +31,16 @@ type BlogPostSliderProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const BlogPostSliderParallax = ({
+const BlogPostSliderParallax = ({
   options,
-  plugins,
+  pluginsConfig,
   posts,
   blockData,
   ...props
 }: BlogPostSliderProps) => {
   const locale = 'fa'
   const { content, settings } = blockData
+  const plugins: EmblaPluginType[] = [Autoplay(pluginsConfig)]
   const postSlids = posts.map((post) => {
     const translationPost: PostTranslationSchema =
       post?.translations?.find(
@@ -54,6 +55,7 @@ export const BlogPostSliderParallax = ({
       ) ||
       post.image?.translations[0] ||
       {}
+
     return (
       <div
         key={post.id}
@@ -70,9 +72,7 @@ export const BlogPostSliderParallax = ({
                 layout="fill"
                 objectFit="cover"
                 placeholder="blur" //  فعال کردن حالت بلور
-                blurDataURL={
-                  post?.image?.srcSmall || '/image-placeholder-Small.webp'
-                } //  مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
+                blurDataURL={post?.image?.blurDataURL || ''} //  مسیر عکس خیلی کم‌کیفیت (LQIP یا base64)
               />
 
               {/* overlay گرادینت تاریک از پایین */}
@@ -98,3 +98,5 @@ export const BlogPostSliderParallax = ({
     />
   )
 }
+
+export default BlogPostSliderParallax

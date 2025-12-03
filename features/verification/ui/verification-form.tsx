@@ -2,7 +2,7 @@
 import { Suspense, useActionState, useEffect, useState } from 'react'
 import Link from 'next/link'
 import { toast } from '@/hooks/use-toast'
-import { SubmitButton } from '@/components/form-fields/submit-button'
+import SubmitButton from '@/components/form-fields/submit-button'
 import { ActionsState } from '@/types'
 import { User } from '@/features/user/interface'
 import OTP from '@/components/form-fields/otp'

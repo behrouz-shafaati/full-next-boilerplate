@@ -5,7 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { Block } from '../../types'
 import { UserNav } from './UserNav'
 import Link from 'next/link'
-import { Button } from '@/components/custom/button'
+import { Button } from '@/components/ui/button'
 import { CircleUserRound } from 'lucide-react'
 import { Skeleton } from '@/components/ui/skeleton'
 

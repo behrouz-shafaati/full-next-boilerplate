@@ -77,7 +77,6 @@ export default async function PostListBlock({
   ])
   const posts = result.data
   const randomMap = posts.map(() => Math.random() < 0.1)
-  // if (posts.length == 0) return null
 
   return (
     <PostList

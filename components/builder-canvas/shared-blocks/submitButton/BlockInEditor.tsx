@@ -9,7 +9,7 @@ import {
 import Text from '@/components/form-fields/text'
 import { IconRenderer } from '@/components/builder-canvas/components/IconRenderer'
 import TextArea from '@/components/form-fields/textArea'
-import { SubmitButton } from '@/components/form-fields/submit-button'
+import SubmitButton from '@/components/form-fields/submit-button'
 
 type BlockInEditorProps = {
   widgetName: string

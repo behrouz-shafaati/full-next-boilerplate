@@ -4,12 +4,12 @@ import React from 'react'
 import { Block } from '../../types'
 import { Post } from '@/features/post/interface'
 import { Option } from '@/types'
-import { PostListColumn } from './designs/list/PostListColumn'
 import { buildUrlFromFilters } from '@/lib/utils'
-import PostListRow from './designs/list/PostListRow'
 import { PostListHeroVertical } from './designs/list/PostListHeroVertical'
 import { PostListSpotlight } from './designs/list/PostListSpotlight'
 import { PostListHeroHorizontal } from './designs/list/PostListHeroHorizontal'
+import PostListRowLazy from './designs/list/PostListRowLazy'
+import PostListColumnLazy from './designs/list/PostListColumnLazy'
 
 type PostListProps = {
   posts: Post[]
@@ -73,17 +73,10 @@ export const PostList = async ({
         showMoreHref + '/' + buildUrlFromFilters({ categories: categorySlugs })
   }
 
-  // showMoreHref = showMoreHref + `?page=1&perPage=${showMoreHref.length || 6}`
-  // selectedTag از نوار آدرس مرورگر خوانده میشود
-  // showMoreHref =
-  //   selectedTag != ''
-  //     ? showMoreHref + '/' + buildUrlFromFilters({ tags: [selectedTag] })
-  //     : showMoreHref
-
   switch (settings?.listDesign) {
     case 'column':
       return (
-        <PostListColumn
+        <PostListColumnLazy
           posts={posts}
           blockData={blockData}
           showMoreHref={showMoreHref}
@@ -122,7 +115,7 @@ export const PostList = async ({
       )
     default: // case 'row':
       return (
-        <PostListRow
+        <PostListRowLazy
           posts={posts}
           blockData={blockData}
           showMoreHref={showMoreHref}

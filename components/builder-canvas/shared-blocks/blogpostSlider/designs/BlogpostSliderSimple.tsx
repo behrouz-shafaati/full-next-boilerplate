@@ -1,24 +1,23 @@
 'use client'
 // کامپوننت نمایشی بلاک
 import React, { useCallback, useEffect, useState } from 'react'
-import Image from 'next/image'
 import Link from 'next/link'
 import useEmblaCarousel from 'embla-carousel-react'
-import { Post, PostTranslationSchema } from '@/features/post/interface'
+import { Post } from '@/features/post/interface'
 import LeftSliderButton from '@/components/ui/left-slider-button'
 import RightSliderButton from '@/components/ui/right-slider-button'
 import { Option } from '@/types'
 import { Badge } from '@/components/ui/badge'
-import { CalendarPlus, ChevronLeft, MessageCircleMore } from 'lucide-react'
+import { CalendarPlus, ChevronLeft } from 'lucide-react'
 import { buildUrlFromFilters, timeAgo } from '@/lib/utils'
-import { FileTranslationSchema } from '@/lib/entity/file/interface'
 import { EmblaOptionsType, EmblaPluginType } from 'embla-carousel'
 import { Block } from '@/components/builder-canvas/types'
 import VerticalPostCard from '@/components/post/vertical-card'
+import Autoplay from 'embla-carousel-autoplay'
 
 type BlogPostSliderProps = {
   options?: EmblaOptionsType
-  plugins?: EmblaPluginType[]
+  pluginsConfig?: Object
   posts: Post[]
   blockData: {
     id: string
@@ -36,9 +35,9 @@ type BlogPostSliderProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const BlogPostSliderSimple = ({
+const BlogPostSliderSimple = ({
   options,
-  plugins,
+  pluginsConfig,
   posts,
   blockData,
   ...props
@@ -46,6 +45,7 @@ export const BlogPostSliderSimple = ({
   const locale = 'fa'
   const { content, settings } = blockData
 
+  const plugins: EmblaPluginType[] = [Autoplay(pluginsConfig)]
   const [emblaRef, emblaApi] = useEmblaCarousel(options, plugins)
 
   const [canScrollPrev, setCanScrollPrev] = useState(false)
@@ -133,3 +133,5 @@ export const BlogPostSliderSimple = ({
     </div>
   )
 }
+
+export default BlogPostSliderSimple

@@ -14,7 +14,7 @@
 // import { useToast } from '../../../hooks/use-toast'
 // import { updateSettings } from '@/features/settings/actions'
 // import Text from '../../../components/form-fields/text'
-// import { SubmitButton } from '../../../components/form-fields/submit-button'
+// import SubmitButton  from '../../../components/form-fields/submit-button'
 // import { AlertModal } from '../../../components/modal/alert-modal'
 // import { PageContent, PageTranslationSchema } from '@/features/page/interface'
 // import { Settings } from '../interface'

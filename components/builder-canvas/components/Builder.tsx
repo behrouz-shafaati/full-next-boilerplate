@@ -14,7 +14,7 @@ import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import SortableRow from '../shared-blocks/row/SortableRow'
 import ToolsSection from './toolsSection' // <==
 import { Button } from '@/components/ui/button'
-import { SubmitButton } from '@/components/form-fields/submit-button'
+import SubmitButton from '@/components/form-fields/submit-button'
 import { generateObjectId } from '@/lib/utils/generateObjectId'
 
 type props = {

@@ -21,7 +21,7 @@ import {
   updateUser,
 } from '@/features/user/actions'
 import Text from '../../../components/form-fields/text'
-import { SubmitButton } from '../../../components/form-fields/submit-button'
+import SubmitButton from '../../../components/form-fields/submit-button'
 import MultipleSelector, {
   Option,
 } from '../../../components/form-fields/multiple-selector'

@@ -2,12 +2,9 @@
 
 import React, { ElementType } from 'react'
 import { Block as BlockType } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
 import Text from '@/components/form-fields/text'
 import { IconRenderer } from '@/components/builder-canvas/components/IconRenderer'
+import computedStyles from '../../utils/computedStyles'
 
 type BlockProps = {
   content: React.ReactNode

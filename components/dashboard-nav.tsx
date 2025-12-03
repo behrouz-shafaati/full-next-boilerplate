@@ -28,7 +28,7 @@ import { useSession } from '@/components/context/SessionContext'
 import useCheckActiveNav from '@/hooks/use-check-active-nav'
 import { Button } from './ui/button'
 import { ChevronDown } from 'lucide-react'
-import { buttonVariants } from './custom/button'
+import { buttonVariants } from './ui/button'
 import { can } from '@/lib/utils/can.client'
 
 interface DashboardNavProps {

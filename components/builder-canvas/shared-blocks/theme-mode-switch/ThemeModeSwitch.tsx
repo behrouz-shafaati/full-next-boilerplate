@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { Moon, Sun } from 'lucide-react'
-import { cn } from '@/lib/utils'
+import cn from '@/lib/utils/client/cn'
 import { computedStyles } from '../../utils/styleUtils'
 
 export default function ThemeToggle({ blockData, ...props }: any) {

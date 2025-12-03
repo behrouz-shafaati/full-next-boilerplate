@@ -1,7 +1,7 @@
-import { timeAgo } from '@/lib/utils'
 import React from 'react'
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar'
 import Link from 'next/link'
+import timeAgo from '@/lib/utils/timeAgo'
 
 type PostCoverProps = {
   createdAt: any

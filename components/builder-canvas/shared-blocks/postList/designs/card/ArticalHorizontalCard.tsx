@@ -2,7 +2,7 @@ import highlightText from '@/components/highlight-text'
 import { Separator } from '@/components/ui/separator'
 import { Post, PostTranslationSchema } from '@/features/post/interface'
 import { FileTranslationSchema } from '@/lib/entity/file/interface'
-import { timeAgo } from '@/lib/utils'
+import timeAgo from '@/lib/utils/timeAgo'
 import Image from 'next/image'
 import Link from 'next/link'
 

@@ -1,12 +1,9 @@
-import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 // import { logout } from '@/lib/auth'
@@ -64,42 +61,28 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              {canCreatePost && (
-                <DropdownMenuItem>
-                  <Link
-                    href={'/dashboard/posts/create'}
-                    className="w-full h-full"
-                  >
-                    افزودن مطلب
-                  </Link>
-                </DropdownMenuItem>
-              )}
+            {canCreatePost && (
               <DropdownMenuItem>
-                <Link href={`/account/${user.id}`} className="w-full h-full">
-                  پروفایل
+                <Link
+                  href={'/dashboard/posts/create'}
+                  className="w-full h-full"
+                >
+                  افزودن مطلب
                 </Link>
               </DropdownMenuItem>
-              {canDashboardView && (
-                <DropdownMenuItem>
-                  <Link href={'/dashboard'} className="w-full h-full">
-                    داشبورد
-                  </Link>
-                </DropdownMenuItem>
-              )}
-              {/* <DropdownMenuItem>
+            )}
+            <DropdownMenuItem>
+              <Link href={`/account/${user.id}`} className="w-full h-full">
                 پروفایل
-                <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-              </DropdownMenuItem>
+              </Link>
+            </DropdownMenuItem>
+            {canDashboardView && (
               <DropdownMenuItem>
-                صورتحساب
-                <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+                <Link href={'/dashboard'} className="w-full h-full">
+                  داشبورد
+                </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                تنظیمات
-                <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
-              </DropdownMenuItem> */}
-            </DropdownMenuGroup>
+            )}
             <DropdownMenuSeparator />
 
             <DropdownMenuItem>
@@ -112,9 +95,7 @@ export function UserNav({ widgetName, blockData, user, ...props }: props) {
                   window.location.href = '/login' // یا هر صفحه‌ای که می‌خوای
                 }}
               >
-                <button className="flex w-full h-full">
-                  خروج <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-                </button>
+                <button className="flex w-full h-full">خروج</button>
               </form>
             </DropdownMenuItem>
           </DropdownMenuContent>

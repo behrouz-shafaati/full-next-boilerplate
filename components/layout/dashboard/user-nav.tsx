@@ -3,11 +3,9 @@ import { Button, ButtonProps } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { getSession, logout } from '@/lib/auth'
@@ -53,29 +51,27 @@ export async function UserNav() {
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            {canCreatePost && (
-              <DropdownMenuItem className="p-0">
-                <Link
-                  href="/dashboard/posts/create"
-                  className="w-full flex justify-between py-1.5 px-2"
-                >
-                  <span>افزودن مطلب</span>
-                </Link>
-              </DropdownMenuItem>
-            )}
-            {canDashboardView && (
-              <DropdownMenuItem className="p-0">
-                <Link
-                  href="/dashboard"
-                  className="w-full flex justify-between py-1.5 px-2"
-                >
-                  <span>داشبورد</span>
-                  <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                </Link>
-              </DropdownMenuItem>
-            )}
-            {/* <DropdownMenuItem>
+          {canCreatePost && (
+            <DropdownMenuItem className="p-0">
+              <Link
+                href="/dashboard/posts/create"
+                className="w-full flex justify-between py-1.5 px-2"
+              >
+                <span>افزودن مطلب</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
+          {canDashboardView && (
+            <DropdownMenuItem className="p-0">
+              <Link
+                href="/dashboard"
+                className="w-full flex justify-between py-1.5 px-2"
+              >
+                <span>داشبورد</span>
+              </Link>
+            </DropdownMenuItem>
+          )}
+          {/* <DropdownMenuItem>
                 پروفایل
                 <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
               </DropdownMenuItem>
@@ -87,7 +83,6 @@ export async function UserNav() {
                 تنظیمات
                 <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
               </DropdownMenuItem> */}
-          </DropdownMenuGroup>
           <DropdownMenuSeparator />
 
           <DropdownMenuItem>
@@ -98,9 +93,7 @@ export async function UserNav() {
                 await logout()
               }}
             >
-              <button className="w-full h-full flex">
-                خروج <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
-              </button>
+              <button className="w-full h-full flex">خروج</button>
             </form>
           </DropdownMenuItem>
         </DropdownMenuContent>

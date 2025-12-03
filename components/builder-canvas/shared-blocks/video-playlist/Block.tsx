@@ -4,8 +4,8 @@ import React from 'react'
 import { Block as BlockType } from '../../types'
 import { Option } from '@/types'
 import { getPosts } from '@/features/post/actions'
-import VideoEmbedPlaylist from '@/components/video-playlist/VideoEmbedPlaylist'
-import { getTranslation } from '@/lib/utils'
+import getTranslation from '@/lib/utils/getTranslation'
+import VideoEmbedPlaylistLazy from '@/components/video-playlist/VideoEmbedPlaylistLazy'
 
 type BlockProps = {
   widgetName: string
@@ -78,7 +78,7 @@ export const Block = async ({
           {content?.title}
         </span>
       </div>
-      <VideoEmbedPlaylist videos={videos} />
+      <VideoEmbedPlaylistLazy videos={videos} />
     </div>
   )
 }

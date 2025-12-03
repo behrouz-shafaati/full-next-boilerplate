@@ -17,20 +17,20 @@ import { ContentPostTagsBlockDef_serverRender } from '../blocks/content_post_tag
 import { ContentPostTitleBlockDef_serverRender } from '../blocks/content_post_title/index.server'
 
 export const serverRenderBuilderTemplateRegistry = {
-  content_all: ContentBlockDef_serverRender, // تمام محتوا
-  content_post_title: ContentPostTitleBlockDef_serverRender, // عنوان مطلب
-  content_post_cover: ContentPostCoverBlockDef_serverRender, // پوستر مطلب
-  content_post_metadata: ContentPostMetadataBlockDef_serverRender, // متادیتا مطلب
-  content_post_content: ContentPostContentBlockDef_serverRender, // متن مطلب
-  content_post_tablecontent: ContentPostTableContentBlockDef_serverRender, // فهرست مطالب
-  content_post_comments: ContentPostCommentsBlockDef_serverRender, //  دیدگاه‌ها
-  content_post_comment_form: ContentPostCommentFormBlockDef_serverRender, // فرم ارسال دیدگاه برای مطالب
-  content_post_breadcrumb: ContentPostBreadcrumbBlockDef_serverRender, // مسیر ناوبری مطلب
-  content_post_share: ContentPostShareBlockDef_serverRender, // دکمه‌های اشتراک‌گذاری مطلب
-  content_post_tags: ContentPostTagsBlockDef_serverRender, // برچسب‌های مطلب
-  content_post_author_card: ContentPostAuthorCardBlockDef_serverRender, // کارت نویسنده مطلب
-  content_post_comments_header: ContentPostCommentsHeaderBlockDef_serverRender, // هدر دیدگاه‌های مطلب
-  content_category_description: ContentCategoryDescriptionBlockDef_serverRender, // توضیحات دسته‌بندی
+  content_all: ContentBlockDef_serverRender, // 0KB تمام محتوا
+  content_post_title: ContentPostTitleBlockDef_serverRender, // 0KB عنوان مطلب
+  content_post_cover: ContentPostCoverBlockDef_serverRender, // 0KB پوستر مطلب
+  content_post_metadata: ContentPostMetadataBlockDef_serverRender, // 149KB | server متادیتا مطلب
+  content_post_content: ContentPostContentBlockDef_serverRender, // 2KB متن مطلب
+  content_post_tablecontent: ContentPostTableContentBlockDef_serverRender, // 0KB فهرست مطالب
+  content_post_comments: ContentPostCommentsBlockDef_serverRender, // 0KB  دیدگاه‌ها
+  content_post_comment_form: ContentPostCommentFormBlockDef_serverRender, // 0KB فرم ارسال دیدگاه برای مطالب
+  content_post_breadcrumb: ContentPostBreadcrumbBlockDef_serverRender, // 0KB مسیر ناوبری مطلب
+  content_post_share: ContentPostShareBlockDef_serverRender, // 2KB دکمه‌های اشتراک‌گذاری مطلب
+  content_post_tags: ContentPostTagsBlockDef_serverRender, // 0KB برچسب‌های مطلب
+  content_post_author_card: ContentPostAuthorCardBlockDef_serverRender, // 0KB کارت نویسنده مطلب
+  content_post_comments_header: ContentPostCommentsHeaderBlockDef_serverRender, // 0KB هدر دیدگاه‌های مطلب
+  content_category_description: ContentCategoryDescriptionBlockDef_serverRender, // 0KB توضیحات دسته‌بندی
 }
 
 // registerBlock(blockRegistry)

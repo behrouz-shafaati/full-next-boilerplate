@@ -35,7 +35,7 @@ type PostListProps = {
   } & Block
 } & React.HTMLAttributes<HTMLParagraphElement> // ✅ اجازه‌ی دادن onclick, className و ...
 
-export const PostListColumn = ({
+const PostListColumn = ({
   posts: initialPosts,
   showMoreHref,
   blockData,
@@ -124,3 +124,5 @@ export const PostListColumn = ({
     </div>
   )
 }
+
+export default PostListColumn
