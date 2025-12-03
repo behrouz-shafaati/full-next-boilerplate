@@ -1,52 +1,75 @@
 'use client'
 
-// import dynamic from 'next/dynamic'
-import React from 'react'
+import { useState, useEffect } from 'react'
 
-interface IconRendererProps {
-  name?: string
+interface DynamicIconProps {
+  name: string
   className?: string
   size?: number
+  strokeWidth?: number
 }
 
-/**
- * آیکون را فقط یکبار با dynamic import بارگذاری می‌کند
- * و با تغییر نام آیکون دوباره فقط یکبار لود می‌شود.
- */
-export function IconRenderer({
+export default function DynamicIcon({
   name,
-  className,
+  className = '',
   size = 20,
-}: IconRendererProps) {
-  const [IconComp, setIconComp] =
-    React.useState<React.ComponentType<any> | null>(null)
+  strokeWidth = 2,
+}: DynamicIconProps) {
+  const [svgContent, setSvgContent] = useState<string | null>(null)
 
-  React.useEffect(() => {
-    let active = true
+  useEffect(() => {
+    if (!name) return
 
-    async function loadIcon() {
-      if (!name) {
-        setIconComp(null)
-        return
-      }
-      try {
-        const mod = await import('lucide-react')
-        const Icon = mod[name as keyof typeof mod] as React.ComponentType<any>
-        if (active) {
-          setIconComp(() => Icon || null)
+    const kebab = name.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+    fetch(`https://unpkg.com/lucide-static@latest/icons/${kebab}.svg`)
+      .then((res) => (res.ok ? res.text() : null))
+      .then((svg) => {
+        if (!svg) {
+          setSvgContent(null)
+          return
         }
-      } catch (err) {
-        console.warn(`Icon "${name}" not found in lucide-react`)
-        if (active) setIconComp(null)
-      }
-    }
 
-    loadIcon()
-    return () => {
-      active = false
-    }
-  }, [name])
+        // ✅ پاکسازی و تنظیم SVG
+        let processed = svg
+          // حذف width و height موجود
+          .replace(/\s(width|height)="[^"]*"/g, '')
+          // حذف style موجود
+          .replace(/\sstyle="[^"]*"/g, '')
+          // اضافه کردن attributes جدید
+          .replace(
+            '<svg',
+            `<svg width="${size}" height="${size}" style="min-width:${size}px;min-height:${size}px" stroke-width="${strokeWidth}"`
+          )
 
-  if (!IconComp) return null
-  return <IconComp className={className} size={size} />
+        setSvgContent(processed)
+      })
+      .catch(() => setSvgContent(null))
+  }, [name, size, strokeWidth])
+
+  if (!svgContent) {
+    return (
+      <span
+        className={className}
+        style={{
+          display: 'inline-block',
+          width: size,
+          height: size,
+          backgroundColor: '#e5e7eb',
+          borderRadius: 4,
+        }}
+      />
+    )
+  }
+
+  return (
+    <span
+      className={className}
+      style={{
+        display: 'inline-flex',
+        lineHeight: 0,
+      }}
+      dangerouslySetInnerHTML={{ __html: svgContent }}
+    />
+  )
 }

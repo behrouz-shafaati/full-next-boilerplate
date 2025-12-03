@@ -2,13 +2,9 @@
 
 import React, { ElementType } from 'react'
 import { Block } from '@/components/builder-canvas/types'
-import {
-  combineClassNames,
-  computedStyles,
-} from '@/components/builder-canvas/utils/styleUtils'
-import Text from '@/components/form-fields/text'
-import { IconRenderer } from '@/components/builder-canvas/components/IconRenderer'
+import IconRenderer from '@/components/builder-canvas/components/IconRenderer'
 import TextArea from '@/components/form-fields/textArea'
+import computedStyles from '../../utils/computedStyles'
 
 type BlockInEditorProps = {
   widgetName: string

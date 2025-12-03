@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
+import bundleAnalyzer from '@next/bundle-analyzer'
 
 const nextConfig = {
+  // فعال کردن Output Standalone برای عملکرد بهتر
+  // output: 'standalone',
   images: {
     domains: [], // نیازی به دامنه نیست برای تصاویر محلی
     remotePatterns: [
@@ -35,13 +38,25 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: '10mb', // 👈 افزایش به ۱۰ مگابایت
+      bodySizeLimit: '10mb',
+      optimizeCss: true,
     },
   },
   compiler: {
     // 👇 کد جاوااسکریپت مدرن‌تر و کوچیک‌تر
     removeConsole: process.env.NODE_ENV === 'production',
   },
+  // فشرده‌سازی
+  // compress: true,
+
+  // تولید Source Map فقط در Dev
+  // productionBrowserSourceMaps: false,
 }
 
-export default nextConfig
+// export default nextConfig
+
+const withBundleAnalyzer = bundleAnalyzer({
+  enabled: process.env.ANALYZE === 'true',
+})
+
+export default withBundleAnalyzer(nextConfig)

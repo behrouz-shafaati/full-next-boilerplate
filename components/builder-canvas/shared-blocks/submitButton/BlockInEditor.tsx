@@ -1,14 +1,11 @@
 // کامپوننت نمایشی بلاک
 
-import React, { ElementType } from 'react'
+import React from 'react'
 import { Block } from '@/components/builder-canvas/types'
 import {
   combineClassNames,
   computedStyles,
 } from '@/components/builder-canvas/utils/styleUtils'
-import Text from '@/components/form-fields/text'
-import { IconRenderer } from '@/components/builder-canvas/components/IconRenderer'
-import TextArea from '@/components/form-fields/textArea'
 import SubmitButton from '@/components/form-fields/submit-button'
 
 type BlockInEditorProps = {

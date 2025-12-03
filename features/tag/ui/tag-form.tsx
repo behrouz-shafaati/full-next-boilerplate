@@ -17,10 +17,10 @@ import { useRouter } from 'next/navigation'
 import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
-import TiptapEditor from '@/components/tiptap-editor'
 import { Label } from '@/components/ui/label'
 import StickyBox from 'react-sticky-box'
-import { IconPicker } from '@/components/form-fields/IconPicker'
+import TiptapEditorLazy from '@/components/tiptap-editor/TiptapEditorLazy'
+import IconPicker from '@/components/form-fields/IconPicker'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -167,7 +167,7 @@ export const TagForm: React.FC<TagFormProps> = ({ initialData: tag }) => {
           >
             توضیحات
           </Label>
-          <TiptapEditor
+          <TiptapEditorLazy
             attachedFilesTo={[{ feature: 'tag', id: tag?.id || null }]}
             name="description"
             defaultContent={

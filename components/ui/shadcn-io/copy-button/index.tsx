@@ -1,14 +1,13 @@
 'use client'
 
 import * as React from 'react'
-import { AnimatePresence, HTMLMotionProps, motion } from 'motion/react'
 import { CheckIcon, CopyIcon } from 'lucide-react'
 import { cva, type VariantProps } from 'class-variance-authority'
 
 import { cn } from '@/lib/utils'
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center cursor-pointer rounded-md transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive',
+  'inline-flex items-center justify-center cursor-pointer rounded-md transition-all duration-150 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive hover:scale-105 active:scale-95',
   {
     variants: {
       variant: {
@@ -38,7 +37,10 @@ const buttonVariants = cva(
   }
 )
 
-type CopyButtonProps = Omit<HTMLMotionProps<'button'>, 'children' | 'onCopy'> &
+type CopyButtonProps = Omit<
+  React.ButtonHTMLAttributes<HTMLButtonElement>,
+  'children' | 'onCopy'
+> &
   VariantProps<typeof buttonVariants> & {
     content?: string
     delay?: number
@@ -60,62 +62,77 @@ function CopyButton({
   ...props
 }: CopyButtonProps) {
   const [localIsCopied, setLocalIsCopied] = React.useState(isCopied ?? false)
-  const Icon = localIsCopied ? CheckIcon : CopyIcon
+  const [isAnimating, setIsAnimating] = React.useState(false)
 
   React.useEffect(() => {
     setLocalIsCopied(isCopied ?? false)
   }, [isCopied])
 
   const handleIsCopied = React.useCallback(
-    (isCopied: boolean) => {
-      setLocalIsCopied(isCopied)
-      onCopyChange?.(isCopied)
+    (copied: boolean) => {
+      setLocalIsCopied(copied)
+      onCopyChange?.(copied)
     },
     [onCopyChange]
   )
 
   const handleCopy = React.useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (isCopied) return
+      if (localIsCopied || isAnimating) return
+
       if (content) {
+        // شروع انیمیشن
+        setIsAnimating(true)
+
         navigator.clipboard
           .writeText(content)
           .then(() => {
-            handleIsCopied(true)
+            // بعد از یک delay کوتاه، آیکون را عوض کن
+            setTimeout(() => {
+              handleIsCopied(true)
+              setIsAnimating(false)
+            }, 75)
+
+            // برگرداندن به حالت اول
             setTimeout(() => handleIsCopied(false), delay)
             onCopy?.(content)
           })
           .catch((error) => {
             console.error('Error copying command', error)
+            setIsAnimating(false)
           })
       }
       onClick?.(e)
     },
-    [isCopied, content, delay, onClick, onCopy, handleIsCopied]
+    [
+      localIsCopied,
+      isAnimating,
+      content,
+      delay,
+      onClick,
+      onCopy,
+      handleIsCopied,
+    ]
   )
 
   return (
-    <motion.button
+    <button
       data-slot="copy-button"
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      type="button"
       className={cn(buttonVariants({ variant, size }), className)}
       onClick={handleCopy}
       {...props}
     >
-      <AnimatePresence mode="wait">
-        <motion.span
-          key={localIsCopied ? 'check' : 'copy'}
-          data-slot="copy-button-icon"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          exit={{ scale: 0 }}
-          transition={{ duration: 0.15 }}
-        >
-          <Icon />
-        </motion.span>
-      </AnimatePresence>
-    </motion.button>
+      <span
+        data-slot="copy-button-icon"
+        className={cn(
+          'transition-transform duration-150',
+          isAnimating && 'scale-0'
+        )}
+      >
+        {localIsCopied ? <CheckIcon /> : <CopyIcon />}
+      </span>
+    </button>
   )
 }
 

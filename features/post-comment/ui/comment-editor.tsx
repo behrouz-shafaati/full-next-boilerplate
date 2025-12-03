@@ -33,7 +33,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip'
 import { CustomMention } from '@/components/tiptap-editor/extensions/custom-mention'
-import { EmojiPicker } from '@/components/ui/emoji-picker'
+import EmojiPicker from '@/components/ui/emoji-picker'
 
 export interface CommentEditorRef {
   clear: () => void

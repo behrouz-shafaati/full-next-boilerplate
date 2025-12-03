@@ -14,12 +14,16 @@ const MONGO_URI = process.env.MONGO_URI
 let cachedDb: mongoose.Connection | null = null
 
 export default async function dbConnect() {
-  if (cachedDb) {
-    return cachedDb
+  // 1️⃣ تست اتصال دیتابیس
+  const dbStart = Date.now()
+  if (cachedDb == null) {
+    const db = await mongoose.connect(MONGO_URI, {})
+    cachedDb = db.connections[0]
   }
+  const database_connection = Date.now() - dbStart
 
-  const db = await mongoose.connect(MONGO_URI, {})
-  cachedDb = db.connections[0]
+  if (database_connection > 100)
+    console.log('🔴 اتصال دیتابیس کند است - Region را بررسی کنید')
 
   return cachedDb
 }

@@ -6,7 +6,7 @@ import { computedStyles } from '../../utils/styleUtils'
 import { Button } from '@/components/ui/button'
 import { buttonBlockDefaults } from './defaultSettings'
 import Link from 'next/link'
-import { IconRenderer } from '../../components/IconRenderer'
+import IconRenderer from '../../components/IconRenderer'
 import { cn } from '@/lib/utils'
 
 type ButtonBlockProps = {
@@ -54,14 +54,14 @@ export const ButtonBlock = ({
       >
         {settings?.icon && settings?.iconPlace == 'before' && (
           <IconRenderer
-            name={settings.icon}
+            name={settings.icon || null}
             className={`w-5 h-5 ${settings?.iconColor}`}
           />
         )}
         <span className={`${settings.textColor}`}>{settings?.label}</span>
         {settings?.icon && settings?.iconPlace == 'after' && (
           <IconRenderer
-            name={settings.icon}
+            name={settings.icon || null}
             className={`w-5 h-5 ${settings?.iconColor}`}
           />
         )}

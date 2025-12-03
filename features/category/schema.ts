@@ -63,7 +63,7 @@ categorySchema
   })
 
 // ایندکس‌ها برای بهبود عملکرد
-categorySchema.index({ title: 1 })
+categorySchema.index({ 'translations.title': 1 })
 categorySchema.index({ status: 1 })
 
 const transform = (doc: any, ret: any, options: any) => {

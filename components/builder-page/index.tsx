@@ -4,7 +4,7 @@ import BuilderCanvas from '../builder-canvas'
 import SettingsPanel from './SettingsPanel'
 import { Category } from '@/features/category/interface'
 import { blockRegistry } from './registry/blockRegistry'
-import { blockRegistry as templatePartBlockregistry } from '../builder-template-part/registry/blockRegistry'
+// import { blockRegistry as templatePartBlockregistry } from '../builder-template-part/registry/blockRegistry'
 
 type BuilderPageProp = {
   title?: string
@@ -42,7 +42,8 @@ export default function BuilderPage({
       }
       submitFormHandler={submitFormHandler}
       initialContent={initialContent}
-      newBlocks={{ ...blockRegistry, ...templatePartBlockregistry }}
+      newBlocks={{ ...blockRegistry }}
+      // newBlocks={{ ...blockRegistry, ...templatePartBlockregistry }}
     />
   )
 }

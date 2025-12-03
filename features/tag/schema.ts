@@ -50,7 +50,7 @@ tagSchema
   })
 
 // ایندکس‌ها برای بهبود عملکرد
-tagSchema.index({ title: 1 })
+tagSchema.index({ 'translations.title': 1 })
 tagSchema.index({ status: 1 })
 
 const transform = (doc: any, ret: any, options: any) => {

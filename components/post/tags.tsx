@@ -3,7 +3,7 @@ import React from 'react'
 import { Tag } from '@/features/tag/interface'
 import Link from 'next/link'
 import { Button } from '../ui/button'
-import { IconRenderer } from '../builder-canvas/components/IconRenderer'
+import IconRenderer from '../builder-canvas/components/IconRenderer'
 
 type PostCoverProps = {
   tags: Tag[]

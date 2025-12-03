@@ -2,10 +2,9 @@
 'use client'
 import React, { ElementType, useEffect, useState } from 'react'
 import { Block } from '../../types'
-import { combineClassNames, computedStyles } from '../../utils/styleUtils'
 import { renderTiptapAction } from '@/components/tiptap-editor/render/renderTiptapAction'
-import EnhanceHtmlForNext from '@/components/tiptap-editor/render/EnhanceHtmlForNext'
 import { getSettingsAction } from '@/features/settings/actions'
+import computedStyles from '../../utils/computedStyles'
 
 type WriteBlockProps = {
   widgetName: string

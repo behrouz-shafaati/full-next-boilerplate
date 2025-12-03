@@ -28,8 +28,8 @@ export default async function RenderedHtml({ contentJson }: Props) {
   return (
     <EnhanceHtmlForNext
       siteSettings={siteSettings}
-      HTML_string={html}
-      contentJson={contentJson}
+      HTML_string={html ?? ''}
+      contentJson={contentJson ?? {}}
     />
   )
 }

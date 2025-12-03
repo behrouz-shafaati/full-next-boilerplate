@@ -22,7 +22,6 @@ import Text from '../../../components/form-fields/text'
 import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
-import TiptapEditor from '@/components/tiptap-editor'
 import Combobox from '@/components/form-fields/combobox'
 import {
   Category,
@@ -49,6 +48,7 @@ import AccessDenied from '@/components/access-denied'
 import { getEmbedUrl } from '@/components/tiptap-editor/utils'
 import VideoEmbed from '@/components/video-embed/VideoEmbed'
 import { searchCategories } from '@/features/category/actions'
+import TiptapEditorLazy from '@/components/tiptap-editor/TiptapEditorLazy'
 
 interface PostFormProps {
   initialData: any | null
@@ -222,7 +222,7 @@ export const PostForm: React.FC<PostFormProps> = ({
               icon={<PostIcon className="w-4 h-4" />}
             />
             {/* contentJson */}
-            <TiptapEditor
+            <TiptapEditorLazy
               attachedFilesTo={[{ feature: 'post', id: post?.id || null }]}
               name="contentJson"
               defaultContent={

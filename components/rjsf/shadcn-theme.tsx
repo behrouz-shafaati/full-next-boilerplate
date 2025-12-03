@@ -10,8 +10,8 @@ import { NumberWidget } from './widgets/NumberWidget'
 import { SliderWidget } from './widgets/SliderWidget'
 import { FourSideBoxWidget } from './widgets/FourSideBoxWidget'
 import { ShadowWidget } from './widgets/ShadowWidget'
-import { IconPickerWidget } from './widgets/IconPickerWidget'
 import { TailwindTextColorPickerWidget } from './widgets/TailwindTextColorPickerWidget'
+import IconPickerWidget from './widgets/IconPickerWidget'
 
 const CustomFieldTemplate = ({
   id,

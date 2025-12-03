@@ -1,4 +1,4 @@
-import type { NextRequest } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { cookies } from 'next/headers'
 import { jwtVerify } from 'jose'
 
@@ -6,23 +6,71 @@ const secretKey = 'secret'
 const key = new TextEncoder().encode(secretKey)
 
 export async function middleware(request: NextRequest) {
-  const currentUser = await getSession()
+  // ⏱️ شروع اندازه‌گیری کل
+  const totalStart = Date.now()
 
-  if (!request.nextUrl.pathname.startsWith('/dashboard')) {
-    return
-  }
+  // 🔍 اطلاعات درخواست
+  const pathname = request.nextUrl.pathname
+  const requestId = crypto.randomUUID().slice(0, 8)
 
+  // 🚀 مسیرهای غیر Dashboard - خروج سریع
   if (
-    !currentUser &&
-    (request.nextUrl.pathname.startsWith('/dashboard') ||
-      request.nextUrl.pathname.startsWith('api/dashboard'))
+    !pathname.startsWith('/dashboard') &&
+    !pathname.startsWith('/api/dashboard')
   ) {
-    return Response.redirect(new URL('/login', request.url))
+    const response = NextResponse.next()
+    addDebugHeaders(response, {
+      requestId,
+      totalTime: Date.now() - totalStart,
+      pathname,
+      action: 'passthrough',
+    })
+    return response
   }
 
-  if (!currentUser && !request.nextUrl.pathname.startsWith('/login')) {
-    return Response.redirect(new URL('/login', request.url))
+  // 📊 اندازه‌گیری زمان getSession
+  const sessionStart = Date.now()
+  const currentUser = await getSession()
+  const sessionTime = Date.now() - sessionStart
+
+  // 📝 لاگ Session Time
+  if (sessionTime > 50) {
+    console.warn(
+      `⚠️ [${requestId}] Slow getSession: ${sessionTime}ms on ${pathname}`
+    )
   }
+
+  // بررسی احراز هویت برای Dashboard  🔒
+  if (!currentUser) {
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('callbackUrl', pathname)
+    const response = NextResponse.redirect(loginUrl)
+    addDebugHeaders(response, {
+      requestId,
+      totalTime: Date.now() - totalStart,
+      sessionTime,
+      pathname,
+      action: 'redirect-to-login',
+    })
+
+    console.log(
+      `🔐 [${requestId}] Redirecting unauthenticated user from ${pathname} to /login`
+    )
+    return response
+  }
+
+  // ✅ کاربر احراز هویت شده
+  const response = NextResponse.next()
+  addDebugHeaders(response, {
+    requestId,
+    totalTime: Date.now() - totalStart,
+    sessionTime,
+    pathname,
+    action: 'authenticated',
+    userId: currentUser.id || 'unknown',
+  })
+
+  return response
 }
 
 export const config = {
@@ -50,5 +98,54 @@ export async function decrypt(input: string): Promise<any> {
       console.log('Token verification failed:', error.message)
     }
     return null
+  }
+}
+
+// 🔧 تابع کمکی برای اضافه کردن Headers
+function addDebugHeaders(
+  response: NextResponse,
+  data: {
+    requestId: string
+    totalTime: number
+    sessionTime: number
+    pathname: string
+    action: string
+    userId?: string
+  }
+) {
+  const { requestId, totalTime, sessionTime, pathname, action, userId } = data
+
+  // 📊 Debug Headers
+  response.headers.set('X-Request-ID', requestId)
+  response.headers.set('X-Middleware-Time', `${totalTime}ms`)
+  response.headers.set('X-Session-Time', `${sessionTime}ms`)
+  response.headers.set('X-Middleware-Action', action)
+  response.headers.set('X-Debug-Path', pathname)
+  response.headers.set('X-Timestamp', new Date().toISOString())
+
+  if (userId) {
+    response.headers.set('X-User-ID', userId)
+  }
+
+  // 🚨 هشدار برای زمان‌های بالا
+  if (totalTime > 100) {
+    response.headers.set('X-Performance-Warning', 'slow-middleware')
+    console.warn(
+      `🔴 [${requestId}] SLOW MIDDLEWARE: ${totalTime}ms (session: ${sessionTime}ms) on ${pathname}`
+    )
+  }
+
+  // 🔒 Security Headers
+  response.headers.set('X-Content-Type-Options', 'nosniff')
+  response.headers.set('X-Frame-Options', 'DENY')
+
+  // 📈 لاگ در Development
+  if (process.env.NODE_ENV === 'development') {
+    console.log(
+      `📊 [${requestId}] ${action.toUpperCase()} | ` +
+        `Path: ${pathname} | ` +
+        `Total: ${totalTime}ms | ` +
+        `Session: ${sessionTime}ms`
+    )
   }
 }

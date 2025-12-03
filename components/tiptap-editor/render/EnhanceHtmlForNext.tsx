@@ -39,8 +39,29 @@ type Props = {
 export default async function EnhanceHtmlForNext({
   siteSettings,
   contentJson,
-  HTML_string,
+  HTML_string = '',
 }: Props) {
+  // ✅ اضافه کردن Early Return با Fallback
+  // اگر HTML_string معتبر نیست، یک div خالی برگردان
+  if (!HTML_string || typeof HTML_string !== 'string') {
+    console.warn('⚠️ EnhanceHtmlForNext: HTML_string is empty or invalid', {
+      type: typeof HTML_string,
+      value: HTML_string,
+    })
+    return <div className="prose max-w-none" />
+  }
+
+  // ✅ اگر contentJson هم خالی باشد
+  if (!contentJson || typeof contentJson !== 'string') {
+    console.warn('⚠️ EnhanceHtmlForNext: contentJson is empty or invalid')
+    return (
+      <div
+        className="prose max-w-none"
+        dangerouslySetInnerHTML={{ __html: HTML_string }}
+      />
+    )
+  }
+
   // 1. JSON پارس شده (doc)
   const doc = JSON.parse(contentJson) as TNode
 

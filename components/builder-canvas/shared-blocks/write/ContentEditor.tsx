@@ -12,8 +12,8 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog'
-import TiptapEditor from '@/components/tiptap-editor'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import TiptapEditorLazy from '@/components/tiptap-editor/TiptapEditorLazy'
 
 type Props = {
   initialData: any
@@ -37,7 +37,7 @@ export const ContentEditor = ({ initialData }: Props) => {
         </DialogHeader>
         <ScrollArea className="h-[calc(90vh-4rem)] w-full overflow-auto pb-12 px-4">
           {/* contentJson */}
-          <TiptapEditor
+          <TiptapEditorLazy
             // attachedFilesTo={[
             //   { feature: 'post', id: post?.id || null },
             // ]}

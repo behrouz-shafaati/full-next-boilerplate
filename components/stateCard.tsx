@@ -1,15 +1,7 @@
 import React from 'react'
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-import {
-  ArrowUp,
-  ArrowDown,
-  FileText,
-  Eye,
-  MessageSquare,
-  User,
-  Clock,
-} from 'lucide-react'
+import { ArrowUp, ArrowDown } from 'lucide-react'
 
 interface StatCardProps {
   title: string

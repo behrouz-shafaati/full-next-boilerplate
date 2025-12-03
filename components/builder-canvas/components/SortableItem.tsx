@@ -6,7 +6,6 @@ import { GripHorizontal, Settings, Trash } from 'lucide-react'
 import { useBuilderStore } from '../store/useBuilderStore'
 import { Button } from '@/components/ui/button'
 import { combineClassNames } from '../utils/styleUtils'
-import { useEffect } from 'react'
 
 type SortableItemProp = {
   item: Block

@@ -61,7 +61,7 @@ const PostImageCard = ({ post, options }: Props) => {
               decoding="async"
               quality={80}
             /> */}
-            <Image
+            {/* <Image
               src={
                 post?.image?.srcMedium ||
                 '/assets/image-placeholder-Medium.webp'
@@ -72,7 +72,7 @@ const PostImageCard = ({ post, options }: Props) => {
               objectFit="cover"
               placeholder="blur"
               blurDataURL={post?.image?.blurDataURL || ''}
-            />
+            /> */}
           </div>
           <div className="p-4">
             <h3 className="text-sm font-semibold mb-2 leading-5 min-h-[2.5rem] line-clamp-2">

@@ -1,5 +1,4 @@
 'use client'
-import * as z from 'zod'
 import { useActionState, useEffect, useRef, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -20,7 +19,6 @@ import {
 import { AlertModal } from '../../../components/modal/alert-modal'
 import FileUpload from '../../../components/form-fields/file-upload'
 import Select from '../../../components/form-fields/select'
-import TiptapEditor from '@/components/tiptap-editor'
 import Combobox from '@/components/form-fields/combobox'
 import {
   Category,
@@ -35,6 +33,7 @@ import { Tag, TagTranslationSchema } from '@/features/tag/interface'
 import MultipleSelec from '@/components/form-fields/multiple-selector'
 import Link from 'next/link'
 import { createPostHref } from '@/features/post/utils'
+import TiptapEditorLazy from '@/components/tiptap-editor/TiptapEditorLazy'
 
 interface PostCommentFormProps {
   initialData: any | null
@@ -233,7 +232,7 @@ export const Form: React.FC<PostCommentFormProps> = ({
 
           <div className="col-span-3">
             {/* contentJson */}
-            <TiptapEditor
+            <TiptapEditorLazy
               name="contentJson"
               defaultContent={
                 postComment

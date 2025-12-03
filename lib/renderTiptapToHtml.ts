@@ -1,3 +1,4 @@
+'use server'
 const jsdom = require('jsdom')
 const { JSDOM } = jsdom
 // let jsdom: typeof import('jsdom') | null = null
@@ -10,7 +11,7 @@ import { getTextFromNode } from '@/components/tiptap-editor/utils'
 import { Schema, DOMSerializer, Node as ProseNode } from 'prosemirror-model'
 import { slugify } from './utils'
 
-export const accordionNodes = {
+const accordionNodes = {
   accordion: {
     group: 'block',
     content: 'accordionItems',
@@ -58,7 +59,7 @@ export const accordionNodes = {
     ],
   },
 }
-export const faqNodes = {
+const faqNodes = {
   faq: {
     group: 'block',
     content: 'accordionItems',
@@ -184,6 +185,7 @@ const nodes = {
       createdAt: { default: null },
       updatedAt: { default: null },
       extension: { default: null },
+      blurDataURL: { default: null },
     },
     group: 'inline',
     draggable: true,
@@ -196,8 +198,16 @@ const nodes = {
       },
     ],
     toDOM: (node: any) => {
-      const { id, translations, srcSmall, srcMedium, srcLarge, width, height } =
-        node.attrs
+      const {
+        id,
+        translations,
+        srcSmall,
+        srcMedium,
+        srcLarge,
+        width,
+        height,
+        blurDataURL,
+      } = node.attrs
       const src =
         srcMedium || srcSmall || srcLarge || '/image-placeholder-Medium.webp'
       return [
@@ -211,6 +221,7 @@ const nodes = {
           translations: translations ? JSON.stringify(translations) : null,
           width,
           height,
+          blurDataURL,
         },
       ]
     },
@@ -531,7 +542,7 @@ const schema = new Schema({ nodes, marks })
 
 // const { JSDOM } = jsdom
 // 2. تابع نهایی تبدیل JSON → HTML
-export function renderTiptapJsonToHtml(json: any): string {
+export async function renderTiptapJsonToHtml(json: any): string {
   const dom = new JSDOM(`<!DOCTYPE html><body></body>`)
   const document = dom.window.document
 

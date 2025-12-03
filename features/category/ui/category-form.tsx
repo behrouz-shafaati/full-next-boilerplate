@@ -32,9 +32,9 @@ import { useSession } from '@/components/context/SessionContext'
 import { can } from '@/lib/utils/can.client'
 import AccessDenied from '@/components/access-denied'
 import StickyBox from 'react-sticky-box'
-import { IconPicker } from '@/components/form-fields/IconPicker'
-import TiptapEditor from '@/components/tiptap-editor'
 import { Label } from '@/components/ui/label'
+import TiptapEditorLazy from '@/components/tiptap-editor/TiptapEditorLazy'
+import IconPicker from '@/components/form-fields/IconPicker'
 
 export const IMG_MAX_LIMIT = 1
 
@@ -210,7 +210,7 @@ export const CategoryForm: React.FC<CategoryFormProps> = ({
           >
             توضیحات
           </Label>
-          <TiptapEditor
+          <TiptapEditorLazy
             attachedFilesTo={[
               { feature: 'category', id: category?.id || null },
             ]}

@@ -44,7 +44,7 @@ const VerificationCodeSchema = new Schema<IVerificationCode>(
     attempts: { type: Number, default: 0 },
     maxAttempts: { type: Number, default: 5 },
 
-    expiresAt: { type: Date, required: true, index: true },
+    expiresAt: { type: Date, required: true },
     ip: { type: String, default: null },
     userAgent: { type: String, default: null },
     metadata: { type: Schema.Types.Mixed, default: {} },
