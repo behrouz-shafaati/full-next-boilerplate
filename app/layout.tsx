@@ -1,13 +1,13 @@
-import './initial-load'
+// import './initial-load' => رفت به instrumentation.ts (در root پروژه)
 import type { Metadata } from 'next'
 import './globals.css'
 import localFont from 'next/font/local'
 import { getSettings } from '@/features/settings/controller'
 import { Settings } from '@/features/settings/interface'
 import { getTranslation } from '@/lib/utils'
-import { ThemeScript } from '@/components/ThemeScript'
 import { PageLoadingProgressBar } from '@/components/loading-page-progress-bar'
 import { PageLoadingProgressBarActivator } from '@/components/loading-page-progress-bar-activator'
+import { HydrationDebug } from '@/components/debug/HydrationDebug'
 
 const iransans = localFont({
   src: [
@@ -70,15 +70,19 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fa" dir="rtl" suppressHydrationWarning>
-      <head>
-        <ThemeScript />
-      </head>
       <body className={iransans.className}>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var m=document.cookie.match(/theme=(dark|light)/);var t=m?m[1]:'light';if(t==='dark')document.documentElement.classList.add('dark')}catch(e){}})();`,
+          }}
+        />
         <PageLoadingProgressBarActivator />
         <PageLoadingProgressBar />
         {/* <Providers> */}
         <main>{children}</main>
+        <HydrationDebug />
         {/* </Providers> */}
+        {/* اگر این تگ اسکریپت از Body‌خارج بشه Hydration رو افزایش میده */}
       </body>
     </html>
   )

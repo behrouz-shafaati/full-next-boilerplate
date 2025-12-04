@@ -24,7 +24,6 @@ export const ContentBlock = ({
   ...props
 }: ContentBlockProps) => {
   const { settings } = blockData
-  console.log('#234098 props:', props)
   return (
     <article
       style={{

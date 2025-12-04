@@ -17,14 +17,22 @@ export type BlockDef<TSettings = any> = {
 const blockRegistry: Record<string, BlockDef> = {}
 
 export async function registerBlock(blocks: Record<string, BlockDef>) {
+  let repeetRegister = 0
   Object.entries(blocks).forEach(([key, block]) => {
     if (blockRegistry[key]) {
-      console.log(
-        `Block "${key}" is already registered, skipping duplicate registration.`
-      )
+      if (repeetRegister < 2) {
+        console.log(
+          `Block repeetRegister: ${repeetRegister} "${key}" is already registered, skipping duplicate registration.`
+        )
+        repeetRegister++
+      }
       // throw new Error(`Block "${key}" is already registered`)
     } else blockRegistry[key] = block
   })
+  if (repeetRegister > 2)
+    console.log(
+      `*** And  "${repeetRegister}" Blocks is already registered, skipping duplicate registration.\n-----------------------------------------------------------`
+    )
 }
 
 export async function getBlockRegistry() {

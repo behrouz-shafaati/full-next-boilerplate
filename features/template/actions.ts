@@ -137,6 +137,7 @@ export async function updateTemplate(
       feature: 'template',
       slug: [`/dashboard/templates`],
     })
+    console.log('098 path need revalidate:', pathes)
     for (const slug of pathes) {
       // این تابع باید یا در همین فایل سرور اکشن یا از طریق api فراخوانی شود. پس محلش نباید تغییر کند.
       revalidatePath(slug)

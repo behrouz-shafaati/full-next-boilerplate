@@ -55,7 +55,6 @@ export default function DynamicIcon({
           display: 'inline-block',
           width: size,
           height: size,
-          backgroundColor: '#e5e7eb',
           borderRadius: 4,
         }}
       />

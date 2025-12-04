@@ -1,4 +1,3 @@
-'use server'
 import { BreadCrumbType } from '@/components/breadcrumb'
 import RenderedHtml from '@/components/tiptap-editor/render/RenderedHtml.server'
 import { Post, PostTranslationSchema } from '../../interface'
@@ -11,13 +10,14 @@ import { PostContent } from '@/components/post/content'
 import { PostMetaData } from '@/components/post/meta-data'
 import { PostTitle } from '@/components/post/title'
 import ShareButtons from '@/components/share/share-buttons'
-import { getSettings } from '@/features/settings/controller'
+import { Settings } from '@/features/settings/interface'
 import { PostTags } from '@/components/post/tags'
 import { PostAuthorCard } from '@/components/post/author-card'
 import { CommentsHeader } from '@/components/post/comments-header'
 
 type props = {
   locale?: string
+  siteSettings: Settings
   breadcrumbItems: BreadCrumbType[]
   post: Post
   readingDuration: number
@@ -26,16 +26,16 @@ type props = {
   searchParams?: any
 }
 
-const SinglePageBlog = async ({
+const SinglePageBlog = ({
   breadcrumbItems,
   post,
+  siteSettings,
   locale = 'fa',
   readingDuration,
   tableOfContent = null,
   comments = null,
   searchParams = {},
 }: props) => {
-  const siteSettings = await getSettings()
   const translation: PostTranslationSchema = getTranslation({
     translations: post?.translations,
   })

@@ -19,7 +19,6 @@ export default async function MenuBlock({
   blockData,
   ...props
 }: MenuBlockProps) {
-  console.log('#234897 props in menuBlock:', props)
   const { content } = blockData
 
   const result = await getMenus({

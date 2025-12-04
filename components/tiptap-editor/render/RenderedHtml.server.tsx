@@ -19,12 +19,15 @@ type Props = {
 }
 
 export default async function RenderedHtml({ contentJson }: Props) {
-  const [siteSettings] = await Promise.all([getSettings()])
   // 1. JSON پارس شده (doc)
   const doc = JSON.parse(contentJson) as TNode
 
+  const [siteSettings, html] = await Promise.all([
+    getSettings(),
+    renderTiptapJsonToHtml(doc),
+  ])
   // 3. HTML تولید شده (سرور) — مثل قبل
-  const html = renderTiptapJsonToHtml(doc)
+
   return (
     <EnhanceHtmlForNext
       siteSettings={siteSettings}

@@ -6,30 +6,14 @@ const config = {
     './pages/**/*.{ts,tsx}',
     './components/**/*.{ts,tsx}',
     './app/**/*.{ts,tsx}',
-    './src/**/*.{ts,tsx}',
     './features/**/*.{ts,tsx}',
   ],
+  // ❌ safelist رو حذف یا minimize کن
   safelist: [
-    ,
     {
       pattern: /col-span-(1[0-2]|[1-9])/,
       variants: ['sm', 'md', 'lg', 'xl', '2xl'],
     },
-    // {
-    //   pattern:
-    //     /(bg|text|border)-(gray|neutral|zinc|stone|slate|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)/,
-    //   variants: ['hover'], // hover کلاس‌ها
-    // },
-    // {
-    //   pattern:
-    //     /(bg|text|dark:text)-(gray|neutral|zinc|stone|slate|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-(50|100|200|300|400|500|600|700|800|900|950)/,
-    //   variants: ['dark', 'hover'], // اینجا میگی همه این کلاس‌ها رو با dark هم بساز
-    // },
-    // {
-    //   pattern: /(bg|text|border)-(black|white|transparent)/,
-    //   variants: ['dark', 'dark:hover'],
-    // },
-    // تمام breakpointها برای displayهای مهم
     'sm:!block',
     'md:!block',
     'lg:!block',
@@ -114,13 +98,7 @@ const config = {
       },
     },
   },
-  // corePlugins: {
-  //   aspectRatio: false,
-  // },
-  plugins: [
-    require('tailwindcss-animate'),
-    // require('@tailwindcss/aspect-ratio'),
-  ],
+  // plugins: [require('tailwindcss-animate')],
 } satisfies Config
 
 export default config

@@ -68,11 +68,11 @@
   }
 }
 
-@layer utilities {
+/* @layer utilities {
   .ltr {
     direction: ltr;
   }
-}
+} */
 
 /* styles.css */
 .collapsibleDropdown {

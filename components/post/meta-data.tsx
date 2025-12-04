@@ -15,10 +15,11 @@ export const PostMetaData = ({
   author,
   readingDuration,
   styles = {},
-  ...props
+  ...restProps
 }: PostCoverProps) => {
+  console.log('PostMetaData rendered for:', author?.name)
   return (
-    <div style={styles} {...props} className="text-sm text-gray-500 mb-4">
+    <div style={styles} {...restProps} className="text-sm text-gray-500 mb-4">
       <div className="flex gap-2">
         <div>
           <Avatar>

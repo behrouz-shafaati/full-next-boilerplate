@@ -33,32 +33,8 @@ const RenderBlock = async ({
 
   const block = blocks[item.type]
   const Component = block?.Renderer
-  // const Island = block?.Island
-  // const EditorComponent = block?.RendererInEditor
-
-  // if (editroMode && EditorComponent) {
-  //   {
-  //     return (
-  //       <EditorComponent
-  //         siteSettings={siteSettings}
-  //         blockData={item}
-  //         className={`${className} ${combineClassNames(item.classNames || {})}`}
-  //         pageSlug={pageSlug}
-  //         categorySlug={categorySlug}
-  //         searchParams={searchParams}
-  //       />
-  //     )
-  //   }
-  // } else {
   if (Component) {
     if (item.type.startsWith('content_')) {
-      /**
-       * محتواها در صفحه ی مورد نظر از دیتابیس خوانده میشوند و مانند زیر به کامپوننت رندر کننده اصلی داده میشوند و در اینجا همه ی آنها وجود دارند
-       * content_post_title={translation?.title}
-       *   content_post_cover={post?.image ?? null}
-       *   content_post_metadata={metadata}
-       * بعد در تابغ زیر هر بلاک محتوای خودش را بر می دارد و نمایش میدهد. مثلا بلاک content_post_title محتوایی که از RenderRows با همین نام آمده را توسط تابع زیر واکشی می کند و آن را نمایش میدهد.
-       */
       const node = extractNode(rest, item.type) // محتوای مورد نظر از پراپ های ارسال شده استخراج میشود
       if (node)
         return (

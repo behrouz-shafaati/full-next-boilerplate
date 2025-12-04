@@ -4,7 +4,7 @@
 export const dynamic = 'force-static'
 // export const dynamic = 'force-dynamic'
 
-import React from 'react'
+import React, { cache } from 'react'
 import postCtrl from '@/features/post/controller'
 import { notFound } from 'next/navigation'
 import templateCtrl from '@/features/template/controller'
@@ -28,6 +28,7 @@ import DefaultSinglePageBlog from '@/features/post/ui/page/single'
 import RendererTemplate from '@/components/builder-canvas/templateRender/RenderTemplate.server'
 import PostCommentListLazy from '@/features/post-comment/ui/list/PostCommentListLazy'
 import TableOfContentsLazy from '@/components/post/table-of-contents-lazy'
+import getTranslation from '@/lib/utils/getTranslation'
 
 interface PageProps {
   params: Promise<{ slugs: string[] }>
@@ -40,6 +41,19 @@ export async function generateStaticParams() {
   return postCtrl.generateStaticParams()
 }
 
+// ✅ Cache کردن کوئری پست - فقط یک بار اجرا میشه
+const getPostBySlug = cache(async (slug: string) => {
+  const result = await postCtrl.find({
+    filters: { slug: decodeURIComponent(slug) },
+  })
+  return result?.data[0] || null
+})
+
+// ✅ Cache کردن template
+const getCachedTemplate = cache(async () => {
+  return templateCtrl.getTemplate({ slug: 'post' })
+})
+
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -48,11 +62,14 @@ export async function generateMetadata({
   const { slugs } = resolvedParams
   const slug = slugs[slugs.length - 1]
   let findResult = null
-  const siteTitle = (await getSettings('site_title')) as string
+  // ✅ استفاده از cached function
+  const [post, siteTitle] = await Promise.all([
+    getPostBySlug(slug),
+    getSettings('site_title') as Promise<string>,
+  ])
   ;[findResult] = await Promise.all([
     postCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
   ])
-  const post: Post = findResult?.data[0] || null
   if (!post || post == undefined) {
     return {
       title: 'صفحه یافت نشد',
@@ -60,10 +77,9 @@ export async function generateMetadata({
     }
   }
   const href = createPostHref(post?.mainCategory)
-  const translation: PostTranslationSchema =
-    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
-    {}
+  const translation: PostTranslationSchema = getTranslation({
+    translations: post?.translations,
+  })
 
   return {
     title: translation?.seoTitle || translation.title,
@@ -100,18 +116,18 @@ export default async function Page({ params, searchParams }: PageProps) {
   const locale = 'fa'
   const resolvedParams = await params
   const { slugs } = resolvedParams
+  const slug = slugs[slugs.length - 1]
 
   // const resolvedSearchParams = {}
   const resolvedSearchParams = await searchParams
   // const { tag } = resolvedSearchParams
 
-  const slug = slugs[slugs.length - 1]
-  let findResult = null
-
-  ;[findResult] = await Promise.all([
-    postCtrl.find({ filters: { slug: decodeURIComponent(slug) } }),
+  const [post, template, siteSettings] = await Promise.all([
+    getPostBySlug(slug), // از cache میاد اگه قبلاً در metadata گرفته شده
+    getCachedTemplate(),
+    getSettings(),
   ])
-  const post = findResult?.data[0] || null
+
   if (!post) {
     notFound()
   }
@@ -121,11 +137,10 @@ export default async function Page({ params, searchParams }: PageProps) {
       filters: { post: post.id },
     })
 
-  const href = createPostHref(post.mainCategory)
-  const translation: PostTranslationSchema =
-    post?.translations?.find((t: PostTranslationSchema) => t.lang === locale) ||
-    post?.translations[0] ||
-    {}
+  // const href = createPostHref(post.mainCategory)
+  const translation: PostTranslationSchema = getTranslation({
+    translations: post?.translations,
+  })
 
   // تبدیل contentJson به متن ساده
   const json = JSON.parse(translation?.contentJson)
@@ -148,10 +163,6 @@ export default async function Page({ params, searchParams }: PageProps) {
   // ساخت TOC سمت سرور
   const toc = generateTableOfContents(JSON.parse(translation?.contentJson))
   const breadcrumbItems = buildBreadcrumbsArray(post)
-  const [template, siteSettings] = await Promise.all([
-    templateCtrl.getTemplate({ slug: 'post' }),
-    getSettings(),
-  ])
 
   const postSchema = generatePostSchema({ post, locale: 'fa' })
   const faqSchema = generateFAQSchema(translation.contentJson)
@@ -179,6 +190,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       )}
     </>
   )
+
   if (post.status !== 'published')
     return (
       <div className="h-screen w-full flex justify-center items-center align-middle">
@@ -199,6 +211,7 @@ export default async function Page({ params, searchParams }: PageProps) {
             editroMode={false}
             content_all={
               <DefaultSinglePageBlog
+                siteSettings={siteSettings}
                 post={post}
                 breadcrumbItems={breadcrumbItems}
                 readingDuration={readingDuration}
@@ -252,6 +265,7 @@ export default async function Page({ params, searchParams }: PageProps) {
         <DefaultSinglePageBlog
           searchParams={resolvedSearchParams}
           post={post}
+          siteSettings={siteSettings}
           breadcrumbItems={breadcrumbItems}
           readingDuration={readingDuration}
           tableOfContent={<TableOfContentsLazy toc={toc} />}

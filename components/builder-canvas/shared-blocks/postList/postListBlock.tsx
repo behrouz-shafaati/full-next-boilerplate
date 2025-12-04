@@ -1,4 +1,3 @@
-'use server'
 // کامپوننت نمایشی بلاک
 import React from 'react'
 import { Block } from '../../types'
@@ -54,6 +53,7 @@ export default async function PostListBlock({
     : false
   if (selectedTag != '' && flgSelectedTagExistInBlock) {
     const tag = await getTagAction({ slug: selectedTag })
+
     filters = { ...filters, tags: [tag.id] }
   }
 
@@ -77,7 +77,6 @@ export default async function PostListBlock({
   ])
   const posts = result.data
   const randomMap = posts.map(() => Math.random() < 0.1)
-
   return (
     <PostList
       posts={posts}
