@@ -8,14 +8,10 @@ import { ArrowLeft } from 'lucide-react'
 import { Block } from '@/components/builder-canvas/types'
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area'
 import PostItems from '../card/PostItems'
-// import { getPosts } from '@/features/post/actions'
-// import { getTagAction } from '@/features/tag/actions'
-// import SelectableTags from '@/components/builder-canvas/components/SelectableTags'
-// import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
-// import { usePathname, useRouter } from 'next/navigation'
-import SelectableTags from '@/components/builder-canvas/components/SelectableTags'
 import { getPosts } from '@/features/post/actions'
 import { getTagAction } from '@/features/tag/actions'
+// import SelectableTags from '@/components/builder-canvas/components/SelectableTags'
+import QueryParamLinks from '@/components/builder-canvas/components/QueryParamLinks'
 
 type PostListProps = {
   posts: Post[]
@@ -53,25 +49,6 @@ export const PostListRow = ({
   props.className = props?.className
     ? `${props?.className} w-full h-auto max-w-full`
     : 'w-full h-auto max-w-full'
-
-  // const router = useRouter()
-  // const pathname = usePathname()
-  // const [isPending, startTransition] = useTransition()
-
-  // const handleTagChange = (tagSlug: string) => {
-  //   startTransition(() => {
-  //     // URL رو تغییر بده و Next.js خودش Server Component رو دوباره render میکنه
-  //     const params = new URLSearchParams(searchParams)
-
-  //     if (tagSlug) {
-  //       params.set('tag', tagSlug)
-  //     } else {
-  //       params.delete('tag')
-  //     }
-
-  //     router.push(`${pathname}?${params.toString()}`, { scroll: false })
-  //   })
-  // }
 
   const firstLoad = useRef(true)
   const [loading, setLoading] = useState(false)
@@ -128,18 +105,12 @@ export const PostListRow = ({
         </Link>
       </div>
       <div>
-        <SelectableTags
+        {/* <SelectableTags
           items={queryParamLS}
           setSelectedTag={setSelectedTag}
           className="p-2"
-        />
-        {/* <QueryParamLinks
-          items={queryParamLS}
-          className="p-2"
-          paramKey="tag"
-          onTagSelect={handleTagChange} // به جای setSelectedTag
-          selectedTag={searchParams?.tag || ''}
         /> */}
+        <QueryParamLinks items={queryParamLS} className="p-2" paramKey="tag" />
         <div className={`mt-2 `}>
           <ScrollArea className="">
             <div className="flex flex-row w-full gap-4 pb-4">
@@ -147,7 +118,7 @@ export const PostListRow = ({
                 posts={posts}
                 blockData={blockData}
                 randomMap={randomMap}
-                loading={false}
+                loading={loading}
               />
             </div>
             <ScrollBar orientation="horizontal" />

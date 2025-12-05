@@ -40,15 +40,16 @@ export default async function PostListBlock({
 }: PostListBlockProps) {
   const { content, settings } = blockData
 
-  let filters = {}
+  // const selectedTag = searchParams?.tag
+  const selectedTag = settings?.showNewest ? '' : content?.tags?.[0].slug || ''
+  const flgSelectedTagExistInBlock = Array.isArray(content?.tags)
 
-  /*======== tag filter ========*/
-  const selectedTag = searchParams?.tag
-    ? searchParams?.tag
+  let filters = {}
+    ? /*======== tag filter ========*/
+      searchParams?.tag
     : settings?.showNewest == true
     ? ''
     : content?.tags?.[0]?.slug || ''
-  const flgSelectedTagExistInBlock = Array.isArray(content?.tags)
     ? content.tags.some((tag) => tag.slug === selectedTag)
     : false
   if (selectedTag != '' && flgSelectedTagExistInBlock) {

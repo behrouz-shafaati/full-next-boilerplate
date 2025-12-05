@@ -101,7 +101,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
         {!loading && leftSection && <span className="mr-2">{leftSection}</span>}
 
-        <span>{children}</span>
+        <>{children}</>
 
         {!loading && rightSection && (
           <span className="ml-2">{rightSection}</span>

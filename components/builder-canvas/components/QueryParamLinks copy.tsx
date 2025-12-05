@@ -32,37 +32,42 @@ export default function QueryParamLinks({
   paramKey = 'param',
   items,
   className = '',
-  onTagSelect,
-  selectedTag,
 }: // searchParams,
 {
   paramKey?: string
   items: { label: string; slug: string }[]
   className?: string
   searchParams?: any
-  onTagSelect: (slug: string) => void // callback از parent
-  selectedTag: string
 }) {
+  const [selectedTag, setSelectedTag] = useState('')
+
   let selectedTagExistInItems = items.some((item) => item.slug === selectedTag)
 
   return (
     <div className={`flex flex-wrap gap-2 ${className}`}>
       {items?.map((item, index) => (
-        <Badge
+        <Link
+          href={`?${paramKey}=${item.slug}`}
           key={item.slug}
-          onClick={() => onTagSelect(item.slug)}
-          variant="outline"
-          className={cn(
-            'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
-            {
-              'bg-primary text-white':
-                (selectedTagExistInItems && item.slug === selectedTag) ||
-                (!selectedTagExistInItems && index == 0),
-            }
-          )}
+          scroll={false}
+          data-nprogress="off"
+          onClick={() => setSelectedTag(item.slug)}
         >
-          {item.label}
-        </Badge>
+          <Badge
+            key={item.slug}
+            variant="outline"
+            className={cn(
+              'p-2 text-xs text-gray-600 dark:text-gray-100 font-normal cursor-pointer px-4',
+              {
+                'bg-primary text-white':
+                  (selectedTagExistInItems && item.slug === selectedTag) ||
+                  (!selectedTagExistInItems && index == 0),
+              }
+            )}
+          >
+            {item.label}
+          </Badge>
+        </Link>
       ))}
     </div>
   )

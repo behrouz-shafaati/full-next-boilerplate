@@ -15,14 +15,14 @@ function MenuItem({ item }: { item: MenuItem }) {
 
   useEffect(() => {
     if (item?.url) {
-      console.log('#234987 prefetch:', item.url)
+      console.log('#234987dd prefetch:', item.url)
       router.prefetch(item.url)
     }
     if (hasSubMenu) {
       // Prefetch top-level links
       item.subMenu.forEach((item) => {
         {
-          console.log('#234987 prefetch:', item.url)
+          console.log('#234987dd prefetch:', item.url)
           router.prefetch(item.url)
         }
       })
